@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { Users, Search, Filter } from 'lucide-react';
@@ -22,6 +23,7 @@ const riskColors: Record<string, string> = {
 };
 
 export default function Customers() {
+  const navigate = useNavigate();
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-background">
@@ -60,7 +62,7 @@ export default function Customers() {
               </TableHeader>
               <TableBody>
                 {customers.map((c) => (
-                  <TableRow key={c.id} className="cursor-pointer hover:bg-muted/50">
+                  <TableRow key={c.id} className="cursor-pointer hover:bg-muted/50" onClick={() => navigate(`/customers/${c.id}`)}>
                     <TableCell className="font-medium">{c.name}</TableCell>
                     <TableCell className="font-mono text-xs text-muted-foreground">{c.bvn}</TableCell>
                     <TableCell>
