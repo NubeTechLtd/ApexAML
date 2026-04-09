@@ -196,7 +196,19 @@ export default function Customers() {
               <Input placeholder="Search by name or BVN..." className="pl-9" value={search} onChange={e => handleSearchChange(e.target.value)} />
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-4 gap-4">
+            <div
+              onClick={() => { setStatusFilter('all'); setPage(1); }}
+              className={`rounded-xl border p-4 flex items-center gap-3 cursor-pointer transition-colors ${statusFilter === 'all' ? 'border-primary bg-primary/5 ring-1 ring-primary/20' : 'border-border bg-card hover:bg-muted/50'}`}
+            >
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                <Users className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-foreground">{customers.length}</p>
+                <p className="text-xs text-muted-foreground">Total</p>
+              </div>
+            </div>
             {([
               { status: 'Active' as CustomerStatus, icon: UserCheck, iconClass: 'text-emerald-600', bgClass: 'bg-emerald-500/10' },
               { status: 'Under Review' as CustomerStatus, icon: Clock, iconClass: 'text-yellow-600', bgClass: 'bg-yellow-500/10' },
