@@ -142,9 +142,19 @@ export default function LandingPage() {
             <span className="font-bold text-lg tracking-tight text-white">Sentinel</span>
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm text-white/60">
-            <a href="#features" className="hover:text-white transition-colors">Platform</a>
-            <a href="#ai" className="hover:text-white transition-colors">AI Engine</a>
-            <a href="#trust" className="hover:text-white transition-colors">Results</a>
+            {[
+              { href: 'features', label: 'Platform' },
+              { href: 'ai', label: 'AI Engine' },
+              { href: 'trust', label: 'Results' },
+            ].map(({ href, label }) => (
+              <button
+                key={href}
+                onClick={() => document.getElementById(href)?.scrollIntoView({ behavior: 'smooth' })}
+                className="hover:text-white transition-colors"
+              >
+                {label}
+              </button>
+            ))}
           </div>
           <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg text-xs font-semibold">
             Book Demo
