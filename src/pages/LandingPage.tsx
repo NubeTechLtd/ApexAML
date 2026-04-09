@@ -305,18 +305,26 @@ export default function LandingPage() {
             <p className="text-white/40 max-w-lg mx-auto">
               Join the institutions preparing for the June 2026 deadline. Get private access to Sentinel today.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto">
-              <Input
-                type="email"
-                placeholder="your@bank.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="bg-white/[0.04] border-white/10 text-white placeholder:text-white/25 rounded-xl h-12 focus-visible:ring-primary/40"
-              />
-              <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl whitespace-nowrap text-sm font-semibold h-12 px-6">
-                Request Private Access
-              </Button>
-            </div>
+            {submitted ? (
+              <div className="flex items-center justify-center gap-2 text-risk-low">
+                <CheckCircle2 className="h-5 w-5" />
+                <span className="font-medium">You're on the list. We'll be in touch.</span>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto">
+                <Input
+                  type="email"
+                  required
+                  placeholder="your@bank.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="bg-white/[0.04] border-white/10 text-white placeholder:text-white/25 rounded-xl h-12 focus-visible:ring-primary/40"
+                />
+                <Button type="submit" disabled={submitting} size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl whitespace-nowrap text-sm font-semibold h-12 px-6">
+                  {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Request Private Access'}
+                </Button>
+              </form>
+            )}
           </AnimatedSection>
         </div>
       </section>
