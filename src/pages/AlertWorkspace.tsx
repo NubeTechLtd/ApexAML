@@ -459,7 +459,7 @@ export default function AlertWorkspace() {
                     {strGenerated && (
                       <div className="flex gap-4 min-h-[400px]">
                         {/* Editor */}
-                         <div className={`flex-1 flex flex-col rounded-lg border overflow-hidden relative transition-all ${strLoading ? 'border-primary/50 shadow-[0_0_15px_hsl(var(--primary)/0.15)]' : ''}`}>
+                         <div className={`flex-1 flex flex-col rounded-lg border overflow-hidden relative transition-all duration-500 ${isTyping ? 'border-primary/50 shadow-[0_0_20px_hsl(var(--primary)/0.2)]' : ''}`}>
                           <div className="px-4 py-2 border-b bg-muted/30 flex items-center justify-between shrink-0">
                             <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">STR Draft Editor</span>
                             <div className="flex items-center gap-2">
