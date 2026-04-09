@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
-import { Users, Search, Filter, ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
+import { Users, Search, Filter, ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown, Download } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -100,6 +100,19 @@ export default function Customers() {
   const handlePageSizeChange = (val: string) => {
     setPageSize(Number(val));
     setPage(1);
+  };
+
+  const exportCsv = () => {
+    const headers = ['Customer Name', 'BVN', 'Risk Level', 'KYC Tier', 'Alerts'];
+    const rows = filtered.map(c => [c.name, c.bvn, c.riskLevel, c.kycTier, c.alerts]);
+    const csv = [headers, ...rows].map(r => r.join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'customers_export.csv';
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   return (
