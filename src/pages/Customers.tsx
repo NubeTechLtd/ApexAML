@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
-import { Users, Search, Filter, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Users, Search, Filter, ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -10,6 +10,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { Customer360Content } from '@/components/customer360/Customer360Content';
+
+type Customer = typeof customers[number];
+type SortKey = 'name' | 'riskLevel' | 'alerts';
+type SortDir = 'asc' | 'desc';
 
 const customers = [
   { id: 1, name: 'Adebayo Ogunlesi', bvn: '22345678901', riskLevel: 'High', kycTier: 'Tier 3', alerts: 5 },
@@ -38,19 +42,50 @@ const riskColors: Record<string, string> = {
   Low: 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20',
 };
 
+const RISK_ORDER: Record<string, number> = { High: 3, Medium: 2, Low: 1 };
 const PAGE_SIZE_OPTIONS = [5, 10, 20];
+
+function SortIcon({ column, sortKey, sortDir }: { column: SortKey; sortKey: SortKey | null; sortDir: SortDir }) {
+  if (sortKey !== column) return <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground/50" />;
+  return sortDir === 'asc'
+    ? <ArrowUp className="h-3.5 w-3.5 text-foreground" />
+    : <ArrowDown className="h-3.5 w-3.5 text-foreground" />;
+}
 
 export default function Customers() {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [sortKey, setSortKey] = useState<SortKey | null>(null);
+  const [sortDir, setSortDir] = useState<SortDir>('asc');
 
-  const filtered = useMemo(() =>
-    customers.filter(c =>
+  const toggleSort = (key: SortKey) => {
+    if (sortKey === key) {
+      setSortDir(d => d === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortKey(key);
+      setSortDir('asc');
+    }
+    setPage(1);
+  };
+
+  const filtered = useMemo(() => {
+    let result = customers.filter(c =>
       c.name.toLowerCase().includes(search.toLowerCase()) ||
       c.bvn.includes(search)
-    ), [search]);
+    );
+    if (sortKey) {
+      result = [...result].sort((a, b) => {
+        let cmp = 0;
+        if (sortKey === 'name') cmp = a.name.localeCompare(b.name);
+        else if (sortKey === 'riskLevel') cmp = (RISK_ORDER[a.riskLevel] ?? 0) - (RISK_ORDER[b.riskLevel] ?? 0);
+        else if (sortKey === 'alerts') cmp = a.alerts - b.alerts;
+        return sortDir === 'desc' ? -cmp : cmp;
+      });
+    }
+    return result;
+  }, [search, sortKey, sortDir]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const currentPage = Math.min(page, totalPages);
@@ -95,11 +130,17 @@ export default function Customers() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Customer Name</TableHead>
+                  <TableHead className="cursor-pointer select-none" onClick={() => toggleSort('name')}>
+                    <span className="inline-flex items-center gap-1.5">Customer Name <SortIcon column="name" sortKey={sortKey} sortDir={sortDir} /></span>
+                  </TableHead>
                   <TableHead>BVN</TableHead>
-                  <TableHead>Risk Level</TableHead>
+                  <TableHead className="cursor-pointer select-none" onClick={() => toggleSort('riskLevel')}>
+                    <span className="inline-flex items-center gap-1.5">Risk Level <SortIcon column="riskLevel" sortKey={sortKey} sortDir={sortDir} /></span>
+                  </TableHead>
                   <TableHead>KYC Tier</TableHead>
-                  <TableHead className="text-right">Alerts</TableHead>
+                  <TableHead className="text-right cursor-pointer select-none" onClick={() => toggleSort('alerts')}>
+                    <span className="inline-flex items-center gap-1.5 justify-end">Alerts <SortIcon column="alerts" sortKey={sortKey} sortDir={sortDir} /></span>
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
