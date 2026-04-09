@@ -1,11 +1,12 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { ShieldAlert, Snowflake, Download, ChevronDown } from 'lucide-react';
+import { ShieldAlert, Snowflake, Download, ChevronDown, X, ExternalLink } from 'lucide-react';
 import { customer360Data } from '@/data/mockCustomer360';
 import { mockLegacyAlerts as mockAlerts } from '@/data/mockLegacyAlerts';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 import { Customer360IdentityCard } from './IdentityCard';
 import { Customer360RiskRadar } from './RiskRadar';
 import { Customer360Entities } from './EntitiesCard';
@@ -19,9 +20,11 @@ const riskColors: Record<string, string> = {
 
 interface Props {
   customerId: number;
+  onClose?: () => void;
 }
 
-export function Customer360Content({ customerId }: Props) {
+export function Customer360Content({ customerId, onClose }: Props) {
+  const navigate = useNavigate();
   const customer = customer360Data[customerId];
 
   if (!customer) {
@@ -60,6 +63,15 @@ export function Customer360Content({ customerId }: Props) {
               </p>
             </div>
           </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5"
+              onClick={() => navigate(`/customers/${customerId}`)}
+            >
+              <ExternalLink className="h-3.5 w-3.5" /> Open Full Page
+            </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm" className="gap-1.5">
@@ -78,6 +90,13 @@ export function Customer360Content({ customerId }: Props) {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+            {onClose && (
+              <Button variant="ghost" size="icon" onClick={onClose} className="ml-1">
+                <X className="h-4 w-4" />
+                <span className="sr-only">Close</span>
+              </Button>
+            )}
+          </div>
         </div>
       </div>
 

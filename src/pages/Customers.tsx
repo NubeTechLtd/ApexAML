@@ -83,7 +83,7 @@ export default function Customers() {
 
       <Sheet open={selectedId !== null} onOpenChange={(open) => !open && setSelectedId(null)}>
         <SheetContent side="right" className="w-[85vw] sm:max-w-[85vw] p-0 overflow-hidden">
-          {selectedId !== null && <Customer360Content customerId={selectedId} />}
+          {selectedId !== null && <Customer360Content customerId={selectedId} onClose={() => setSelectedId(null)} />}
         </SheetContent>
       </Sheet>
     </SidebarProvider>
