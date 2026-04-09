@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { User, CreditCard, ShieldCheck, AlertTriangle, FileWarning, MessageSquare, XCircle } from 'lucide-react';
-import type { AlertData } from '@/data/mockAlerts';
+import type { AlertData } from '@/data/mockLegacyAlerts';
 import { RiskBadge } from './RiskBadge';
 import { TransactionTimeline } from './TransactionTimeline';
 import { Button } from '@/components/ui/button';

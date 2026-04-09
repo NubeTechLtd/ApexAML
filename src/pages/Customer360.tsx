@@ -10,7 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { ArrowLeft, ShieldAlert, Snowflake, User, Fingerprint, Network, FileText, AlertTriangle, Clock } from 'lucide-react';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
 import { customer360Data } from '@/data/mockCustomer360';
-import { mockAlerts } from '@/data/mockAlerts';
+import { mockLegacyAlerts as mockAlerts } from '@/data/mockLegacyAlerts';
 import { motion } from 'framer-motion';
 
 const riskColors: Record<string, string> = {

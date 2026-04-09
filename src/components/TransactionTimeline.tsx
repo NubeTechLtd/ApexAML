@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 import { ArrowDownLeft, ArrowUpRight, AlertTriangle } from 'lucide-react';
-import type { TransactionEvent } from '@/data/mockAlerts';
+import type { TransactionEvent } from '@/data/mockLegacyAlerts';
 import { motion } from 'framer-motion';
 
 function formatCurrency(amount: number) {
