@@ -1,21 +1,38 @@
-import { useState } from 'react';
-import { Search, SlidersHorizontal } from 'lucide-react';
-import { mockAlerts, type AlertData } from '@/data/mockAlerts';
+import { useState, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { Search, SlidersHorizontal, X } from 'lucide-react';
+import { mockAlerts, type AlertData, type RiskLevel, type AlertStatus } from '@/data/mockAlerts';
 import { AlertCard } from './AlertCard';
 import { AlertDetail } from './AlertDetail';
 import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 
 export function AlertInbox() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [selectedId, setSelectedId] = useState<string>(mockAlerts[0].id);
   const [search, setSearch] = useState('');
 
-  const filtered = mockAlerts.filter((a) =>
-    a.customerName.toLowerCase().includes(search.toLowerCase()) ||
-    a.id.toLowerCase().includes(search.toLowerCase()) ||
-    a.alertType.toLowerCase().includes(search.toLowerCase())
-  );
+  const statusFilter = searchParams.get('status') as AlertStatus | null;
+  const riskFilter = searchParams.get('risk') as RiskLevel | null;
+  const typeFilter = searchParams.get('type');
+  const activeFilter = statusFilter || riskFilter || typeFilter;
 
-  const selected = mockAlerts.find((a) => a.id === selectedId) || mockAlerts[0];
+  const filtered = useMemo(() => {
+    return mockAlerts.filter((a) => {
+      const matchesSearch =
+        a.customerName.toLowerCase().includes(search.toLowerCase()) ||
+        a.id.toLowerCase().includes(search.toLowerCase()) ||
+        a.alertType.toLowerCase().includes(search.toLowerCase());
+      const matchesStatus = !statusFilter || a.status === statusFilter;
+      const matchesRisk = !riskFilter || a.riskLevel === riskFilter;
+      const matchesType = !typeFilter || a.alertType === typeFilter;
+      return matchesSearch && matchesStatus && matchesRisk && matchesType;
+    });
+  }, [search, statusFilter, riskFilter, typeFilter]);
+
+  const selected = filtered.find((a) => a.id === selectedId) || filtered[0] || mockAlerts[0];
+
+  const clearFilters = () => setSearchParams({});
 
   return (
     <div className="flex h-[calc(100vh-3.5rem)] overflow-hidden">
@@ -36,9 +53,20 @@ export function AlertInbox() {
               <SlidersHorizontal className="h-3.5 w-3.5 text-muted-foreground" />
             </button>
           </div>
-          <p className="text-[11px] text-muted-foreground mt-2">
-            {filtered.length} active alert{filtered.length !== 1 ? 's' : ''}
-          </p>
+          <div className="flex items-center gap-2 mt-2">
+            <p className="text-[11px] text-muted-foreground">
+              {filtered.length} alert{filtered.length !== 1 ? 's' : ''}
+            </p>
+            {activeFilter && (
+              <button
+                onClick={clearFilters}
+                className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary hover:bg-primary/20 transition-colors"
+              >
+                {statusFilter || riskFilter || typeFilter}
+                <X className="h-2.5 w-2.5" />
+              </button>
+            )}
+          </div>
         </div>
         <div className="flex-1 overflow-y-auto scrollbar-thin p-2 space-y-1">
           {filtered.map((alert) => (
