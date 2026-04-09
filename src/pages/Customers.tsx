@@ -72,6 +72,7 @@ export default function Customers() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [checkedIds, setCheckedIds] = useState<Set<number>>(new Set());
   const [statuses, setStatuses] = useState<Record<number, CustomerStatus>>({});
+  const searchRef = useRef<HTMLInputElement>(null);
 
   const toggleSort = (key: SortKey) => {
     if (sortKey === key) {
