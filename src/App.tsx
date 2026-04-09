@@ -11,6 +11,7 @@ import RegulatoryReports from "./pages/RegulatoryReports.tsx";
 import IdentityKYC from "./pages/IdentityKYC.tsx";
 import SystemAudit from "./pages/SystemAudit.tsx";
 import Customers from "./pages/Customers.tsx";
+import Customer360 from "./pages/Customer360.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -29,6 +30,7 @@ const App = () => (
             <Route path="/reports/nfiu" element={<RegulatoryReports />} />
             <Route path="/identity" element={<IdentityKYC />} />
             <Route path="/customers" element={<Customers />} />
+            <Route path="/customers/:id" element={<Customer360 />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/audit" element={<SystemAudit />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
