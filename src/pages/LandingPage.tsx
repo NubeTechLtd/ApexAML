@@ -114,7 +114,24 @@ function AIMockUI() {
 export default function LandingPage() {
   const countdown = useCountdown(new Date('2026-06-10T00:00:00'));
   const [email, setEmail] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const { toast } = useToast();
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || submitting) return;
+    setSubmitting(true);
+    const { error } = await supabase.from('leads').insert({ email });
+    setSubmitting(false);
+    if (error) {
+      toast({ title: 'Something went wrong', description: 'Please try again.', variant: 'destructive' });
+    } else {
+      setSubmitted(true);
+      setEmail('');
+      toast({ title: 'You're on the list!', description: 'We'll be in touch shortly.' });
+    }
+  };
   return (
     <div className="min-h-screen bg-[hsl(220,25%,6%)] text-foreground overflow-x-hidden">
       {/* ── Navbar ─────────────────────────────────────────────── */}
