@@ -190,34 +190,32 @@ export default function Customers() {
             <ThemeToggle />
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="relative flex-1">
+          <div className="flex items-center gap-2 flex-wrap">
+            <div className="relative flex-1 min-w-[200px]">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input placeholder="Search by name or BVN..." className="pl-9" value={search} onChange={e => handleSearchChange(e.target.value)} />
             </div>
 
-            <div className="flex items-center gap-2">
-              {([
-                { status: 'all' as const, label: 'All', count: customers.length, icon: Users, iconClass: 'text-primary', bgClass: 'bg-primary/10' },
-                { status: 'Active' as const, label: 'Active', count: statusCounts.Active, icon: UserCheck, iconClass: 'text-emerald-600', bgClass: 'bg-emerald-500/10' },
-                { status: 'Under Review' as const, label: 'Review', count: statusCounts['Under Review'], icon: Clock, iconClass: 'text-yellow-600', bgClass: 'bg-yellow-500/10' },
-                { status: 'Frozen' as const, label: 'Frozen', count: statusCounts.Frozen, icon: Snowflake, iconClass: 'text-destructive', bgClass: 'bg-destructive/10' },
-              ]).map(({ status, label, count, icon: Icon, iconClass, bgClass }) => (
-                <button
-                  key={status}
-                  onClick={() => { setStatusFilter(status === 'all' ? 'all' : (statusFilter === status ? 'all' : status)); setPage(1); }}
-                  className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm transition-colors ${statusFilter === status ? 'border-primary bg-primary/5 ring-1 ring-primary/20' : 'border-border bg-card hover:bg-muted/50'}`}
-                >
-                  <Icon className={`h-3.5 w-3.5 ${iconClass}`} />
-                  <span className="font-medium text-foreground">{count}</span>
-                  <span className="text-muted-foreground hidden sm:inline">{label}</span>
-                </button>
-              ))}
-            </div>
-          </div>
+            {([
+              { status: 'all' as const, label: 'All', count: customers.length, icon: Users, iconClass: 'text-primary', bgClass: 'bg-primary/10' },
+              { status: 'Active' as const, label: 'Active', count: statusCounts.Active, icon: UserCheck, iconClass: 'text-emerald-600', bgClass: 'bg-emerald-500/10' },
+              { status: 'Under Review' as const, label: 'Review', count: statusCounts['Under Review'], icon: Clock, iconClass: 'text-yellow-600', bgClass: 'bg-yellow-500/10' },
+              { status: 'Frozen' as const, label: 'Frozen', count: statusCounts.Frozen, icon: Snowflake, iconClass: 'text-destructive', bgClass: 'bg-destructive/10' },
+            ]).map(({ status, label, count, icon: Icon, iconClass }) => (
+              <button
+                key={status}
+                onClick={() => { setStatusFilter(status === 'all' ? 'all' : (statusFilter === status ? 'all' : status)); setPage(1); }}
+                className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs transition-colors ${statusFilter === status ? 'border-primary bg-primary/5 ring-1 ring-primary/20' : 'border-border bg-card hover:bg-muted/50'}`}
+              >
+                <Icon className={`h-3 w-3 ${iconClass}`} />
+                <span className="font-semibold text-foreground">{count}</span>
+                <span className="text-muted-foreground">{label}</span>
+              </button>
+            ))}
+
             <Select value={riskFilter} onValueChange={(v) => { setRiskFilter(v); setPage(1); }}>
-              <SelectTrigger className="h-9 w-[140px] gap-1.5">
-                <Filter className="h-3.5 w-3.5 text-muted-foreground" />
+              <SelectTrigger className="h-8 w-[130px] gap-1.5 text-xs">
+                <Filter className="h-3 w-3 text-muted-foreground" />
                 <SelectValue placeholder="Risk Level" />
               </SelectTrigger>
               <SelectContent>
@@ -227,19 +225,8 @@ export default function Customers() {
                 <SelectItem value="Low">Low</SelectItem>
               </SelectContent>
             </Select>
-            <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
-              <SelectTrigger className="h-9 w-[150px] gap-1.5">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Statuses</SelectItem>
-                <SelectItem value="Active">Active</SelectItem>
-                <SelectItem value="Under Review">Under Review</SelectItem>
-                <SelectItem value="Frozen">Frozen</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button variant="outline" size="sm" className="gap-1.5" onClick={exportCsv}>
-              <Download className="h-3.5 w-3.5" /> Export CSV
+            <Button variant="outline" size="sm" className="gap-1.5 h-8 text-xs" onClick={exportCsv}>
+              <Download className="h-3 w-3" /> Export
             </Button>
           </div>
 
