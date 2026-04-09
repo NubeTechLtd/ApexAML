@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
-import { Users, Search, Filter, ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown, Download, ShieldAlert, ShieldCheck, X } from 'lucide-react';
+import { Users, Search, Filter, ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown, Download, ShieldAlert, ShieldCheck, X, UserCheck, Clock, Snowflake } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -106,6 +106,12 @@ export default function Customers() {
   const currentPage = Math.min(page, totalPages);
   const paginated = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
+  const statusCounts = useMemo(() => {
+    const counts = { Active: 0, 'Under Review': 0, Frozen: 0 };
+    customers.forEach(c => { counts[statuses[c.id] || 'Active']++; });
+    return counts;
+  }, [statuses]);
+
   const allPageChecked = paginated.length > 0 && paginated.every(c => checkedIds.has(c.id));
   const somePageChecked = paginated.some(c => checkedIds.has(c.id));
 
@@ -188,7 +194,37 @@ export default function Customers() {
             <div className="relative flex-1 max-w-sm">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input placeholder="Search by name or BVN..." className="pl-9" value={search} onChange={e => handleSearchChange(e.target.value)} />
+          </div>
+
+          <div className="grid grid-cols-3 gap-4">
+            <div className="rounded-xl border border-border bg-card p-4 flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-500/10">
+                <UserCheck className="h-5 w-5 text-emerald-600" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-foreground">{statusCounts.Active}</p>
+                <p className="text-xs text-muted-foreground">Active</p>
+              </div>
             </div>
+            <div className="rounded-xl border border-border bg-card p-4 flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-yellow-500/10">
+                <Clock className="h-5 w-5 text-yellow-600" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-foreground">{statusCounts['Under Review']}</p>
+                <p className="text-xs text-muted-foreground">Under Review</p>
+              </div>
+            </div>
+            <div className="rounded-xl border border-border bg-card p-4 flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-destructive/10">
+                <Snowflake className="h-5 w-5 text-destructive" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-foreground">{statusCounts.Frozen}</p>
+                <p className="text-xs text-muted-foreground">Frozen</p>
+              </div>
+            </div>
+          </div>
             <Select value={riskFilter} onValueChange={(v) => { setRiskFilter(v); setPage(1); }}>
               <SelectTrigger className="h-9 w-[140px] gap-1.5">
                 <Filter className="h-3.5 w-3.5 text-muted-foreground" />
