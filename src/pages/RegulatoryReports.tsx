@@ -1,0 +1,67 @@
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { AppSidebar } from '@/components/AppSidebar';
+import { ComplianceTimeline } from '@/components/ComplianceTimeline';
+import { ComplianceMetrics } from '@/components/ComplianceMetrics';
+import { Bell, Download } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { toast } from '@/hooks/use-toast';
+
+const RegulatoryReports = () => {
+  const handleExportPDF = () => {
+    toast({
+      title: 'Exporting PDF…',
+      description: 'Generating compliance report for CBN Circular BSD/DIR/PUB/LAB/019/002.',
+    });
+    setTimeout(() => {
+      toast({ title: 'PDF Ready', description: 'Compliance_Health_Report_2026.pdf downloaded.' });
+    }, 2000);
+  };
+
+  return (
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full">
+        <AppSidebar />
+        <div className="flex-1 flex flex-col">
+          <header className="h-14 flex items-center justify-between border-b px-4 bg-card">
+            <div className="flex items-center gap-2">
+              <SidebarTrigger />
+              <h1 className="text-sm font-semibold text-foreground">Regulatory Reports & Roadmap</h1>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button size="sm" onClick={handleExportPDF} className="gap-1.5">
+                <Download className="h-3.5 w-3.5" />
+                Export PDF
+              </Button>
+              <button className="relative flex h-8 w-8 items-center justify-center rounded-md hover:bg-muted transition-colors">
+                <Bell className="h-4 w-4 text-muted-foreground" />
+              </button>
+            </div>
+          </header>
+
+          <main className="flex-1 overflow-y-auto p-6 bg-background space-y-6">
+            {/* Reference banner */}
+            <div className="rounded-lg border bg-card p-4 flex items-center justify-between">
+              <div>
+                <p className="text-xs text-muted-foreground font-medium tracking-wide uppercase">Reference Circular</p>
+                <p className="text-sm font-semibold text-foreground mt-0.5">CBN Circular BSD/DIR/PUB/LAB/019/002</p>
+                <p className="text-xs text-muted-foreground mt-1">AML/CFT/CPF Compliance Framework — Implementation Roadmap</p>
+              </div>
+              <div className="text-right">
+                <p className="text-xs text-muted-foreground">Report Generated</p>
+                <p className="text-sm font-medium text-foreground">{new Date().toLocaleDateString('en-NG', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+              </div>
+            </div>
+
+            {/* Compliance Timeline */}
+            <ComplianceTimeline />
+
+            {/* Metric Cards */}
+            <ComplianceMetrics />
+          </main>
+        </div>
+      </div>
+    </SidebarProvider>
+  );
+};
+
+export default RegulatoryReports;
