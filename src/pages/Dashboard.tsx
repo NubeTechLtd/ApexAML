@@ -126,7 +126,11 @@ export default function Dashboard() {
             {/* KPI Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {kpiCards.map((kpi) => (
-                <Card key={kpi.title} className="border-border bg-card shadow-sm">
+                <Card
+                  key={kpi.title}
+                  className="border-border bg-card shadow-sm cursor-pointer hover:shadow-md hover:border-primary/20 transition-all group"
+                  onClick={() => navigate(kpi.link)}
+                >
                   <CardContent className="p-5">
                     <div className="flex items-start justify-between">
                       <div className="space-y-2">
@@ -143,6 +147,7 @@ export default function Dashboard() {
                         <kpi.icon className={`h-5 w-5 ${kpi.accent}`} />
                       </div>
                     </div>
+                    <p className="text-[10px] text-primary/60 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">Click to view →</p>
                   </CardContent>
                 </Card>
               ))}
