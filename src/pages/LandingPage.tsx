@@ -149,7 +149,13 @@ export default function LandingPage() {
             ].map(({ href, label }) => (
               <button
                 key={href}
-                onClick={() => document.getElementById(href)?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={() => {
+                  const el = document.getElementById(href);
+                  if (el) {
+                    const top = el.getBoundingClientRect().top + window.scrollY - 80;
+                    window.scrollTo({ top, behavior: 'smooth' });
+                  }
+                }}
                 className="hover:text-white transition-colors"
               >
                 {label}
