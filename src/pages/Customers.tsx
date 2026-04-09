@@ -1,6 +1,7 @@
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { Users, Search, Filter } from 'lucide-react';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -33,6 +34,7 @@ export default function Customers() {
               </h1>
               <p className="text-sm text-muted-foreground mt-1">Manage customer profiles, risk levels, and KYC tiers</p>
             </div>
+            <ThemeToggle />
           </div>
 
           <div className="flex items-center gap-3">

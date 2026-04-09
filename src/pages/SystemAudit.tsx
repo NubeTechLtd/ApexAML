@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { Bell, Search, Lock, Shield, Eye, UserCog, Users } from 'lucide-react';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { cn } from '@/lib/utils';
 
 interface AuditEntry {
@@ -61,9 +62,12 @@ const SystemAudit = () => {
                 Read-Only
               </Badge>
             </div>
-            <button className="relative flex h-8 w-8 items-center justify-center rounded-md hover:bg-muted transition-colors">
-              <Bell className="h-4 w-4 text-muted-foreground" />
-            </button>
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <button className="relative flex h-8 w-8 items-center justify-center rounded-md hover:bg-muted transition-colors">
+                <Bell className="h-4 w-4 text-muted-foreground" />
+              </button>
+            </div>
           </header>
 
           <main className="flex-1 overflow-y-auto p-6 bg-background space-y-6">

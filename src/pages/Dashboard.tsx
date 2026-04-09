@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { Bell, AlertTriangle, ShieldCheck, TrendingUp, TrendingDown, Clock, Users, FileText, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -114,6 +115,7 @@ export default function Dashboard() {
             </div>
             <div className="flex items-center gap-3">
               <span className="text-[10px] text-muted-foreground">Last updated: Today, 08:32 WAT</span>
+              <ThemeToggle />
               <button className="relative flex h-8 w-8 items-center justify-center rounded-md hover:bg-muted transition-colors">
                 <Bell className="h-4 w-4 text-muted-foreground" />
                 <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-[hsl(var(--risk-critical))] animate-pulse" />
