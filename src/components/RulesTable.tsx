@@ -17,102 +17,54 @@ export interface Rule {
   id: string;
   name: string;
   description: string;
-  category: string;
+  targetSegment: string;
   severity: 'critical' | 'high' | 'medium' | 'low';
   framework: 'banks' | 'fintechs' | 'both';
   conditions: number;
   alertsTriggered: number;
+  lastTriggered: string;
   enabled: boolean;
   lastModified: string;
 }
 
 const mockRules: Rule[] = [
   {
-    id: 'R-001',
-    name: 'High-Velocity Crypto P2P',
+    id: 'R-001', name: 'High-Velocity Crypto P2P',
     description: 'Detects rapid peer-to-peer crypto transfers exceeding velocity thresholds',
-    category: 'Velocity',
-    severity: 'critical',
-    framework: 'fintechs',
-    conditions: 3,
-    alertsTriggered: 47,
-    enabled: true,
-    lastModified: '2026-04-08',
+    targetSegment: 'Fintechs/MMOs', severity: 'critical', framework: 'fintechs',
+    conditions: 3, alertsTriggered: 47, lastTriggered: '2h ago', enabled: true, lastModified: '2026-04-08',
   },
   {
-    id: 'R-002',
-    name: 'Structuring below 5M NGN',
+    id: 'R-002', name: 'Structuring below 5M NGN',
     description: 'Identifies deposits split to avoid ₦5,000,000 reporting threshold',
-    category: 'Structuring',
-    severity: 'high',
-    framework: 'both',
-    conditions: 4,
-    alertsTriggered: 124,
-    enabled: true,
-    lastModified: '2026-04-06',
+    targetSegment: 'Tier 1 Accounts', severity: 'high', framework: 'both',
+    conditions: 4, alertsTriggered: 124, lastTriggered: '45m ago', enabled: true, lastModified: '2026-04-06',
   },
   {
-    id: 'R-003',
-    name: 'PEP Sanction Match',
+    id: 'R-003', name: 'PEP Sanction Match',
     description: 'Flags transactions involving politically exposed persons on sanction lists',
-    category: 'Sanctions',
-    severity: 'critical',
-    framework: 'banks',
-    conditions: 2,
-    alertsTriggered: 12,
-    enabled: true,
-    lastModified: '2026-04-05',
+    targetSegment: 'All Tiers — Banks', severity: 'critical', framework: 'banks',
+    conditions: 2, alertsTriggered: 12, lastTriggered: '1d ago', enabled: true, lastModified: '2026-04-05',
   },
   {
-    id: 'R-004',
-    name: 'Dormant Account Reactivation',
+    id: 'R-004', name: 'Dormant Account Reactivation',
     description: 'Alerts when dormant accounts (>12 months) receive large inflows',
-    category: 'Behavioral',
-    severity: 'medium',
-    framework: 'both',
-    conditions: 3,
-    alertsTriggered: 31,
-    enabled: false,
-    lastModified: '2026-03-28',
+    targetSegment: 'Tier 2 & 3 Accounts', severity: 'medium', framework: 'both',
+    conditions: 3, alertsTriggered: 31, lastTriggered: '3d ago', enabled: false, lastModified: '2026-03-28',
   },
   {
-    id: 'R-005',
-    name: 'Cross-Border Round-Tripping',
+    id: 'R-005', name: 'Cross-Border Round-Tripping',
     description: 'Detects funds sent abroad and returned via different channels',
-    category: 'Layering',
-    severity: 'high',
-    framework: 'banks',
-    conditions: 5,
-    alertsTriggered: 8,
-    enabled: true,
-    lastModified: '2026-04-01',
+    targetSegment: 'Tier 3 — Banks', severity: 'high', framework: 'banks',
+    conditions: 5, alertsTriggered: 8, lastTriggered: '5d ago', enabled: true, lastModified: '2026-04-01',
   },
   {
-    id: 'R-006',
-    name: 'Rapid Onboarding Abuse',
+    id: 'R-006', name: 'Rapid Onboarding Abuse',
     description: 'Flags multiple accounts created from same device/IP within 24h',
-    category: 'Onboarding',
-    severity: 'medium',
-    framework: 'fintechs',
-    conditions: 3,
-    alertsTriggered: 56,
-    enabled: true,
-    lastModified: '2026-04-03',
+    targetSegment: 'Fintechs/MMOs', severity: 'medium', framework: 'fintechs',
+    conditions: 3, alertsTriggered: 56, lastTriggered: '12h ago', enabled: true, lastModified: '2026-04-03',
   },
 ];
-
-const severityConfig: Record<string, { className: string; label: string }> = {
-  critical: { className: 'bg-[hsl(var(--risk-critical))] text-[hsl(var(--risk-critical-foreground))]', label: 'Critical' },
-  high: { className: 'bg-[hsl(var(--risk-high))] text-[hsl(var(--risk-high-foreground))]', label: 'High' },
-  medium: { className: 'bg-[hsl(var(--risk-medium))] text-[hsl(var(--risk-medium-foreground))]', label: 'Medium' },
-  low: { className: 'bg-[hsl(var(--risk-low))] text-[hsl(var(--risk-low-foreground))]', label: 'Low' },
-};
-
-const frameworkLabels: Record<string, string> = {
-  banks: 'Banks (Sept 2027)',
-  fintechs: 'Fintechs/MMOs (Mar 2028)',
-  both: 'All Entities',
-};
 
 export function RulesTable() {
   const [rules, setRules] = useState<Rule[]>(mockRules);
@@ -123,7 +75,7 @@ export function RulesTable() {
   const filtered = rules.filter(
     (r) =>
       r.name.toLowerCase().includes(search.toLowerCase()) ||
-      r.category.toLowerCase().includes(search.toLowerCase()),
+      r.targetSegment.toLowerCase().includes(search.toLowerCase()),
   );
 
   const toggleRule = (id: string) => {
@@ -146,13 +98,18 @@ export function RulesTable() {
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div>
-        <h2 className="text-2xl font-semibold text-foreground tracking-tight">
-          Transaction Monitoring Scenarios
-        </h2>
-        <p className="text-sm text-muted-foreground mt-1">
-          Configure and manage detection rules for suspicious activity monitoring.
-        </p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h2 className="text-2xl font-semibold text-foreground tracking-tight">
+            Transaction Monitoring Rules
+          </h2>
+          <p className="text-sm text-muted-foreground mt-1">
+            Configure detection scenarios for suspicious activity monitoring.
+          </p>
+        </div>
+        <Button size="sm" className="h-9 gap-1.5 shadow-sm" onClick={() => setModalOpen(true)}>
+          <Plus className="h-3.5 w-3.5" /> Create New Rule
+        </Button>
       </div>
 
       {/* Stats Strip */}
@@ -171,7 +128,7 @@ export function RulesTable() {
       </div>
 
       {/* Toolbar */}
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex items-center gap-4">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
@@ -181,14 +138,9 @@ export function RulesTable() {
             className="pl-9 h-9 bg-card"
           />
         </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" className="h-9 gap-1.5">
-            <Filter className="h-3.5 w-3.5" /> Filter
-          </Button>
-          <Button size="sm" className="h-9 gap-1.5 bg-primary text-primary-foreground hover:bg-primary/90" onClick={() => setModalOpen(true)}>
-            <Plus className="h-3.5 w-3.5" /> Create New Rule
-          </Button>
-        </div>
+        <Button variant="outline" size="sm" className="h-9 gap-1.5">
+          <Filter className="h-3.5 w-3.5" /> Filter
+        </Button>
       </div>
 
       {/* Table */}
@@ -196,14 +148,11 @@ export function RulesTable() {
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/40 hover:bg-muted/40">
-              <TableHead className="w-[50px]">Status</TableHead>
+              <TableHead className="w-[60px]">Status</TableHead>
               <TableHead>Rule Name</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead>Severity</TableHead>
-              <TableHead>Framework</TableHead>
-              <TableHead className="text-center">Conditions</TableHead>
-              <TableHead className="text-center">Alerts (30d)</TableHead>
-              <TableHead className="text-right">Modified</TableHead>
+              <TableHead>Target Segment</TableHead>
+              <TableHead className="text-center">Triggers (30d)</TableHead>
+              <TableHead>Last Triggered</TableHead>
               <TableHead className="w-[50px]" />
             </TableRow>
           </TableHeader>
@@ -225,25 +174,14 @@ export function RulesTable() {
                 </TableCell>
                 <TableCell>
                   <Badge variant="outline" className="text-xs font-normal">
-                    {rule.category}
+                    {rule.targetSegment}
                   </Badge>
-                </TableCell>
-                <TableCell>
-                  <Badge className={`${severityConfig[rule.severity].className} border-0 text-[10px] font-semibold uppercase tracking-wide`}>
-                    {severityConfig[rule.severity].label}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <span className="text-xs text-muted-foreground">{frameworkLabels[rule.framework]}</span>
-                </TableCell>
-                <TableCell className="text-center">
-                  <span className="text-sm font-medium text-foreground">{rule.conditions}</span>
                 </TableCell>
                 <TableCell className="text-center">
                   <span className="text-sm font-medium text-foreground">{rule.alertsTriggered}</span>
                 </TableCell>
-                <TableCell className="text-right text-xs text-muted-foreground">
-                  {rule.lastModified}
+                <TableCell>
+                  <span className="text-xs text-muted-foreground">{rule.lastTriggered}</span>
                 </TableCell>
                 <TableCell>
                   <DropdownMenu>
