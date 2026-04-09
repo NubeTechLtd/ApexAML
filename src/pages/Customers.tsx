@@ -60,7 +60,6 @@ export default function Customers() {
   const [sortKey, setSortKey] = useState<SortKey | null>(null);
   const [sortDir, setSortDir] = useState<SortDir>('asc');
   const [riskFilter, setRiskFilter] = useState<string>('all');
-  const [sortDir, setSortDir] = useState<SortDir>('asc');
 
   const toggleSort = (key: SortKey) => {
     if (sortKey === key) {
