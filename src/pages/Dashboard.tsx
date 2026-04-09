@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { Bell, AlertTriangle, ShieldCheck, TrendingUp, TrendingDown, Clock, Users, FileText, ArrowUpRight, ArrowDownRight } from 'lucide-react';
@@ -43,6 +44,7 @@ const kpiCards = [
     icon: AlertTriangle,
     accent: 'text-[hsl(var(--risk-high))]',
     bg: 'bg-[hsl(var(--risk-high))]/8',
+    link: '/?status=Open',
   },
   {
     title: 'Resolved (MTD)',
@@ -52,6 +54,7 @@ const kpiCards = [
     icon: ShieldCheck,
     accent: 'text-[hsl(var(--risk-low))]',
     bg: 'bg-[hsl(var(--risk-low))]/8',
+    link: '/?status=Dismissed',
   },
   {
     title: 'Avg. Resolution Time',
@@ -61,6 +64,7 @@ const kpiCards = [
     icon: Clock,
     accent: 'text-primary',
     bg: 'bg-primary/8',
+    link: '/?status=Under Review',
   },
   {
     title: 'STRs Filed (MTD)',
@@ -70,6 +74,7 @@ const kpiCards = [
     icon: FileText,
     accent: 'text-[hsl(var(--risk-medium))]',
     bg: 'bg-[hsl(var(--risk-medium))]/8',
+    link: '/?status=Escalated',
   },
 ];
 
@@ -92,6 +97,7 @@ const statusBadgeClass: Record<string, string> = {
 };
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-background">
@@ -120,7 +126,11 @@ export default function Dashboard() {
             {/* KPI Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {kpiCards.map((kpi) => (
-                <Card key={kpi.title} className="border-border bg-card shadow-sm">
+                <Card
+                  key={kpi.title}
+                  className="border-border bg-card shadow-sm cursor-pointer hover:shadow-md hover:border-primary/20 transition-all group"
+                  onClick={() => navigate(kpi.link)}
+                >
                   <CardContent className="p-5">
                     <div className="flex items-start justify-between">
                       <div className="space-y-2">
@@ -137,6 +147,7 @@ export default function Dashboard() {
                         <kpi.icon className={`h-5 w-5 ${kpi.accent}`} />
                       </div>
                     </div>
+                    <p className="text-[10px] text-primary/60 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">Click to view →</p>
                   </CardContent>
                 </Card>
               ))}
