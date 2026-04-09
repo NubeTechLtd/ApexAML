@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { Users, Search, Filter } from 'lucide-react';
@@ -6,6 +6,8 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Sheet, SheetContent } from '@/components/ui/sheet';
+import { Customer360Content } from '@/components/customer360/Customer360Content';
 
 const customers = [
   { id: 1, name: 'Adebayo Ogunlesi', bvn: '22345678901', riskLevel: 'High', kycTier: 'Tier 3', alerts: 5 },
@@ -23,7 +25,8 @@ const riskColors: Record<string, string> = {
 };
 
 export default function Customers() {
-  const navigate = useNavigate();
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-background">
@@ -62,7 +65,7 @@ export default function Customers() {
               </TableHeader>
               <TableBody>
                 {customers.map((c) => (
-                  <TableRow key={c.id} className="cursor-pointer hover:bg-muted/50" onClick={() => navigate(`/customers/${c.id}`)}>
+                  <TableRow key={c.id} className="cursor-pointer hover:bg-muted/50" onClick={() => setSelectedId(c.id)}>
                     <TableCell className="font-medium">{c.name}</TableCell>
                     <TableCell className="font-mono text-xs text-muted-foreground">{c.bvn}</TableCell>
                     <TableCell>
@@ -77,6 +80,12 @@ export default function Customers() {
           </div>
         </main>
       </div>
+
+      <Sheet open={selectedId !== null} onOpenChange={(open) => !open && setSelectedId(null)}>
+        <SheetContent side="right" className="w-[85vw] sm:max-w-[85vw] p-0 overflow-hidden">
+          {selectedId !== null && <Customer360Content customerId={selectedId} />}
+        </SheetContent>
+      </Sheet>
     </SidebarProvider>
   );
 }
