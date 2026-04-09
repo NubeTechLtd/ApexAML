@@ -147,6 +147,9 @@ export default function Customers() {
                 <SelectItem value="Low">Low</SelectItem>
               </SelectContent>
             </Select>
+            <Button variant="outline" size="sm" className="gap-1.5" onClick={exportCsv}>
+              <Download className="h-3.5 w-3.5" /> Export CSV
+            </Button>
           </div>
 
           <div className="rounded-xl border border-border bg-card">
