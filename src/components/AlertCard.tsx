@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 import { Clock } from 'lucide-react';
-import type { AlertData } from '@/data/mockAlerts';
+import type { AlertData } from '@/data/mockLegacyAlerts';
 import { RiskScoreIndicator } from './RiskBadge';
 
 function formatTime(iso: string) {

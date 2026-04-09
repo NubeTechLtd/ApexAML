@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Search, SlidersHorizontal, X } from 'lucide-react';
-import { mockAlerts, type AlertData, type RiskLevel, type AlertStatus } from '@/data/mockAlerts';
+import { mockLegacyAlerts as mockAlerts, type AlertData, type RiskLevel, type AlertStatus } from '@/data/mockLegacyAlerts';
 import { AlertCard } from './AlertCard';
 import { AlertDetail } from './AlertDetail';
 import { Input } from '@/components/ui/input';

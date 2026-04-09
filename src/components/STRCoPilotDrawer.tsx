@@ -9,7 +9,7 @@ import {
   Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription,
 } from '@/components/ui/sheet';
 import { useToast } from '@/hooks/use-toast';
-import type { AlertData } from '@/data/mockAlerts';
+import type { AlertData } from '@/data/mockLegacyAlerts';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface ChatMessage {
