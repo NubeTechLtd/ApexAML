@@ -1,4 +1,4 @@
-import { LayoutDashboard, Inbox, Users, Settings2, FileText, Shield, Fingerprint } from 'lucide-react';
+import { LayoutDashboard, Inbox, Users, Settings2, FileText, Shield, Fingerprint, ShieldAlert } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import {
   Sidebar,
