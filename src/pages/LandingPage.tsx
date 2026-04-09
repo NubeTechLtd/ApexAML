@@ -3,6 +3,8 @@ import { motion, useInView } from 'framer-motion';
 import { Shield, Sparkles, SlidersHorizontal, Lock, ArrowRight, Play, CheckCircle2, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 // ── Helpers ──────────────────────────────────────────────────────────────
 
@@ -112,7 +114,24 @@ function AIMockUI() {
 export default function LandingPage() {
   const countdown = useCountdown(new Date('2026-06-10T00:00:00'));
   const [email, setEmail] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const { toast } = useToast();
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || submitting) return;
+    setSubmitting(true);
+    const { error } = await supabase.from('leads').insert({ email });
+    setSubmitting(false);
+    if (error) {
+      toast({ title: 'Something went wrong', description: 'Please try again.', variant: 'destructive' });
+    } else {
+      setSubmitted(true);
+      setEmail('');
+      toast({ title: "You're on the list!", description: "We'll be in touch shortly." });
+    }
+  };
   return (
     <div className="min-h-screen bg-[hsl(220,25%,6%)] text-foreground overflow-x-hidden">
       {/* ── Navbar ─────────────────────────────────────────────── */}
@@ -286,18 +305,26 @@ export default function LandingPage() {
             <p className="text-white/40 max-w-lg mx-auto">
               Join the institutions preparing for the June 2026 deadline. Get private access to Sentinel today.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto">
-              <Input
-                type="email"
-                placeholder="your@bank.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="bg-white/[0.04] border-white/10 text-white placeholder:text-white/25 rounded-xl h-12 focus-visible:ring-primary/40"
-              />
-              <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl whitespace-nowrap text-sm font-semibold h-12 px-6">
-                Request Private Access
-              </Button>
-            </div>
+            {submitted ? (
+              <div className="flex items-center justify-center gap-2 text-risk-low">
+                <CheckCircle2 className="h-5 w-5" />
+                <span className="font-medium">You're on the list. We'll be in touch.</span>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto">
+                <Input
+                  type="email"
+                  required
+                  placeholder="your@bank.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="bg-white/[0.04] border-white/10 text-white placeholder:text-white/25 rounded-xl h-12 focus-visible:ring-primary/40"
+                />
+                <Button type="submit" disabled={submitting} size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl whitespace-nowrap text-sm font-semibold h-12 px-6">
+                  {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Request Private Access'}
+                </Button>
+              </form>
+            )}
           </AnimatedSection>
         </div>
       </section>
