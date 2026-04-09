@@ -129,7 +129,7 @@ export default function LandingPage() {
     } else {
       setSubmitted(true);
       setEmail('');
-      toast({ title: 'You're on the list!', description: 'We'll be in touch shortly.' });
+      toast({ title: "You're on the list!", description: "We'll be in touch shortly." });
     }
   };
   return (
