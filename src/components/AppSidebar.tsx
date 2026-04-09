@@ -1,4 +1,4 @@
-import { LayoutDashboard, Inbox, Users, Settings2, FileText, Shield } from 'lucide-react';
+import { LayoutDashboard, Inbox, Users, Settings2, FileText, Shield, Fingerprint } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import {
   Sidebar,
@@ -17,6 +17,7 @@ import {
 const mainNav = [
   { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
   { title: 'Alert Inbox', url: '/', icon: Inbox },
+  { title: 'Identity & KYC', url: '/identity', icon: Fingerprint },
   { title: 'Customers', url: '/customers', icon: Users },
   { title: 'Rules Engine', url: '/rules', icon: Settings2 },
 ];
