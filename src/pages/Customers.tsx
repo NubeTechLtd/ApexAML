@@ -1,17 +1,19 @@
 import { useState, useMemo } from 'react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
-import { Users, Search, Filter, ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown, Download } from 'lucide-react';
+import { Users, Search, Filter, ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown, Download, ShieldAlert, ShieldCheck, X } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { Customer360Content } from '@/components/customer360/Customer360Content';
+import { toast } from 'sonner';
+import { motion, AnimatePresence } from 'framer-motion';
 
-type Customer = typeof customers[number];
 type SortKey = 'name' | 'riskLevel' | 'alerts';
 type SortDir = 'asc' | 'desc';
 
@@ -60,6 +62,7 @@ export default function Customers() {
   const [sortKey, setSortKey] = useState<SortKey | null>(null);
   const [sortDir, setSortDir] = useState<SortDir>('asc');
   const [riskFilter, setRiskFilter] = useState<string>('all');
+  const [checkedIds, setCheckedIds] = useState<Set<number>>(new Set());
 
   const toggleSort = (key: SortKey) => {
     if (sortKey === key) {
@@ -92,6 +95,42 @@ export default function Customers() {
   const currentPage = Math.min(page, totalPages);
   const paginated = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
+  const allPageChecked = paginated.length > 0 && paginated.every(c => checkedIds.has(c.id));
+  const somePageChecked = paginated.some(c => checkedIds.has(c.id));
+
+  const toggleRow = (id: number) => {
+    setCheckedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleAll = () => {
+    setCheckedIds(prev => {
+      const next = new Set(prev);
+      if (allPageChecked) {
+        paginated.forEach(c => next.delete(c.id));
+      } else {
+        paginated.forEach(c => next.add(c.id));
+      }
+      return next;
+    });
+  };
+
+  const handleBulkAction = (action: string) => {
+    const count = checkedIds.size;
+    const names = customers.filter(c => checkedIds.has(c.id)).map(c => c.name);
+    if (action === 'flag') {
+      toast.warning(`Flagged ${count} customer(s) for review`, { description: names.join(', ') });
+    } else if (action === 'clear') {
+      toast.success(`Cleared ${count} customer(s)`, { description: names.join(', ') });
+    } else if (action === 'escalate') {
+      toast.error(`Escalated ${count} customer(s) to compliance`, { description: names.join(', ') });
+    }
+    setCheckedIds(new Set());
+  };
+
   const handleSearchChange = (val: string) => {
     setSearch(val);
     setPage(1);
@@ -119,7 +158,7 @@ export default function Customers() {
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-background">
         <AppSidebar />
-        <main className="flex-1 p-6 space-y-6">
+        <main className="flex-1 p-6 space-y-6 relative">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
@@ -156,6 +195,12 @@ export default function Customers() {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-10">
+                    <Checkbox
+                      checked={allPageChecked ? true : somePageChecked ? 'indeterminate' : false}
+                      onCheckedChange={toggleAll}
+                    />
+                  </TableHead>
                   <TableHead className="cursor-pointer select-none" onClick={() => toggleSort('name')}>
                     <span className="inline-flex items-center gap-1.5">Customer Name <SortIcon column="name" sortKey={sortKey} sortDir={sortDir} /></span>
                   </TableHead>
@@ -171,14 +216,17 @@ export default function Customers() {
               </TableHeader>
               <TableBody>
                 {paginated.map((c) => (
-                  <TableRow key={c.id} className="cursor-pointer hover:bg-muted/50" onClick={() => setSelectedId(c.id)}>
-                    <TableCell className="font-medium">{c.name}</TableCell>
-                    <TableCell className="font-mono text-xs text-muted-foreground">{c.bvn}</TableCell>
-                    <TableCell>
+                  <TableRow key={c.id} className={`cursor-pointer hover:bg-muted/50 ${checkedIds.has(c.id) ? 'bg-muted/30' : ''}`}>
+                    <TableCell onClick={e => e.stopPropagation()}>
+                      <Checkbox checked={checkedIds.has(c.id)} onCheckedChange={() => toggleRow(c.id)} />
+                    </TableCell>
+                    <TableCell className="font-medium" onClick={() => setSelectedId(c.id)}>{c.name}</TableCell>
+                    <TableCell className="font-mono text-xs text-muted-foreground" onClick={() => setSelectedId(c.id)}>{c.bvn}</TableCell>
+                    <TableCell onClick={() => setSelectedId(c.id)}>
                       <Badge variant="outline" className={riskColors[c.riskLevel]}>{c.riskLevel}</Badge>
                     </TableCell>
-                    <TableCell>{c.kycTier}</TableCell>
-                    <TableCell className="text-right">{c.alerts}</TableCell>
+                    <TableCell onClick={() => setSelectedId(c.id)}>{c.kycTier}</TableCell>
+                    <TableCell className="text-right" onClick={() => setSelectedId(c.id)}>{c.alerts}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -224,6 +272,33 @@ export default function Customers() {
               </div>
             </div>
           </div>
+
+          {/* Bulk actions bar */}
+          <AnimatePresence>
+            {checkedIds.size > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 rounded-xl border border-border bg-card px-5 py-3 shadow-lg"
+              >
+                <span className="text-sm font-medium text-foreground">{checkedIds.size} selected</span>
+                <div className="h-4 w-px bg-border" />
+                <Button size="sm" variant="outline" className="gap-1.5" onClick={() => handleBulkAction('flag')}>
+                  <ShieldAlert className="h-3.5 w-3.5" /> Flag for Review
+                </Button>
+                <Button size="sm" variant="outline" className="gap-1.5 text-emerald-600 border-emerald-500/30 hover:bg-emerald-500/10" onClick={() => handleBulkAction('clear')}>
+                  <ShieldCheck className="h-3.5 w-3.5" /> Clear
+                </Button>
+                <Button size="sm" variant="destructive" className="gap-1.5" onClick={() => handleBulkAction('escalate')}>
+                  <ShieldAlert className="h-3.5 w-3.5" /> Escalate
+                </Button>
+                <Button size="icon" variant="ghost" className="h-8 w-8 ml-1" onClick={() => setCheckedIds(new Set())}>
+                  <X className="h-3.5 w-3.5" />
+                </Button>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </main>
       </div>
 
