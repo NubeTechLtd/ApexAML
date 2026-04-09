@@ -12,6 +12,7 @@ import IdentityKYC from "./pages/IdentityKYC.tsx";
 import SystemAudit from "./pages/SystemAudit.tsx";
 import Customers from "./pages/Customers.tsx";
 import Customer360 from "./pages/Customer360.tsx";
+import AlertWorkspace from "./pages/AlertWorkspace.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -33,6 +34,7 @@ const App = () => (
             <Route path="/customers/:id" element={<Customer360 />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/audit" element={<SystemAudit />} />
+            <Route path="/workspace" element={<AlertWorkspace />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
