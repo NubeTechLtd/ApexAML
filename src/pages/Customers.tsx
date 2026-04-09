@@ -59,6 +59,8 @@ export default function Customers() {
   const [pageSize, setPageSize] = useState(10);
   const [sortKey, setSortKey] = useState<SortKey | null>(null);
   const [sortDir, setSortDir] = useState<SortDir>('asc');
+  const [riskFilter, setRiskFilter] = useState<string>('all');
+  const [sortDir, setSortDir] = useState<SortDir>('asc');
 
   const toggleSort = (key: SortKey) => {
     if (sortKey === key) {
@@ -72,8 +74,8 @@ export default function Customers() {
 
   const filtered = useMemo(() => {
     let result = customers.filter(c =>
-      c.name.toLowerCase().includes(search.toLowerCase()) ||
-      c.bvn.includes(search)
+      (c.name.toLowerCase().includes(search.toLowerCase()) || c.bvn.includes(search)) &&
+      (riskFilter === 'all' || c.riskLevel === riskFilter)
     );
     if (sortKey) {
       result = [...result].sort((a, b) => {
@@ -85,7 +87,7 @@ export default function Customers() {
       });
     }
     return result;
-  }, [search, sortKey, sortDir]);
+  }, [search, sortKey, sortDir, riskFilter]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const currentPage = Math.min(page, totalPages);
@@ -121,10 +123,18 @@ export default function Customers() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input placeholder="Search by name or BVN..." className="pl-9" value={search} onChange={e => handleSearchChange(e.target.value)} />
             </div>
-            <button className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm text-muted-foreground hover:bg-accent">
-              <Filter className="h-3.5 w-3.5" /> Filter
-            </button>
-          </div>
+            <Select value={riskFilter} onValueChange={(v) => { setRiskFilter(v); setPage(1); }}>
+              <SelectTrigger className="h-9 w-[140px] gap-1.5">
+                <Filter className="h-3.5 w-3.5 text-muted-foreground" />
+                <SelectValue placeholder="Risk Level" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Risks</SelectItem>
+                <SelectItem value="High">High</SelectItem>
+                <SelectItem value="Medium">Medium</SelectItem>
+                <SelectItem value="Low">Low</SelectItem>
+              </SelectContent>
+            </Select>
 
           <div className="rounded-xl border border-border bg-card">
             <Table>
