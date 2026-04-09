@@ -1,6 +1,7 @@
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { RulesTable } from '@/components/RulesTable';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { Bell } from 'lucide-react';
 
 const RulesEngine = () => {
@@ -14,9 +15,12 @@ const RulesEngine = () => {
               <SidebarTrigger />
               <h1 className="text-sm font-semibold text-foreground">Rules Engine</h1>
             </div>
-            <button className="relative flex h-8 w-8 items-center justify-center rounded-md hover:bg-muted transition-colors">
-              <Bell className="h-4 w-4 text-muted-foreground" />
-            </button>
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <button className="relative flex h-8 w-8 items-center justify-center rounded-md hover:bg-muted transition-colors">
+                <Bell className="h-4 w-4 text-muted-foreground" />
+              </button>
+            </div>
           </header>
           <main className="flex-1 p-6 bg-background">
             <RulesTable />
