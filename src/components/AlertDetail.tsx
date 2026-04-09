@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { User, CreditCard, ShieldCheck, AlertTriangle, FileWarning, MessageSquare, XCircle } from 'lucide-react';
 import type { AlertData } from '@/data/mockAlerts';
 import { RiskBadge } from './RiskBadge';
@@ -6,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
+import { STRCoPilotDrawer } from './STRCoPilotDrawer';
 
 function formatCurrency(amount: number) {
   return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', minimumFractionDigits: 0 }).format(amount);
@@ -13,8 +15,13 @@ function formatCurrency(amount: number) {
 
 export function AlertDetail({ alert }: { alert: AlertData }) {
   const { toast } = useToast();
+  const [strDrawerOpen, setStrDrawerOpen] = useState(false);
 
   const handleAction = (action: string) => {
+    if (action === 'Escalate to STR') {
+      setStrDrawerOpen(true);
+      return;
+    }
     toast({
       title: `${action} — ${alert.id}`,
       description: `Action "${action}" has been recorded for ${alert.customerName}.`,
@@ -121,6 +128,8 @@ export function AlertDetail({ alert }: { alert: AlertData }) {
           </div>
         </div>
       </div>
+
+      <STRCoPilotDrawer open={strDrawerOpen} onOpenChange={setStrDrawerOpen} alert={alert} />
     </motion.div>
   );
 }
