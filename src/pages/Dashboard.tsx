@@ -97,6 +97,7 @@ const statusBadgeClass: Record<string, string> = {
 };
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-background">
