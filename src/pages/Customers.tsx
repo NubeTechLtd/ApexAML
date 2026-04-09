@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { Users, Search, Filter, ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown, Download, ShieldAlert, ShieldCheck, X, UserCheck, Clock, Snowflake } from 'lucide-react';
@@ -72,6 +72,7 @@ export default function Customers() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [checkedIds, setCheckedIds] = useState<Set<number>>(new Set());
   const [statuses, setStatuses] = useState<Record<number, CustomerStatus>>({});
+  const searchRef = useRef<HTMLInputElement>(null);
 
   const toggleSort = (key: SortKey) => {
     if (sortKey === key) {
@@ -111,6 +112,28 @@ export default function Customers() {
     customers.forEach(c => { counts[statuses[c.id] || 'Active']++; });
     return counts;
   }, [statuses]);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        searchRef.current?.focus();
+      }
+      if (e.key === 'Escape') {
+        if (selectedId !== null) {
+          setSelectedId(null);
+        } else if (search || riskFilter !== 'all' || statusFilter !== 'all') {
+          setSearch('');
+          setRiskFilter('all');
+          setStatusFilter('all');
+          setPage(1);
+          searchRef.current?.blur();
+        }
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [selectedId, search, riskFilter, statusFilter]);
 
   const allPageChecked = paginated.length > 0 && paginated.every(c => checkedIds.has(c.id));
   const somePageChecked = paginated.some(c => checkedIds.has(c.id));
@@ -193,7 +216,7 @@ export default function Customers() {
           <div className="flex items-center gap-2 flex-wrap">
             <div className="relative flex-1 min-w-[200px]">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search by name or BVN..." className="pl-9" value={search} onChange={e => handleSearchChange(e.target.value)} />
+              <Input ref={searchRef} placeholder="Search by name or BVN... (⌘K)" className="pl-9" value={search} onChange={e => handleSearchChange(e.target.value)} />
             </div>
 
             {([
