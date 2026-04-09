@@ -3,6 +3,8 @@ import { motion, useInView } from 'framer-motion';
 import { Shield, Sparkles, SlidersHorizontal, Lock, ArrowRight, Play, CheckCircle2, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 // ── Helpers ──────────────────────────────────────────────────────────────
 
