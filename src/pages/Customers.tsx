@@ -69,6 +69,7 @@ export default function Customers() {
   const [sortKey, setSortKey] = useState<SortKey | null>(null);
   const [sortDir, setSortDir] = useState<SortDir>('asc');
   const [riskFilter, setRiskFilter] = useState<string>('all');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
   const [checkedIds, setCheckedIds] = useState<Set<number>>(new Set());
   const [statuses, setStatuses] = useState<Record<number, CustomerStatus>>({});
 
@@ -83,10 +84,12 @@ export default function Customers() {
   };
 
   const filtered = useMemo(() => {
-    let result = customers.filter(c =>
-      (c.name.toLowerCase().includes(search.toLowerCase()) || c.bvn.includes(search)) &&
-      (riskFilter === 'all' || c.riskLevel === riskFilter)
-    );
+    let result = customers.filter(c => {
+      const status: CustomerStatus = statuses[c.id] || 'Active';
+      return (c.name.toLowerCase().includes(search.toLowerCase()) || c.bvn.includes(search)) &&
+        (riskFilter === 'all' || c.riskLevel === riskFilter) &&
+        (statusFilter === 'all' || status === statusFilter);
+    });
     if (sortKey) {
       result = [...result].sort((a, b) => {
         let cmp = 0;
@@ -97,7 +100,7 @@ export default function Customers() {
       });
     }
     return result;
-  }, [search, sortKey, sortDir, riskFilter]);
+  }, [search, sortKey, sortDir, riskFilter, statusFilter, statuses]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const currentPage = Math.min(page, totalPages);
@@ -196,6 +199,17 @@ export default function Customers() {
                 <SelectItem value="High">High</SelectItem>
                 <SelectItem value="Medium">Medium</SelectItem>
                 <SelectItem value="Low">Low</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
+              <SelectTrigger className="h-9 w-[150px] gap-1.5">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Statuses</SelectItem>
+                <SelectItem value="Active">Active</SelectItem>
+                <SelectItem value="Under Review">Under Review</SelectItem>
+                <SelectItem value="Frozen">Frozen</SelectItem>
               </SelectContent>
             </Select>
             <Button variant="outline" size="sm" className="gap-1.5" onClick={exportCsv}>
