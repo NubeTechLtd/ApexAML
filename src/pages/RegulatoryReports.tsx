@@ -1,7 +1,10 @@
+import { useState } from 'react';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { ComplianceTimeline } from '@/components/ComplianceTimeline';
 import { ComplianceMetrics } from '@/components/ComplianceMetrics';
+import { CTRTable } from '@/components/CTRTable';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Bell, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
@@ -52,11 +55,21 @@ const RegulatoryReports = () => {
               </div>
             </div>
 
-            {/* Compliance Timeline */}
-            <ComplianceTimeline />
+            <Tabs defaultValue="roadmap" className="space-y-4">
+              <TabsList>
+                <TabsTrigger value="roadmap" className="text-xs">Roadmap & Metrics</TabsTrigger>
+                <TabsTrigger value="ctr" className="text-xs">CTR (Currency Transaction Reports)</TabsTrigger>
+              </TabsList>
 
-            {/* Metric Cards */}
-            <ComplianceMetrics />
+              <TabsContent value="roadmap" className="space-y-6">
+                <ComplianceTimeline />
+                <ComplianceMetrics />
+              </TabsContent>
+
+              <TabsContent value="ctr">
+                <CTRTable />
+              </TabsContent>
+            </Tabs>
           </main>
         </div>
       </div>
