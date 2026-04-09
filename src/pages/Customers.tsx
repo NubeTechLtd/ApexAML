@@ -44,6 +44,13 @@ const riskColors: Record<string, string> = {
   Low: 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20',
 };
 
+type CustomerStatus = 'Active' | 'Under Review' | 'Frozen';
+const statusColors: Record<CustomerStatus, string> = {
+  Active: 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20',
+  'Under Review': 'bg-yellow-500/10 text-yellow-700 border-yellow-500/20',
+  Frozen: 'bg-destructive/10 text-destructive border-destructive/20',
+};
+
 const RISK_ORDER: Record<string, number> = { High: 3, Medium: 2, Low: 1 };
 const PAGE_SIZE_OPTIONS = [5, 10, 20];
 
@@ -63,6 +70,7 @@ export default function Customers() {
   const [sortDir, setSortDir] = useState<SortDir>('asc');
   const [riskFilter, setRiskFilter] = useState<string>('all');
   const [checkedIds, setCheckedIds] = useState<Set<number>>(new Set());
+  const [statuses, setStatuses] = useState<Record<number, CustomerStatus>>({});
 
   const toggleSort = (key: SortKey) => {
     if (sortKey === key) {
@@ -121,11 +129,15 @@ export default function Customers() {
   const handleBulkAction = (action: string) => {
     const count = checkedIds.size;
     const names = customers.filter(c => checkedIds.has(c.id)).map(c => c.name);
+    const ids = Array.from(checkedIds);
     if (action === 'flag') {
+      setStatuses(prev => { const next = { ...prev }; ids.forEach(id => next[id] = 'Under Review'); return next; });
       toast.warning(`Flagged ${count} customer(s) for review`, { description: names.join(', ') });
     } else if (action === 'clear') {
+      setStatuses(prev => { const next = { ...prev }; ids.forEach(id => next[id] = 'Active'); return next; });
       toast.success(`Cleared ${count} customer(s)`, { description: names.join(', ') });
     } else if (action === 'escalate') {
+      setStatuses(prev => { const next = { ...prev }; ids.forEach(id => next[id] = 'Frozen'); return next; });
       toast.error(`Escalated ${count} customer(s) to compliance`, { description: names.join(', ') });
     }
     setCheckedIds(new Set());
@@ -212,6 +224,7 @@ export default function Customers() {
                   <TableHead className="text-right cursor-pointer select-none" onClick={() => toggleSort('alerts')}>
                     <span className="inline-flex items-center gap-1.5 justify-end">Alerts <SortIcon column="alerts" sortKey={sortKey} sortDir={sortDir} /></span>
                   </TableHead>
+                  <TableHead>Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -227,6 +240,9 @@ export default function Customers() {
                     </TableCell>
                     <TableCell onClick={() => setSelectedId(c.id)}>{c.kycTier}</TableCell>
                     <TableCell className="text-right" onClick={() => setSelectedId(c.id)}>{c.alerts}</TableCell>
+                    <TableCell onClick={() => setSelectedId(c.id)}>
+                      <Badge variant="outline" className={statusColors[statuses[c.id] || 'Active']}>{statuses[c.id] || 'Active'}</Badge>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
