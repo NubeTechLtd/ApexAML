@@ -323,7 +323,7 @@ export interface Alert {
   aiDraftedNarrative: string;
 }
 
-export const mockAlerts: Alert[] = [
+export const mockWorkspaceAlerts: Alert[] = [
   {
     id: "ALT-2026-0891",
     caseId: "CAS-2026-0891-NG",
