@@ -189,7 +189,7 @@ export default function Dashboard() {
               <Card className="border-border bg-card shadow-sm">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-semibold text-foreground">Alert Risk Distribution</CardTitle>
-                  <p className="text-[10px] text-muted-foreground">Active alerts by severity</p>
+                  <p className="text-[10px] text-muted-foreground">Click a segment to filter alerts</p>
                 </CardHeader>
                 <CardContent className="pt-0 flex flex-col items-center">
                   <ResponsiveContainer width="100%" height={160}>
@@ -204,7 +204,12 @@ export default function Dashboard() {
                         stroke="none"
                       >
                         {alertsByRisk.map((entry, i) => (
-                          <Cell key={i} fill={entry.color} />
+                          <Cell
+                            key={i}
+                            fill={entry.color}
+                            className="cursor-pointer hover:opacity-80 transition-opacity"
+                            onClick={() => navigate(`/?risk=${entry.level}`)}
+                          />
                         ))}
                       </Pie>
                       <Tooltip
