@@ -14,6 +14,7 @@ import Customers from "./pages/Customers.tsx";
 import Customer360 from "./pages/Customer360.tsx";
 import AlertWorkspace from "./pages/AlertWorkspace.tsx";
 import SanctionsScreening from "./pages/SanctionsScreening.tsx";
+import LandingPage from "./pages/LandingPage.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -26,7 +27,8 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Index />} />
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/alerts" element={<Index />} />
             <Route path="/rules" element={<RulesEngine />} />
             <Route path="/reports/cbn" element={<RegulatoryReports />} />
             <Route path="/reports/nfiu" element={<RegulatoryReports />} />
