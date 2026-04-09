@@ -135,6 +135,28 @@ export default function Customers() {
                 <SelectItem value="Low">Low</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+            </div>
+            <ThemeToggle />
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="relative flex-1 max-w-sm">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input placeholder="Search by name or BVN..." className="pl-9" value={search} onChange={e => handleSearchChange(e.target.value)} />
+            </div>
+            <Select value={riskFilter} onValueChange={(v) => { setRiskFilter(v); setPage(1); }}>
+              <SelectTrigger className="h-9 w-[140px] gap-1.5">
+                <Filter className="h-3.5 w-3.5 text-muted-foreground" />
+                <SelectValue placeholder="Risk Level" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Risks</SelectItem>
+                <SelectItem value="High">High</SelectItem>
+                <SelectItem value="Medium">Medium</SelectItem>
+                <SelectItem value="Low">Low</SelectItem>
+              </SelectContent>
+            </Select>
 
           <div className="rounded-xl border border-border bg-card">
             <Table>
