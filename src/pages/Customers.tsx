@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
-import { Users, Search, Filter } from 'lucide-react';
+import { Users, Search, Filter, ChevronLeft, ChevronRight } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { Customer360Content } from '@/components/customer360/Customer360Content';
@@ -16,6 +18,18 @@ const customers = [
   { id: 4, name: 'Fatima Bello', bvn: '22345678904', riskLevel: 'High', kycTier: 'Tier 1', alerts: 8 },
   { id: 5, name: 'Ibrahim Musa', bvn: '22345678905', riskLevel: 'Low', kycTier: 'Tier 3', alerts: 1 },
   { id: 6, name: 'Ngozi Okafor', bvn: '22345678906', riskLevel: 'Medium', kycTier: 'Tier 2', alerts: 3 },
+  { id: 7, name: 'Olumide Adeyemi', bvn: '22345678907', riskLevel: 'Low', kycTier: 'Tier 3', alerts: 0 },
+  { id: 8, name: 'Aisha Yusuf', bvn: '22345678908', riskLevel: 'High', kycTier: 'Tier 2', alerts: 6 },
+  { id: 9, name: 'Chinedu Nwosu', bvn: '22345678909', riskLevel: 'Medium', kycTier: 'Tier 1', alerts: 1 },
+  { id: 10, name: 'Halima Abdullahi', bvn: '22345678910', riskLevel: 'Low', kycTier: 'Tier 3', alerts: 0 },
+  { id: 11, name: 'Tunde Bakare', bvn: '22345678911', riskLevel: 'High', kycTier: 'Tier 2', alerts: 4 },
+  { id: 12, name: 'Blessing Eze', bvn: '22345678912', riskLevel: 'Medium', kycTier: 'Tier 3', alerts: 2 },
+  { id: 13, name: 'Yemi Alade', bvn: '22345678913', riskLevel: 'Low', kycTier: 'Tier 2', alerts: 0 },
+  { id: 14, name: 'Obinna Okechukwu', bvn: '22345678914', riskLevel: 'High', kycTier: 'Tier 1', alerts: 7 },
+  { id: 15, name: 'Zainab Mohammed', bvn: '22345678915', riskLevel: 'Medium', kycTier: 'Tier 3', alerts: 1 },
+  { id: 16, name: 'Kunle Afolabi', bvn: '22345678916', riskLevel: 'Low', kycTier: 'Tier 2', alerts: 0 },
+  { id: 17, name: 'Amina Suleiman', bvn: '22345678917', riskLevel: 'High', kycTier: 'Tier 3', alerts: 9 },
+  { id: 18, name: 'Ifeanyi Agu', bvn: '22345678918', riskLevel: 'Medium', kycTier: 'Tier 1', alerts: 3 },
 ];
 
 const riskColors: Record<string, string> = {
@@ -24,14 +38,33 @@ const riskColors: Record<string, string> = {
   Low: 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20',
 };
 
+const PAGE_SIZE_OPTIONS = [5, 10, 20];
+
 export default function Customers() {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
-  const filtered = customers.filter(c =>
-    c.name.toLowerCase().includes(search.toLowerCase()) ||
-    c.bvn.includes(search)
-  );
+  const filtered = useMemo(() =>
+    customers.filter(c =>
+      c.name.toLowerCase().includes(search.toLowerCase()) ||
+      c.bvn.includes(search)
+    ), [search]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const currentPage = Math.min(page, totalPages);
+  const paginated = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+  const handleSearchChange = (val: string) => {
+    setSearch(val);
+    setPage(1);
+  };
+
+  const handlePageSizeChange = (val: string) => {
+    setPageSize(Number(val));
+    setPage(1);
+  };
 
   return (
     <SidebarProvider>
@@ -51,7 +84,7 @@ export default function Customers() {
           <div className="flex items-center gap-3">
             <div className="relative flex-1 max-w-sm">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search by name or BVN..." className="pl-9" value={search} onChange={e => setSearch(e.target.value)} />
+              <Input placeholder="Search by name or BVN..." className="pl-9" value={search} onChange={e => handleSearchChange(e.target.value)} />
             </div>
             <button className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm text-muted-foreground hover:bg-accent">
               <Filter className="h-3.5 w-3.5" /> Filter
@@ -70,7 +103,7 @@ export default function Customers() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filtered.map((c) => (
+                {paginated.map((c) => (
                   <TableRow key={c.id} className="cursor-pointer hover:bg-muted/50" onClick={() => setSelectedId(c.id)}>
                     <TableCell className="font-medium">{c.name}</TableCell>
                     <TableCell className="font-mono text-xs text-muted-foreground">{c.bvn}</TableCell>
@@ -83,6 +116,46 @@ export default function Customers() {
                 ))}
               </TableBody>
             </Table>
+
+            {/* Pagination footer */}
+            <div className="flex items-center justify-between border-t border-border px-4 py-3">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <span>Showing {((currentPage - 1) * pageSize) + 1}–{Math.min(currentPage * pageSize, filtered.length)} of {filtered.length}</span>
+                <span className="text-border">|</span>
+                <div className="flex items-center gap-1.5">
+                  <span>Rows</span>
+                  <Select value={String(pageSize)} onValueChange={handlePageSizeChange}>
+                    <SelectTrigger className="h-8 w-[70px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PAGE_SIZE_OPTIONS.map(s => (
+                        <SelectItem key={s} value={String(s)}>{s}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="flex items-center gap-1">
+                <Button variant="outline" size="icon" className="h-8 w-8" disabled={currentPage <= 1} onClick={() => setPage(p => p - 1)}>
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+                  <Button
+                    key={p}
+                    variant={p === currentPage ? 'default' : 'outline'}
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => setPage(p)}
+                  >
+                    {p}
+                  </Button>
+                ))}
+                <Button variant="outline" size="icon" className="h-8 w-8" disabled={currentPage >= totalPages} onClick={() => setPage(p => p + 1)}>
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
           </div>
         </main>
       </div>
