@@ -18,6 +18,7 @@ const mainNav = [
   { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
   { title: 'Alert Inbox', url: '/', icon: Inbox },
   { title: 'Alert Workspace', url: '/workspace', icon: Search },
+  { title: 'Sanctions Screening', url: '/sanctions', icon: ShieldAlert },
   { title: 'Identity & KYC', url: '/identity', icon: Fingerprint },
   { title: 'Customers', url: '/customers', icon: Users },
   { title: 'Rules Engine', url: '/rules', icon: Settings2 },
