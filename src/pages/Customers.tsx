@@ -197,33 +197,28 @@ export default function Customers() {
           </div>
 
           <div className="grid grid-cols-3 gap-4">
-            <div className="rounded-xl border border-border bg-card p-4 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-500/10">
-                <UserCheck className="h-5 w-5 text-emerald-600" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-foreground">{statusCounts.Active}</p>
-                <p className="text-xs text-muted-foreground">Active</p>
-              </div>
-            </div>
-            <div className="rounded-xl border border-border bg-card p-4 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-yellow-500/10">
-                <Clock className="h-5 w-5 text-yellow-600" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-foreground">{statusCounts['Under Review']}</p>
-                <p className="text-xs text-muted-foreground">Under Review</p>
-              </div>
-            </div>
-            <div className="rounded-xl border border-border bg-card p-4 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-destructive/10">
-                <Snowflake className="h-5 w-5 text-destructive" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-foreground">{statusCounts.Frozen}</p>
-                <p className="text-xs text-muted-foreground">Frozen</p>
-              </div>
-            </div>
+            {([
+              { status: 'Active' as CustomerStatus, icon: UserCheck, iconClass: 'text-emerald-600', bgClass: 'bg-emerald-500/10' },
+              { status: 'Under Review' as CustomerStatus, icon: Clock, iconClass: 'text-yellow-600', bgClass: 'bg-yellow-500/10' },
+              { status: 'Frozen' as CustomerStatus, icon: Snowflake, iconClass: 'text-destructive', bgClass: 'bg-destructive/10' },
+            ]).map(({ status, icon: Icon, iconClass, bgClass }) => {
+              const isActive = statusFilter === status;
+              return (
+                <div
+                  key={status}
+                  onClick={() => { setStatusFilter(isActive ? 'all' : status); setPage(1); }}
+                  className={`rounded-xl border p-4 flex items-center gap-3 cursor-pointer transition-colors ${isActive ? 'border-primary bg-primary/5 ring-1 ring-primary/20' : 'border-border bg-card hover:bg-muted/50'}`}
+                >
+                  <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${bgClass}`}>
+                    <Icon className={`h-5 w-5 ${iconClass}`} />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-foreground">{statusCounts[status]}</p>
+                    <p className="text-xs text-muted-foreground">{status}</p>
+                  </div>
+                </div>
+              );
+            })}
           </div>
             <Select value={riskFilter} onValueChange={(v) => { setRiskFilter(v); setPage(1); }}>
               <SelectTrigger className="h-9 w-[140px] gap-1.5">
