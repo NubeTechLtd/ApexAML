@@ -165,19 +165,29 @@ export default function AlertWorkspace() {
     }, 1400);
   };
 
-  const handleExport = () => {
+  const handleExport = useCallback(() => {
     toast({
       title: 'Exporting to goAML XML',
       description: `STR for ${selected.caseId} packaged in NFIU goAML XML format and queued for submission.`,
     });
-  };
+  }, [selected, toast]);
 
-  const handleEscalate = () => {
+  const handleEscalate = useCallback(() => {
     toast({
       title: 'Escalated to NFIU',
       description: `Case ${selected.caseId} has been escalated with priority ${selected.riskLevel}.`,
     });
-  };
+  }, [selected, toast]);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.shiftKey && e.key === 'E') { e.preventDefault(); handleEscalate(); }
+      if (e.shiftKey && e.key === 'D') { e.preventDefault(); handleExport(); }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [handleEscalate, handleExport]);
 
   if (!selected) return null;
 
@@ -254,44 +264,56 @@ export default function AlertWorkspace() {
                           <Button size="sm" variant="destructive" className="gap-1.5 shrink-0" onClick={handleEscalate}>
                             <ShieldAlert className="h-3.5 w-3.5" />
                             Escalate to NFIU
+                            <Badge variant="outline" className="text-[8px] px-1 py-0 ml-1 bg-destructive-foreground/10 text-destructive-foreground border-destructive-foreground/20">⇧E</Badge>
                           </Button>
                         </div>
                       </CardContent>
                     </Card>
                   </motion.div>
 
-                  {/* Customer Profile Sub-header */}
-                  <Card>
-                    <CardContent className="py-3 px-5">
-                      <div className="grid grid-cols-4 gap-4">
-                        <div className="flex items-center gap-2">
-                          <User className="h-4 w-4 text-muted-foreground" />
-                          <div>
-                            <p className="text-[10px] uppercase text-muted-foreground tracking-wider">Customer</p>
-                            <p className="text-sm font-semibold text-foreground">{cp.fullName}</p>
+                  {/* Customer Profile (Collapsible) */}
+                  <Accordion type="multiple" defaultValue={['customer-profile', 'red-flags']}>
+                    <AccordionItem value="customer-profile" className="border rounded-lg overflow-hidden">
+                      <Card className="border-0 shadow-none">
+                        <AccordionTrigger className="px-5 py-3 hover:no-underline">
+                          <div className="flex items-center gap-2 text-sm font-semibold">
+                            <User className="h-4 w-4 text-muted-foreground" />
+                            Customer Profile
                           </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Fingerprint className="h-4 w-4 text-muted-foreground" />
-                          <div>
-                            <p className="text-[10px] uppercase text-muted-foreground tracking-wider">BVN</p>
-                            <p className="text-sm font-mono text-foreground">{cp.bvn}</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <CreditCard className="h-4 w-4 text-muted-foreground" />
-                          <div>
-                            <p className="text-[10px] uppercase text-muted-foreground tracking-wider">NUBAN</p>
-                            <p className="text-sm font-mono text-foreground">{cp.nuban}</p>
-                          </div>
-                        </div>
-                        <div>
-                          <p className="text-[10px] uppercase text-muted-foreground tracking-wider">KYC Tier</p>
-                          <p className="text-sm font-medium text-foreground">{cp.kycTier}</p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <CardContent className="py-3 px-5 pt-0">
+                            <div className="grid grid-cols-4 gap-4">
+                              <div className="flex items-center gap-2">
+                                <User className="h-4 w-4 text-muted-foreground" />
+                                <div>
+                                  <p className="text-[10px] uppercase text-muted-foreground tracking-wider">Customer</p>
+                                  <p className="text-sm font-semibold text-foreground">{cp.fullName}</p>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Fingerprint className="h-4 w-4 text-muted-foreground" />
+                                <div>
+                                  <p className="text-[10px] uppercase text-muted-foreground tracking-wider">BVN</p>
+                                  <p className="text-sm font-mono text-foreground">{cp.bvn}</p>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <CreditCard className="h-4 w-4 text-muted-foreground" />
+                                <div>
+                                  <p className="text-[10px] uppercase text-muted-foreground tracking-wider">NUBAN</p>
+                                  <p className="text-sm font-mono text-foreground">{cp.nuban}</p>
+                                </div>
+                              </div>
+                              <div>
+                                <p className="text-[10px] uppercase text-muted-foreground tracking-wider">KYC Tier</p>
+                                <p className="text-sm font-medium text-foreground">{cp.kycTier}</p>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </AccordionContent>
+                      </Card>
+                    </AccordionItem>
 
                   {/* Transaction Timeline */}
                   <Card>
@@ -341,25 +363,30 @@ export default function AlertWorkspace() {
                     </CardContent>
                   </Card>
 
-                  {/* Behavioral Red Flags */}
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-semibold flex items-center gap-2">
-                        <Flag className="h-4 w-4 text-destructive" />
-                        Behavioral Red Flags
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <ul className="space-y-2">
-                        {selected.behavioralRedFlags.map((flag, i) => (
-                          <li key={i} className="flex items-start gap-2 text-sm text-foreground">
-                            <AlertTriangle className="h-3.5 w-3.5 mt-0.5 text-destructive shrink-0" />
-                            {flag}
-                          </li>
-                        ))}
-                      </ul>
-                    </CardContent>
-                  </Card>
+                    {/* Behavioral Red Flags (Collapsible) */}
+                    <AccordionItem value="red-flags" className="border rounded-lg overflow-hidden">
+                      <Card className="border-0 shadow-none">
+                        <AccordionTrigger className="px-5 py-3 hover:no-underline">
+                          <div className="flex items-center gap-2 text-sm font-semibold">
+                            <Flag className="h-4 w-4 text-destructive" />
+                            Behavioral Red Flags
+                          </div>
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <CardContent className="pt-0">
+                            <ul className="space-y-2">
+                              {selected.behavioralRedFlags.map((flag, i) => (
+                                <li key={i} className="flex items-start gap-2 text-sm text-foreground">
+                                  <AlertTriangle className="h-3.5 w-3.5 mt-0.5 text-destructive shrink-0" />
+                                  {flag}
+                                </li>
+                              ))}
+                            </ul>
+                          </CardContent>
+                        </AccordionContent>
+                      </Card>
+                    </AccordionItem>
+                  </Accordion>
 
                   <Separator />
 
@@ -432,13 +459,20 @@ export default function AlertWorkspace() {
                     {strGenerated && (
                       <div className="flex gap-4 min-h-[400px]">
                         {/* Editor */}
-                        <div className="flex-1 flex flex-col rounded-lg border overflow-hidden">
+                         <div className={`flex-1 flex flex-col rounded-lg border overflow-hidden relative transition-all ${strLoading ? 'border-primary/50 shadow-[0_0_15px_hsl(var(--primary)/0.15)]' : ''}`}>
                           <div className="px-4 py-2 border-b bg-muted/30 flex items-center justify-between shrink-0">
                             <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">STR Draft Editor</span>
                             <div className="flex items-center gap-2">
+                              {strGenerated && (
+                                <Badge variant="outline" className="text-[9px] gap-1 bg-primary/5 text-primary border-primary/20">
+                                  <Sparkles className="h-2.5 w-2.5" />
+                                  AI Generated — Review Required
+                                </Badge>
+                              )}
                               <Badge variant="outline" className="text-[9px]">Editable</Badge>
                               <Button size="sm" className="h-7 gap-1.5 text-xs" onClick={handleExport}>
                                 <FileDown className="h-3 w-3" /> Export goAML XML
+                                <Badge variant="outline" className="text-[8px] px-1 py-0 ml-0.5 bg-primary-foreground/10 border-primary-foreground/20">⇧D</Badge>
                               </Button>
                             </div>
                           </div>
