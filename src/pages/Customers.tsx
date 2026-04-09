@@ -191,46 +191,29 @@ export default function Customers() {
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="relative flex-1 max-w-sm">
+            <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input placeholder="Search by name or BVN..." className="pl-9" value={search} onChange={e => handleSearchChange(e.target.value)} />
-          </div>
-
-          <div className="grid grid-cols-4 gap-4">
-            <div
-              onClick={() => { setStatusFilter('all'); setPage(1); }}
-              className={`rounded-xl border p-4 flex items-center gap-3 cursor-pointer transition-colors ${statusFilter === 'all' ? 'border-primary bg-primary/5 ring-1 ring-primary/20' : 'border-border bg-card hover:bg-muted/50'}`}
-            >
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                <Users className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-foreground">{customers.length}</p>
-                <p className="text-xs text-muted-foreground">Total</p>
-              </div>
             </div>
-            {([
-              { status: 'Active' as CustomerStatus, icon: UserCheck, iconClass: 'text-emerald-600', bgClass: 'bg-emerald-500/10' },
-              { status: 'Under Review' as CustomerStatus, icon: Clock, iconClass: 'text-yellow-600', bgClass: 'bg-yellow-500/10' },
-              { status: 'Frozen' as CustomerStatus, icon: Snowflake, iconClass: 'text-destructive', bgClass: 'bg-destructive/10' },
-            ]).map(({ status, icon: Icon, iconClass, bgClass }) => {
-              const isActive = statusFilter === status;
-              return (
-                <div
+
+            <div className="flex items-center gap-2">
+              {([
+                { status: 'all' as const, label: 'All', count: customers.length, icon: Users, iconClass: 'text-primary', bgClass: 'bg-primary/10' },
+                { status: 'Active' as const, label: 'Active', count: statusCounts.Active, icon: UserCheck, iconClass: 'text-emerald-600', bgClass: 'bg-emerald-500/10' },
+                { status: 'Under Review' as const, label: 'Review', count: statusCounts['Under Review'], icon: Clock, iconClass: 'text-yellow-600', bgClass: 'bg-yellow-500/10' },
+                { status: 'Frozen' as const, label: 'Frozen', count: statusCounts.Frozen, icon: Snowflake, iconClass: 'text-destructive', bgClass: 'bg-destructive/10' },
+              ]).map(({ status, label, count, icon: Icon, iconClass, bgClass }) => (
+                <button
                   key={status}
-                  onClick={() => { setStatusFilter(isActive ? 'all' : status); setPage(1); }}
-                  className={`rounded-xl border p-4 flex items-center gap-3 cursor-pointer transition-colors ${isActive ? 'border-primary bg-primary/5 ring-1 ring-primary/20' : 'border-border bg-card hover:bg-muted/50'}`}
+                  onClick={() => { setStatusFilter(status === 'all' ? 'all' : (statusFilter === status ? 'all' : status)); setPage(1); }}
+                  className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm transition-colors ${statusFilter === status ? 'border-primary bg-primary/5 ring-1 ring-primary/20' : 'border-border bg-card hover:bg-muted/50'}`}
                 >
-                  <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${bgClass}`}>
-                    <Icon className={`h-5 w-5 ${iconClass}`} />
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold text-foreground">{statusCounts[status]}</p>
-                    <p className="text-xs text-muted-foreground">{status}</p>
-                  </div>
-                </div>
-              );
-            })}
+                  <Icon className={`h-3.5 w-3.5 ${iconClass}`} />
+                  <span className="font-medium text-foreground">{count}</span>
+                  <span className="text-muted-foreground hidden sm:inline">{label}</span>
+                </button>
+              ))}
+            </div>
           </div>
             <Select value={riskFilter} onValueChange={(v) => { setRiskFilter(v); setPage(1); }}>
               <SelectTrigger className="h-9 w-[140px] gap-1.5">
