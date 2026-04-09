@@ -113,6 +113,28 @@ export default function Customers() {
     return counts;
   }, [statuses]);
 
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        searchRef.current?.focus();
+      }
+      if (e.key === 'Escape') {
+        if (selectedId !== null) {
+          setSelectedId(null);
+        } else if (search || riskFilter !== 'all' || statusFilter !== 'all') {
+          setSearch('');
+          setRiskFilter('all');
+          setStatusFilter('all');
+          setPage(1);
+          searchRef.current?.blur();
+        }
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [selectedId, search, riskFilter, statusFilter]);
+
   const allPageChecked = paginated.length > 0 && paginated.every(c => checkedIds.has(c.id));
   const somePageChecked = paginated.some(c => checkedIds.has(c.id));
 
