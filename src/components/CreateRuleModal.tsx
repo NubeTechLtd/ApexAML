@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Zap, X, ChevronDown, ArrowRight } from 'lucide-react';
+import { Plus, Zap, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -20,12 +20,17 @@ interface CreateRuleModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
+interface ExtraCondition {
+  id: number;
+  field: string;
+  operator: string;
+  value: string;
+}
+
 export function CreateRuleModal({ open, onOpenChange }: CreateRuleModalProps) {
   const { toast } = useToast();
   const [ruleName, setRuleName] = useState('');
-  const [description, setDescription] = useState('');
-  const [severity, setSeverity] = useState('');
-  const [framework, setFramework] = useState<'banks' | 'fintechs'>('banks');
+  const [framework, setFramework] = useState('');
 
   // Logic builder state
   const [ifField, setIfField] = useState('');
@@ -36,6 +41,7 @@ export function CreateRuleModal({ open, onOpenChange }: CreateRuleModalProps) {
   const [andValue, setAndValue] = useState('');
   const [andUnit, setAndUnit] = useState('');
   const [thenAction, setThenAction] = useState('');
+  const [extraConditions, setExtraConditions] = useState<ExtraCondition[]>([]);
 
   const handleCreate = () => {
     toast({
@@ -47,21 +53,31 @@ export function CreateRuleModal({ open, onOpenChange }: CreateRuleModalProps) {
   };
 
   const resetForm = () => {
-    setRuleName('');
-    setDescription('');
-    setSeverity('');
+    setRuleName(''); setFramework('');
     setIfField(''); setIfOperator(''); setIfValue('');
     setAndField(''); setAndOperator(''); setAndValue(''); setAndUnit('');
-    setThenAction('');
+    setThenAction(''); setExtraConditions([]);
+  };
+
+  const addCondition = () => {
+    setExtraConditions((prev) => [...prev, { id: Date.now(), field: '', operator: '', value: '' }]);
+  };
+
+  const updateCondition = (id: number, key: keyof ExtraCondition, val: string) => {
+    setExtraConditions((prev) => prev.map((c) => c.id === id ? { ...c, [key]: val } : c));
+  };
+
+  const removeCondition = (id: number) => {
+    setExtraConditions((prev) => prev.filter((c) => c.id !== id));
   };
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-full sm:max-w-xl p-0 flex flex-col">
+      <SheetContent side="right" className="w-full sm:max-w-2xl p-0 flex flex-col">
         <SheetHeader className="px-6 py-5 border-b bg-card shrink-0">
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10">
-              <Zap className="h-4.5 w-4.5 text-primary" />
+              <Zap className="h-4 w-4 text-primary" />
             </div>
             <div>
               <SheetTitle className="text-base">Create New Rule</SheetTitle>
@@ -74,7 +90,7 @@ export function CreateRuleModal({ open, onOpenChange }: CreateRuleModalProps) {
 
         <ScrollArea className="flex-1">
           <div className="p-6 space-y-7">
-            {/* Basic Info */}
+            {/* Header: Name + Framework */}
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
               <div className="space-y-2">
                 <Label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Rule Name</Label>
@@ -85,42 +101,17 @@ export function CreateRuleModal({ open, onOpenChange }: CreateRuleModalProps) {
                   className="h-10 bg-background shadow-sm"
                 />
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-2">
-                  <Label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Severity</Label>
-                  <Select value={severity} onValueChange={setSeverity}>
-                    <SelectTrigger className="h-10 bg-background shadow-sm">
-                      <SelectValue placeholder="Select…" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="critical"><span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-[hsl(var(--risk-critical))]" /> Critical</span></SelectItem>
-                      <SelectItem value="high"><span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-[hsl(var(--risk-high))]" /> High</span></SelectItem>
-                      <SelectItem value="medium"><span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-[hsl(var(--risk-medium))]" /> Medium</span></SelectItem>
-                      <SelectItem value="low"><span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-[hsl(var(--risk-low))]" /> Low</span></SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Framework</Label>
-                  <Select value={framework} onValueChange={(v: 'banks' | 'fintechs') => setFramework(v)}>
-                    <SelectTrigger className="h-10 bg-background shadow-sm">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="banks">Banks (Sept 2027)</SelectItem>
-                      <SelectItem value="fintechs">Fintechs/MMOs (Mar 2028)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
               <div className="space-y-2">
-                <Label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Description</Label>
-                <Input
-                  placeholder="Briefly describe what this rule detects…"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  className="h-10 bg-background shadow-sm"
-                />
+                <Label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Target Framework</Label>
+                <Select value={framework} onValueChange={setFramework}>
+                  <SelectTrigger className="h-10 bg-background shadow-sm">
+                    <SelectValue placeholder="Select regulatory framework…" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="banks">Bank — Sept 2027</SelectItem>
+                    <SelectItem value="fintechs">Fintech/MMO — March 2028</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </motion.div>
 
@@ -131,13 +122,12 @@ export function CreateRuleModal({ open, onOpenChange }: CreateRuleModalProps) {
               <div className="flex items-center justify-between">
                 <Label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Rule Logic</Label>
                 <Badge variant="outline" className="text-[10px] font-normal gap-1">
-                  <Zap className="h-2.5 w-2.5" /> Visual Builder
+                  <Zap className="h-2.5 w-2.5" /> No-Code Builder
                 </Badge>
               </div>
 
-              {/* Connector line container */}
+              {/* Connector container */}
               <div className="relative">
-                {/* Vertical connector line */}
                 <div className="absolute left-[27px] top-[44px] bottom-[44px] w-px bg-border z-0" />
 
                 <div className="space-y-0 relative z-10">
@@ -177,13 +167,11 @@ export function CreateRuleModal({ open, onOpenChange }: CreateRuleModalProps) {
                     </div>
                   </div>
 
-                  {/* Connector: AND badge */}
+                  {/* Connector badge */}
                   <div className="flex items-center justify-center py-1">
                     <div className="flex items-center gap-1.5">
                       <div className="h-px w-6 bg-border" />
-                      <Badge variant="outline" className="text-[10px] font-bold text-primary bg-background border-primary/20 shadow-sm px-3 py-0.5">
-                        AND
-                      </Badge>
+                      <Badge variant="outline" className="text-[10px] font-bold text-primary bg-background border-primary/20 shadow-sm px-3 py-0.5">AND</Badge>
                       <div className="h-px w-6 bg-border" />
                     </div>
                   </div>
@@ -230,6 +218,79 @@ export function CreateRuleModal({ open, onOpenChange }: CreateRuleModalProps) {
                         </SelectContent>
                       </Select>
                     </div>
+                  </div>
+
+                  {/* Extra conditions */}
+                  {extraConditions.map((cond, i) => (
+                    <div key={cond.id}>
+                      <div className="flex items-center justify-center py-1">
+                        <div className="flex items-center gap-1.5">
+                          <div className="h-px w-6 bg-border" />
+                          <Badge variant="outline" className="text-[10px] font-bold text-primary bg-background border-primary/20 shadow-sm px-3 py-0.5">AND</Badge>
+                          <div className="h-px w-6 bg-border" />
+                        </div>
+                      </div>
+                      <motion.div
+                        initial={{ opacity: 0, y: -8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="rounded-xl border bg-card shadow-sm p-4 space-y-3"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline" className="text-[10px] font-bold text-primary border-primary/20 px-2.5 py-0.5 rounded-md shadow-sm">AND</Badge>
+                            <span className="text-[11px] text-muted-foreground">Additional condition {i + 1}</span>
+                          </div>
+                          <button
+                            onClick={() => removeCondition(cond.id)}
+                            className="text-[10px] text-muted-foreground hover:text-destructive transition-colors"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Select value={cond.field} onValueChange={(v) => updateCondition(cond.id, 'field', v)}>
+                            <SelectTrigger className="flex-1 h-9 text-xs bg-background shadow-sm border-border">
+                              <SelectValue placeholder="Select metric…" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Transaction Volume">Transaction Volume</SelectItem>
+                              <SelectItem value="Velocity">Velocity</SelectItem>
+                              <SelectItem value="Risk Score">Risk Score</SelectItem>
+                              <SelectItem value="Counterparty Count">Counterparty Count</SelectItem>
+                              <SelectItem value="Channel">Channel</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <Select value={cond.operator} onValueChange={(v) => updateCondition(cond.id, 'operator', v)}>
+                            <SelectTrigger className="w-[130px] h-9 text-xs bg-background shadow-sm border-border">
+                              <SelectValue placeholder="Operator…" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Greater Than">Greater Than</SelectItem>
+                              <SelectItem value="Less Than">Less Than</SelectItem>
+                              <SelectItem value="Equals">Equals</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <Input
+                            placeholder="Value"
+                            value={cond.value}
+                            onChange={(e) => updateCondition(cond.id, 'value', e.target.value)}
+                            className="w-24 h-9 text-xs bg-background shadow-sm"
+                          />
+                        </div>
+                      </motion.div>
+                    </div>
+                  ))}
+
+                  {/* + Add Condition */}
+                  <div className="flex items-center justify-center py-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-8 gap-1.5 text-xs border-dashed text-muted-foreground hover:text-primary hover:border-primary/30"
+                      onClick={addCondition}
+                    >
+                      <Plus className="h-3 w-3" /> Add Condition
+                    </Button>
                   </div>
 
                   {/* Connector: THEN arrow */}
@@ -288,15 +349,17 @@ export function CreateRuleModal({ open, onOpenChange }: CreateRuleModalProps) {
                 <Label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Rule Preview</Label>
                 <div className="rounded-lg border bg-muted/30 p-3 text-xs text-foreground leading-relaxed font-mono">
                   <span className="text-primary font-bold">IF</span>{' '}
-                  <span className="text-foreground">{ifField || '___'}</span>{' '}
-                  <span className="text-muted-foreground">{ifOperator || '___'}</span>{' '}
-                  <span className="font-semibold">{ifValue || '___'}</span>
+                  {ifField || '___'} {ifOperator || '___'} <span className="font-semibold">{ifValue || '___'}</span>
                   <br />
                   <span className="text-primary font-bold">AND</span>{' '}
-                  <span className="text-foreground">{andField || '___'}</span>{' '}
-                  <span className="text-muted-foreground">{andOperator || '___'}</span>{' '}
-                  <span className="font-semibold">{andValue || '___'}</span>{' '}
-                  <span className="text-foreground">{andUnit || '___'}</span>
+                  {andField || '___'} {andOperator || '___'} <span className="font-semibold">{andValue || '___'}</span> {andUnit || '___'}
+                  {extraConditions.map((c) => (
+                    <span key={c.id}>
+                      <br />
+                      <span className="text-primary font-bold">AND</span>{' '}
+                      {c.field || '___'} {c.operator || '___'} <span className="font-semibold">{c.value || '___'}</span>
+                    </span>
+                  ))}
                   <br />
                   <span className="text-primary font-bold">THEN</span>{' '}
                   <span className="font-semibold">{thenAction || '___'}</span>
@@ -314,7 +377,7 @@ export function CreateRuleModal({ open, onOpenChange }: CreateRuleModalProps) {
           <Button
             size="sm"
             onClick={handleCreate}
-            disabled={!ruleName || !severity || !thenAction}
+            disabled={!ruleName || !framework || !thenAction}
             className="gap-1.5 shadow-sm"
           >
             <Plus className="h-3.5 w-3.5" /> Create Rule
