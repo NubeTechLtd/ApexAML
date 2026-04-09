@@ -3,6 +3,7 @@ export interface SanctionsMatch {
   matchScore: number;
   status: 'Pending' | 'Dismissed' | 'Confirmed';
   matchingFields: string[];
+  slaDeadline: string;
   internal: {
     name: string;
     dob: string;
@@ -31,6 +32,7 @@ export const mockSanctionsMatches: SanctionsMatch[] = [
     id: 'SCR-001',
     matchScore: 88,
     status: 'Pending',
+    slaDeadline: new Date(Date.now() + 14 * 60 * 60 * 1000 + 20 * 60 * 1000).toISOString(),
     matchingFields: ['name', 'nationality'],
     internal: {
       name: 'Ibrahim Musa',
@@ -58,6 +60,7 @@ export const mockSanctionsMatches: SanctionsMatch[] = [
     id: 'SCR-002',
     matchScore: 72,
     status: 'Pending',
+    slaDeadline: new Date(Date.now() + 3 * 60 * 60 * 1000 + 10 * 60 * 1000).toISOString(),
     matchingFields: ['name'],
     internal: {
       name: 'Chinedu Eze',
@@ -85,6 +88,7 @@ export const mockSanctionsMatches: SanctionsMatch[] = [
     id: 'SCR-003',
     matchScore: 45,
     status: 'Pending',
+    slaDeadline: new Date(Date.now() + 22 * 60 * 60 * 1000).toISOString(),
     matchingFields: [],
     internal: {
       name: 'Fatima Abdullahi',
