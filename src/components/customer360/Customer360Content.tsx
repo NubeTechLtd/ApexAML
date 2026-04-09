@@ -1,0 +1,103 @@
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { ShieldAlert, Snowflake, Download, ChevronDown } from 'lucide-react';
+import { customer360Data } from '@/data/mockCustomer360';
+import { mockLegacyAlerts as mockAlerts } from '@/data/mockLegacyAlerts';
+import { motion } from 'framer-motion';
+import { toast } from 'sonner';
+import { Customer360IdentityCard } from './IdentityCard';
+import { Customer360RiskRadar } from './RiskRadar';
+import { Customer360Entities } from './EntitiesCard';
+import { Customer360Tabs } from './DeepDiveTabs';
+
+const riskColors: Record<string, string> = {
+  High: 'bg-destructive/10 text-destructive border-destructive/20',
+  Medium: 'bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border-yellow-500/20',
+  Low: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20',
+};
+
+interface Props {
+  customerId: number;
+}
+
+export function Customer360Content({ customerId }: Props) {
+  const customer = customer360Data[customerId];
+
+  if (!customer) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center space-y-3">
+          <ShieldAlert className="h-12 w-12 text-muted-foreground mx-auto" />
+          <h2 className="text-xl font-semibold text-foreground">Customer not found</h2>
+        </div>
+      </div>
+    );
+  }
+
+  const customerAlerts = mockAlerts.filter(a =>
+    a.customerName.toLowerCase().includes(customer.name.split(' ')[0].toLowerCase())
+  );
+
+  return (
+    <div className="flex flex-col h-full overflow-auto">
+      {/* Header */}
+      <div className="sticky top-0 z-10 border-b border-border bg-background/95 backdrop-blur px-6 py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary font-bold text-lg">
+              {customer.name.charAt(0)}
+            </div>
+            <div>
+              <div className="flex items-center gap-3">
+                <h2 className="text-xl font-bold text-foreground">{customer.name}</h2>
+                <Badge variant="outline" className={`text-sm px-3 py-1 ${riskColors[customer.riskLevel]}`}>
+                  Risk: {customer.riskLevel.toUpperCase()} ({customer.riskScore}/100)
+                </Badge>
+              </div>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                {customer.kycTier} Account • {customer.bvnVerified ? 'BVN Verified' : 'BVN Unverified'} • {customer.accountStatus}
+              </p>
+            </div>
+          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="gap-1.5">
+                Actions <ChevronDown className="h-3.5 w-3.5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => toast.warning('Account frozen pending review')}>
+                <Snowflake className="h-4 w-4 mr-2" /> Freeze Account
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => toast.info('EDD workflow triggered')}>
+                <ShieldAlert className="h-4 w-4 mr-2" /> Trigger EDD
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => toast.success('NFIU profile downloaded')}>
+                <Download className="h-4 w-4 mr-2" /> Download NFIU Profile
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+
+      <div className="p-6 space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
+            <Customer360IdentityCard customer={customer} />
+          </motion.div>
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+            <Customer360RiskRadar radarScores={customer.radarScores} riskLevel={customer.riskLevel} />
+          </motion.div>
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
+            <Customer360Entities entities={customer.connectedEntities} />
+          </motion.div>
+        </div>
+
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+          <Customer360Tabs customer={customer} customerAlerts={customerAlerts} />
+        </motion.div>
+      </div>
+    </div>
+  );
+}
