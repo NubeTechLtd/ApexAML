@@ -26,6 +26,12 @@ const riskColors: Record<string, string> = {
 
 export default function Customers() {
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [search, setSearch] = useState('');
+
+  const filtered = customers.filter(c =>
+    c.name.toLowerCase().includes(search.toLowerCase()) ||
+    c.bvn.includes(search)
+  );
 
   return (
     <SidebarProvider>
@@ -45,7 +51,7 @@ export default function Customers() {
           <div className="flex items-center gap-3">
             <div className="relative flex-1 max-w-sm">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search by name or BVN..." className="pl-9" />
+              <Input placeholder="Search by name or BVN..." className="pl-9" value={search} onChange={e => setSearch(e.target.value)} />
             </div>
             <button className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm text-muted-foreground hover:bg-accent">
               <Filter className="h-3.5 w-3.5" /> Filter
@@ -64,7 +70,7 @@ export default function Customers() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {customers.map((c) => (
+                {filtered.map((c) => (
                   <TableRow key={c.id} className="cursor-pointer hover:bg-muted/50" onClick={() => setSelectedId(c.id)}>
                     <TableCell className="font-medium">{c.name}</TableCell>
                     <TableCell className="font-mono text-xs text-muted-foreground">{c.bvn}</TableCell>
