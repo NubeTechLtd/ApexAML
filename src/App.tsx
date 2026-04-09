@@ -27,7 +27,7 @@ const App = () => (
           <Route path="/reports/nfiu" element={<RegulatoryReports />} />
           <Route path="/identity" element={<IdentityKYC />} />
           <Route path="/customers" element={<Customers />} />
-          <Route path="/dashboard" element={<Index />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/audit" element={<SystemAudit />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
