@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { Bell, AlertTriangle, ShieldCheck, TrendingUp, TrendingDown, Clock, Users, FileText, ArrowUpRight, ArrowDownRight } from 'lucide-react';
@@ -43,6 +44,7 @@ const kpiCards = [
     icon: AlertTriangle,
     accent: 'text-[hsl(var(--risk-high))]',
     bg: 'bg-[hsl(var(--risk-high))]/8',
+    link: '/?status=Open',
   },
   {
     title: 'Resolved (MTD)',
@@ -52,6 +54,7 @@ const kpiCards = [
     icon: ShieldCheck,
     accent: 'text-[hsl(var(--risk-low))]',
     bg: 'bg-[hsl(var(--risk-low))]/8',
+    link: '/?status=Dismissed',
   },
   {
     title: 'Avg. Resolution Time',
@@ -61,6 +64,7 @@ const kpiCards = [
     icon: Clock,
     accent: 'text-primary',
     bg: 'bg-primary/8',
+    link: '/?status=Under Review',
   },
   {
     title: 'STRs Filed (MTD)',
@@ -70,6 +74,7 @@ const kpiCards = [
     icon: FileText,
     accent: 'text-[hsl(var(--risk-medium))]',
     bg: 'bg-[hsl(var(--risk-medium))]/8',
+    link: '/?status=Escalated',
   },
 ];
 
