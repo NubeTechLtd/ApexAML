@@ -1,8 +1,11 @@
+import { useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { AlertTriangle, ShieldCheck, TrendingUp, TrendingDown, Clock, Users, FileText, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { AlertTriangle, ShieldCheck, TrendingUp, TrendingDown, Clock, Users, FileText, ArrowUpRight, ArrowDownRight, RefreshCw, Loader2 } from 'lucide-react';
+import { NotificationBell } from '@/components/NotificationBell';
+import { Button } from '@/components/ui/button';
 import { NotificationBell } from '@/components/NotificationBell';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -37,26 +40,30 @@ const volumeTrend = [
   { date: 'Apr 07', volume: 56 },
 ];
 
+const openAlerts = mockAlerts.filter(a => a.status === 'Open').length;
+const criticalAlerts = mockAlerts.filter(a => a.riskLevel === 'Critical' && a.status === 'Open').length;
+const escalatedAlerts = mockAlerts.filter(a => a.status === 'Escalated').length;
+
 const kpiCards = [
   {
     title: 'Open Alerts',
-    value: mockAlerts.filter(a => a.status === 'Open').length,
-    subtitle: '+3 since yesterday',
+    value: openAlerts,
+    subtitle: `${criticalAlerts} critical alert${criticalAlerts !== 1 ? 's' : ''}`,
     trend: 'up' as const,
     icon: AlertTriangle,
     accent: 'text-[hsl(var(--risk-high))]',
     bg: 'bg-[hsl(var(--risk-high))]/8',
-    link: '/?status=Open',
+    link: '/alerts?status=Open',
   },
   {
-    title: 'Resolved (MTD)',
-    value: 142,
-    subtitle: '94% resolution rate',
-    trend: 'up-good' as const,
-    icon: ShieldCheck,
-    accent: 'text-[hsl(var(--risk-low))]',
-    bg: 'bg-[hsl(var(--risk-low))]/8',
-    link: '/?status=Dismissed',
+    title: 'Critical Alerts',
+    value: criticalAlerts,
+    subtitle: `${criticalAlerts} requiring immediate action`,
+    trend: 'up' as const,
+    icon: AlertTriangle,
+    accent: 'text-destructive',
+    bg: 'bg-destructive/8',
+    link: '/alerts?risk=Critical',
   },
   {
     title: 'Avg. Resolution Time',
@@ -66,17 +73,17 @@ const kpiCards = [
     icon: Clock,
     accent: 'text-primary',
     bg: 'bg-primary/8',
-    link: '/?status=Under Review',
+    link: '/alerts?status=Under Review',
   },
   {
     title: 'STRs Filed (MTD)',
-    value: 23,
-    subtitle: '5 pending review',
+    value: escalatedAlerts,
+    subtitle: `${escalatedAlerts} escalated cases`,
     trend: 'neutral' as const,
     icon: FileText,
     accent: 'text-[hsl(var(--risk-medium))]',
     bg: 'bg-[hsl(var(--risk-medium))]/8',
-    link: '/?status=Escalated',
+    link: '/alerts?status=Escalated',
   },
 ];
 
