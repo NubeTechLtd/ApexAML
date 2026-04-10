@@ -2,9 +2,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Clock, AlertTriangle, FileText, Download } from 'lucide-react';
+import { Clock, AlertTriangle, FileText, Download, CreditCard, Network } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { Customer360Data } from '@/data/mockCustomer360';
+import { TransactionsTab } from './TransactionsTab';
+import { NetworkGraph } from './NetworkGraph';
 
 const riskColors: Record<string, string> = {
   High: 'bg-destructive/10 text-destructive border-destructive/20',
@@ -33,7 +35,10 @@ export function Customer360Tabs({ customer, customerAlerts }: Props) {
     <Tabs defaultValue="transactions" className="w-full">
       <TabsList>
         <TabsTrigger value="transactions" className="gap-1.5">
-          <Clock className="h-3.5 w-3.5" /> Transaction History
+          <CreditCard className="h-3.5 w-3.5" /> Transactions
+        </TabsTrigger>
+        <TabsTrigger value="network" className="gap-1.5">
+          <Network className="h-3.5 w-3.5" /> Network
         </TabsTrigger>
         <TabsTrigger value="alerts" className="gap-1.5">
           <AlertTriangle className="h-3.5 w-3.5" /> Case & Alert History
@@ -44,44 +49,11 @@ export function Customer360Tabs({ customer, customerAlerts }: Props) {
       </TabsList>
 
       <TabsContent value="transactions">
-        <Card>
-          <CardContent className="pt-4">
-            {customerAlerts.length > 0 && customerAlerts[0].transactionTimeline.length > 0 ? (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Channel</TableHead>
-                    <TableHead>Counterparty</TableHead>
-                    <TableHead className="text-right">Amount</TableHead>
-                    <TableHead>Flag</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {customerAlerts.flatMap(a => a.transactionTimeline).map(tx => (
-                    <TableRow key={tx.id}>
-                      <TableCell className="text-xs text-muted-foreground">{new Date(tx.date).toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric' })}</TableCell>
-                      <TableCell className="text-sm">{tx.type}</TableCell>
-                      <TableCell className="text-sm">{tx.channel}</TableCell>
-                      <TableCell className="text-sm truncate max-w-[200px]">{tx.counterparty}</TableCell>
-                      <TableCell className="text-right font-mono text-sm">{formatCurrency(tx.amount)}</TableCell>
-                      <TableCell>
-                        {tx.flagReason && (
-                          <Badge variant="outline" className="text-[10px] bg-destructive/10 text-destructive border-destructive/20">
-                            {tx.flagReason}
-                          </Badge>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            ) : (
-              <p className="text-sm text-muted-foreground py-8 text-center">No transaction history available</p>
-            )}
-          </CardContent>
-        </Card>
+        <TransactionsTab customer={customer} />
+      </TabsContent>
+
+      <TabsContent value="network">
+        <NetworkGraph customer={customer} />
       </TabsContent>
 
       <TabsContent value="alerts">
