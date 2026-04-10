@@ -4,6 +4,7 @@ import { AppSidebar } from '@/components/AppSidebar';
 import { ComplianceTimeline } from '@/components/ComplianceTimeline';
 import { ComplianceMetrics } from '@/components/ComplianceMetrics';
 import { CTRTable } from '@/components/CTRTable';
+import { STRManagement } from '@/components/STRManagement';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Download } from 'lucide-react';
 import { NotificationBell } from '@/components/NotificationBell';
@@ -43,7 +44,6 @@ const RegulatoryReports = () => {
           </header>
 
           <main className="flex-1 overflow-y-auto p-6 bg-background space-y-6">
-            {/* Reference banner */}
             <div className="rounded-lg border bg-card p-4 flex items-center justify-between">
               <div>
                 <p className="text-xs text-muted-foreground font-medium tracking-wide uppercase">Reference Circular</p>
@@ -60,6 +60,7 @@ const RegulatoryReports = () => {
               <TabsList>
                 <TabsTrigger value="roadmap" className="text-xs">Roadmap & Metrics</TabsTrigger>
                 <TabsTrigger value="ctr" className="text-xs">CTR (Currency Transaction Reports)</TabsTrigger>
+                <TabsTrigger value="str" className="text-xs">STR Management</TabsTrigger>
               </TabsList>
 
               <TabsContent value="roadmap" className="space-y-6">
@@ -69,6 +70,10 @@ const RegulatoryReports = () => {
 
               <TabsContent value="ctr">
                 <CTRTable />
+              </TabsContent>
+
+              <TabsContent value="str">
+                <STRManagement />
               </TabsContent>
             </Tabs>
           </main>
