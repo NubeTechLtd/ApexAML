@@ -78,8 +78,13 @@ export default function Customers() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [checkedIds, setCheckedIds] = useState<Set<number>>(new Set());
   const [statuses, setStatuses] = useState<Record<number, CustomerStatus>>({});
-  const [bulkEscalateOpen, setBulkEscalateOpen] = useState(false);
+  const [bulkFreezeOpen, setBulkFreezeOpen] = useState(false);
+  const [bulkFlagOpen, setBulkFlagOpen] = useState(false);
+  const [bulkClearOpen, setBulkClearOpen] = useState(false);
+  const [bulkAuditEntries, setBulkAuditEntries] = useState<BulkAuditEntry[]>([]);
+  const { append } = useAuditLog();
   const searchRef = useRef<HTMLInputElement>(null);
+  const undoRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const toggleSort = (key: SortKey) => {
     if (sortKey === key) {
