@@ -2,6 +2,8 @@ import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { AuditBell } from '@/components/AuditBell';
+import { ConfirmEscalationDialog } from '@/components/ConfirmEscalationDialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -95,6 +97,7 @@ export default function AlertWorkspace() {
   const { toast } = useToast();
   const [search, setSearch] = useState('');
   const [selectedId, setSelectedId] = useState<string>(mockAlerts[0].id);
+  const [escalateOpen, setEscalateOpen] = useState(false);
 
   // STR state
   const [strDraft, setStrDraft] = useState('');
@@ -173,11 +176,8 @@ export default function AlertWorkspace() {
   }, [selected, toast]);
 
   const handleEscalate = useCallback(() => {
-    toast({
-      title: 'Escalated to NFIU',
-      description: `Case ${selected.caseId} has been escalated with priority ${selected.riskLevel}.`,
-    });
-  }, [selected, toast]);
+    setEscalateOpen(true);
+  }, []);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -204,7 +204,10 @@ export default function AlertWorkspace() {
               <Shield className="h-5 w-5 text-primary" />
               <h1 className="text-lg font-bold text-foreground">Alert Workspace</h1>
             </div>
-            <ThemeToggle />
+            <div className="flex items-center gap-2">
+              <AuditBell />
+              <ThemeToggle />
+            </div>
           </div>
 
           {/* Split pane */}
@@ -558,6 +561,16 @@ export default function AlertWorkspace() {
           </div>
         </div>
       </div>
+      <ConfirmEscalationDialog
+        open={escalateOpen}
+        onOpenChange={setEscalateOpen}
+        customerName={selected.customerProfile.fullName}
+        caseId={selected.caseId}
+        action="NFIU_ESCALATION"
+        onConfirmed={() => {
+          toast({ title: 'Escalated to NFIU', description: `Case ${selected.caseId} escalated.` });
+        }}
+      />
     </SidebarProvider>
   );
 }
