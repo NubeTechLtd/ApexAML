@@ -98,9 +98,18 @@ function MiniAlertCard({ alert, isSelected, onClick }: { alert: Alert; isSelecte
 
 export default function AlertWorkspace() {
   const { toast } = useToast();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState('');
   const [selectedId, setSelectedId] = useState<string>(mockAlerts[0].id);
   const [escalateOpen, setEscalateOpen] = useState(false);
+
+  const riskParam = searchParams.get('risk');
+  const statusParam = searchParams.get('status');
+  const activeFilterLabel = riskParam ? `${riskParam} risk` : statusParam ? `${statusParam} alerts` : null;
+
+  const clearFilterParams = useCallback(() => {
+    setSearchParams({});
+  }, [setSearchParams]);
 
   // STR state
   const [strDraft, setStrDraft] = useState('');
@@ -115,16 +124,16 @@ export default function AlertWorkspace() {
   const filtered = useMemo(() => {
     return mockAlerts.filter((a) => {
       const q = search.toLowerCase();
-      return (
-        a.status === 'Open' || a.status === 'Under Review'
-      ) && (
+      const matchesStatus = statusParam ? a.status === statusParam : (a.status === 'Open' || a.status === 'Under Review');
+      const matchesRisk = riskParam ? a.riskLevel === riskParam : true;
+      return matchesStatus && matchesRisk && (
         !q ||
         a.customerProfile.fullName.toLowerCase().includes(q) ||
         a.caseId.toLowerCase().includes(q) ||
         a.ruleTriggered.toLowerCase().includes(q)
       );
     });
-  }, [search]);
+  }, [search, riskParam, statusParam]);
 
   const selected = filtered.find((a) => a.id === selectedId) || filtered[0];
 
