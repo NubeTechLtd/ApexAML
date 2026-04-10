@@ -4,7 +4,7 @@ import { AppSidebar } from '@/components/AppSidebar';
 import { VerificationQueue } from '@/components/VerificationQueue';
 import { EDDWorkspace } from '@/components/EDDWorkspace';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { Bell } from 'lucide-react';
+import { NotificationBell } from '@/components/NotificationBell';
 import { mockKYCCustomers, type KYCCustomer } from '@/data/mockKYC';
 
 const IdentityKYC = () => {
@@ -22,9 +22,7 @@ const IdentityKYC = () => {
             </div>
             <div className="flex items-center gap-2">
               <ThemeToggle />
-              <button className="relative flex h-8 w-8 items-center justify-center rounded-md hover:bg-muted transition-colors">
-                <Bell className="h-4 w-4 text-muted-foreground" />
-              </button>
+              <NotificationBell />
             </div>
           </header>
 

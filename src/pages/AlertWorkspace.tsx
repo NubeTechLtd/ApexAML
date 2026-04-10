@@ -1,4 +1,5 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
+import { NotificationBell } from '@/components/NotificationBell';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -206,6 +207,7 @@ export default function AlertWorkspace() {
             </div>
             <div className="flex items-center gap-2">
               <AuditBell />
+              <NotificationBell />
               <ThemeToggle />
             </div>
           </div>
