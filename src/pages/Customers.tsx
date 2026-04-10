@@ -1,11 +1,10 @@
-import { useState, useMemo, useEffect, useRef } from 'react';
+import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { Users, Search, Filter, ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown, Download, ShieldAlert, ShieldCheck, X, UserCheck, Clock, Snowflake } from 'lucide-react';
 import { NotificationBell } from '@/components/NotificationBell';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { AuditBell } from '@/components/AuditBell';
-import { ConfirmEscalationDialog } from '@/components/ConfirmEscalationDialog';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -14,6 +13,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { Customer360Content } from '@/components/customer360/Customer360Content';
+import { BulkFreezeDialog } from '@/components/customers/BulkFreezeDialog';
+import { BulkConfirmDialog } from '@/components/customers/BulkConfirmDialog';
+import { BulkAuditLog, BulkAuditEntry } from '@/components/customers/BulkAuditLog';
+import { useAuditLog } from '@/hooks/useAuditLog';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -75,8 +78,13 @@ export default function Customers() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [checkedIds, setCheckedIds] = useState<Set<number>>(new Set());
   const [statuses, setStatuses] = useState<Record<number, CustomerStatus>>({});
-  const [bulkEscalateOpen, setBulkEscalateOpen] = useState(false);
+  const [bulkFreezeOpen, setBulkFreezeOpen] = useState(false);
+  const [bulkFlagOpen, setBulkFlagOpen] = useState(false);
+  const [bulkClearOpen, setBulkClearOpen] = useState(false);
+  const [bulkAuditEntries, setBulkAuditEntries] = useState<BulkAuditEntry[]>([]);
+  const { append } = useAuditLog();
   const searchRef = useRef<HTMLInputElement>(null);
+  const undoRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const toggleSort = (key: SortKey) => {
     if (sortKey === key) {
@@ -162,22 +170,36 @@ export default function Customers() {
     });
   };
 
-  const handleBulkAction = (action: string) => {
-    const count = checkedIds.size;
-    const names = customers.filter(c => checkedIds.has(c.id)).map(c => c.name);
+  const selectedNames = useMemo(() => customers.filter(c => checkedIds.has(c.id)).map(c => c.name), [checkedIds]);
+  const selectedIds = useMemo(() => Array.from(checkedIds), [checkedIds]);
+
+  const applyBulkAction = useCallback((action: 'flag' | 'clear' | 'escalate', justification?: string) => {
     const ids = Array.from(checkedIds);
-    if (action === 'flag') {
-      setStatuses(prev => { const next = { ...prev }; ids.forEach(id => next[id] = 'Under Review'); return next; });
-      toast.warning(`Flagged ${count} customer(s) for review`, { description: names.join(', ') });
-    } else if (action === 'clear') {
-      setStatuses(prev => { const next = { ...prev }; ids.forEach(id => next[id] = 'Active'); return next; });
-      toast.success(`Cleared ${count} customer(s)`, { description: names.join(', ') });
-    } else if (action === 'escalate') {
-      setStatuses(prev => { const next = { ...prev }; ids.forEach(id => next[id] = 'Frozen'); return next; });
-      toast.error(`Escalated ${count} customer(s) to compliance`, { description: names.join(', ') });
+    const names = customers.filter(c => checkedIds.has(c.id)).map(c => c.name);
+    const prevStatuses = { ...statuses };
+    const newStatus: CustomerStatus = action === 'flag' ? 'Under Review' : action === 'clear' ? 'Active' : 'Frozen';
+    setStatuses(prev => { const next = { ...prev }; ids.forEach(id => next[id] = newStatus); return next; });
+
+    const auditEntry: BulkAuditEntry = {
+      id: crypto.randomUUID(), timestamp: new Date().toISOString(),
+      type: action, analyst: 'mock-analyst-001', customers: names, justification,
+    };
+
+    if (action === 'escalate') {
+      toast.error(`Froze ${names.length} customer account(s)`, {
+        description: names.join(', '), duration: 5000,
+        action: { label: 'Undo', onClick: () => { setStatuses(prevStatuses); if (undoRef.current) clearTimeout(undoRef.current); toast.info('Freeze undone'); } },
+      });
+      undoRef.current = setTimeout(() => {
+        setBulkAuditEntries(prev => [...prev, auditEntry]);
+        append({ action: 'ACCOUNT_FREEZE', analyst: 'mock-analyst-001', caseId: `BULK-${ids.join('-')}`, justification: justification || '' });
+      }, 5000);
+    } else {
+      setBulkAuditEntries(prev => [...prev, auditEntry]);
+      (action === 'flag' ? toast.warning : toast.success)(`${action === 'flag' ? 'Flagged' : 'Cleared'} ${names.length} customer(s)`, { description: names.join(', ') });
     }
     setCheckedIds(new Set());
-  };
+  }, [checkedIds, statuses, append]);
 
   const handleSearchChange = (val: string) => {
     setSearch(val);
@@ -259,6 +281,7 @@ export default function Customers() {
             <Button variant="outline" size="sm" className="gap-1.5 h-8 text-xs" onClick={exportCsv}>
               <Download className="h-3 w-3" /> Export
             </Button>
+            <BulkAuditLog entries={bulkAuditEntries} />
           </div>
 
           <div className="rounded-xl border border-border bg-card">
@@ -358,14 +381,14 @@ export default function Customers() {
               >
                 <span className="text-sm font-medium text-foreground">{checkedIds.size} selected</span>
                 <div className="h-4 w-px bg-border" />
-                <Button size="sm" variant="outline" className="gap-1.5" onClick={() => handleBulkAction('flag')}>
+                <Button size="sm" variant="outline" className="gap-1.5" onClick={() => setBulkFlagOpen(true)}>
                   <ShieldAlert className="h-3.5 w-3.5" /> Flag for Review
                 </Button>
-                <Button size="sm" variant="outline" className="gap-1.5 text-emerald-600 border-emerald-500/30 hover:bg-emerald-500/10" onClick={() => handleBulkAction('clear')}>
+                <Button size="sm" variant="outline" className="gap-1.5" onClick={() => setBulkClearOpen(true)}>
                   <ShieldCheck className="h-3.5 w-3.5" /> Clear
                 </Button>
-                <Button size="sm" variant="destructive" className="gap-1.5" onClick={() => setBulkEscalateOpen(true)}>
-                  <ShieldAlert className="h-3.5 w-3.5" /> Escalate
+                <Button size="sm" variant="destructive" className="gap-1.5" onClick={() => setBulkFreezeOpen(true)}>
+                  <Snowflake className="h-3.5 w-3.5" /> Freeze / Escalate
                 </Button>
                 <Button size="icon" variant="ghost" className="h-8 w-8 ml-1" onClick={() => setCheckedIds(new Set())}>
                   <X className="h-3.5 w-3.5" />
@@ -381,16 +404,9 @@ export default function Customers() {
           {selectedId !== null && <Customer360Content customerId={selectedId} onClose={() => setSelectedId(null)} />}
         </SheetContent>
       </Sheet>
-      <ConfirmEscalationDialog
-        open={bulkEscalateOpen}
-        onOpenChange={setBulkEscalateOpen}
-        customerName={customers.filter(c => checkedIds.has(c.id)).map(c => c.name).join(', ')}
-        caseId={`BULK-${Array.from(checkedIds).join('-')}`}
-        action="NFIU_ESCALATION"
-        onConfirmed={() => {
-          handleBulkAction('escalate');
-        }}
-      />
+      <BulkConfirmDialog open={bulkFlagOpen} onOpenChange={setBulkFlagOpen} action="flag" customerNames={selectedNames} onConfirmed={() => applyBulkAction('flag')} />
+      <BulkConfirmDialog open={bulkClearOpen} onOpenChange={setBulkClearOpen} action="clear" customerNames={selectedNames} onConfirmed={() => applyBulkAction('clear')} />
+      <BulkFreezeDialog open={bulkFreezeOpen} onOpenChange={setBulkFreezeOpen} customerNames={selectedNames} onConfirmed={(j) => applyBulkAction('escalate', j)} />
     </SidebarProvider>
   );
 }
