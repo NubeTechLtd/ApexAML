@@ -237,9 +237,12 @@ export default function AlertWorkspace() {
                     className="pl-8 h-8 text-sm bg-background"
                   />
                 </div>
-                <p className="text-[11px] text-muted-foreground mt-2">
-                  {filtered.length} alert{filtered.length !== 1 ? 's' : ''} requiring action
-                </p>
+                <div className="flex items-center gap-2 mt-2">
+                  <p className="text-[11px] text-muted-foreground">
+                    {filtered.length} alert{filtered.length !== 1 ? 's' : ''} requiring action
+                  </p>
+                  {activeFilterLabel && <ActiveFilterChip label={activeFilterLabel} onClear={clearFilterParams} />}
+                </div>
               </div>
               <ScrollArea className="flex-1">
                 <div className="p-2 space-y-1">
