@@ -1,11 +1,10 @@
-import { useState, useMemo, useEffect, useRef } from 'react';
+import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { Users, Search, Filter, ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown, Download, ShieldAlert, ShieldCheck, X, UserCheck, Clock, Snowflake } from 'lucide-react';
 import { NotificationBell } from '@/components/NotificationBell';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { AuditBell } from '@/components/AuditBell';
-import { ConfirmEscalationDialog } from '@/components/ConfirmEscalationDialog';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -14,6 +13,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { Customer360Content } from '@/components/customer360/Customer360Content';
+import { BulkFreezeDialog } from '@/components/customers/BulkFreezeDialog';
+import { BulkConfirmDialog } from '@/components/customers/BulkConfirmDialog';
+import { BulkAuditLog, BulkAuditEntry } from '@/components/customers/BulkAuditLog';
+import { useAuditLog } from '@/hooks/useAuditLog';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 
