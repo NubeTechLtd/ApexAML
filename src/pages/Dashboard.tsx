@@ -4,6 +4,7 @@ import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { AlertTriangle, ShieldCheck, TrendingUp, TrendingDown, Clock, Users, FileText, ArrowUpRight, ArrowDownRight, RefreshCw, Loader2 } from 'lucide-react';
+import { useChartTheme } from '@/hooks/useChartTheme';
 import { NotificationBell } from '@/components/NotificationBell';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -108,6 +109,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [refreshing, setRefreshing] = useState(false);
   const [lastRefreshed, setLastRefreshed] = useState(() => new Date());
+  const chart = useChartTheme();
 
   const handleRefresh = useCallback(() => {
     setRefreshing(true);
@@ -188,19 +190,19 @@ export default function Dashboard() {
                 <CardContent className="pt-0">
                   <ResponsiveContainer width="100%" height={220}>
                     <BarChart data={weeklyTrend} barGap={2}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(214, 20%, 90%)" vertical={false} />
-                      <XAxis dataKey="day" tick={{ fontSize: 11, fill: 'hsl(215, 14%, 46%)' }} axisLine={false} tickLine={false} />
-                      <YAxis tick={{ fontSize: 11, fill: 'hsl(215, 14%, 46%)' }} axisLine={false} tickLine={false} width={28} />
+                      <CartesianGrid strokeDasharray="3 3" stroke={chart.gridColor} vertical={false} />
+                      <XAxis dataKey="day" tick={{ fontSize: 11, fill: chart.tickColor }} axisLine={false} tickLine={false} />
+                      <YAxis tick={{ fontSize: 11, fill: chart.tickColor }} axisLine={false} tickLine={false} width={28} />
                       <Tooltip
                         contentStyle={{
-                          backgroundColor: 'hsl(0, 0%, 100%)',
-                          border: '1px solid hsl(214, 20%, 90%)',
+                          backgroundColor: chart.tooltipBg,
+                          border: `1px solid ${chart.tooltipBorder}`,
                           borderRadius: '8px',
                           fontSize: '12px',
                         }}
                       />
-                      <Bar dataKey="alerts" fill="hsl(217, 55%, 22%)" radius={[4, 4, 0, 0]} name="Generated" />
-                      <Bar dataKey="resolved" fill="hsl(142, 71%, 45%)" radius={[4, 4, 0, 0]} name="Resolved" />
+                      <Bar dataKey="alerts" fill={chart.barPrimary} radius={[4, 4, 0, 0]} name="Generated" />
+                      <Bar dataKey="resolved" fill={chart.barSuccess} radius={[4, 4, 0, 0]} name="Resolved" />
                     </BarChart>
                   </ResponsiveContainer>
                 </CardContent>
@@ -235,8 +237,8 @@ export default function Dashboard() {
                       </Pie>
                       <Tooltip
                         contentStyle={{
-                          backgroundColor: 'hsl(0, 0%, 100%)',
-                          border: '1px solid hsl(214, 20%, 90%)',
+                          backgroundColor: chart.tooltipBg,
+                          border: `1px solid ${chart.tooltipBorder}`,
                           borderRadius: '8px',
                           fontSize: '12px',
                         }}
@@ -312,17 +314,17 @@ export default function Dashboard() {
                     <AreaChart data={volumeTrend}>
                       <defs>
                         <linearGradient id="volumeGrad" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="hsl(217, 55%, 22%)" stopOpacity={0.2} />
-                          <stop offset="100%" stopColor="hsl(217, 55%, 22%)" stopOpacity={0} />
+                          <stop offset="0%" stopColor={chart.areaStroke} stopOpacity={0.2} />
+                          <stop offset="100%" stopColor={chart.areaStroke} stopOpacity={0} />
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(214, 20%, 90%)" vertical={false} />
-                      <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'hsl(215, 14%, 46%)' }} axisLine={false} tickLine={false} />
-                      <YAxis tick={{ fontSize: 10, fill: 'hsl(215, 14%, 46%)' }} axisLine={false} tickLine={false} width={28} />
+                      <CartesianGrid strokeDasharray="3 3" stroke={chart.gridColor} vertical={false} />
+                      <XAxis dataKey="date" tick={{ fontSize: 10, fill: chart.tickColor }} axisLine={false} tickLine={false} />
+                      <YAxis tick={{ fontSize: 10, fill: chart.tickColor }} axisLine={false} tickLine={false} width={28} />
                       <Tooltip
                         contentStyle={{
-                          backgroundColor: 'hsl(0, 0%, 100%)',
-                          border: '1px solid hsl(214, 20%, 90%)',
+                          backgroundColor: chart.tooltipBg,
+                          border: `1px solid ${chart.tooltipBorder}`,
                           borderRadius: '8px',
                           fontSize: '12px',
                         }}
@@ -330,7 +332,7 @@ export default function Dashboard() {
                       <Area
                         type="monotone"
                         dataKey="volume"
-                        stroke="hsl(217, 55%, 22%)"
+                        stroke={chart.areaStroke}
                         strokeWidth={2}
                         fill="url(#volumeGrad)"
                         name="Alerts"
