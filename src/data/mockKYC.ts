@@ -1,3 +1,5 @@
+export type KYCStatus = 'Pending' | 'In Review' | 'Escalated' | 'Verified';
+
 export interface KYCCustomer {
   id: string;
   name: string;
@@ -6,8 +8,15 @@ export interface KYCCustomer {
   bvnMatch: 'match' | 'mismatch' | 'pending';
   ninMatch: 'match' | 'mismatch' | 'pending';
   livenessCheck: 'pass' | 'fail' | 'pending';
+  livenessConfidence: number;
   riskTier: 'low' | 'medium' | 'high';
+  kycTier: string;
+  status: KYCStatus;
   submittedAt: string;
+  bvnVerifiedAt?: string;
+  ninVerifiedAt?: string;
+  bvnFailReason?: string;
+  ninFailReason?: string;
   email: string;
   phone: string;
   address: string;
@@ -27,8 +36,13 @@ export const mockKYCCustomers: KYCCustomer[] = [
     bvnMatch: 'match',
     ninMatch: 'match',
     livenessCheck: 'pass',
+    livenessConfidence: 96,
     riskTier: 'low',
+    kycTier: 'Tier 3',
+    status: 'Verified',
     submittedAt: '2026-04-09T08:12:00Z',
+    bvnVerifiedAt: '2026-04-09T08:14:22Z',
+    ninVerifiedAt: '2026-04-09T08:14:25Z',
     email: 'chidinma.okafor@email.com',
     phone: '+234 801 234 5678',
     address: '14 Admiralty Way, Lekki Phase 1, Lagos',
@@ -48,8 +62,13 @@ export const mockKYCCustomers: KYCCustomer[] = [
     bvnMatch: 'match',
     ninMatch: 'mismatch',
     livenessCheck: 'fail',
+    livenessConfidence: 42,
     riskTier: 'high',
+    kycTier: 'Tier 1',
+    status: 'Escalated',
     submittedAt: '2026-04-09T07:45:00Z',
+    bvnVerifiedAt: '2026-04-09T07:47:10Z',
+    ninFailReason: 'Name mismatch — NIN record shows "Emeka C. Nwosuh"',
     email: 'emeka.nwosu@email.com',
     phone: '+234 802 345 6789',
     address: '7 Trans Amadi Road, Port Harcourt',
@@ -67,8 +86,13 @@ export const mockKYCCustomers: KYCCustomer[] = [
     bvnMatch: 'match',
     ninMatch: 'match',
     livenessCheck: 'pending',
+    livenessConfidence: 0,
     riskTier: 'medium',
+    kycTier: 'Tier 2',
+    status: 'In Review',
     submittedAt: '2026-04-09T09:30:00Z',
+    bvnVerifiedAt: '2026-04-09T09:32:05Z',
+    ninVerifiedAt: '2026-04-09T09:32:08Z',
     email: 'fatima.abdullahi@email.com',
     phone: '+234 803 456 7890',
     address: '22 Sultan Road, Kaduna',
@@ -88,8 +112,13 @@ export const mockKYCCustomers: KYCCustomer[] = [
     bvnMatch: 'mismatch',
     ninMatch: 'match',
     livenessCheck: 'pass',
+    livenessConfidence: 61,
     riskTier: 'high',
+    kycTier: 'Tier 2',
+    status: 'In Review',
     submittedAt: '2026-04-08T16:20:00Z',
+    bvnFailReason: 'DOB mismatch — BVN shows 1992, application shows 1990',
+    ninVerifiedAt: '2026-04-08T16:22:30Z',
     email: 'seun.adeyemi@email.com',
     phone: '+234 805 678 9012',
     address: '3 Awolowo Road, Ikoyi, Lagos',
@@ -110,7 +139,10 @@ export const mockKYCCustomers: KYCCustomer[] = [
     bvnMatch: 'pending',
     ninMatch: 'pending',
     livenessCheck: 'pending',
+    livenessConfidence: 0,
     riskTier: 'medium',
+    kycTier: 'Tier 1',
+    status: 'Pending',
     submittedAt: '2026-04-09T10:05:00Z',
     email: 'amina.bello@email.com',
     phone: '+234 806 789 0123',
@@ -129,8 +161,13 @@ export const mockKYCCustomers: KYCCustomer[] = [
     bvnMatch: 'match',
     ninMatch: 'match',
     livenessCheck: 'pass',
+    livenessConfidence: 94,
     riskTier: 'low',
+    kycTier: 'Tier 3',
+    status: 'Verified',
     submittedAt: '2026-04-08T14:50:00Z',
+    bvnVerifiedAt: '2026-04-08T14:52:15Z',
+    ninVerifiedAt: '2026-04-08T14:52:18Z',
     email: 'ike.eze@email.com',
     phone: '+234 807 890 1234',
     address: '9 New Market Road, Onitsha',

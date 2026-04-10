@@ -5,6 +5,8 @@ import { VerificationQueue } from '@/components/VerificationQueue';
 import { EDDWorkspace } from '@/components/EDDWorkspace';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { NotificationBell } from '@/components/NotificationBell';
+import { AuditBell } from '@/components/AuditBell';
+import { Fingerprint } from 'lucide-react';
 import { mockKYCCustomers, type KYCCustomer } from '@/data/mockKYC';
 
 const IdentityKYC = () => {
@@ -14,30 +16,38 @@ const IdentityKYC = () => {
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
         <AppSidebar />
-        <div className="flex-1 flex flex-col">
-          <header className="h-14 flex items-center justify-between border-b px-4 bg-card">
+        <div className="flex-1 flex flex-col min-h-0">
+          <header className="h-14 flex items-center justify-between border-b px-6 bg-card shrink-0">
             <div className="flex items-center gap-2">
               <SidebarTrigger />
-              <h1 className="text-sm font-semibold text-foreground">Identity & KYC Ops</h1>
+              <Fingerprint className="h-5 w-5 text-primary" />
+              <div>
+                <h1 className="text-sm font-semibold text-foreground">Identity & KYC Ops</h1>
+                <p className="text-[10px] text-muted-foreground -mt-0.5">Verification & Enhanced Due Diligence</p>
+              </div>
             </div>
             <div className="flex items-center gap-2">
-              <ThemeToggle />
+              <AuditBell />
               <NotificationBell />
+              <ThemeToggle />
             </div>
           </header>
 
-          <main className="flex-1 overflow-y-auto p-6 bg-background space-y-6">
-            <div className="min-h-[280px]">
+          <div className="flex flex-1 min-h-0">
+            {/* Left pane — Queue */}
+            <div className="w-[320px] border-r flex flex-col bg-muted/20 shrink-0">
               <VerificationQueue
                 customers={mockKYCCustomers}
                 selectedId={selected?.id ?? null}
                 onSelect={setSelected}
               />
             </div>
-            <div className="border-t pt-6">
+
+            {/* Right pane — EDD Workspace */}
+            <div className="flex-1 flex flex-col min-h-0">
               <EDDWorkspace customer={selected} />
             </div>
-          </main>
+          </div>
         </div>
       </div>
     </SidebarProvider>
