@@ -12,6 +12,9 @@ import { Separator } from '@/components/ui/separator';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { mockSanctionsMatches, type SanctionsMatch } from '@/data/mockSanctions';
+import { BulkDismissDialog } from '@/components/sanctions/BulkDismissDialog';
+import { BulkEscalateDialog } from '@/components/sanctions/BulkEscalateDialog';
+import { useAuditLog } from '@/hooks/useAuditLog';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ShieldAlert, ShieldCheck, ShieldX, User, Globe, Calendar,
@@ -122,10 +125,13 @@ function MatchCard({ match, isSelected, isChecked, onClick, onCheck }: {
 
 export default function SanctionsScreening() {
   const { toast } = useToast();
+  const { append } = useAuditLog();
   const [matches, setMatches] = useState(mockSanctionsMatches);
   const [selectedId, setSelectedId] = useState(mockSanctionsMatches[0].id);
   const [analystNotes, setAnalystNotes] = useState('');
   const [checkedIds, setCheckedIds] = useState<Set<string>>(new Set());
+  const [bulkDismissOpen, setBulkDismissOpen] = useState(false);
+  const [bulkEscalateOpen, setBulkEscalateOpen] = useState(false);
 
   const pendingMatches = matches.filter((m) => m.status === 'Pending');
   const allPendingChecked = pendingMatches.length > 0 && pendingMatches.every((m) => checkedIds.has(m.id));
@@ -146,17 +152,23 @@ export default function SanctionsScreening() {
     }
   };
 
-  const handleBulkDismiss = () => {
-    const ids = [...checkedIds].filter((id) => matches.find((m) => m.id === id)?.status === 'Pending');
-    setMatches((prev) => prev.map((m) => ids.includes(m.id) ? { ...m, status: 'Dismissed' as const } : m));
-    toast({ title: 'Bulk Dismissed', description: `${ids.length} match(es) cleared as false positives.` });
+  const checkedPendingIds = [...checkedIds].filter((id) => matches.find((m) => m.id === id)?.status === 'Pending');
+
+  const handleBulkDismissConfirmed = (justification: string) => {
+    setMatches((prev) => prev.map((m) => checkedPendingIds.includes(m.id) ? { ...m, status: 'Dismissed' as const } : m));
+    checkedPendingIds.forEach((id) => {
+      append({ action: 'NFIU_ESCALATION', analyst: 'mock-analyst-001', caseId: id, justification: `[BULK DISMISS] ${justification}` });
+    });
+    toast({ title: 'Bulk Dismissed', description: `${checkedPendingIds.length} match(es) cleared as false positives. Justification recorded.` });
     setCheckedIds(new Set());
   };
 
-  const handleBulkEscalate = () => {
-    const ids = [...checkedIds].filter((id) => matches.find((m) => m.id === id)?.status === 'Pending');
-    setMatches((prev) => prev.map((m) => ids.includes(m.id) ? { ...m, status: 'Confirmed' as const } : m));
-    toast({ title: 'Bulk Escalated', description: `${ids.length} match(es) confirmed. Accounts frozen & STRs queued.` });
+  const handleBulkEscalateConfirmed = (justification: string) => {
+    setMatches((prev) => prev.map((m) => checkedPendingIds.includes(m.id) ? { ...m, status: 'Confirmed' as const } : m));
+    checkedPendingIds.forEach((id) => {
+      append({ action: 'ACCOUNT_FREEZE', analyst: 'mock-analyst-001', caseId: id, justification: `[BULK ESCALATE] ${justification}` });
+    });
+    toast({ title: 'Bulk Escalated', description: `${checkedPendingIds.length} match(es) confirmed. Accounts frozen & STRs queued.` });
     setCheckedIds(new Set());
   };
 
@@ -258,11 +270,11 @@ export default function SanctionsScreening() {
                   >
                     <p className="text-[10px] text-muted-foreground text-center mb-1.5">{checkedPendingCount} selected</p>
                     <div className="flex gap-1.5">
-                      <Button variant="outline" size="sm" className="flex-1 text-xs h-8" onClick={handleBulkDismiss}>
+                      <Button variant="outline" size="sm" className="flex-1 text-xs h-8" onClick={() => setBulkDismissOpen(true)}>
                         <ShieldCheck className="h-3.5 w-3.5 mr-1" />
                         Bulk Dismiss
                       </Button>
-                      <Button size="sm" className="flex-1 text-xs h-8 bg-destructive hover:bg-destructive/90 text-destructive-foreground" onClick={handleBulkEscalate}>
+                      <Button size="sm" className="flex-1 text-xs h-8 bg-destructive hover:bg-destructive/90 text-destructive-foreground" onClick={() => setBulkEscalateOpen(true)}>
                         <XCircle className="h-3.5 w-3.5 mr-1" />
                         Bulk Escalate
                       </Button>
@@ -417,6 +429,8 @@ export default function SanctionsScreening() {
           </div>
         </div>
       </div>
+      <BulkDismissDialog open={bulkDismissOpen} onOpenChange={setBulkDismissOpen} count={checkedPendingCount} onConfirmed={handleBulkDismissConfirmed} />
+      <BulkEscalateDialog open={bulkEscalateOpen} onOpenChange={setBulkEscalateOpen} count={checkedPendingCount} onConfirmed={handleBulkEscalateConfirmed} />
     </SidebarProvider>
   );
 }
