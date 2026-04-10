@@ -208,6 +208,7 @@ export default function AlertWorkspace() {
               <AuditBell />
               <ThemeToggle />
             </div>
+          </div>
 
           {/* Split pane */}
           <div className="flex flex-1 min-h-0">
