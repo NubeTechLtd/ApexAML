@@ -204,8 +204,10 @@ export default function AlertWorkspace() {
               <Shield className="h-5 w-5 text-primary" />
               <h1 className="text-lg font-bold text-foreground">Alert Workspace</h1>
             </div>
-            <ThemeToggle />
-          </div>
+            <div className="flex items-center gap-2">
+              <AuditBell />
+              <ThemeToggle />
+            </div>
 
           {/* Split pane */}
           <div className="flex flex-1 min-h-0">
