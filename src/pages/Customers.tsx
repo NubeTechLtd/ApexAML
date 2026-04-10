@@ -213,7 +213,10 @@ export default function Customers() {
               </h1>
               <p className="text-sm text-muted-foreground mt-1">Manage customer profiles, risk levels, and KYC tiers</p>
             </div>
-            <ThemeToggle />
+            <div className="flex items-center gap-2">
+              <AuditBell />
+              <ThemeToggle />
+            </div>
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
@@ -359,7 +362,7 @@ export default function Customers() {
                 <Button size="sm" variant="outline" className="gap-1.5 text-emerald-600 border-emerald-500/30 hover:bg-emerald-500/10" onClick={() => handleBulkAction('clear')}>
                   <ShieldCheck className="h-3.5 w-3.5" /> Clear
                 </Button>
-                <Button size="sm" variant="destructive" className="gap-1.5" onClick={() => handleBulkAction('escalate')}>
+                <Button size="sm" variant="destructive" className="gap-1.5" onClick={() => setBulkEscalateOpen(true)}>
                   <ShieldAlert className="h-3.5 w-3.5" /> Escalate
                 </Button>
                 <Button size="icon" variant="ghost" className="h-8 w-8 ml-1" onClick={() => setCheckedIds(new Set())}>
