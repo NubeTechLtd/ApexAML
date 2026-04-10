@@ -100,9 +100,10 @@ function LivenessRow({ status, confidence, onReverify }: {
 
 interface EDDWorkspaceProps {
   customer: KYCCustomer | null;
+  onTierUpgrade?: (newTier: string) => void;
 }
 
-export function EDDWorkspace({ customer }: EDDWorkspaceProps) {
+export function EDDWorkspace({ customer, onTierUpgrade }: EDDWorkspaceProps) {
   const [auditLog, setAuditLog] = useState<AuditEntry[]>([]);
   const [reverifying, setReverifying] = useState<Record<string, boolean>>({});
 
