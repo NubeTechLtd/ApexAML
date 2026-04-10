@@ -296,6 +296,12 @@ export default function Customers() {
             <BulkAuditLog entries={bulkAuditEntries} />
           </div>
 
+          {activeFilterLabel && (
+            <div className="flex items-center">
+              <ActiveFilterChip label={activeFilterLabel} onClear={clearFilterParams} />
+            </div>
+          )}
+
           <div className="rounded-xl border border-border bg-card">
             <Table>
               <TableHeader>
