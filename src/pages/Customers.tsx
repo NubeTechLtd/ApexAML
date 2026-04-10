@@ -381,14 +381,14 @@ export default function Customers() {
               >
                 <span className="text-sm font-medium text-foreground">{checkedIds.size} selected</span>
                 <div className="h-4 w-px bg-border" />
-                <Button size="sm" variant="outline" className="gap-1.5" onClick={() => handleBulkAction('flag')}>
+                <Button size="sm" variant="outline" className="gap-1.5" onClick={() => setBulkFlagOpen(true)}>
                   <ShieldAlert className="h-3.5 w-3.5" /> Flag for Review
                 </Button>
-                <Button size="sm" variant="outline" className="gap-1.5 text-emerald-600 border-emerald-500/30 hover:bg-emerald-500/10" onClick={() => handleBulkAction('clear')}>
+                <Button size="sm" variant="outline" className="gap-1.5" onClick={() => setBulkClearOpen(true)}>
                   <ShieldCheck className="h-3.5 w-3.5" /> Clear
                 </Button>
-                <Button size="sm" variant="destructive" className="gap-1.5" onClick={() => setBulkEscalateOpen(true)}>
-                  <ShieldAlert className="h-3.5 w-3.5" /> Escalate
+                <Button size="sm" variant="destructive" className="gap-1.5" onClick={() => setBulkFreezeOpen(true)}>
+                  <Snowflake className="h-3.5 w-3.5" /> Freeze / Escalate
                 </Button>
                 <Button size="icon" variant="ghost" className="h-8 w-8 ml-1" onClick={() => setCheckedIds(new Set())}>
                   <X className="h-3.5 w-3.5" />
