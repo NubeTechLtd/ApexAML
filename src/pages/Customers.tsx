@@ -281,6 +281,7 @@ export default function Customers() {
             <Button variant="outline" size="sm" className="gap-1.5 h-8 text-xs" onClick={exportCsv}>
               <Download className="h-3 w-3" /> Export
             </Button>
+            <BulkAuditLog entries={bulkAuditEntries} />
           </div>
 
           <div className="rounded-xl border border-border bg-card">
