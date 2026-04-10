@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect, useRef } from 'react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { Users, Search, Filter, ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown, Download, ShieldAlert, ShieldCheck, X, UserCheck, Clock, Snowflake } from 'lucide-react';
+import { NotificationBell } from '@/components/NotificationBell';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { AuditBell } from '@/components/AuditBell';
 import { ConfirmEscalationDialog } from '@/components/ConfirmEscalationDialog';

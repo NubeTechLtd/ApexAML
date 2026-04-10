@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { NotificationBell } from '@/components/NotificationBell';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -203,7 +204,10 @@ export default function SanctionsScreening() {
                 {pendingMatches.length} pending
               </Badge>
             </div>
-            <ThemeToggle />
+            <div className="flex items-center gap-2">
+              <NotificationBell />
+              <ThemeToggle />
+            </div>
           </div>
 
           {/* SLA Warning Banner */}

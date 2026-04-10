@@ -1,4 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
+import { NotificationBell } from '@/components/NotificationBell';
 import { useState } from 'react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
@@ -110,6 +111,7 @@ export default function Customer360() {
                   </DropdownMenuContent>
                 </DropdownMenu>
                 <AuditBell />
+                <NotificationBell />
                 <ThemeToggle />
               </div>
             </div>

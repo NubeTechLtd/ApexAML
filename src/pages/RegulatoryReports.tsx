@@ -5,7 +5,8 @@ import { ComplianceTimeline } from '@/components/ComplianceTimeline';
 import { ComplianceMetrics } from '@/components/ComplianceMetrics';
 import { CTRTable } from '@/components/CTRTable';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Bell, Download } from 'lucide-react';
+import { Download } from 'lucide-react';
+import { NotificationBell } from '@/components/NotificationBell';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
@@ -37,9 +38,7 @@ const RegulatoryReports = () => {
                 Export PDF
               </Button>
               <ThemeToggle />
-              <button className="relative flex h-8 w-8 items-center justify-center rounded-md hover:bg-muted transition-colors">
-                <Bell className="h-4 w-4 text-muted-foreground" />
-              </button>
+              <NotificationBell />
             </div>
           </header>
 
