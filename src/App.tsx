@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AuditLogProvider } from "@/hooks/useAuditLog";
+import { NotificationsProvider } from "@/hooks/useNotifications";
 import Index from "./pages/Index.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
 import RulesEngine from "./pages/RulesEngine.tsx";
@@ -24,6 +25,7 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
       <AuditLogProvider>
+      <NotificationsProvider>
       <TooltipProvider>
         <Toaster />
         <Sonner />
@@ -46,6 +48,7 @@ const App = () => (
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
+      </NotificationsProvider>
       </AuditLogProvider>
     </ThemeProvider>
   </QueryClientProvider>
