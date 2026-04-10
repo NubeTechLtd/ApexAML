@@ -170,22 +170,36 @@ export default function Customers() {
     });
   };
 
-  const handleBulkAction = (action: string) => {
-    const count = checkedIds.size;
-    const names = customers.filter(c => checkedIds.has(c.id)).map(c => c.name);
+  const selectedNames = useMemo(() => customers.filter(c => checkedIds.has(c.id)).map(c => c.name), [checkedIds]);
+  const selectedIds = useMemo(() => Array.from(checkedIds), [checkedIds]);
+
+  const applyBulkAction = useCallback((action: 'flag' | 'clear' | 'escalate', justification?: string) => {
     const ids = Array.from(checkedIds);
-    if (action === 'flag') {
-      setStatuses(prev => { const next = { ...prev }; ids.forEach(id => next[id] = 'Under Review'); return next; });
-      toast.warning(`Flagged ${count} customer(s) for review`, { description: names.join(', ') });
-    } else if (action === 'clear') {
-      setStatuses(prev => { const next = { ...prev }; ids.forEach(id => next[id] = 'Active'); return next; });
-      toast.success(`Cleared ${count} customer(s)`, { description: names.join(', ') });
-    } else if (action === 'escalate') {
-      setStatuses(prev => { const next = { ...prev }; ids.forEach(id => next[id] = 'Frozen'); return next; });
-      toast.error(`Escalated ${count} customer(s) to compliance`, { description: names.join(', ') });
+    const names = customers.filter(c => checkedIds.has(c.id)).map(c => c.name);
+    const prevStatuses = { ...statuses };
+    const newStatus: CustomerStatus = action === 'flag' ? 'Under Review' : action === 'clear' ? 'Active' : 'Frozen';
+    setStatuses(prev => { const next = { ...prev }; ids.forEach(id => next[id] = newStatus); return next; });
+
+    const auditEntry: BulkAuditEntry = {
+      id: crypto.randomUUID(), timestamp: new Date().toISOString(),
+      type: action, analyst: 'mock-analyst-001', customers: names, justification,
+    };
+
+    if (action === 'escalate') {
+      toast.error(`Froze ${names.length} customer account(s)`, {
+        description: names.join(', '), duration: 5000,
+        action: { label: 'Undo', onClick: () => { setStatuses(prevStatuses); if (undoRef.current) clearTimeout(undoRef.current); toast.info('Freeze undone'); } },
+      });
+      undoRef.current = setTimeout(() => {
+        setBulkAuditEntries(prev => [...prev, auditEntry]);
+        append({ action: 'ACCOUNT_FREEZE', analyst: 'mock-analyst-001', caseId: `BULK-${ids.join('-')}`, justification: justification || '' });
+      }, 5000);
+    } else {
+      setBulkAuditEntries(prev => [...prev, auditEntry]);
+      (action === 'flag' ? toast.warning : toast.success)(`${action === 'flag' ? 'Flagged' : 'Cleared'} ${names.length} customer(s)`, { description: names.join(', ') });
     }
     setCheckedIds(new Set());
-  };
+  }, [checkedIds, statuses, append]);
 
   const handleSearchChange = (val: string) => {
     setSearch(val);
