@@ -14,6 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 import { mockSanctionsMatches, type SanctionsMatch } from '@/data/mockSanctions';
 import { BulkDismissDialog } from '@/components/sanctions/BulkDismissDialog';
 import { BulkEscalateDialog } from '@/components/sanctions/BulkEscalateDialog';
+import { AdverseMediaSection } from '@/components/sanctions/AdverseMediaSection';
 import { useAuditLog } from '@/hooks/useAuditLog';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -371,6 +372,9 @@ export default function SanctionsScreening() {
                     </Card>
                   </div>
                 </motion.div>
+
+                {/* Adverse Media */}
+                <AdverseMediaSection matchId={selected.id} matchScore={selected.matchScore} />
 
                 <Separator />
 
