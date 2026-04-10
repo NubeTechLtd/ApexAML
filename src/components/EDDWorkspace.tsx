@@ -15,6 +15,7 @@ import {
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import type { KYCCustomer } from '@/data/mockKYC';
+import { TierManagement } from '@/components/kyc/TierManagement';
 
 interface AuditEntry {
   id: string;
@@ -315,6 +316,13 @@ export function EDDWorkspace({ customer }: EDDWorkspaceProps) {
               </CardContent>
             </Card>
           </div>
+
+          <Separator />
+
+          {/* KYC Tier Management */}
+          {onTierUpgrade && (
+            <TierManagement customer={customer} onTierUpgrade={onTierUpgrade} addAudit={addAudit} />
+          )}
 
           <Separator />
 
