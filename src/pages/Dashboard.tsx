@@ -6,7 +6,6 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 import { AlertTriangle, ShieldCheck, TrendingUp, TrendingDown, Clock, Users, FileText, ArrowUpRight, ArrowDownRight, RefreshCw, Loader2 } from 'lucide-react';
 import { NotificationBell } from '@/components/NotificationBell';
 import { Button } from '@/components/ui/button';
-import { NotificationBell } from '@/components/NotificationBell';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { mockLegacyAlerts as mockAlerts } from '@/data/mockLegacyAlerts';
@@ -107,6 +106,18 @@ const statusBadgeClass: Record<string, string> = {
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const [refreshing, setRefreshing] = useState(false);
+  const [lastRefreshed, setLastRefreshed] = useState(() => new Date());
+
+  const handleRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => { setRefreshing(false); setLastRefreshed(new Date()); }, 1200);
+  }, []);
+
+  const formattedTime = useMemo(() => {
+    return `Today ${lastRefreshed.toLocaleTimeString('en-NG', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Africa/Lagos' })} WAT`;
+  }, [lastRefreshed]);
+
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-background">
@@ -122,7 +133,10 @@ export default function Dashboard() {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <span className="text-[10px] text-muted-foreground">Last updated: Today, 08:32 WAT</span>
+              <span className="text-[10px] text-muted-foreground">Last refreshed: {formattedTime}</span>
+              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleRefresh} disabled={refreshing}>
+                {refreshing ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+              </Button>
               <ThemeToggle />
               <NotificationBell />
             </div>
