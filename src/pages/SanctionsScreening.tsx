@@ -12,6 +12,9 @@ import { Separator } from '@/components/ui/separator';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { mockSanctionsMatches, type SanctionsMatch } from '@/data/mockSanctions';
+import { BulkDismissDialog } from '@/components/sanctions/BulkDismissDialog';
+import { BulkEscalateDialog } from '@/components/sanctions/BulkEscalateDialog';
+import { useAuditLog } from '@/hooks/useAuditLog';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ShieldAlert, ShieldCheck, ShieldX, User, Globe, Calendar,
