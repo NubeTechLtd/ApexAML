@@ -10,7 +10,16 @@ import { Fingerprint } from 'lucide-react';
 import { mockKYCCustomers, type KYCCustomer } from '@/data/mockKYC';
 
 const IdentityKYC = () => {
-  const [selected, setSelected] = useState<KYCCustomer | null>(null);
+  const [customers, setCustomers] = useState(mockKYCCustomers);
+  const selected = customers.find(c => c.id === selectedId) ?? null;
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  const handleSelect = (c: KYCCustomer) => setSelectedId(c.id);
+
+  const handleTierUpgrade = (newTier: string) => {
+    if (!selectedId) return;
+    setCustomers(prev => prev.map(c => c.id === selectedId ? { ...c, kycTier: newTier } : c));
+  };
 
   return (
     <SidebarProvider>
@@ -45,7 +54,7 @@ const IdentityKYC = () => {
 
             {/* Right pane — EDD Workspace */}
             <div className="flex-1 flex flex-col min-h-0">
-              <EDDWorkspace customer={selected} />
+              <EDDWorkspace customer={selected} onTierUpgrade={handleTierUpgrade} />
             </div>
           </div>
         </div>
