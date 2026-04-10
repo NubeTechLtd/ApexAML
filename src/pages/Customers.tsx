@@ -404,16 +404,9 @@ export default function Customers() {
           {selectedId !== null && <Customer360Content customerId={selectedId} onClose={() => setSelectedId(null)} />}
         </SheetContent>
       </Sheet>
-      <ConfirmEscalationDialog
-        open={bulkEscalateOpen}
-        onOpenChange={setBulkEscalateOpen}
-        customerName={customers.filter(c => checkedIds.has(c.id)).map(c => c.name).join(', ')}
-        caseId={`BULK-${Array.from(checkedIds).join('-')}`}
-        action="NFIU_ESCALATION"
-        onConfirmed={() => {
-          handleBulkAction('escalate');
-        }}
-      />
+      <BulkConfirmDialog open={bulkFlagOpen} onOpenChange={setBulkFlagOpen} action="flag" customerNames={selectedNames} onConfirmed={() => applyBulkAction('flag')} />
+      <BulkConfirmDialog open={bulkClearOpen} onOpenChange={setBulkClearOpen} action="clear" customerNames={selectedNames} onConfirmed={() => applyBulkAction('clear')} />
+      <BulkFreezeDialog open={bulkFreezeOpen} onOpenChange={setBulkFreezeOpen} customerNames={selectedNames} onConfirmed={(j) => applyBulkAction('escalate', j)} />
     </SidebarProvider>
   );
 }
