@@ -159,7 +159,7 @@ export default function Dashboard() {
                         <p className="text-2xl font-bold text-foreground">{kpi.value}</p>
                         <p className="text-[11px] text-muted-foreground flex items-center gap-1">
                           {kpi.trend === 'up' && <ArrowUpRight className="h-3 w-3 text-[hsl(var(--risk-high))]" />}
-                          {kpi.trend === 'up-good' && <ArrowUpRight className="h-3 w-3 text-[hsl(var(--risk-low))]" />}
+                          {(kpi.trend as string) === 'up-good' && <ArrowUpRight className="h-3 w-3 text-[hsl(var(--risk-low))]" />}
                           {kpi.trend === 'down-good' && <ArrowDownRight className="h-3 w-3 text-[hsl(var(--risk-low))]" />}
                           {kpi.subtitle}
                         </p>
