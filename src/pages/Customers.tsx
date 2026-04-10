@@ -1,4 +1,6 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { ActiveFilterChip } from '@/components/ActiveFilterChip';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { Users, Search, Filter, ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown, Download, ShieldAlert, ShieldCheck, X, UserCheck, Clock, Snowflake } from 'lucide-react';
@@ -68,16 +70,26 @@ function SortIcon({ column, sortKey, sortDir }: { column: SortKey; sortKey: Sort
 }
 
 export default function Customers() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [sortKey, setSortKey] = useState<SortKey | null>(null);
   const [sortDir, setSortDir] = useState<SortDir>('asc');
-  const [riskFilter, setRiskFilter] = useState<string>('all');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const riskParam = searchParams.get('risk');
+  const statusParam = searchParams.get('status');
+  const [riskFilter, setRiskFilter] = useState<string>(riskParam || 'all');
+  const [statusFilter, setStatusFilter] = useState<string>(statusParam || 'all');
   const [checkedIds, setCheckedIds] = useState<Set<number>>(new Set());
   const [statuses, setStatuses] = useState<Record<number, CustomerStatus>>({});
+
+  const activeFilterLabel = riskParam ? `${riskParam} risk` : statusParam ? `${statusParam} customers` : null;
+  const clearFilterParams = useCallback(() => {
+    setSearchParams({});
+    setRiskFilter('all');
+    setStatusFilter('all');
+  }, [setSearchParams]);
   const [bulkFreezeOpen, setBulkFreezeOpen] = useState(false);
   const [bulkFlagOpen, setBulkFlagOpen] = useState(false);
   const [bulkClearOpen, setBulkClearOpen] = useState(false);
@@ -283,6 +295,12 @@ export default function Customers() {
             </Button>
             <BulkAuditLog entries={bulkAuditEntries} />
           </div>
+
+          {activeFilterLabel && (
+            <div className="flex items-center">
+              <ActiveFilterChip label={activeFilterLabel} onClear={clearFilterParams} />
+            </div>
+          )}
 
           <div className="rounded-xl border border-border bg-card">
             <Table>

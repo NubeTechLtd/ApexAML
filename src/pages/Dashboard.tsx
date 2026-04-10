@@ -1,9 +1,11 @@
+import { useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { AlertTriangle, ShieldCheck, TrendingUp, TrendingDown, Clock, Users, FileText, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { AlertTriangle, ShieldCheck, TrendingUp, TrendingDown, Clock, Users, FileText, ArrowUpRight, ArrowDownRight, RefreshCw, Loader2 } from 'lucide-react';
 import { NotificationBell } from '@/components/NotificationBell';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { mockLegacyAlerts as mockAlerts } from '@/data/mockLegacyAlerts';
@@ -37,26 +39,30 @@ const volumeTrend = [
   { date: 'Apr 07', volume: 56 },
 ];
 
+const openAlerts = mockAlerts.filter(a => a.status === 'Open').length;
+const criticalAlerts = mockAlerts.filter(a => a.riskLevel === 'Critical' && a.status === 'Open').length;
+const escalatedAlerts = mockAlerts.filter(a => a.status === 'Escalated').length;
+
 const kpiCards = [
   {
     title: 'Open Alerts',
-    value: mockAlerts.filter(a => a.status === 'Open').length,
-    subtitle: '+3 since yesterday',
+    value: openAlerts,
+    subtitle: `${criticalAlerts} critical alert${criticalAlerts !== 1 ? 's' : ''}`,
     trend: 'up' as const,
     icon: AlertTriangle,
     accent: 'text-[hsl(var(--risk-high))]',
     bg: 'bg-[hsl(var(--risk-high))]/8',
-    link: '/?status=Open',
+    link: '/alerts?status=Open',
   },
   {
-    title: 'Resolved (MTD)',
-    value: 142,
-    subtitle: '94% resolution rate',
-    trend: 'up-good' as const,
-    icon: ShieldCheck,
-    accent: 'text-[hsl(var(--risk-low))]',
-    bg: 'bg-[hsl(var(--risk-low))]/8',
-    link: '/?status=Dismissed',
+    title: 'Critical Alerts',
+    value: criticalAlerts,
+    subtitle: `${criticalAlerts} requiring immediate action`,
+    trend: 'up' as const,
+    icon: AlertTriangle,
+    accent: 'text-destructive',
+    bg: 'bg-destructive/8',
+    link: '/alerts?risk=Critical',
   },
   {
     title: 'Avg. Resolution Time',
@@ -66,17 +72,17 @@ const kpiCards = [
     icon: Clock,
     accent: 'text-primary',
     bg: 'bg-primary/8',
-    link: '/?status=Under Review',
+    link: '/alerts?status=Under Review',
   },
   {
     title: 'STRs Filed (MTD)',
-    value: 23,
-    subtitle: '5 pending review',
+    value: escalatedAlerts,
+    subtitle: `${escalatedAlerts} escalated cases`,
     trend: 'neutral' as const,
     icon: FileText,
     accent: 'text-[hsl(var(--risk-medium))]',
     bg: 'bg-[hsl(var(--risk-medium))]/8',
-    link: '/?status=Escalated',
+    link: '/alerts?status=Escalated',
   },
 ];
 
@@ -100,6 +106,18 @@ const statusBadgeClass: Record<string, string> = {
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const [refreshing, setRefreshing] = useState(false);
+  const [lastRefreshed, setLastRefreshed] = useState(() => new Date());
+
+  const handleRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => { setRefreshing(false); setLastRefreshed(new Date()); }, 1200);
+  }, []);
+
+  const formattedTime = useMemo(() => {
+    return `Today ${lastRefreshed.toLocaleTimeString('en-NG', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Africa/Lagos' })} WAT`;
+  }, [lastRefreshed]);
+
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-background">
@@ -115,7 +133,10 @@ export default function Dashboard() {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <span className="text-[10px] text-muted-foreground">Last updated: Today, 08:32 WAT</span>
+              <span className="text-[10px] text-muted-foreground">Last refreshed: {formattedTime}</span>
+              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleRefresh} disabled={refreshing}>
+                {refreshing ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+              </Button>
               <ThemeToggle />
               <NotificationBell />
             </div>
@@ -138,7 +159,7 @@ export default function Dashboard() {
                         <p className="text-2xl font-bold text-foreground">{kpi.value}</p>
                         <p className="text-[11px] text-muted-foreground flex items-center gap-1">
                           {kpi.trend === 'up' && <ArrowUpRight className="h-3 w-3 text-[hsl(var(--risk-high))]" />}
-                          {kpi.trend === 'up-good' && <ArrowUpRight className="h-3 w-3 text-[hsl(var(--risk-low))]" />}
+                          {(kpi.trend as string) === 'up-good' && <ArrowUpRight className="h-3 w-3 text-[hsl(var(--risk-low))]" />}
                           {kpi.trend === 'down-good' && <ArrowDownRight className="h-3 w-3 text-[hsl(var(--risk-low))]" />}
                           {kpi.subtitle}
                         </p>

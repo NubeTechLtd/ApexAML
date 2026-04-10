@@ -1,4 +1,6 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { ActiveFilterChip } from '@/components/ActiveFilterChip';
 import { NotificationBell } from '@/components/NotificationBell';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
@@ -96,9 +98,18 @@ function MiniAlertCard({ alert, isSelected, onClick }: { alert: Alert; isSelecte
 
 export default function AlertWorkspace() {
   const { toast } = useToast();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState('');
   const [selectedId, setSelectedId] = useState<string>(mockAlerts[0].id);
   const [escalateOpen, setEscalateOpen] = useState(false);
+
+  const riskParam = searchParams.get('risk');
+  const statusParam = searchParams.get('status');
+  const activeFilterLabel = riskParam ? `${riskParam} risk` : statusParam ? `${statusParam} alerts` : null;
+
+  const clearFilterParams = useCallback(() => {
+    setSearchParams({});
+  }, [setSearchParams]);
 
   // STR state
   const [strDraft, setStrDraft] = useState('');
@@ -113,16 +124,16 @@ export default function AlertWorkspace() {
   const filtered = useMemo(() => {
     return mockAlerts.filter((a) => {
       const q = search.toLowerCase();
-      return (
-        a.status === 'Open' || a.status === 'Under Review'
-      ) && (
+      const matchesStatus = statusParam ? a.status === statusParam : (a.status === 'Open' || a.status === 'Under Review');
+      const matchesRisk = riskParam ? a.riskLevel === riskParam : true;
+      return matchesStatus && matchesRisk && (
         !q ||
         a.customerProfile.fullName.toLowerCase().includes(q) ||
         a.caseId.toLowerCase().includes(q) ||
         a.ruleTriggered.toLowerCase().includes(q)
       );
     });
-  }, [search]);
+  }, [search, riskParam, statusParam]);
 
   const selected = filtered.find((a) => a.id === selectedId) || filtered[0];
 
@@ -226,9 +237,12 @@ export default function AlertWorkspace() {
                     className="pl-8 h-8 text-sm bg-background"
                   />
                 </div>
-                <p className="text-[11px] text-muted-foreground mt-2">
-                  {filtered.length} alert{filtered.length !== 1 ? 's' : ''} requiring action
-                </p>
+                <div className="flex items-center gap-2 mt-2">
+                  <p className="text-[11px] text-muted-foreground">
+                    {filtered.length} alert{filtered.length !== 1 ? 's' : ''} requiring action
+                  </p>
+                  {activeFilterLabel && <ActiveFilterChip label={activeFilterLabel} onClear={clearFilterParams} />}
+                </div>
               </div>
               <ScrollArea className="flex-1">
                 <div className="p-2 space-y-1">
