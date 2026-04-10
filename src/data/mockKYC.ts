@@ -1,3 +1,5 @@
+export type KYCStatus = 'Pending' | 'In Review' | 'Escalated' | 'Verified';
+
 export interface KYCCustomer {
   id: string;
   name: string;
@@ -6,8 +8,15 @@ export interface KYCCustomer {
   bvnMatch: 'match' | 'mismatch' | 'pending';
   ninMatch: 'match' | 'mismatch' | 'pending';
   livenessCheck: 'pass' | 'fail' | 'pending';
+  livenessConfidence: number;
   riskTier: 'low' | 'medium' | 'high';
+  kycTier: string;
+  status: KYCStatus;
   submittedAt: string;
+  bvnVerifiedAt?: string;
+  ninVerifiedAt?: string;
+  bvnFailReason?: string;
+  ninFailReason?: string;
   email: string;
   phone: string;
   address: string;
