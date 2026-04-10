@@ -22,6 +22,8 @@ import { Customer360IdentityCard } from '@/components/customer360/IdentityCard';
 import { Customer360RiskRadar } from '@/components/customer360/RiskRadar';
 import { Customer360Entities } from '@/components/customer360/EntitiesCard';
 import { Customer360Tabs } from '@/components/customer360/DeepDiveTabs';
+import { AuditBell } from '@/components/AuditBell';
+import { ConfirmEscalationDialog } from '@/components/ConfirmEscalationDialog';
 
 const riskColors: Record<string, string> = {
   High: 'bg-destructive/10 text-destructive border-destructive/20',
@@ -33,6 +35,8 @@ export default function Customer360() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const customer = customer360Data[Number(id)];
+  const [freezeOpen, setFreezeOpen] = useState(false);
+  const [escalateOpen, setEscalateOpen] = useState(false);
 
   if (!customer) {
     return (
@@ -94,17 +98,18 @@ export default function Customer360() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => toast.warning('Account frozen pending review')}>
+                    <DropdownMenuItem onClick={() => setFreezeOpen(true)}>
                       <Snowflake className="h-4 w-4 mr-2" /> Freeze Account
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => toast.info('EDD workflow triggered')}>
-                      <ShieldAlert className="h-4 w-4 mr-2" /> Trigger EDD
+                    <DropdownMenuItem onClick={() => setEscalateOpen(true)}>
+                      <ShieldAlert className="h-4 w-4 mr-2" /> Escalate to NFIU
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => toast.success('NFIU profile downloaded')}>
                       <Download className="h-4 w-4 mr-2" /> Download NFIU Profile
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
+                <AuditBell />
                 <ThemeToggle />
               </div>
             </div>
@@ -133,6 +138,22 @@ export default function Customer360() {
             </motion.div>
           </div>
         </main>
+        <ConfirmEscalationDialog
+          open={freezeOpen}
+          onOpenChange={setFreezeOpen}
+          customerName={customer.name}
+          caseId={`ACCT-${id}`}
+          action="ACCOUNT_FREEZE"
+          onConfirmed={() => toast.warning('Account frozen pending review')}
+        />
+        <ConfirmEscalationDialog
+          open={escalateOpen}
+          onOpenChange={setEscalateOpen}
+          customerName={customer.name}
+          caseId={`ACCT-${id}`}
+          action="NFIU_ESCALATION"
+          onConfirmed={() => toast.error('Escalated to NFIU')}
+        />
       </div>
     </SidebarProvider>
   );
