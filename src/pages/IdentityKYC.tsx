@@ -10,9 +10,9 @@ import { Fingerprint } from 'lucide-react';
 import { mockKYCCustomers, type KYCCustomer } from '@/data/mockKYC';
 
 const IdentityKYC = () => {
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [customers, setCustomers] = useState(mockKYCCustomers);
   const selected = customers.find(c => c.id === selectedId) ?? null;
-  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const handleSelect = (c: KYCCustomer) => setSelectedId(c.id);
 
@@ -43,16 +43,13 @@ const IdentityKYC = () => {
           </header>
 
           <div className="flex flex-1 min-h-0">
-            {/* Left pane — Queue */}
             <div className="w-[320px] border-r flex flex-col bg-muted/20 shrink-0">
               <VerificationQueue
-                customers={mockKYCCustomers}
-                selectedId={selected?.id ?? null}
-                onSelect={setSelected}
+                customers={customers}
+                selectedId={selectedId}
+                onSelect={handleSelect}
               />
             </div>
-
-            {/* Right pane — EDD Workspace */}
             <div className="flex-1 flex flex-col min-h-0">
               <EDDWorkspace customer={selected} onTierUpgrade={handleTierUpgrade} />
             </div>
