@@ -3,6 +3,8 @@ import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { Users, Search, Filter, ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown, Download, ShieldAlert, ShieldCheck, X, UserCheck, Clock, Snowflake } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { AuditBell } from '@/components/AuditBell';
+import { ConfirmEscalationDialog } from '@/components/ConfirmEscalationDialog';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -72,6 +74,7 @@ export default function Customers() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [checkedIds, setCheckedIds] = useState<Set<number>>(new Set());
   const [statuses, setStatuses] = useState<Record<number, CustomerStatus>>({});
+  const [bulkEscalateOpen, setBulkEscalateOpen] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
 
   const toggleSort = (key: SortKey) => {
