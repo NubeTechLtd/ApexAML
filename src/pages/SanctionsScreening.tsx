@@ -124,11 +124,13 @@ function MatchCard({ match, isSelected, isChecked, onClick, onCheck }: {
 }
 
 export default function SanctionsScreening() {
-  const { toast } = useToast();
+  const { append } = useAuditLog();
   const [matches, setMatches] = useState(mockSanctionsMatches);
   const [selectedId, setSelectedId] = useState(mockSanctionsMatches[0].id);
   const [analystNotes, setAnalystNotes] = useState('');
   const [checkedIds, setCheckedIds] = useState<Set<string>>(new Set());
+  const [bulkDismissOpen, setBulkDismissOpen] = useState(false);
+  const [bulkEscalateOpen, setBulkEscalateOpen] = useState(false);
 
   const pendingMatches = matches.filter((m) => m.status === 'Pending');
   const allPendingChecked = pendingMatches.length > 0 && pendingMatches.every((m) => checkedIds.has(m.id));
@@ -149,17 +151,23 @@ export default function SanctionsScreening() {
     }
   };
 
-  const handleBulkDismiss = () => {
-    const ids = [...checkedIds].filter((id) => matches.find((m) => m.id === id)?.status === 'Pending');
-    setMatches((prev) => prev.map((m) => ids.includes(m.id) ? { ...m, status: 'Dismissed' as const } : m));
-    toast({ title: 'Bulk Dismissed', description: `${ids.length} match(es) cleared as false positives.` });
+  const checkedPendingIds = [...checkedIds].filter((id) => matches.find((m) => m.id === id)?.status === 'Pending');
+
+  const handleBulkDismissConfirmed = (justification: string) => {
+    setMatches((prev) => prev.map((m) => checkedPendingIds.includes(m.id) ? { ...m, status: 'Dismissed' as const } : m));
+    checkedPendingIds.forEach((id) => {
+      append({ action: 'NFIU_ESCALATION', analyst: 'mock-analyst-001', caseId: id, justification: `[BULK DISMISS] ${justification}` });
+    });
+    toast({ title: 'Bulk Dismissed', description: `${checkedPendingIds.length} match(es) cleared as false positives. Justification recorded.` });
     setCheckedIds(new Set());
   };
 
-  const handleBulkEscalate = () => {
-    const ids = [...checkedIds].filter((id) => matches.find((m) => m.id === id)?.status === 'Pending');
-    setMatches((prev) => prev.map((m) => ids.includes(m.id) ? { ...m, status: 'Confirmed' as const } : m));
-    toast({ title: 'Bulk Escalated', description: `${ids.length} match(es) confirmed. Accounts frozen & STRs queued.` });
+  const handleBulkEscalateConfirmed = (justification: string) => {
+    setMatches((prev) => prev.map((m) => checkedPendingIds.includes(m.id) ? { ...m, status: 'Confirmed' as const } : m));
+    checkedPendingIds.forEach((id) => {
+      append({ action: 'ACCOUNT_FREEZE', analyst: 'mock-analyst-001', caseId: id, justification: `[BULK ESCALATE] ${justification}` });
+    });
+    toast({ title: 'Bulk Escalated', description: `${checkedPendingIds.length} match(es) confirmed. Accounts frozen & STRs queued.` });
     setCheckedIds(new Set());
   };
 
