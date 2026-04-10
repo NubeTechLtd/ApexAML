@@ -561,6 +561,16 @@ export default function AlertWorkspace() {
           </div>
         </div>
       </div>
+      <ConfirmEscalationDialog
+        open={escalateOpen}
+        onOpenChange={setEscalateOpen}
+        customerName={selected.customerProfile.fullName}
+        caseId={selected.caseId}
+        action="NFIU_ESCALATION"
+        onConfirmed={() => {
+          toast({ title: 'Escalated to NFIU', description: `Case ${selected.caseId} escalated.` });
+        }}
+      />
     </SidebarProvider>
   );
 }
