@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -11,6 +12,7 @@ import { Customer360IdentityCard } from './IdentityCard';
 import { Customer360RiskRadar } from './RiskRadar';
 import { Customer360Entities } from './EntitiesCard';
 import { Customer360Tabs } from './DeepDiveTabs';
+import { ConfirmEscalationDialog } from '@/components/ConfirmEscalationDialog';
 
 const riskColors: Record<string, string> = {
   High: 'bg-destructive/10 text-destructive border-destructive/20',
@@ -26,6 +28,8 @@ interface Props {
 export function Customer360Content({ customerId, onClose }: Props) {
   const navigate = useNavigate();
   const customer = customer360Data[customerId];
+  const [freezeOpen, setFreezeOpen] = useState(false);
+  const [escalateOpen, setEscalateOpen] = useState(false);
 
   if (!customer) {
     return (
@@ -79,11 +83,11 @@ export function Customer360Content({ customerId, onClose }: Props) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => toast.warning('Account frozen pending review')}>
+              <DropdownMenuItem onClick={() => setFreezeOpen(true)}>
                 <Snowflake className="h-4 w-4 mr-2" /> Freeze Account
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => toast.info('EDD workflow triggered')}>
-                <ShieldAlert className="h-4 w-4 mr-2" /> Trigger EDD
+              <DropdownMenuItem onClick={() => setEscalateOpen(true)}>
+                <ShieldAlert className="h-4 w-4 mr-2" /> Trigger EDD / Escalate
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => toast.success('NFIU profile downloaded')}>
                 <Download className="h-4 w-4 mr-2" /> Download NFIU Profile
@@ -117,6 +121,23 @@ export function Customer360Content({ customerId, onClose }: Props) {
           <Customer360Tabs customer={customer} customerAlerts={customerAlerts} />
         </motion.div>
       </div>
+
+      <ConfirmEscalationDialog
+        open={freezeOpen}
+        onOpenChange={setFreezeOpen}
+        customerName={customer.name}
+        caseId={`ACCT-${customerId}`}
+        action="ACCOUNT_FREEZE"
+        onConfirmed={() => toast.warning('Account frozen pending review')}
+      />
+      <ConfirmEscalationDialog
+        open={escalateOpen}
+        onOpenChange={setEscalateOpen}
+        customerName={customer.name}
+        caseId={`ACCT-${customerId}`}
+        action="NFIU_ESCALATION"
+        onConfirmed={() => toast.error('Escalated to NFIU')}
+      />
     </div>
   );
 }
