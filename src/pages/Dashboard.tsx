@@ -109,6 +109,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [refreshing, setRefreshing] = useState(false);
   const [lastRefreshed, setLastRefreshed] = useState(() => new Date());
+  const chart = useChartTheme();
 
   const handleRefresh = useCallback(() => {
     setRefreshing(true);
