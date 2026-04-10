@@ -124,6 +124,7 @@ function MatchCard({ match, isSelected, isChecked, onClick, onCheck }: {
 }
 
 export default function SanctionsScreening() {
+  const { toast } = useToast();
   const { append } = useAuditLog();
   const [matches, setMatches] = useState(mockSanctionsMatches);
   const [selectedId, setSelectedId] = useState(mockSanctionsMatches[0].id);
@@ -269,11 +270,11 @@ export default function SanctionsScreening() {
                   >
                     <p className="text-[10px] text-muted-foreground text-center mb-1.5">{checkedPendingCount} selected</p>
                     <div className="flex gap-1.5">
-                      <Button variant="outline" size="sm" className="flex-1 text-xs h-8" onClick={handleBulkDismiss}>
+                      <Button variant="outline" size="sm" className="flex-1 text-xs h-8" onClick={() => setBulkDismissOpen(true)}>
                         <ShieldCheck className="h-3.5 w-3.5 mr-1" />
                         Bulk Dismiss
                       </Button>
-                      <Button size="sm" className="flex-1 text-xs h-8 bg-destructive hover:bg-destructive/90 text-destructive-foreground" onClick={handleBulkEscalate}>
+                      <Button size="sm" className="flex-1 text-xs h-8 bg-destructive hover:bg-destructive/90 text-destructive-foreground" onClick={() => setBulkEscalateOpen(true)}>
                         <XCircle className="h-3.5 w-3.5 mr-1" />
                         Bulk Escalate
                       </Button>
