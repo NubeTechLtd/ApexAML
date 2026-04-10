@@ -429,6 +429,8 @@ export default function SanctionsScreening() {
           </div>
         </div>
       </div>
+      <BulkDismissDialog open={bulkDismissOpen} onOpenChange={setBulkDismissOpen} count={checkedPendingCount} onConfirmed={handleBulkDismissConfirmed} />
+      <BulkEscalateDialog open={bulkEscalateOpen} onOpenChange={setBulkEscalateOpen} count={checkedPendingCount} onConfirmed={handleBulkEscalateConfirmed} />
     </SidebarProvider>
   );
 }
