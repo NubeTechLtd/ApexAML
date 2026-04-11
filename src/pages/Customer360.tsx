@@ -60,9 +60,7 @@ export default function Customer360() {
     );
   }
 
-  const customerAlerts = mockAlerts.filter(a =>
-    a.customerName.toLowerCase().includes(customer.name.split(' ')[0].toLowerCase())
-  );
+  const customerAlerts = mockAlerts.filter(a => a.customer360Id === customer.id);
 
   return (
     <SidebarProvider>
