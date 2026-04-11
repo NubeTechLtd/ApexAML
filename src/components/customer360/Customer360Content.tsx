@@ -31,6 +31,7 @@ export function Customer360Content({ customerId, onClose }: Props) {
   const customer = customer360Data[customerId];
   const [freezeOpen, setFreezeOpen] = useState(false);
   const [escalateOpen, setEscalateOpen] = useState(false);
+  const [accountStatus, setAccountStatus] = useState(customer?.accountStatus ?? 'Active');
 
   if (!customer) {
     return (
@@ -64,7 +65,7 @@ export function Customer360Content({ customerId, onClose }: Props) {
                 </Badge>
               </div>
               <p className="text-xs text-muted-foreground mt-0.5">
-                {customer.kycTier} Account • {customer.bvnVerified ? 'BVN Verified' : 'BVN Unverified'} • {customer.accountStatus}
+                {customer.kycTier} Account • {customer.bvnVerified ? 'BVN Verified' : 'BVN Unverified'} • {accountStatus === 'Frozen' ? (<span className="inline-flex items-center gap-1 text-destructive font-semibold"><Snowflake className="h-3 w-3" />Frozen</span>) : accountStatus}
               </p>
             </div>
           </div>
@@ -123,13 +124,18 @@ export function Customer360Content({ customerId, onClose }: Props) {
         </motion.div>
       </div>
 
-      <ConfirmEscalationDialog
+      <FreezeAccountDialog
         open={freezeOpen}
         onOpenChange={setFreezeOpen}
         customerName={customer.name}
         caseId={`ACCT-${customerId}`}
-        action="ACCOUNT_FREEZE"
-        onConfirmed={() => toast.warning('Account frozen pending review')}
+        bvn={customer.bvn || '22012345678'}
+        kycTier={customer.kycTier}
+        accountStatus={accountStatus}
+        onConfirmed={() => {
+          setAccountStatus('Frozen');
+          toast.warning('Account frozen — Ref: FRZ-2026-0089');
+        }}
       />
       <ConfirmEscalationDialog
         open={escalateOpen}
