@@ -1,6 +1,8 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { StickyNote } from 'lucide-react';
 import type { Customer360Data } from '@/data/mockCustomer360';
+import type { ComplianceNote } from './AddNoteSheet';
 
 interface AuditEntry {
   id: string;
@@ -8,11 +10,12 @@ interface AuditEntry {
   action: string;
   analyst: string;
   justification: string;
-  category: 'KYC' | 'Risk' | 'EDD' | 'Account' | 'Alert';
+  category: 'KYC' | 'Risk' | 'EDD' | 'Account' | 'Alert' | 'Note';
+  visibility?: string;
 }
 
-function generateAuditLog(customer: Customer360Data): AuditEntry[] {
-  const entries: AuditEntry[] = [
+function generateAuditLog(customer: Customer360Data, notes: ComplianceNote[]): AuditEntry[] {
+  const staticEntries: AuditEntry[] = [
     { id: 'AUD-001', timestamp: '2026-04-10 14:32', action: 'KYC Tier upgraded from Tier 1 to Tier 2', analyst: 'Amina Bello', justification: 'All Tier 2 requirements satisfied — utility bill and employer verified.', category: 'KYC' },
     { id: 'AUD-002', timestamp: '2026-04-08 09:15', action: 'Risk tier changed to ' + customer.riskLevel, analyst: 'Olusegun Adeyemi', justification: 'Automated risk model recalculation based on 30-day transaction pattern.', category: 'Risk' },
     { id: 'AUD-003', timestamp: '2026-04-05 16:48', action: 'EDD investigation triggered', analyst: 'Fatima Yusuf', justification: 'Unusual transaction velocity detected — 12 transfers in 4 hours exceeding normal baseline.', category: 'EDD' },
@@ -22,7 +25,18 @@ function generateAuditLog(customer: Customer360Data): AuditEntry[] {
     { id: 'AUD-007', timestamp: '2026-03-15 13:45', action: 'BVN re-verification completed', analyst: 'System', justification: 'Periodic BVN reverification — match confirmed with NIBSS records.', category: 'KYC' },
     { id: 'AUD-008', timestamp: '2026-03-01 08:30', action: 'Risk score recalculated: ' + customer.riskScore + '/100', analyst: 'System', justification: 'Monthly automated risk model refresh — crypto exposure factor increased.', category: 'Risk' },
   ];
-  return entries;
+
+  const noteEntries: AuditEntry[] = notes.map(n => ({
+    id: n.id,
+    timestamp: n.timestamp,
+    action: 'Compliance note added',
+    analyst: n.analyst,
+    justification: n.content,
+    category: 'Note' as const,
+    visibility: n.visibility,
+  }));
+
+  return [...noteEntries, ...staticEntries];
 }
 
 const categoryColors: Record<string, string> = {
@@ -31,46 +45,64 @@ const categoryColors: Record<string, string> = {
   EDD: 'bg-[hsl(var(--risk-medium)/0.15)] text-[hsl(var(--risk-medium))] border-0',
   Account: 'bg-[hsl(var(--risk-critical)/0.15)] text-[hsl(var(--risk-critical))] border-0',
   Alert: 'bg-muted text-muted-foreground border-0',
+  Note: 'bg-primary/10 text-primary border-0',
 };
 
 interface Props {
   customer: Customer360Data;
+  notes?: ComplianceNote[];
+  filterNotesOnly?: boolean;
 }
 
-export function AuditLogTab({ customer }: Props) {
-  const entries = generateAuditLog(customer);
+export function AuditLogTab({ customer, notes = [], filterNotesOnly = false }: Props) {
+  const allEntries = generateAuditLog(customer, notes);
+  const entries = filterNotesOnly ? allEntries.filter(e => e.category === 'Note') : allEntries;
 
   return (
     <Card>
       <CardContent className="pt-4">
-        <div className="space-y-0">
-          {entries.map((entry, i) => (
-            <div key={entry.id} className="relative flex gap-4 pb-5 last:pb-0">
-              {/* Timeline connector */}
-              {i < entries.length - 1 && (
-                <div className="absolute left-[15px] top-[32px] w-px bottom-0 bg-border" />
-              )}
-              {/* Dot */}
-              <div className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted border border-border">
-                <span className="text-[9px] font-bold text-muted-foreground">{i + 1}</span>
-              </div>
-              {/* Content */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-xs font-mono text-muted-foreground">{entry.timestamp}</span>
-                  <Badge variant="outline" className={`text-[10px] font-semibold ${categoryColors[entry.category]}`}>
-                    {entry.category}
-                  </Badge>
+        {filterNotesOnly && entries.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-12 text-center space-y-3">
+            <StickyNote className="h-10 w-10 text-muted-foreground" />
+            <p className="text-sm font-medium text-foreground">No compliance notes yet</p>
+            <p className="text-xs text-muted-foreground">Use the "Add Note" button to attach a compliance note to this customer.</p>
+          </div>
+        ) : (
+          <div className="space-y-0">
+            {entries.map((entry, i) => (
+              <div key={entry.id} className="relative flex gap-4 pb-5 last:pb-0">
+                {i < entries.length - 1 && (
+                  <div className="absolute left-[15px] top-[32px] w-px bottom-0 bg-border" />
+                )}
+                <div className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted border border-border">
+                  {entry.category === 'Note' ? (
+                    <StickyNote className="h-3.5 w-3.5 text-primary" />
+                  ) : (
+                    <span className="text-[9px] font-bold text-muted-foreground">{i + 1}</span>
+                  )}
                 </div>
-                <p className="text-sm font-medium text-foreground mt-0.5">{entry.action}</p>
-                <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{entry.justification}</p>
-                <p className="text-[11px] text-muted-foreground mt-1">
-                  Analyst: <span className="font-medium text-foreground">{entry.analyst}</span>
-                </p>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-xs font-mono text-muted-foreground">{entry.timestamp}</span>
+                    <Badge variant="outline" className={`text-[10px] font-semibold ${categoryColors[entry.category]}`}>
+                      {entry.category}
+                    </Badge>
+                    {entry.visibility && (
+                      <Badge variant="outline" className="text-[10px] bg-muted/50 border-0">
+                        {entry.visibility}
+                      </Badge>
+                    )}
+                  </div>
+                  <p className="text-sm font-medium text-foreground mt-0.5">{entry.action}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{entry.justification}</p>
+                  <p className="text-[11px] text-muted-foreground mt-1">
+                    Analyst: <span className="font-medium text-foreground">{entry.analyst}</span>
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </CardContent>
     </Card>
   );
