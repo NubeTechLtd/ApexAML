@@ -443,6 +443,7 @@ export default function AlertWorkspace() {
                       isSelected={alert.id === selectedId}
                       onClick={() => setSelectedId(alert.id)}
                       status={getStatus(alert.id, alert.status)}
+                      assignedAnalyst={getAssignedAnalyst(alert.id)}
                     />
                   ))}
                 </div>
@@ -496,6 +497,58 @@ export default function AlertWorkspace() {
                               >
                                 <ShieldCheck className="h-3 w-3" /> Close as FP
                               </Button>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Assignment row */}
+                        <div className="flex items-center justify-between pt-2 border-t border-border">
+                          <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-2">
+                              <span className="text-[11px] text-muted-foreground">Assigned to:</span>
+                              {(() => {
+                                const assignee = getAssignedAnalyst(selected.id);
+                                return assignee ? (
+                                  <div className="flex items-center gap-1.5">
+                                    <Avatar className="h-5 w-5">
+                                      <AvatarFallback className={`text-[8px] ${assignee.color}`}>{assignee.initials}</AvatarFallback>
+                                    </Avatar>
+                                    <span className="text-xs font-medium text-foreground">{assignee.name}</span>
+                                  </div>
+                                ) : (
+                                  <span className="text-xs font-medium text-amber-600 dark:text-amber-400">Unassigned</span>
+                                );
+                              })()}
+                              <Popover>
+                                <PopoverTrigger asChild>
+                                  <Button variant="ghost" size="icon" className="h-6 w-6">
+                                    <RefreshCw className="h-3 w-3 text-muted-foreground" />
+                                  </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-48 p-1" align="start">
+                                  <p className="text-[10px] uppercase text-muted-foreground tracking-wider px-2 py-1.5">Reassign to</p>
+                                  {ANALYSTS.map((a) => (
+                                    <button
+                                      key={a.id}
+                                      onClick={() => handleReassign(selected.id, selected.caseId, a.id)}
+                                      className="w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs hover:bg-muted transition-colors text-left"
+                                    >
+                                      <Avatar className="h-5 w-5">
+                                        <AvatarFallback className={`text-[8px] ${a.color}`}>{a.initials}</AvatarFallback>
+                                      </Avatar>
+                                      <span className="text-foreground">{a.name}</span>
+                                      {assignments[selected.id] === a.id && (
+                                        <CheckCircle2 className="h-3 w-3 text-primary ml-auto" />
+                                      )}
+                                    </button>
+                                  ))}
+                                </PopoverContent>
+                              </Popover>
+                            </div>
+                            <Separator orientation="vertical" className="h-4" />
+                            <div className="flex items-center gap-1.5">
+                              <Users className="h-3 w-3 text-muted-foreground" />
+                              <span className="text-[11px] text-muted-foreground">Watched by <span className="font-medium text-foreground">2</span></span>
                             </div>
                           </div>
                         </div>
