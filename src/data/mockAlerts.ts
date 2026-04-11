@@ -1,5 +1,7 @@
 export type RiskLevel = 'Critical' | 'High' | 'Medium' | 'Low';
 
+export type TxChannel = 'POS' | 'Mobile Transfer' | 'USSD' | 'ATM Withdrawal' | 'Online Banking' | 'Card Payment' | 'Cash Deposit';
+
 export interface Transaction {
   id: string;
   date: string;
@@ -7,6 +9,7 @@ export interface Transaction {
   amountNGN: number;
   counterparty: string;
   balanceAfter: number;
+  channel: TxChannel;
 }
 
 export interface CustomerProfile {
@@ -57,10 +60,10 @@ export const mockAlerts: Alert[] = [
       riskScore: 88,
     },
     transactions: [
-      { id: 'tx-01', date: '2026-04-08T09:15:00Z', type: 'Credit', amountNGN: 45000, counterparty: 'POS/Moniepoint/Ikeja', balanceAfter: 45500 },
-      { id: 'tx-02', date: '2026-04-08T11:45:00Z', type: 'Credit', amountNGN: 48000, counterparty: 'POS/Opay/Oshodi', balanceAfter: 93500 },
-      { id: 'tx-03', date: '2026-04-08T14:20:00Z', type: 'Credit', amountNGN: 49000, counterparty: 'POS/Palmpay/Mainland', balanceAfter: 142500 },
-      { id: 'tx-04', date: '2026-04-08T14:35:00Z', type: 'Debit', amountNGN: 140000, counterparty: 'BaraqTech BDC (Suspected P2P)', balanceAfter: 2500 },
+      { id: 'tx-01', date: '2026-04-08T09:15:00Z', type: 'Credit', amountNGN: 45000, counterparty: 'POS/Moniepoint/Ikeja', balanceAfter: 45500, channel: 'POS' },
+      { id: 'tx-02', date: '2026-04-08T11:45:00Z', type: 'Credit', amountNGN: 48000, counterparty: 'POS/Opay/Oshodi', balanceAfter: 93500, channel: 'POS' },
+      { id: 'tx-03', date: '2026-04-08T14:20:00Z', type: 'Credit', amountNGN: 49000, counterparty: 'POS/Palmpay/Mainland', balanceAfter: 142500, channel: 'POS' },
+      { id: 'tx-04', date: '2026-04-08T14:35:00Z', type: 'Debit', amountNGN: 140000, counterparty: 'BaraqTech BDC (Suspected P2P)', balanceAfter: 2500, channel: 'Mobile Transfer' },
     ],
     behavioralRedFlags: [
       'IP Address mismatch: Login from 197.210.X.X (Abuja) but POS transactions localized in Lagos.',
@@ -91,9 +94,9 @@ export const mockAlerts: Alert[] = [
       riskScore: 75,
     },
     transactions: [
-      { id: 'tx-05', date: '2026-04-09T02:10:00Z', type: 'Debit', amountNGN: 500000, counterparty: 'Bet9ja Wallet Topup', balanceAfter: 1200500 },
-      { id: 'tx-06', date: '2026-04-09T02:25:00Z', type: 'Debit', amountNGN: 500000, counterparty: 'Bet9ja Wallet Topup', balanceAfter: 700500 },
-      { id: 'tx-07', date: '2026-04-09T02:40:00Z', type: 'Debit', amountNGN: 500000, counterparty: 'SportyBet Wallet Topup', balanceAfter: 200500 },
+      { id: 'tx-05', date: '2026-04-09T02:10:00Z', type: 'Debit', amountNGN: 500000, counterparty: 'Bet9ja Wallet Topup', balanceAfter: 1200500, channel: 'Online Banking' },
+      { id: 'tx-06', date: '2026-04-09T02:25:00Z', type: 'Debit', amountNGN: 500000, counterparty: 'Bet9ja Wallet Topup', balanceAfter: 700500, channel: 'Online Banking' },
+      { id: 'tx-07', date: '2026-04-09T02:40:00Z', type: 'Debit', amountNGN: 500000, counterparty: 'SportyBet Wallet Topup', balanceAfter: 200500, channel: 'Mobile Transfer' },
     ],
     behavioralRedFlags: [
       'Time-of-day anomaly: 100% of transaction volume occurred outside regular banking hours.',
@@ -124,10 +127,10 @@ export const mockAlerts: Alert[] = [
       riskScore: 72,
     },
     transactions: [
-      { id: 'tx-08', date: '2026-04-08T10:00:00Z', type: 'Credit', amountNGN: 2800000, counterparty: 'NEFT/GTB/Abuja', balanceAfter: 2801200 },
-      { id: 'tx-09', date: '2026-04-08T10:15:00Z', type: 'Debit', amountNGN: 950000, counterparty: 'Individual/Kano', balanceAfter: 1851200 },
-      { id: 'tx-10', date: '2026-04-08T10:22:00Z', type: 'Debit', amountNGN: 900000, counterparty: 'Individual/Kaduna', balanceAfter: 951200 },
-      { id: 'tx-11', date: '2026-04-08T10:30:00Z', type: 'Debit', amountNGN: 900000, counterparty: 'Individual/Lagos', balanceAfter: 51200 },
+      { id: 'tx-08', date: '2026-04-08T10:00:00Z', type: 'Credit', amountNGN: 2800000, counterparty: 'NEFT/GTB/Abuja', balanceAfter: 2801200, channel: 'Online Banking' },
+      { id: 'tx-09', date: '2026-04-08T10:15:00Z', type: 'Debit', amountNGN: 950000, counterparty: 'Individual/Kano', balanceAfter: 1851200, channel: 'Mobile Transfer' },
+      { id: 'tx-10', date: '2026-04-08T10:22:00Z', type: 'Debit', amountNGN: 900000, counterparty: 'Individual/Kaduna', balanceAfter: 951200, channel: 'Mobile Transfer' },
+      { id: 'tx-11', date: '2026-04-08T10:30:00Z', type: 'Debit', amountNGN: 900000, counterparty: 'Individual/Lagos', balanceAfter: 51200, channel: 'USSD' },
     ],
     behavioralRedFlags: [
       'Account dormancy: No transactions for 18 months prior to this activity.',
@@ -158,9 +161,9 @@ export const mockAlerts: Alert[] = [
       riskScore: 58,
     },
     transactions: [
-      { id: 'tx-12', date: '2026-04-07T09:00:00Z', type: 'Debit', amountNGN: 15000000, counterparty: 'SWIFT/Dubai Trading FZE/UAE', balanceAfter: 3200000 },
-      { id: 'tx-13', date: '2026-04-05T14:00:00Z', type: 'Credit', amountNGN: 8000000, counterparty: 'NEFT/Various/Lagos', balanceAfter: 18200000 },
-      { id: 'tx-14', date: '2026-04-04T11:00:00Z', type: 'Credit', amountNGN: 10000000, counterparty: 'NEFT/Various/Onitsha', balanceAfter: 10200000 },
+      { id: 'tx-12', date: '2026-04-07T09:00:00Z', type: 'Debit', amountNGN: 15000000, counterparty: 'SWIFT/Dubai Trading FZE/UAE', balanceAfter: 3200000, channel: 'Online Banking' },
+      { id: 'tx-13', date: '2026-04-05T14:00:00Z', type: 'Credit', amountNGN: 8000000, counterparty: 'NEFT/Various/Lagos', balanceAfter: 18200000, channel: 'Cash Deposit' },
+      { id: 'tx-14', date: '2026-04-04T11:00:00Z', type: 'Credit', amountNGN: 10000000, counterparty: 'NEFT/Various/Onitsha', balanceAfter: 10200000, channel: 'ATM Withdrawal' },
     ],
     behavioralRedFlags: [
       'FATF grey-list: UAE is currently on the FATF list of jurisdictions under increased monitoring.',
