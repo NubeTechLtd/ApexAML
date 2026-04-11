@@ -26,7 +26,7 @@ export function generateGoAMLXml(alert: Alert, strDraft: string): string {
         <TransactionDate>${escapeXml(tx.date.split('T')[0])}</TransactionDate>
         <Amount>${tx.amountNGN}</Amount>
         <Currency>NGN</Currency>
-        <Channel>${escapeXml(tx.type)}</Channel>
+        <Channel>${escapeXml(tx.channel)}</Channel>
         <CounterpartyName>${escapeXml(tx.counterparty)}</CounterpartyName>
       </Transaction>`
   ).join('\n');
