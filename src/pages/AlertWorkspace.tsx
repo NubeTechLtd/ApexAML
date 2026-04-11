@@ -69,16 +69,22 @@ interface ChatMessage {
 
 const quickResponses: Record<string, string> = {
   shorter: '✅ Done — I\'ve condensed the narrative to focus on key facts while preserving regulatory compliance language.',
-  french: '✅ Done — Narrative translated to French. NFIU field labels retained in English per goAML spec.',
   flags: '✅ Done — I\'ve appended the behavioral red flags as a numbered appendix to the narrative.',
+  fatf: '✅ Done — FATF Recommendation 20 on STR obligations referenced in section 2 of the narrative.',
+  circular: '✅ Done — CBN Circular BSD/DIR/PUB/LAB/019/002 cited in the regulatory basis paragraph.',
+  hausa: '✅ Done — Narrative section translated to Hausa for internal memo distribution. goAML field labels retained in English.',
+  formal: '✅ Done — Narrative reformatted to formal NFIU register: passive voice, institutional phrasing, and regulatory cross-references applied throughout.',
   default: '✅ Understood — Draft updated accordingly. Review changes in the editor.',
 };
 
 function getResponse(input: string): string {
   const l = input.toLowerCase();
   if (l.includes('short') || l.includes('concise')) return quickResponses.shorter;
-  if (l.includes('french') || l.includes('translate')) return quickResponses.french;
   if (l.includes('flag') || l.includes('red flag')) return quickResponses.flags;
+  if (l.includes('fatf') || l.includes('recommendation')) return quickResponses.fatf;
+  if (l.includes('circular') || l.includes('bsd/dir')) return quickResponses.circular;
+  if (l.includes('hausa')) return quickResponses.hausa;
+  if (l.includes('formal') || l.includes('nfiu language')) return quickResponses.formal;
   return quickResponses.default;
 }
 
@@ -764,7 +770,7 @@ export default function AlertWorkspace() {
                               </Button>
                             </div>
                             <div className="flex flex-wrap gap-1">
-                              {['Make it shorter', 'Add red flags', 'Translate to French'].map((s) => (
+                              {['Make it shorter', 'Add red flags', 'Add FATF typology reference', 'Cite CBN circular BSD/DIR/PUB/LAB/019/002', 'Translate narrative to Hausa (for internal memo)', 'Formal NFIU language'].map((s) => (
                                 <button
                                   key={s}
                                   onClick={() => setChatInput(s)}
