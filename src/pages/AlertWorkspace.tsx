@@ -49,6 +49,16 @@ const riskColors: Record<string, string> = {
   Low: 'bg-[hsl(var(--risk-low)/0.1)] text-[hsl(var(--risk-low))] border-[hsl(var(--risk-low)/0.3)]',
 };
 
+const channelColors: Record<TxChannel, string> = {
+  'POS': 'bg-amber-500/15 text-amber-700 dark:text-amber-400',
+  'Mobile Transfer': 'bg-blue-500/15 text-blue-700 dark:text-blue-400',
+  'USSD': 'bg-purple-500/15 text-purple-700 dark:text-purple-400',
+  'ATM Withdrawal': 'bg-muted text-muted-foreground',
+  'Online Banking': 'bg-primary/10 text-primary',
+  'Card Payment': 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400',
+  'Cash Deposit': 'bg-destructive/15 text-destructive',
+};
+
 type CaseStatus = 'Open' | 'Under Review' | 'Escalated' | 'Closed';
 
 interface ChatMessage {
