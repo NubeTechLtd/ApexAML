@@ -35,6 +35,22 @@ import {
   ShieldCheck, Eye, Users, RefreshCw,
 } from 'lucide-react';
 
+/* ── Mock Analysts ────────────────────────────────────── */
+
+const ANALYSTS = [
+  { id: 'a1', name: 'Chioma Adeyemi', initials: 'CA', color: 'bg-blue-500/15 text-blue-700 dark:text-blue-400' },
+  { id: 'a2', name: 'Ibrahim Musa', initials: 'IM', color: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400' },
+  { id: 'a3', name: 'Ngozi Okafor', initials: 'NO', color: 'bg-purple-500/15 text-purple-700 dark:text-purple-400' },
+  { id: 'a4', name: 'Emeka Obi', initials: 'EO', color: 'bg-amber-500/15 text-amber-700 dark:text-amber-400' },
+];
+
+// Default assignments for some alerts
+const DEFAULT_ASSIGNMENTS: Record<string, string> = {
+  [mockAlerts[0]?.id]: 'a1',
+  [mockAlerts[1]?.id]: 'a3',
+  [mockAlerts[2]?.id]: 'a2',
+};
+
 /* ── Helpers ─────────────────────────────────────────── */
 
 function formatNGN(amount: number) {
