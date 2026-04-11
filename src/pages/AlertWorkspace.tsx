@@ -260,6 +260,8 @@ export default function AlertWorkspace() {
     setStrGenerated(false);
     setChatMessages([]);
     setEditVersion(0);
+    setChannelFilter('All');
+    setEditVersion(0);
   }, [selectedId]);
 
   useEffect(() => {
