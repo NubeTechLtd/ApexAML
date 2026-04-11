@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { ShieldAlert, Snowflake, Download, ChevronDown, X, ExternalLink } from 'lucide-react';
+import { ShieldAlert, Snowflake, Download, ChevronDown, X, ExternalLink, StickyNote } from 'lucide-react';
 import { customer360Data } from '@/data/mockCustomer360';
 import { mockLegacyAlerts as mockAlerts } from '@/data/mockLegacyAlerts';
 import { motion } from 'framer-motion';
@@ -14,6 +14,7 @@ import { Customer360Entities } from './EntitiesCard';
 import { Customer360Tabs } from './DeepDiveTabs';
 import { ConfirmEscalationDialog } from '@/components/ConfirmEscalationDialog';
 import { FreezeAccountDialog } from '@/components/FreezeAccountDialog';
+import { AddNoteSheet, type ComplianceNote } from './AddNoteSheet';
 
 const riskColors: Record<string, string> = {
   High: 'bg-destructive/10 text-destructive border-destructive/20',
@@ -32,6 +33,20 @@ export function Customer360Content({ customerId, onClose }: Props) {
   const [freezeOpen, setFreezeOpen] = useState(false);
   const [escalateOpen, setEscalateOpen] = useState(false);
   const [accountStatus, setAccountStatus] = useState(customer?.accountStatus ?? 'Active');
+  const [noteSheetOpen, setNoteSheetOpen] = useState(false);
+  const [notes, setNotes] = useState<ComplianceNote[]>([]);
+  const [activeTab, setActiveTab] = useState('transactions');
+  const [filterNotesOnly, setFilterNotesOnly] = useState(false);
+
+  const handleNoteBadgeClick = () => {
+    setActiveTab('audit');
+    setFilterNotesOnly(true);
+  };
+
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    if (tab !== 'audit') setFilterNotesOnly(false);
+  };
 
   if (!customer) {
     return (
@@ -58,6 +73,11 @@ export function Customer360Content({ customerId, onClose }: Props) {
             <div>
               <div className="flex items-center gap-3">
                 <h2 className="text-xl font-bold text-foreground">{customer.name}</h2>
+                {notes.length > 0 && (
+                  <button onClick={handleNoteBadgeClick} className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary px-2 py-0.5 text-xs font-semibold hover:bg-primary/20 transition-colors">
+                    <StickyNote className="h-3 w-3" /> {notes.length}
+                  </button>
+                )}
                 <Badge variant="outline" className={`text-sm px-3 py-1 ${riskColors[customer.riskLevel]}`}>
                   Risk: {customer.riskLevel.toUpperCase()} ({customer.riskScore}/100)
                 </Badge>
@@ -76,24 +96,27 @@ export function Customer360Content({ customerId, onClose }: Props) {
             >
               <ExternalLink className="h-3.5 w-3.5" /> Open Full Page
             </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-1.5">
-                Actions <ChevronDown className="h-3.5 w-3.5" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setFreezeOpen(true)}>
-                <Snowflake className="h-4 w-4 mr-2" /> Freeze Account
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setEscalateOpen(true)}>
-                <ShieldAlert className="h-4 w-4 mr-2" /> Trigger EDD / Escalate
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => toast.success('NFIU profile downloaded')}>
-                <Download className="h-4 w-4 mr-2" /> Download NFIU Profile
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+            <Button variant="outline" size="sm" className="gap-1.5" onClick={() => setNoteSheetOpen(true)}>
+              <StickyNote className="h-3.5 w-3.5" /> Add Note
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="gap-1.5">
+                  Actions <ChevronDown className="h-3.5 w-3.5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setFreezeOpen(true)}>
+                  <Snowflake className="h-4 w-4 mr-2" /> Freeze Account
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setEscalateOpen(true)}>
+                  <ShieldAlert className="h-4 w-4 mr-2" /> Trigger EDD / Escalate
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => toast.success('NFIU profile downloaded')}>
+                  <Download className="h-4 w-4 mr-2" /> Download NFIU Profile
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             {onClose && (
               <Button variant="ghost" size="icon" onClick={onClose} className="ml-1">
                 <X className="h-4 w-4" />
@@ -118,7 +141,14 @@ export function Customer360Content({ customerId, onClose }: Props) {
         </div>
 
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-          <Customer360Tabs customer={customer} customerAlerts={customerAlerts} />
+          <Customer360Tabs
+            customer={customer}
+            customerAlerts={customerAlerts}
+            notes={notes}
+            activeTab={activeTab}
+            onTabChange={handleTabChange}
+            filterNotesOnly={filterNotesOnly}
+          />
         </motion.div>
       </div>
 
@@ -142,6 +172,14 @@ export function Customer360Content({ customerId, onClose }: Props) {
         caseId={`ACCT-${customerId}`}
         action="NFIU_ESCALATION"
         onConfirmed={() => toast.error('Escalated to NFIU')}
+      />
+      <AddNoteSheet
+        open={noteSheetOpen}
+        onOpenChange={setNoteSheetOpen}
+        onSave={(note) => {
+          setNotes(prev => [...prev, note]);
+          toast.success('Compliance note saved');
+        }}
       />
     </div>
   );
