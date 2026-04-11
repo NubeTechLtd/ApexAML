@@ -5,6 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { CreditCard, Network, AlertTriangle, FileText, Download, ClipboardList, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { Customer360Data } from '@/data/mockCustomer360';
+import type { ComplianceNote } from './AddNoteSheet';
 import { TransactionsTab } from './TransactionsTab';
 import { NetworkGraph } from './NetworkGraph';
 import { AuditLogTab } from './AuditLogTab';
@@ -29,11 +30,15 @@ const docIcons: Record<string, string> = {
 interface Props {
   customer: Customer360Data;
   customerAlerts: any[];
+  notes?: ComplianceNote[];
+  activeTab?: string;
+  onTabChange?: (tab: string) => void;
+  filterNotesOnly?: boolean;
 }
 
-export function Customer360Tabs({ customer, customerAlerts }: Props) {
+export function Customer360Tabs({ customer, customerAlerts, notes = [], activeTab, onTabChange, filterNotesOnly = false }: Props) {
   return (
-    <Tabs defaultValue="transactions" className="w-full">
+    <Tabs value={activeTab} defaultValue="transactions" onValueChange={onTabChange} className="w-full">
       <TabsList>
         <TabsTrigger value="transactions" className="gap-1.5 text-xs">
           <CreditCard className="h-3.5 w-3.5" /> Transactions
@@ -129,7 +134,7 @@ export function Customer360Tabs({ customer, customerAlerts }: Props) {
       </TabsContent>
 
       <TabsContent value="audit">
-        <AuditLogTab customer={customer} />
+        <AuditLogTab customer={customer} notes={notes} filterNotesOnly={filterNotesOnly} />
       </TabsContent>
     </Tabs>
   );
