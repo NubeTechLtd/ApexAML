@@ -20,16 +20,19 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogCancel,
 } from '@/components/ui/alert-dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Label } from '@/components/ui/label';
 import { mockAlerts, type Alert, type TxChannel } from '@/data/mockAlerts';
 import { useToast } from '@/hooks/use-toast';
+import { useAuditLog } from '@/hooks/useAuditLog';
 import { generateGoAMLXml, downloadXmlFile } from '@/lib/generateGoAMLXml';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, AlertTriangle, Sparkles, Bot, Send, FileDown,
   Loader2, CheckCircle2, Shield, Clock, User, Fingerprint,
   CreditCard, ArrowUpRight, ArrowDownLeft, Flag, ShieldAlert,
-  ShieldCheck, Eye,
+  ShieldCheck, Eye, Users, RefreshCw,
 } from 'lucide-react';
 
 /* ── Helpers ─────────────────────────────────────────── */
