@@ -170,8 +170,9 @@ function StatusStepper({ status }: { status: CaseStatus }) {
 
 /* ── Alert List Card ─────────────────────────────────── */
 
-function MiniAlertCard({ alert, isSelected, onClick, status }: {
+function MiniAlertCard({ alert, isSelected, onClick, status, assignedAnalyst }: {
   alert: Alert; isSelected: boolean; onClick: () => void; status: CaseStatus;
+  assignedAnalyst?: typeof ANALYSTS[number];
 }) {
   const isResolved = status === 'Escalated' || status === 'Closed';
 
@@ -198,14 +199,25 @@ function MiniAlertCard({ alert, isSelected, onClick, status }: {
       <p className="text-sm font-semibold text-foreground truncate">{alert.customerProfile.fullName}</p>
       <p className="text-xs text-muted-foreground mt-0.5 truncate">{alert.ruleTriggered}</p>
       <div className="flex items-center justify-between mt-2">
-        <Badge variant="secondary" className={`text-[10px] ${
-          status === 'Closed' ? 'bg-muted text-muted-foreground' :
-          status === 'Escalated' ? 'bg-destructive/10 text-destructive' :
-          status === 'Under Review' ? 'bg-primary/10 text-primary' : ''
-        }`}>
-          {status === 'Closed' ? 'False Positive' : status}
-        </Badge>
-        <span className="text-[10px] text-muted-foreground">{alert.timeElapsed}</span>
+        <div className="flex items-center gap-1.5">
+          <Badge variant="secondary" className={`text-[10px] ${
+            status === 'Closed' ? 'bg-muted text-muted-foreground' :
+            status === 'Escalated' ? 'bg-destructive/10 text-destructive' :
+            status === 'Under Review' ? 'bg-primary/10 text-primary' : ''
+          }`}>
+            {status === 'Closed' ? 'False Positive' : status}
+          </Badge>
+        </div>
+        <div className="flex items-center gap-1.5">
+          {assignedAnalyst ? (
+            <Avatar className="h-4 w-4">
+              <AvatarFallback className={`text-[7px] ${assignedAnalyst.color}`}>{assignedAnalyst.initials}</AvatarFallback>
+            </Avatar>
+          ) : (
+            <span className="text-[9px] text-amber-600 dark:text-amber-400 font-medium">Unassigned</span>
+          )}
+          <span className="text-[10px] text-muted-foreground">{alert.timeElapsed}</span>
+        </div>
       </div>
     </button>
   );
