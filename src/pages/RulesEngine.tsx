@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { RulesTable } from '@/components/RulesTable';
+import { RulesSandbox } from '@/components/RulesSandbox';
 import { NewRuleSheet } from '@/components/NewRuleSheet';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { NotificationBell } from '@/components/NotificationBell';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Plus, ShieldCheck, Zap, BarChart3, Clock, Info, BookOpen } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
@@ -72,53 +74,66 @@ const RulesEngine = () => {
               </p>
             </div>
 
-            {/* KPI Cards */}
-            <div className="grid grid-cols-4 gap-4">
-              {kpis.map(kpi => {
-                const Icon = kpi.icon;
-                return (
-                  <Card key={kpi.label}>
-                    <CardContent className="p-4 flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
-                        <Icon className={cn('h-5 w-5', kpi.accent)} />
-                      </div>
-                      <div>
-                        <p className="text-xs text-muted-foreground">{kpi.label}</p>
-                        <p className={cn('text-xl font-semibold mt-0.5', kpi.accent)}>{kpi.value}</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
+            <Tabs defaultValue="rules" className="space-y-4">
+              <TabsList>
+                <TabsTrigger value="rules" className="text-xs">Rules & Typologies</TabsTrigger>
+                <TabsTrigger value="sandbox" className="text-xs">Sandbox</TabsTrigger>
+              </TabsList>
 
-            {/* Rules Table */}
-            <RulesTable />
+              <TabsContent value="rules" className="space-y-6">
+                {/* KPI Cards */}
+                <div className="grid grid-cols-4 gap-4">
+                  {kpis.map(kpi => {
+                    const Icon = kpi.icon;
+                    return (
+                      <Card key={kpi.label}>
+                        <CardContent className="p-4 flex items-center gap-3">
+                          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
+                            <Icon className={cn('h-5 w-5', kpi.accent)} />
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground">{kpi.label}</p>
+                            <p className={cn('text-xl font-semibold mt-0.5', kpi.accent)}>{kpi.value}</p>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
 
-            {/* Nigeria Typology Library */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <BookOpen className="h-4 w-4 text-primary" />
-                <h2 className="text-sm font-semibold text-foreground">Nigeria Typology Library</h2>
-                <span className="text-xs text-muted-foreground">— Pre-built detection templates</span>
-              </div>
-              <div className="grid grid-cols-4 gap-3">
-                {typologyTemplates.map(t => (
-                  <Card key={t.name} className="hover:shadow-md transition-shadow">
-                    <CardContent className="p-4 space-y-2.5">
-                      <div className="flex items-center justify-between">
-                        <p className="text-sm font-semibold text-foreground">{t.name}</p>
-                        <Badge variant="outline" className={cn('text-[10px] font-semibold', riskBadgeClass[t.risk])}>{t.risk}</Badge>
-                      </div>
-                      <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3">{t.desc}</p>
-                      <Button variant="outline" size="sm" className="w-full h-7 text-xs gap-1" onClick={() => addTemplate(t.name)}>
-                        <Plus className="h-3 w-3" /> Add to Rulebook
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
+                {/* Rules Table */}
+                <RulesTable />
+
+                {/* Nigeria Typology Library */}
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <BookOpen className="h-4 w-4 text-primary" />
+                    <h2 className="text-sm font-semibold text-foreground">Nigeria Typology Library</h2>
+                    <span className="text-xs text-muted-foreground">— Pre-built detection templates</span>
+                  </div>
+                  <div className="grid grid-cols-4 gap-3">
+                    {typologyTemplates.map(t => (
+                      <Card key={t.name} className="hover:shadow-md transition-shadow">
+                        <CardContent className="p-4 space-y-2.5">
+                          <div className="flex items-center justify-between">
+                            <p className="text-sm font-semibold text-foreground">{t.name}</p>
+                            <Badge variant="outline" className={cn('text-[10px] font-semibold', riskBadgeClass[t.risk])}>{t.risk}</Badge>
+                          </div>
+                          <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3">{t.desc}</p>
+                          <Button variant="outline" size="sm" className="w-full h-7 text-xs gap-1" onClick={() => addTemplate(t.name)}>
+                            <Plus className="h-3 w-3" /> Add to Rulebook
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="sandbox">
+                <RulesSandbox />
+              </TabsContent>
+            </Tabs>
           </main>
         </div>
       </div>
