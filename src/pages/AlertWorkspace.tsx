@@ -181,11 +181,15 @@ export default function AlertWorkspace() {
   };
 
   const handleExport = useCallback(() => {
+    const today = new Date().toISOString().split('T')[0];
+    const filename = `STR_${selected.caseId}_${today}.xml`;
+    const xml = generateGoAMLXml(selected, strDraft);
+    downloadXmlFile(xml, filename);
     toast({
-      title: 'Exporting to goAML XML',
-      description: `STR for ${selected.caseId} packaged in NFIU goAML XML format and queued for submission.`,
+      title: 'STR exported',
+      description: `${filename} ready for NFIU goAML portal upload.`,
     });
-  }, [selected, toast]);
+  }, [selected, strDraft, toast]);
 
   const handleEscalate = useCallback(() => {
     setEscalateOpen(true);
