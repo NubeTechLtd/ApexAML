@@ -25,6 +25,7 @@ import { Customer360Entities } from '@/components/customer360/EntitiesCard';
 import { Customer360Tabs } from '@/components/customer360/DeepDiveTabs';
 import { AuditBell } from '@/components/AuditBell';
 import { ConfirmEscalationDialog } from '@/components/ConfirmEscalationDialog';
+import { FreezeAccountDialog } from '@/components/FreezeAccountDialog';
 
 const riskColors: Record<string, string> = {
   High: 'bg-destructive/10 text-destructive border-destructive/20',
@@ -38,6 +39,7 @@ export default function Customer360() {
   const customer = customer360Data[Number(id)];
   const [freezeOpen, setFreezeOpen] = useState(false);
   const [escalateOpen, setEscalateOpen] = useState(false);
+  const [accountStatus, setAccountStatus] = useState(customer?.accountStatus ?? 'Active');
 
   if (!customer) {
     return (
@@ -140,13 +142,18 @@ export default function Customer360() {
             </motion.div>
           </div>
         </main>
-        <ConfirmEscalationDialog
+        <FreezeAccountDialog
           open={freezeOpen}
           onOpenChange={setFreezeOpen}
           customerName={customer.name}
           caseId={`ACCT-${id}`}
-          action="ACCOUNT_FREEZE"
-          onConfirmed={() => toast.warning('Account frozen pending review')}
+          bvn={customer.bvn || '22012345678'}
+          kycTier={customer.kycTier}
+          accountStatus={accountStatus}
+          onConfirmed={() => {
+            setAccountStatus('Frozen');
+            toast.warning('Account frozen — Ref: FRZ-2026-0089');
+          }}
         />
         <ConfirmEscalationDialog
           open={escalateOpen}
