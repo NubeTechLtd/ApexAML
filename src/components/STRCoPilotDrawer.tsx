@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/sheet';
 import { useToast } from '@/hooks/use-toast';
 import type { AlertData } from '@/data/mockLegacyAlerts';
+import { generateGoAMLXmlFromLegacy, downloadXmlFile } from '@/lib/generateGoAMLXml';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface ChatMessage {
@@ -161,9 +162,13 @@ export function STRCoPilotDrawer({ open, onOpenChange, alert }: STRCoPilotDrawer
   };
 
   const handleExport = () => {
+    const today = new Date().toISOString().split('T')[0];
+    const filename = `STR_${alert.id}_${today}.xml`;
+    const xml = generateGoAMLXmlFromLegacy(alert, draft);
+    downloadXmlFile(xml, filename);
     toast({
-      title: 'Exporting to goAML Format',
-      description: 'STR has been packaged in NFIU goAML XML format and queued for submission.',
+      title: 'STR exported',
+      description: `${filename} ready for NFIU goAML portal upload.`,
     });
   };
 
