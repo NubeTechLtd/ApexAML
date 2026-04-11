@@ -112,6 +112,9 @@ export default function Customer360() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm" className="gap-1.5" onClick={() => setNoteSheetOpen(true)}>
+                  <StickyNote className="h-3.5 w-3.5" /> Add Note
+                </Button>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" size="sm" className="gap-1.5">
