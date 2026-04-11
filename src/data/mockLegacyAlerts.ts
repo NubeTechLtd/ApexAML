@@ -24,6 +24,7 @@ export interface AlertData {
   riskScore: number;
   customerName: string;
   customerId: string;
+  customer360Id?: number;
   bvn: string;
   alertType: AlertType;
   timestamp: string;
@@ -42,6 +43,7 @@ export const mockLegacyAlerts: AlertData[] = [
     riskScore: 92,
     customerName: "Adebayo Ogundimu",
     customerId: "CUS-88291",
+    customer360Id: 1,
     bvn: "22198xxxxxx",
     alertType: "Structuring",
     timestamp: "2025-04-09T08:32:00Z",
@@ -63,6 +65,7 @@ export const mockLegacyAlerts: AlertData[] = [
     riskScore: 85,
     customerName: "Chinedu Eze",
     customerId: "CUS-77104",
+    customer360Id: undefined,
     bvn: "22187xxxxxx",
     alertType: "PEP Match",
     timestamp: "2025-04-09T07:15:00Z",
@@ -82,6 +85,7 @@ export const mockLegacyAlerts: AlertData[] = [
     riskScore: 74,
     customerName: "Fatima Abdullahi",
     customerId: "CUS-65520",
+    customer360Id: 4,
     bvn: "22145xxxxxx",
     alertType: "Velocity Spike",
     timestamp: "2025-04-08T22:10:00Z",
@@ -104,6 +108,7 @@ export const mockLegacyAlerts: AlertData[] = [
     riskScore: 61,
     customerName: "Emeka Nwosu",
     customerId: "CUS-54301",
+    customer360Id: undefined,
     bvn: "22134xxxxxx",
     alertType: "Round-Tripping",
     timestamp: "2025-04-08T16:42:00Z",
@@ -123,6 +128,7 @@ export const mockLegacyAlerts: AlertData[] = [
     riskScore: 45,
     customerName: "Ngozi Okafor",
     customerId: "CUS-43112",
+    customer360Id: 6,
     bvn: "22156xxxxxx",
     alertType: "Threshold Breach",
     timestamp: "2025-04-08T11:20:00Z",
@@ -141,6 +147,7 @@ export const mockLegacyAlerts: AlertData[] = [
     riskScore: 33,
     customerName: "Ibrahim Musa",
     customerId: "CUS-31998",
+    customer360Id: 5,
     bvn: "22178xxxxxx",
     alertType: "Sanctions Hit",
     timestamp: "2025-04-07T15:55:00Z",

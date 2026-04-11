@@ -44,9 +44,7 @@ export function Customer360Content({ customerId, onClose }: Props) {
     );
   }
 
-  const customerAlerts = mockAlerts.filter(a =>
-    a.customerName.toLowerCase().includes(customer.name.split(' ')[0].toLowerCase())
-  );
+  const customerAlerts = mockAlerts.filter(a => a.customer360Id === customer.id);
 
   return (
     <div className="flex flex-col h-full overflow-auto">

@@ -2,7 +2,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { CreditCard, Network, AlertTriangle, FileText, Download, ClipboardList } from 'lucide-react';
+import { CreditCard, Network, AlertTriangle, FileText, Download, ClipboardList, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { Customer360Data } from '@/data/mockCustomer360';
 import { TransactionsTab } from './TransactionsTab';
@@ -89,7 +89,11 @@ export function Customer360Tabs({ customer, customerAlerts }: Props) {
                 </Table>
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground py-8 text-center">No alert history for this customer</p>
+              <div className="flex flex-col items-center justify-center py-12 text-center space-y-3">
+                <ShieldCheck className="h-10 w-10 text-[hsl(var(--risk-low))]" />
+                <p className="text-sm font-medium text-foreground">No active alerts for this customer</p>
+                <p className="text-xs text-muted-foreground">All clear — no flagged transactions or compliance alerts on file.</p>
+              </div>
             )}
           </CardContent>
         </Card>
