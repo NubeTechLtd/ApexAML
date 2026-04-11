@@ -257,9 +257,9 @@ export default function AlertWorkspace() {
     const analyst = ANALYSTS.find(a => a.id === analystId);
     if (!analyst) return;
     setAssignments(prev => ({ ...prev, [alertId]: analystId }));
-    addEntry(`Case ${caseId} reassigned to ${analyst.name}`);
+    addAuditEntry({ action: 'NFIU_ESCALATION', analyst: analyst.name, caseId, justification: `Case reassigned to ${analyst.name}` });
     toast({ title: 'Case reassigned', description: `${caseId} assigned to ${analyst.name}.` });
-  }, [addEntry, toast]);
+  }, [addAuditEntry, toast]);
 
   const riskParam = searchParams.get('risk');
   const statusParam = searchParams.get('status');
