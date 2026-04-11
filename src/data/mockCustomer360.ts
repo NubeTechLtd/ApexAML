@@ -34,9 +34,9 @@ export const customer360Data: Record<number, Customer360Data> = {
     email: 'adebayo.ogunlesi@email.com', phone: '+234 801 111 2233',
     address: '5 Bourdillon Road, Ikoyi, Lagos',
     radarScores: [
-      { axis: 'Velocity', value: 82 }, { axis: 'Structuring Risk', value: 95 },
-      { axis: 'Jurisdiction Risk', value: 45 }, { axis: 'PEP Proximity', value: 60 },
-      { axis: 'Crypto Exposure', value: 78 },
+      { axis: 'PEP Exposure', value: 75 }, { axis: 'Cross-Border Vol.', value: 82 },
+      { axis: 'Cash Intensity', value: 45 }, { axis: 'BVN/NIN Integrity', value: 18 },
+      { axis: 'Peer Deviation', value: 91 }, { axis: 'Channel Conc.', value: 58 },
     ],
     connectedEntities: [
       { id: 'ce1', label: 'Device #A3F9', type: 'Shared Device ID', detail: 'Shared with 2 accounts (CUS-77104, CUS-88201)' },
@@ -58,9 +58,9 @@ export const customer360Data: Record<number, Customer360Data> = {
     email: 'chioma.adekunle@email.com', phone: '+234 802 222 3344',
     address: '22 Allen Avenue, Ikeja, Lagos',
     radarScores: [
-      { axis: 'Velocity', value: 40 }, { axis: 'Structuring Risk', value: 30 },
-      { axis: 'Jurisdiction Risk', value: 20 }, { axis: 'PEP Proximity', value: 65 },
-      { axis: 'Crypto Exposure', value: 25 },
+      { axis: 'PEP Exposure', value: 62 }, { axis: 'Cross-Border Vol.', value: 25 },
+      { axis: 'Cash Intensity', value: 38 }, { axis: 'BVN/NIN Integrity', value: 10 },
+      { axis: 'Peer Deviation', value: 42 }, { axis: 'Channel Conc.', value: 55 },
     ],
     connectedEntities: [
       { id: 'ce5', label: 'Adekunle Ventures', type: 'Frequent Transfer Target', detail: 'Regular monthly transfers' },
@@ -74,9 +74,9 @@ export const customer360Data: Record<number, Customer360Data> = {
     email: 'emeka.obi@email.com', phone: '+234 803 333 4455',
     address: '9 Market Road, Onitsha',
     radarScores: [
-      { axis: 'Velocity', value: 15 }, { axis: 'Structuring Risk', value: 5 },
-      { axis: 'Jurisdiction Risk', value: 10 }, { axis: 'PEP Proximity', value: 8 },
-      { axis: 'Crypto Exposure', value: 3 },
+      { axis: 'PEP Exposure', value: 5 }, { axis: 'Cross-Border Vol.', value: 12 },
+      { axis: 'Cash Intensity', value: 20 }, { axis: 'BVN/NIN Integrity', value: 8 },
+      { axis: 'Peer Deviation', value: 10 }, { axis: 'Channel Conc.', value: 15 },
     ],
     connectedEntities: [],
     eddDocuments: [],
@@ -88,9 +88,9 @@ export const customer360Data: Record<number, Customer360Data> = {
     email: 'fatima.bello@email.com', phone: '+234 804 444 5566',
     address: '3 Sultan Road, Kaduna',
     radarScores: [
-      { axis: 'Velocity', value: 88 }, { axis: 'Structuring Risk', value: 70 },
-      { axis: 'Jurisdiction Risk', value: 92 }, { axis: 'PEP Proximity', value: 85 },
-      { axis: 'Crypto Exposure', value: 60 },
+      { axis: 'PEP Exposure', value: 88 }, { axis: 'Cross-Border Vol.', value: 78 },
+      { axis: 'Cash Intensity', value: 72 }, { axis: 'BVN/NIN Integrity', value: 65 },
+      { axis: 'Peer Deviation', value: 85 }, { axis: 'Channel Conc.', value: 40 },
     ],
     connectedEntities: [
       { id: 'ce6', label: 'Device #B7K2', type: 'Shared Device ID', detail: 'Also used by CUS-31998 (Ibrahim Musa)' },
@@ -109,9 +109,9 @@ export const customer360Data: Record<number, Customer360Data> = {
     email: 'ibrahim.musa@email.com', phone: '+234 805 555 6677',
     address: '15 Independence Avenue, Abuja',
     radarScores: [
-      { axis: 'Velocity', value: 25 }, { axis: 'Structuring Risk', value: 12 },
-      { axis: 'Jurisdiction Risk', value: 30 }, { axis: 'PEP Proximity', value: 40 },
-      { axis: 'Crypto Exposure', value: 15 },
+      { axis: 'PEP Exposure', value: 35 }, { axis: 'Cross-Border Vol.', value: 28 },
+      { axis: 'Cash Intensity', value: 15 }, { axis: 'BVN/NIN Integrity', value: 12 },
+      { axis: 'Peer Deviation', value: 22 }, { axis: 'Channel Conc.', value: 30 },
     ],
     connectedEntities: [
       { id: 'ce10', label: 'Device #B7K2', type: 'Shared Device ID', detail: 'Also used by CUS-88291 (Fatima Bello)' },
@@ -125,9 +125,9 @@ export const customer360Data: Record<number, Customer360Data> = {
     email: 'ngozi.okafor@email.com', phone: '+234 806 666 7788',
     address: '7 Awolowo Road, Ikoyi, Lagos',
     radarScores: [
-      { axis: 'Velocity', value: 50 }, { axis: 'Structuring Risk', value: 55 },
-      { axis: 'Jurisdiction Risk', value: 35 }, { axis: 'PEP Proximity', value: 25 },
-      { axis: 'Crypto Exposure', value: 70 },
+      { axis: 'PEP Exposure', value: 20 }, { axis: 'Cross-Border Vol.', value: 45 },
+      { axis: 'Cash Intensity', value: 55 }, { axis: 'BVN/NIN Integrity', value: 15 },
+      { axis: 'Peer Deviation', value: 60 }, { axis: 'Channel Conc.', value: 72 },
     ],
     connectedEntities: [
       { id: 'ce11', label: 'Okafor Enterprises', type: 'Frequent Transfer Target', detail: '₦12M single wire transfer' },
