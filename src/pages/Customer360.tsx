@@ -188,6 +188,14 @@ export default function Customer360() {
           action="NFIU_ESCALATION"
           onConfirmed={() => toast.error('Escalated to NFIU')}
         />
+        <AddNoteSheet
+          open={noteSheetOpen}
+          onOpenChange={setNoteSheetOpen}
+          onSave={(note) => {
+            setNotes(prev => [...prev, note]);
+            toast.success('Compliance note saved');
+          }}
+        />
       </div>
     </SidebarProvider>
   );
