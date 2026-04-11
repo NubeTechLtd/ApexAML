@@ -15,6 +15,12 @@ import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import {
+  AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogCancel,
+} from '@/components/ui/alert-dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
 import { mockAlerts, type Alert } from '@/data/mockAlerts';
 import { useToast } from '@/hooks/use-toast';
 import { generateGoAMLXml, downloadXmlFile } from '@/lib/generateGoAMLXml';
@@ -23,6 +29,7 @@ import {
   Search, AlertTriangle, Sparkles, Bot, Send, FileDown,
   Loader2, CheckCircle2, Shield, Clock, User, Fingerprint,
   CreditCard, ArrowUpRight, ArrowDownLeft, Flag, ShieldAlert,
+  ShieldCheck, Eye,
 } from 'lucide-react';
 
 /* ── Helpers ─────────────────────────────────────────── */
@@ -32,19 +39,17 @@ function formatNGN(amount: number) {
 }
 
 function formatTime(iso: string) {
-  return new Date(iso).toLocaleString('en-NG', {
-    month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false,
-  });
+  return new Date(iso).toLocaleString('en-NG', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
 }
 
 const riskColors: Record<string, string> = {
   Critical: 'bg-destructive/10 text-destructive border-destructive/30',
-  High: 'bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/30',
-  Medium: 'bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border-yellow-500/30',
-  Low: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30',
+  High: 'bg-[hsl(var(--risk-high)/0.1)] text-[hsl(var(--risk-high))] border-[hsl(var(--risk-high)/0.3)]',
+  Medium: 'bg-[hsl(var(--risk-medium)/0.1)] text-[hsl(var(--risk-medium))] border-[hsl(var(--risk-medium)/0.3)]',
+  Low: 'bg-[hsl(var(--risk-low)/0.1)] text-[hsl(var(--risk-low))] border-[hsl(var(--risk-low)/0.3)]',
 };
 
-/* ── Chat types ──────────────────────────────────────── */
+type CaseStatus = 'Open' | 'Under Review' | 'Escalated' | 'Closed';
 
 interface ChatMessage {
   id: number;
@@ -67,18 +72,88 @@ function getResponse(input: string): string {
   return quickResponses.default;
 }
 
+const DISMISSAL_REASONS = [
+  'Name/DOB mismatch',
+  'Different nationality',
+  'Verified alternate identity',
+  'Business transaction',
+  'Insufficient evidence',
+] as const;
+
+/* ── Status Stepper ──────────────────────────────────── */
+
+const STEPS: { key: CaseStatus; label: string }[] = [
+  { key: 'Open', label: 'Open' },
+  { key: 'Under Review', label: 'Under Review' },
+  { key: 'Escalated', label: 'Escalated to NFIU' },
+  { key: 'Closed', label: 'Closed (FP)' },
+];
+
+function StatusStepper({ status }: { status: CaseStatus }) {
+  const currentIdx = status === 'Closed'
+    ? 3
+    : STEPS.findIndex(s => s.key === status);
+
+  return (
+    <div className="flex items-center gap-0 w-full">
+      {STEPS.map((step, i) => {
+        // For Escalated/Closed which are terminal branches
+        const isTerminal = i >= 2;
+        const isActive = i === currentIdx;
+        const isPast = i < currentIdx || (status === 'Closed' && i < 3) || (status === 'Escalated' && i < 2);
+        // Only show first two + the relevant terminal
+        if (isTerminal && !isActive && status !== 'Under Review' && status !== 'Open') {
+          if (status === 'Escalated' && i === 3) return null;
+          if (status === 'Closed' && i === 2) return null;
+        }
+
+        return (
+          <div key={step.key} className="flex items-center gap-0 flex-1 last:flex-none">
+            <div className="flex flex-col items-center gap-1">
+              <div className={`h-6 w-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-colors ${
+                isActive
+                  ? 'bg-primary text-primary-foreground'
+                  : isPast
+                    ? 'bg-primary/20 text-primary'
+                    : 'bg-muted text-muted-foreground'
+              }`}>
+                {isPast && !isActive ? <CheckCircle2 className="h-3.5 w-3.5" /> : i + 1}
+              </div>
+              <span className={`text-[10px] whitespace-nowrap ${isActive ? 'font-semibold text-foreground' : 'text-muted-foreground'}`}>
+                {step.label}
+              </span>
+            </div>
+            {i < STEPS.length - 1 && !(isTerminal) && (
+              <div className={`flex-1 h-px mx-1 mt-[-14px] ${isPast ? 'bg-primary/40' : 'bg-border'}`} />
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 /* ── Alert List Card ─────────────────────────────────── */
 
-function MiniAlertCard({ alert, isSelected, onClick }: { alert: Alert; isSelected: boolean; onClick: () => void }) {
+function MiniAlertCard({ alert, isSelected, onClick, status }: {
+  alert: Alert; isSelected: boolean; onClick: () => void; status: CaseStatus;
+}) {
+  const isResolved = status === 'Escalated' || status === 'Closed';
+
   return (
     <button
       onClick={onClick}
-      className={`w-full text-left rounded-lg p-3 transition-all border ${
+      className={`w-full text-left rounded-lg p-3 transition-all border relative ${
         isSelected
           ? 'bg-primary/5 border-primary/30 shadow-sm'
           : 'bg-card border-transparent hover:bg-muted/50 hover:border-border'
-      }`}
+      } ${isResolved ? 'opacity-50' : ''}`}
     >
+      {isResolved && (
+        <div className="absolute top-2 right-2">
+          <CheckCircle2 className="h-4 w-4 text-primary" />
+        </div>
+      )}
       <div className="flex items-center justify-between mb-1.5">
         <span className="text-[11px] font-mono text-muted-foreground">{alert.caseId}</span>
         <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${riskColors[alert.riskLevel]}`}>
@@ -88,7 +163,13 @@ function MiniAlertCard({ alert, isSelected, onClick }: { alert: Alert; isSelecte
       <p className="text-sm font-semibold text-foreground truncate">{alert.customerProfile.fullName}</p>
       <p className="text-xs text-muted-foreground mt-0.5 truncate">{alert.ruleTriggered}</p>
       <div className="flex items-center justify-between mt-2">
-        <Badge variant="secondary" className="text-[10px]">{alert.status}</Badge>
+        <Badge variant="secondary" className={`text-[10px] ${
+          status === 'Closed' ? 'bg-muted text-muted-foreground' :
+          status === 'Escalated' ? 'bg-destructive/10 text-destructive' :
+          status === 'Under Review' ? 'bg-primary/10 text-primary' : ''
+        }`}>
+          {status === 'Closed' ? 'False Positive' : status}
+        </Badge>
         <span className="text-[10px] text-muted-foreground">{alert.timeElapsed}</span>
       </div>
     </button>
@@ -103,6 +184,19 @@ export default function AlertWorkspace() {
   const [search, setSearch] = useState('');
   const [selectedId, setSelectedId] = useState<string>(mockAlerts[0].id);
   const [escalateOpen, setEscalateOpen] = useState(false);
+  const [fpDialogOpen, setFpDialogOpen] = useState(false);
+  const [fpReason, setFpReason] = useState('');
+
+  // Status overrides (local state for lifecycle)
+  const [statusOverrides, setStatusOverrides] = useState<Record<string, CaseStatus>>({});
+
+  const getStatus = useCallback((alertId: string, original: string): CaseStatus => {
+    return statusOverrides[alertId] ?? (original as CaseStatus);
+  }, [statusOverrides]);
+
+  const setAlertStatus = useCallback((alertId: string, status: CaseStatus) => {
+    setStatusOverrides(prev => ({ ...prev, [alertId]: status }));
+  }, []);
 
   const riskParam = searchParams.get('risk');
   const statusParam = searchParams.get('status');
@@ -125,7 +219,8 @@ export default function AlertWorkspace() {
   const filtered = useMemo(() => {
     return mockAlerts.filter((a) => {
       const q = search.toLowerCase();
-      const matchesStatus = statusParam ? a.status === statusParam : (a.status === 'Open' || a.status === 'Under Review');
+      const effectiveStatus = getStatus(a.id, a.status);
+      const matchesStatus = statusParam ? effectiveStatus === statusParam : true;
       const matchesRisk = riskParam ? a.riskLevel === riskParam : true;
       return matchesStatus && matchesRisk && (
         !q ||
@@ -134,7 +229,14 @@ export default function AlertWorkspace() {
         a.ruleTriggered.toLowerCase().includes(q)
       );
     });
-  }, [search, riskParam, statusParam]);
+  }, [search, riskParam, statusParam, getStatus]);
+
+  const actionableCount = useMemo(() => {
+    return filtered.filter(a => {
+      const s = getStatus(a.id, a.status);
+      return s !== 'Escalated' && s !== 'Closed';
+    }).length;
+  }, [filtered, getStatus]);
 
   const selected = filtered.find((a) => a.id === selectedId) || filtered[0];
 
@@ -159,12 +261,7 @@ export default function AlertWorkspace() {
       setStrDraft(selected.aiDraftedNarrative);
       setStrLoading(false);
       setStrGenerated(true);
-      setChatMessages([{
-        id: 1,
-        role: 'assistant',
-        content: `I've drafted an STR for ${selected.customerProfile.fullName} based on "${selected.ruleTriggered}". The narrative is pre-filled in the editor. You can edit directly or ask me to refine it.`,
-      }]);
-    }, 2500);
+    }, 2200);
   };
 
   const handleSendChat = () => {
@@ -182,6 +279,7 @@ export default function AlertWorkspace() {
   };
 
   const handleExport = useCallback(() => {
+    if (!selected) return;
     const today = new Date().toISOString().split('T')[0];
     const filename = `STR_${selected.caseId}_${today}.xml`;
     const xml = generateGoAMLXml(selected, strDraft);
@@ -196,6 +294,20 @@ export default function AlertWorkspace() {
     setEscalateOpen(true);
   }, []);
 
+  const handleMarkUnderReview = useCallback(() => {
+    if (!selected) return;
+    setAlertStatus(selected.id, 'Under Review');
+    toast({ title: 'Status updated', description: `${selected.caseId} marked as Under Review.` });
+  }, [selected, setAlertStatus, toast]);
+
+  const handleCloseFP = useCallback(() => {
+    if (!selected || !fpReason) return;
+    setAlertStatus(selected.id, 'Closed');
+    toast({ title: 'Alert closed', description: `${selected.caseId} closed as False Positive — ${fpReason}.` });
+    setFpDialogOpen(false);
+    setFpReason('');
+  }, [selected, fpReason, setAlertStatus, toast]);
+
   // Keyboard shortcuts
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -209,6 +321,8 @@ export default function AlertWorkspace() {
   if (!selected) return null;
 
   const cp = selected.customerProfile;
+  const currentStatus = getStatus(selected.id, selected.status);
+  const isResolved = currentStatus === 'Escalated' || currentStatus === 'Closed';
 
   return (
     <SidebarProvider>
@@ -244,7 +358,10 @@ export default function AlertWorkspace() {
                 </div>
                 <div className="flex items-center gap-2 mt-2">
                   <p className="text-[11px] text-muted-foreground">
-                    {filtered.length} alert{filtered.length !== 1 ? 's' : ''} requiring action
+                    {actionableCount} alert{actionableCount !== 1 ? 's' : ''} requiring action
+                    {actionableCount < filtered.length && (
+                      <span className="text-muted-foreground/60"> · {filtered.length - actionableCount} resolved</span>
+                    )}
                   </p>
                   {activeFilterLabel && <ActiveFilterChip label={activeFilterLabel} onClear={clearFilterParams} />}
                 </div>
@@ -257,6 +374,7 @@ export default function AlertWorkspace() {
                       alert={alert}
                       isSelected={alert.id === selectedId}
                       onClick={() => setSelectedId(alert.id)}
+                      status={getStatus(alert.id, alert.status)}
                     />
                   ))}
                 </div>
@@ -269,8 +387,8 @@ export default function AlertWorkspace() {
                 <div className="p-6 space-y-6">
                   {/* Case Header */}
                   <motion.div key={selected.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
-                    <Card className="border-l-4 border-l-destructive">
-                      <CardContent className="py-4 px-5">
+                    <Card className={`border-l-4 ${isResolved ? 'border-l-muted-foreground' : 'border-l-destructive'}`}>
+                      <CardContent className="py-4 px-5 space-y-4">
                         <div className="flex items-start justify-between">
                           <div className="space-y-1.5">
                             <div className="flex items-center gap-2">
@@ -285,11 +403,38 @@ export default function AlertWorkspace() {
                               </Badge>
                             </div>
                           </div>
-                          <Button size="sm" variant="destructive" className="gap-1.5 shrink-0" onClick={handleEscalate}>
-                            <ShieldAlert className="h-3.5 w-3.5" />
-                            Escalate to NFIU
-                            <Badge variant="outline" className="text-[8px] px-1 py-0 ml-1 bg-destructive-foreground/10 text-destructive-foreground border-destructive-foreground/20">⇧E</Badge>
-                          </Button>
+                          <div className="flex flex-col items-end gap-2 shrink-0">
+                            <Button size="sm" variant="destructive" className="gap-1.5" onClick={handleEscalate} disabled={isResolved}>
+                              <ShieldAlert className="h-3.5 w-3.5" />
+                              Escalate to NFIU
+                              <Badge variant="outline" className="text-[8px] px-1 py-0 ml-1 bg-destructive-foreground/10 text-destructive-foreground border-destructive-foreground/20">⇧E</Badge>
+                            </Button>
+                            <div className="flex gap-2">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="gap-1.5 text-xs h-7"
+                                onClick={handleMarkUnderReview}
+                                disabled={currentStatus !== 'Open'}
+                              >
+                                <Eye className="h-3 w-3" /> Mark Under Review
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="gap-1.5 text-xs h-7"
+                                onClick={() => setFpDialogOpen(true)}
+                                disabled={isResolved}
+                              >
+                                <ShieldCheck className="h-3 w-3" /> Close as FP
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Status stepper */}
+                        <div className="pt-2 border-t border-border">
+                          <StatusStepper status={currentStatus} />
                         </div>
                       </CardContent>
                     </Card>
@@ -351,11 +496,9 @@ export default function AlertWorkspace() {
                       <div className="relative space-y-0">
                         {selected.transactions.map((tx, i) => (
                           <div key={tx.id} className="flex items-start gap-3 relative">
-                            {/* Vertical connector */}
                             {i < selected.transactions.length - 1 && (
                               <div className="absolute left-[15px] top-8 bottom-0 w-px bg-border" />
                             )}
-                            {/* Icon */}
                             <div className={`shrink-0 mt-1 h-8 w-8 rounded-full flex items-center justify-center border ${
                               tx.type === 'Credit'
                                 ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400'
@@ -366,7 +509,6 @@ export default function AlertWorkspace() {
                                 : <ArrowUpRight className="h-3.5 w-3.5" />
                               }
                             </div>
-                            {/* Details */}
                             <div className="flex-1 pb-4">
                               <div className="flex items-center justify-between">
                                 <div>
@@ -582,6 +724,7 @@ export default function AlertWorkspace() {
           </div>
         </div>
       </div>
+
       <ConfirmEscalationDialog
         open={escalateOpen}
         onOpenChange={setEscalateOpen}
@@ -589,9 +732,37 @@ export default function AlertWorkspace() {
         caseId={selected.caseId}
         action="NFIU_ESCALATION"
         onConfirmed={() => {
+          setAlertStatus(selected.id, 'Escalated');
           toast({ title: 'Escalated to NFIU', description: `Case ${selected.caseId} escalated.` });
         }}
       />
+
+      {/* Close as False Positive dialog */}
+      <AlertDialog open={fpDialogOpen} onOpenChange={(v) => { if (!v) setFpReason(''); setFpDialogOpen(v); }}>
+        <AlertDialogContent className="max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <ShieldCheck className="h-5 w-5 text-primary" /> Close as False Positive
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Closing <span className="font-semibold text-foreground">{selected.caseId}</span> as a false positive. This action will be logged to the audit trail.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="space-y-3 py-2">
+            <Label className="text-xs font-medium">Dismissal reason</Label>
+            <Select value={fpReason} onValueChange={setFpReason}>
+              <SelectTrigger><SelectValue placeholder="Select reason…" /></SelectTrigger>
+              <SelectContent>
+                {DISMISSAL_REASONS.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <Button disabled={!fpReason} onClick={handleCloseFP}>Confirm Close</Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </SidebarProvider>
   );
 }
