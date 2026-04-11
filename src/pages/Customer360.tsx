@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { NotificationBell } from '@/components/NotificationBell';
+import { AddNoteSheet, type ComplianceNote } from '@/components/customer360/AddNoteSheet';
 import { useState } from 'react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
@@ -12,7 +13,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import {
   ArrowLeft, ShieldAlert, Snowflake, User, Fingerprint, Network, FileText,
-  AlertTriangle, Clock, ChevronDown, CheckCircle2, Download, Globe, Wifi,
+  AlertTriangle, Clock, ChevronDown, CheckCircle2, Download, Globe, Wifi, StickyNote,
 } from 'lucide-react';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
 import { customer360Data } from '@/data/mockCustomer360';
@@ -40,6 +41,20 @@ export default function Customer360() {
   const [freezeOpen, setFreezeOpen] = useState(false);
   const [escalateOpen, setEscalateOpen] = useState(false);
   const [accountStatus, setAccountStatus] = useState(customer?.accountStatus ?? 'Active');
+  const [noteSheetOpen, setNoteSheetOpen] = useState(false);
+  const [notes, setNotes] = useState<ComplianceNote[]>([]);
+  const [activeTab, setActiveTab] = useState('transactions');
+  const [filterNotesOnly, setFilterNotesOnly] = useState(false);
+
+  const handleNoteBadgeClick = () => {
+    setActiveTab('audit');
+    setFilterNotesOnly(true);
+  };
+
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    if (tab !== 'audit') setFilterNotesOnly(false);
+  };
 
   if (!customer) {
     return (
@@ -81,6 +96,11 @@ export default function Customer360() {
                   <div>
                     <div className="flex items-center gap-3">
                       <h1 className="text-xl font-bold text-foreground">{customer.name}</h1>
+                      {notes.length > 0 && (
+                        <button onClick={handleNoteBadgeClick} className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary px-2 py-0.5 text-xs font-semibold hover:bg-primary/20 transition-colors">
+                          <StickyNote className="h-3 w-3" /> {notes.length}
+                        </button>
+                      )}
                       <Badge variant="outline" className={`text-sm px-3 py-1 ${riskColors[customer.riskLevel]}`}>
                         Risk: {customer.riskLevel.toUpperCase()} ({customer.riskScore}/100)
                       </Badge>
@@ -136,6 +156,10 @@ export default function Customer360() {
               <Customer360Tabs
                 customer={customer}
                 customerAlerts={customerAlerts}
+                notes={notes}
+                activeTab={activeTab}
+                onTabChange={handleTabChange}
+                filterNotesOnly={filterNotesOnly}
               />
             </motion.div>
           </div>
