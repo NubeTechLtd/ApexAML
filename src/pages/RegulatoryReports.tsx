@@ -14,13 +14,7 @@ import { toast } from '@/hooks/use-toast';
 
 const RegulatoryReports = () => {
   const handleExportPDF = () => {
-    toast({
-      title: 'Exporting PDF…',
-      description: 'Generating compliance report for CBN Circular BSD/DIR/PUB/LAB/019/002.',
-    });
-    setTimeout(() => {
-      toast({ title: 'PDF Ready', description: 'Compliance_Health_Report_2026.pdf downloaded.' });
-    }, 2000);
+    window.print();
   };
 
   return (
