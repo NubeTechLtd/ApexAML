@@ -238,7 +238,7 @@ export default function AlertWorkspace() {
   const [statusOverrides, setStatusOverrides] = useState<Record<string, CaseStatus>>({});
   // Assignment state
   const [assignments, setAssignments] = useState<Record<string, string>>(DEFAULT_ASSIGNMENTS);
-  const { addEntry } = useAuditLog();
+  const { append: addAuditEntry } = useAuditLog();
 
   const getStatus = useCallback((alertId: string, original: string): CaseStatus => {
     return statusOverrides[alertId] ?? (original as CaseStatus);
