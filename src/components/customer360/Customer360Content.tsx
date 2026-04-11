@@ -13,6 +13,7 @@ import { Customer360RiskRadar } from './RiskRadar';
 import { Customer360Entities } from './EntitiesCard';
 import { Customer360Tabs } from './DeepDiveTabs';
 import { ConfirmEscalationDialog } from '@/components/ConfirmEscalationDialog';
+import { FreezeAccountDialog } from '@/components/FreezeAccountDialog';
 
 const riskColors: Record<string, string> = {
   High: 'bg-destructive/10 text-destructive border-destructive/20',

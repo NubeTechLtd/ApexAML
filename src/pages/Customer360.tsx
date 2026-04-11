@@ -88,7 +88,7 @@ export default function Customer360() {
                       </Badge>
                     </div>
                     <p className="text-xs text-muted-foreground mt-0.5">
-                      {customer.kycTier} Account • {customer.bvnVerified ? 'BVN Verified' : 'BVN Unverified'} • {customer.accountStatus}
+                      {customer.kycTier} Account • {customer.bvnVerified ? 'BVN Verified' : 'BVN Unverified'} • {accountStatus === 'Frozen' ? (<span className="inline-flex items-center gap-1 text-destructive font-semibold"><Snowflake className="h-3 w-3" />Frozen</span>) : accountStatus}
                     </p>
                   </div>
                 </div>
