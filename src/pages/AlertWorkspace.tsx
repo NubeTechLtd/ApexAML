@@ -216,6 +216,9 @@ export default function AlertWorkspace() {
     setSearchParams({});
   }, [setSearchParams]);
 
+  // Channel filter state
+  const [channelFilter, setChannelFilter] = useState<TxChannel | 'All'>('All');
+
   // STR state
   const [strDraft, setStrDraft] = useState('');
   const [strLoading, setStrLoading] = useState(false);
