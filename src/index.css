@@ -150,3 +150,46 @@
     border-radius: 20px;
   }
 }
+
+@keyframes pulse-subtle {
+  0%, 100% { background-color: hsl(var(--risk-critical) / 0.04); }
+  50% { background-color: hsl(var(--risk-critical) / 0.1); }
+}
+
+@media print {
+  /* Hide app chrome */
+  [data-sidebar], .sidebar-trigger, nav, header,
+  [data-radix-popper-content-wrapper] {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 11px !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .min-h-screen {
+    min-height: auto !important;
+  }
+
+  .print-timeline-card {
+    border: none !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  /* Hide non-timeline content during print */
+  main > *:not(:has(.print-timeline-card)),
+  main > .rounded-lg.border:first-child,
+  [role="tablist"] {
+    display: none !important;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 15mm;
+  }
+}
