@@ -236,6 +236,9 @@ export default function AlertWorkspace() {
 
   // Status overrides (local state for lifecycle)
   const [statusOverrides, setStatusOverrides] = useState<Record<string, CaseStatus>>({});
+  // Assignment state
+  const [assignments, setAssignments] = useState<Record<string, string>>(DEFAULT_ASSIGNMENTS);
+  const { addEntry } = useAuditLog();
 
   const getStatus = useCallback((alertId: string, original: string): CaseStatus => {
     return statusOverrides[alertId] ?? (original as CaseStatus);
@@ -244,6 +247,19 @@ export default function AlertWorkspace() {
   const setAlertStatus = useCallback((alertId: string, status: CaseStatus) => {
     setStatusOverrides(prev => ({ ...prev, [alertId]: status }));
   }, []);
+
+  const getAssignedAnalyst = useCallback((alertId: string) => {
+    const aId = assignments[alertId];
+    return aId ? ANALYSTS.find(a => a.id === aId) : undefined;
+  }, [assignments]);
+
+  const handleReassign = useCallback((alertId: string, caseId: string, analystId: string) => {
+    const analyst = ANALYSTS.find(a => a.id === analystId);
+    if (!analyst) return;
+    setAssignments(prev => ({ ...prev, [alertId]: analystId }));
+    addEntry(`Case ${caseId} reassigned to ${analyst.name}`);
+    toast({ title: 'Case reassigned', description: `${caseId} assigned to ${analyst.name}.` });
+  }, [addEntry, toast]);
 
   const riskParam = searchParams.get('risk');
   const statusParam = searchParams.get('status');
