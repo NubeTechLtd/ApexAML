@@ -20,17 +20,36 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogCancel,
 } from '@/components/ui/alert-dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Label } from '@/components/ui/label';
 import { mockAlerts, type Alert, type TxChannel } from '@/data/mockAlerts';
 import { useToast } from '@/hooks/use-toast';
+import { useAuditLog } from '@/hooks/useAuditLog';
 import { generateGoAMLXml, downloadXmlFile } from '@/lib/generateGoAMLXml';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, AlertTriangle, Sparkles, Bot, Send, FileDown,
   Loader2, CheckCircle2, Shield, Clock, User, Fingerprint,
   CreditCard, ArrowUpRight, ArrowDownLeft, Flag, ShieldAlert,
-  ShieldCheck, Eye,
+  ShieldCheck, Eye, Users, RefreshCw,
 } from 'lucide-react';
+
+/* ── Mock Analysts ────────────────────────────────────── */
+
+const ANALYSTS = [
+  { id: 'a1', name: 'Chioma Adeyemi', initials: 'CA', color: 'bg-blue-500/15 text-blue-700 dark:text-blue-400' },
+  { id: 'a2', name: 'Ibrahim Musa', initials: 'IM', color: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400' },
+  { id: 'a3', name: 'Ngozi Okafor', initials: 'NO', color: 'bg-purple-500/15 text-purple-700 dark:text-purple-400' },
+  { id: 'a4', name: 'Emeka Obi', initials: 'EO', color: 'bg-amber-500/15 text-amber-700 dark:text-amber-400' },
+];
+
+// Default assignments for some alerts
+const DEFAULT_ASSIGNMENTS: Record<string, string> = {
+  [mockAlerts[0]?.id]: 'a1',
+  [mockAlerts[1]?.id]: 'a3',
+  [mockAlerts[2]?.id]: 'a2',
+};
 
 /* ── Helpers ─────────────────────────────────────────── */
 
@@ -151,8 +170,9 @@ function StatusStepper({ status }: { status: CaseStatus }) {
 
 /* ── Alert List Card ─────────────────────────────────── */
 
-function MiniAlertCard({ alert, isSelected, onClick, status }: {
+function MiniAlertCard({ alert, isSelected, onClick, status, assignedAnalyst }: {
   alert: Alert; isSelected: boolean; onClick: () => void; status: CaseStatus;
+  assignedAnalyst?: typeof ANALYSTS[number];
 }) {
   const isResolved = status === 'Escalated' || status === 'Closed';
 
@@ -179,14 +199,25 @@ function MiniAlertCard({ alert, isSelected, onClick, status }: {
       <p className="text-sm font-semibold text-foreground truncate">{alert.customerProfile.fullName}</p>
       <p className="text-xs text-muted-foreground mt-0.5 truncate">{alert.ruleTriggered}</p>
       <div className="flex items-center justify-between mt-2">
-        <Badge variant="secondary" className={`text-[10px] ${
-          status === 'Closed' ? 'bg-muted text-muted-foreground' :
-          status === 'Escalated' ? 'bg-destructive/10 text-destructive' :
-          status === 'Under Review' ? 'bg-primary/10 text-primary' : ''
-        }`}>
-          {status === 'Closed' ? 'False Positive' : status}
-        </Badge>
-        <span className="text-[10px] text-muted-foreground">{alert.timeElapsed}</span>
+        <div className="flex items-center gap-1.5">
+          <Badge variant="secondary" className={`text-[10px] ${
+            status === 'Closed' ? 'bg-muted text-muted-foreground' :
+            status === 'Escalated' ? 'bg-destructive/10 text-destructive' :
+            status === 'Under Review' ? 'bg-primary/10 text-primary' : ''
+          }`}>
+            {status === 'Closed' ? 'False Positive' : status}
+          </Badge>
+        </div>
+        <div className="flex items-center gap-1.5">
+          {assignedAnalyst ? (
+            <Avatar className="h-4 w-4">
+              <AvatarFallback className={`text-[7px] ${assignedAnalyst.color}`}>{assignedAnalyst.initials}</AvatarFallback>
+            </Avatar>
+          ) : (
+            <span className="text-[9px] text-amber-600 dark:text-amber-400 font-medium">Unassigned</span>
+          )}
+          <span className="text-[10px] text-muted-foreground">{alert.timeElapsed}</span>
+        </div>
       </div>
     </button>
   );
@@ -205,6 +236,9 @@ export default function AlertWorkspace() {
 
   // Status overrides (local state for lifecycle)
   const [statusOverrides, setStatusOverrides] = useState<Record<string, CaseStatus>>({});
+  // Assignment state
+  const [assignments, setAssignments] = useState<Record<string, string>>(DEFAULT_ASSIGNMENTS);
+  const { append: addAuditEntry } = useAuditLog();
 
   const getStatus = useCallback((alertId: string, original: string): CaseStatus => {
     return statusOverrides[alertId] ?? (original as CaseStatus);
@@ -213,6 +247,19 @@ export default function AlertWorkspace() {
   const setAlertStatus = useCallback((alertId: string, status: CaseStatus) => {
     setStatusOverrides(prev => ({ ...prev, [alertId]: status }));
   }, []);
+
+  const getAssignedAnalyst = useCallback((alertId: string) => {
+    const aId = assignments[alertId];
+    return aId ? ANALYSTS.find(a => a.id === aId) : undefined;
+  }, [assignments]);
+
+  const handleReassign = useCallback((alertId: string, caseId: string, analystId: string) => {
+    const analyst = ANALYSTS.find(a => a.id === analystId);
+    if (!analyst) return;
+    setAssignments(prev => ({ ...prev, [alertId]: analystId }));
+    addAuditEntry({ action: 'NFIU_ESCALATION', analyst: analyst.name, caseId, justification: `Case reassigned to ${analyst.name}` });
+    toast({ title: 'Case reassigned', description: `${caseId} assigned to ${analyst.name}.` });
+  }, [addAuditEntry, toast]);
 
   const riskParam = searchParams.get('risk');
   const statusParam = searchParams.get('status');
@@ -396,6 +443,7 @@ export default function AlertWorkspace() {
                       isSelected={alert.id === selectedId}
                       onClick={() => setSelectedId(alert.id)}
                       status={getStatus(alert.id, alert.status)}
+                      assignedAnalyst={getAssignedAnalyst(alert.id)}
                     />
                   ))}
                 </div>
@@ -449,6 +497,58 @@ export default function AlertWorkspace() {
                               >
                                 <ShieldCheck className="h-3 w-3" /> Close as FP
                               </Button>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Assignment row */}
+                        <div className="flex items-center justify-between pt-2 border-t border-border">
+                          <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-2">
+                              <span className="text-[11px] text-muted-foreground">Assigned to:</span>
+                              {(() => {
+                                const assignee = getAssignedAnalyst(selected.id);
+                                return assignee ? (
+                                  <div className="flex items-center gap-1.5">
+                                    <Avatar className="h-5 w-5">
+                                      <AvatarFallback className={`text-[8px] ${assignee.color}`}>{assignee.initials}</AvatarFallback>
+                                    </Avatar>
+                                    <span className="text-xs font-medium text-foreground">{assignee.name}</span>
+                                  </div>
+                                ) : (
+                                  <span className="text-xs font-medium text-amber-600 dark:text-amber-400">Unassigned</span>
+                                );
+                              })()}
+                              <Popover>
+                                <PopoverTrigger asChild>
+                                  <Button variant="ghost" size="icon" className="h-6 w-6">
+                                    <RefreshCw className="h-3 w-3 text-muted-foreground" />
+                                  </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-48 p-1" align="start">
+                                  <p className="text-[10px] uppercase text-muted-foreground tracking-wider px-2 py-1.5">Reassign to</p>
+                                  {ANALYSTS.map((a) => (
+                                    <button
+                                      key={a.id}
+                                      onClick={() => handleReassign(selected.id, selected.caseId, a.id)}
+                                      className="w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs hover:bg-muted transition-colors text-left"
+                                    >
+                                      <Avatar className="h-5 w-5">
+                                        <AvatarFallback className={`text-[8px] ${a.color}`}>{a.initials}</AvatarFallback>
+                                      </Avatar>
+                                      <span className="text-foreground">{a.name}</span>
+                                      {assignments[selected.id] === a.id && (
+                                        <CheckCircle2 className="h-3 w-3 text-primary ml-auto" />
+                                      )}
+                                    </button>
+                                  ))}
+                                </PopoverContent>
+                              </Popover>
+                            </div>
+                            <Separator orientation="vertical" className="h-4" />
+                            <div className="flex items-center gap-1.5">
+                              <Users className="h-3 w-3 text-muted-foreground" />
+                              <span className="text-[11px] text-muted-foreground">Watched by <span className="font-medium text-foreground">2</span></span>
                             </div>
                           </div>
                         </div>
