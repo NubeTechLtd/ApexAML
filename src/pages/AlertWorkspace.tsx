@@ -500,49 +500,95 @@ export default function AlertWorkspace() {
                     </AccordionItem>
 
                   {/* Transaction Timeline */}
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-semibold flex items-center gap-2">
-                        <Clock className="h-4 w-4 text-primary" />
-                        Transaction Timeline ({selected.transactions.length})
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="relative space-y-0">
-                        {selected.transactions.map((tx, i) => (
-                          <div key={tx.id} className="flex items-start gap-3 relative">
-                            {i < selected.transactions.length - 1 && (
-                              <div className="absolute left-[15px] top-8 bottom-0 w-px bg-border" />
-                            )}
-                            <div className={`shrink-0 mt-1 h-8 w-8 rounded-full flex items-center justify-center border ${
-                              tx.type === 'Credit'
-                                ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400'
-                                : 'bg-destructive/10 border-destructive/30 text-destructive'
-                            }`}>
-                              {tx.type === 'Credit'
-                                ? <ArrowDownLeft className="h-3.5 w-3.5" />
-                                : <ArrowUpRight className="h-3.5 w-3.5" />
-                              }
-                            </div>
-                            <div className="flex-1 pb-4">
-                              <div className="flex items-center justify-between">
-                                <div>
-                                  <p className="text-sm font-medium text-foreground">{tx.counterparty}</p>
-                                  <p className="text-[11px] text-muted-foreground">{formatTime(tx.date)}</p>
+                  {(() => {
+                    // Channel summary
+                    const channelCounts = selected.transactions.reduce<Record<string, number>>((acc, tx) => {
+                      acc[tx.channel] = (acc[tx.channel] || 0) + 1;
+                      return acc;
+                    }, {});
+                    const filteredTx = channelFilter === 'All'
+                      ? selected.transactions
+                      : selected.transactions.filter(tx => tx.channel === channelFilter);
+
+                    return (
+                      <Card>
+                        <CardHeader className="pb-2">
+                          <CardTitle className="text-sm font-semibold flex items-center gap-2">
+                            <Clock className="h-4 w-4 text-primary" />
+                            Transaction Timeline ({filteredTx.length}{channelFilter !== 'All' ? ` of ${selected.transactions.length}` : ''})
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-3">
+                          {/* Channel summary chips */}
+                          <div className="flex flex-wrap gap-1.5">
+                            <button
+                              onClick={() => setChannelFilter('All')}
+                              className={`text-[10px] px-2 py-0.5 rounded-full border transition-colors ${
+                                channelFilter === 'All'
+                                  ? 'bg-primary text-primary-foreground border-primary'
+                                  : 'bg-card text-muted-foreground hover:border-primary/30'
+                              }`}
+                            >
+                              All ({selected.transactions.length})
+                            </button>
+                            {Object.entries(channelCounts).map(([ch, count]) => (
+                              <button
+                                key={ch}
+                                onClick={() => setChannelFilter(ch as TxChannel)}
+                                className={`text-[10px] px-2 py-0.5 rounded-full border transition-colors ${
+                                  channelFilter === ch
+                                    ? 'bg-primary text-primary-foreground border-primary'
+                                    : `${channelColors[ch as TxChannel] || 'bg-muted text-muted-foreground'} border-transparent hover:border-primary/30`
+                                }`}
+                              >
+                                {count} {ch}
+                              </button>
+                            ))}
+                          </div>
+
+                          {/* Timeline */}
+                          <div className="relative space-y-0">
+                            {filteredTx.map((tx, i) => (
+                              <div key={tx.id} className="flex items-start gap-3 relative">
+                                {i < filteredTx.length - 1 && (
+                                  <div className="absolute left-[15px] top-8 bottom-0 w-px bg-border" />
+                                )}
+                                <div className={`shrink-0 mt-1 h-8 w-8 rounded-full flex items-center justify-center border ${
+                                  tx.type === 'Credit'
+                                    ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400'
+                                    : 'bg-destructive/10 border-destructive/30 text-destructive'
+                                }`}>
+                                  {tx.type === 'Credit'
+                                    ? <ArrowDownLeft className="h-3.5 w-3.5" />
+                                    : <ArrowUpRight className="h-3.5 w-3.5" />
+                                  }
                                 </div>
-                                <div className="text-right">
-                                  <p className={`text-sm font-semibold ${tx.type === 'Credit' ? 'text-emerald-600 dark:text-emerald-400' : 'text-destructive'}`}>
-                                    {tx.type === 'Credit' ? '+' : '-'}{formatNGN(tx.amountNGN)}
-                                  </p>
-                                  <p className="text-[10px] text-muted-foreground">Bal: {formatNGN(tx.balanceAfter)}</p>
+                                <div className="flex-1 pb-4">
+                                  <div className="flex items-center justify-between">
+                                    <div>
+                                      <div className="flex items-center gap-2">
+                                        <p className="text-sm font-medium text-foreground">{tx.counterparty}</p>
+                                        <span className={`inline-flex text-[9px] font-semibold px-1.5 py-0.5 rounded-full ${channelColors[tx.channel] || 'bg-muted text-muted-foreground'}`}>
+                                          {tx.channel}
+                                        </span>
+                                      </div>
+                                      <p className="text-[11px] text-muted-foreground">{formatTime(tx.date)}</p>
+                                    </div>
+                                    <div className="text-right">
+                                      <p className={`text-sm font-semibold ${tx.type === 'Credit' ? 'text-emerald-600 dark:text-emerald-400' : 'text-destructive'}`}>
+                                        {tx.type === 'Credit' ? '+' : '-'}{formatNGN(tx.amountNGN)}
+                                      </p>
+                                      <p className="text-[10px] text-muted-foreground">Bal: {formatNGN(tx.balanceAfter)}</p>
+                                    </div>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
+                            ))}
                           </div>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
+                        </CardContent>
+                      </Card>
+                    );
+                  })()}
 
                     {/* Behavioral Red Flags (Collapsible) */}
                     <AccordionItem value="red-flags" className="border rounded-lg overflow-hidden">
