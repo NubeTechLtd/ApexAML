@@ -5,6 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { WhatsAppIcon } from './WhatsAppIcon';
+import { WHATSAPP_URL } from '@/lib/whatsapp';
 
 const ROADMAP_CONTENT = `CBN AML COMPLIANCE ROADMAP TEMPLATE
 Circular: BSD/DIR/PUB/LAB/019/002
