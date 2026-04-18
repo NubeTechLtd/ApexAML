@@ -250,19 +250,3 @@ export function LeadCaptureForm() {
       </AnimatePresence>
     </div>
   );
-}
-
-function ConsentRow({ consent, setConsent }: { consent: boolean; setConsent: (v: boolean) => void }) {
-  return (
-    <label className="flex items-start gap-3 cursor-pointer pt-2">
-      <Checkbox
-        checked={consent}
-        onCheckedChange={(c) => setConsent(c === true)}
-        className="mt-0.5 border-white/30 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-      />
-      <span className="text-xs text-white/50 leading-relaxed">
-        I consent to being contacted in accordance with the Nigeria Data Protection Act 2023.
-      </span>
-    </label>
-  );
-}
