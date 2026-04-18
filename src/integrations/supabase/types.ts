@@ -16,32 +16,41 @@ export type Database = {
     Tables: {
       leads: {
         Row: {
+          compliance_timeline: string | null
           created_at: string
+          current_setup: string | null
           email: string
           full_name: string | null
           id: string
           institution_name: string | null
           institution_type: string | null
+          ndpr_consent: boolean | null
           phone: string | null
           source: string | null
         }
         Insert: {
+          compliance_timeline?: string | null
           created_at?: string
+          current_setup?: string | null
           email: string
           full_name?: string | null
           id?: string
           institution_name?: string | null
           institution_type?: string | null
+          ndpr_consent?: boolean | null
           phone?: string | null
           source?: string | null
         }
         Update: {
+          compliance_timeline?: string | null
           created_at?: string
+          current_setup?: string | null
           email?: string
           full_name?: string | null
           id?: string
           institution_name?: string | null
           institution_type?: string | null
+          ndpr_consent?: boolean | null
           phone?: string | null
           source?: string | null
         }
