@@ -8,6 +8,7 @@ import { QuickDemoBar } from '@/components/landing/QuickDemoBar';
 import { LeadCaptureForm } from '@/components/landing/LeadCaptureForm';
 import { SocialProofSection } from '@/components/landing/SocialProofSection';
 import { HowItWorksSection } from '@/components/landing/HowItWorksSection';
+import { ComparisonSection } from '@/components/landing/ComparisonSection';
 
 // ── Helpers ──────────────────────────────────────────────────────────────
 

@@ -1,9 +1,11 @@
 import { Check, X, Sparkles } from 'lucide-react';
 
+type Tone = 'bad' | 'mid' | 'ok';
+
 interface Row {
   feature: string;
-  manual: { value: string; tone?: 'bad' | 'mid' };
-  enterprise: { value: string; tone?: 'mid' | 'ok' };
+  manual: { value: string; tone?: Tone };
+  enterprise: { value: string; tone?: Tone };
   sentinel: string;
 }
 
