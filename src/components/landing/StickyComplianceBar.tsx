@@ -32,6 +32,10 @@ export function StickyComplianceBar({ daysRemaining, onBookDemo, onDownloadTempl
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  useEffect(() => {
+    onVisibilityChange?.(visible && !dismissed);
+  }, [visible, dismissed, onVisibilityChange]);
+
   const handleClose = () => {
     sessionStorage.setItem(DISMISS_KEY, '1');
     setDismissed(true);
