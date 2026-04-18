@@ -156,6 +156,17 @@
   50% { background-color: hsl(var(--risk-critical) / 0.1); }
 }
 
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
 @media print {
   /* Hide app chrome */
   [data-sidebar], .sidebar-trigger, nav, header,
