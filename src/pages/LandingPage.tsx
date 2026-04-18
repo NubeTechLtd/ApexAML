@@ -188,6 +188,7 @@ export default function LandingPage() {
 
   const [quickBarOpen, setQuickBarOpen] = useState(false);
   const [pulseActive, setPulseActive] = useState(true);
+  const [stickyBarVisible, setStickyBarVisible] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
