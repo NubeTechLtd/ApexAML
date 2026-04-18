@@ -112,10 +112,11 @@ export function BookDemoSheet({ open, onOpenChange }: Props) {
                   className="bg-white/[0.04] border-white/10 text-white placeholder:text-white/25 h-11 rounded-l-none rounded-r-lg" />
               </div>
             </div>
-            <Button type="submit" disabled={submitting} size="lg"
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg h-12 font-semibold">
+            <Button type="submit" disabled={submitting || !consent} size="lg"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg h-12 font-semibold disabled:opacity-40">
               {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Request Demo'}
             </Button>
+            <NDPRConsent checked={consent} onCheckedChange={setConsent} id="ndpr-bookdemo" />
           </form>
         )}
       </SheetContent>
