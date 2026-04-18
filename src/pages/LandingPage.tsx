@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { Shield, Sparkles, SlidersHorizontal, Lock, ArrowRight, Download, CheckCircle2, MessageCircle } from 'lucide-react';
+import { Shield, Sparkles, SlidersHorizontal, Lock, ArrowRight, Download, CheckCircle2, Loader2, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { BookDemoSheet } from '@/components/landing/BookDemoSheet';
