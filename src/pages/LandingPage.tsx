@@ -174,6 +174,11 @@ function LandingPageInner() {
   const [demoSheetOpen, setDemoSheetOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navRef = useRef<HTMLElement | null>(null);
+  const { profile } = useAudience();
+  const features = (profile?.features ?? defaultFeatures).map((f, i) => ({
+    ...f,
+    icon: FEATURE_ICONS[i] ?? Shield,
+  }));
 
   useEffect(() => {
     if (!mobileMenuOpen) return;
