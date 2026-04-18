@@ -7,11 +7,12 @@ interface Props {
   daysRemaining: number;
   onBookDemo: () => void;
   onDownloadTemplate: () => void;
+  onVisibilityChange?: (visible: boolean) => void;
 }
 
 const DISMISS_KEY = 'sentinel_sticky_bar_dismissed';
 
-export function StickyComplianceBar({ daysRemaining, onBookDemo, onDownloadTemplate }: Props) {
+export function StickyComplianceBar({ daysRemaining, onBookDemo, onDownloadTemplate, onVisibilityChange }: Props) {
   const [visible, setVisible] = useState(false);
   const [dismissed, setDismissed] = useState(false);
 
