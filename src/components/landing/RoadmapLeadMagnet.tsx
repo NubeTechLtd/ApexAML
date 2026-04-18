@@ -81,7 +81,7 @@ export function RoadmapLeadMagnet() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (submitting) return;
+    if (submitting || !consent) return;
     const trimmed = email.trim();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
       toast({ title: 'Invalid email', description: 'Please enter a valid work email.', variant: 'destructive' });
@@ -91,7 +91,7 @@ export function RoadmapLeadMagnet() {
     const { error } = await supabase.from('leads').insert({
       email: trimmed,
       source: 'roadmap_magnet',
-      ndpr_consent: true,
+      ndpr_consent: consent,
     });
     setSubmitting(false);
     if (error) {
