@@ -157,8 +157,6 @@ export function LeadCaptureForm() {
               <Input id="lc-email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@bank.com" className={inputCls} />
             </div>
 
-            <ConsentRow consent={consent} setConsent={setConsent} />
-
             <Button
               type="submit"
               size="lg"
@@ -168,6 +166,8 @@ export function LeadCaptureForm() {
               Continue
               <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
             </Button>
+
+            <NDPRConsent checked={consent} onCheckedChange={setConsent} id="ndpr-step1" />
           </motion.form>
         ) : (
           <motion.form
@@ -224,8 +224,6 @@ export function LeadCaptureForm() {
               </div>
             </div>
 
-            <ConsentRow consent={consent} setConsent={setConsent} />
-
             <div className="flex gap-3">
               <Button
                 type="button"
@@ -245,6 +243,8 @@ export function LeadCaptureForm() {
                 {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Request Private Access'}
               </Button>
             </div>
+
+            <NDPRConsent checked={consent} onCheckedChange={setConsent} id="ndpr-step2" />
           </motion.form>
         )}
       </AnimatePresence>
