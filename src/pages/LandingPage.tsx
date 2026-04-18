@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { BookDemoSheet } from '@/components/landing/BookDemoSheet';
+import { QuickDemoBar } from '@/components/landing/QuickDemoBar';
 
 // ── Helpers ──────────────────────────────────────────────────────────────
 
@@ -116,7 +118,23 @@ export default function LandingPage() {
   const [email, setEmail] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [demoSheetOpen, setDemoSheetOpen] = useState(false);
+  const [quickBarOpen, setQuickBarOpen] = useState(false);
+  const [pulseActive, setPulseActive] = useState(true);
   const { toast } = useToast();
+
+  useEffect(() => {
+    const t = setTimeout(() => setPulseActive(false), 10000);
+    return () => clearTimeout(t);
+  }, []);
+
+  const handleBookDemo = () => {
+    setDemoSheetOpen(true);
+    setQuickBarOpen(true);
+    setPulseActive(false);
+    const el = document.getElementById('hero-cta');
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -162,11 +180,18 @@ export default function LandingPage() {
               </button>
             ))}
           </div>
-          <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg text-xs font-semibold">
+          <Button
+            size="sm"
+            onClick={handleBookDemo}
+            className={`bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg text-xs font-semibold ${pulseActive ? 'ring-2 ring-primary/30 animate-pulse' : ''}`}
+          >
             Book Demo
           </Button>
         </div>
       </nav>
+
+      <QuickDemoBar open={quickBarOpen} onClose={() => setQuickBarOpen(false)} />
+      <BookDemoSheet open={demoSheetOpen} onOpenChange={setDemoSheetOpen} />
 
       {/* ── Hero ───────────────────────────────────────────────── */}
       <section className="relative pt-32 pb-20 md:pt-44 md:pb-32 px-6">
@@ -200,7 +225,7 @@ export default function LandingPage() {
           </AnimatedSection>
 
           <AnimatedSection delay={0.3}>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div id="hero-cta" className="flex flex-col sm:flex-row items-center justify-center gap-4 scroll-mt-32">
               <Button size="lg" className="relative bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl text-sm font-semibold px-8 group animate-pulse-soft">
                 Get Custom Roadmap
                 <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
