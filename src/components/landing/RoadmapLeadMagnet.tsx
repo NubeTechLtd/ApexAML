@@ -7,6 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { WhatsAppIcon } from './WhatsAppIcon';
 import { WHATSAPP_URL } from '@/lib/whatsapp';
+import { NDPRConsent } from './NDPRConsent';
 
 const ROADMAP_CONTENT = `CBN AML COMPLIANCE ROADMAP TEMPLATE
 Circular: BSD/DIR/PUB/LAB/019/002
@@ -57,6 +58,7 @@ export function RoadmapLeadMagnet() {
   const [email, setEmail] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
+  const [consent, setConsent] = useState(false);
   const { toast } = useToast();
 
   const urgencyDate = useMemo(() => {
