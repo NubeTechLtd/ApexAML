@@ -250,3 +250,5 @@ export function LeadCaptureForm() {
       </AnimatePresence>
     </div>
   );
+}
+
