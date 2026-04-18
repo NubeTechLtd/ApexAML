@@ -205,7 +205,7 @@ export default function LandingPage() {
                 Get Custom Roadmap
                 <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
               </Button>
-              <Button size="lg" variant="outline" className="rounded-xl border-white/10 text-white/70 hover:bg-white/5 hover:text-white text-sm px-8">
+              <Button size="lg" variant="outline" className="rounded-xl bg-transparent border-white/10 text-white/70 hover:bg-white/5 hover:text-white text-sm px-8">
                 <Play className="h-4 w-4 mr-1" />
                 Watch Demo
               </Button>
