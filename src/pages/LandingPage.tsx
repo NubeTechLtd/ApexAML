@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { Shield, Sparkles, SlidersHorizontal, Lock, ArrowRight, Play, CheckCircle2, Loader2 } from 'lucide-react';
+import { Shield, Sparkles, SlidersHorizontal, Lock, ArrowRight, Download, CheckCircle2, Loader2, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
@@ -225,15 +225,38 @@ export default function LandingPage() {
           </AnimatedSection>
 
           <AnimatedSection delay={0.3}>
-            <div id="hero-cta" className="flex flex-col sm:flex-row items-center justify-center gap-4 scroll-mt-32">
-              <Button size="lg" className="relative bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl text-sm font-semibold px-8 group animate-pulse-soft">
-                Get Custom Roadmap
-                <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
-              </Button>
-              <Button size="lg" variant="outline" className="rounded-xl bg-transparent border-white/10 text-white/70 hover:bg-white/5 hover:text-white text-sm px-8">
-                <Play className="h-4 w-4 mr-1" />
-                Watch Demo
-              </Button>
+            <div id="hero-cta" className="scroll-mt-32 space-y-5">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <Button
+                  size="lg"
+                  onClick={() => setDemoSheetOpen(true)}
+                  className="relative bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl text-sm font-semibold px-8 group"
+                >
+                  Book a 20-min Demo
+                  <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  onClick={handleDownloadRoadmap}
+                  className="rounded-xl bg-transparent border-white/15 text-white/80 hover:bg-white/5 hover:text-white text-sm px-8"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Download CBN Roadmap Template (Free)
+                </Button>
+              </div>
+              <a
+                href="https://wa.me/2348XXXXXXXX"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-sm text-white/40 hover:text-white/70 transition-colors"
+              >
+                <MessageCircle className="h-3.5 w-3.5" />
+                or chat on WhatsApp →
+              </a>
+              <p className="text-xs text-primary/70 font-medium">
+                First month free for CBN roadmap submissions before June 10, 2026.
+              </p>
             </div>
           </AnimatedSection>
 
