@@ -115,6 +115,35 @@ function AIMockUI() {
 export default function LandingPage() {
   const countdown = useCountdown(new Date('2026-06-10T00:00:00'));
   const [demoSheetOpen, setDemoSheetOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const navRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (navRef.current && !navRef.current.contains(e.target as Node)) {
+        setMobileMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [mobileMenuOpen]);
+
+  const navLinks = [
+    { href: 'features', label: 'Platform' },
+    { href: 'ai', label: 'AI Engine' },
+    { href: 'trust', label: 'Results' },
+  ];
+
+  const scrollToSection = (href: string) => {
+    const el = document.getElementById(href);
+    if (el) {
+      const top = el.getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+    setMobileMenuOpen(false);
+  };
+
   const [quickBarOpen, setQuickBarOpen] = useState(false);
   const [pulseActive, setPulseActive] = useState(true);
   const { toast } = useToast();
