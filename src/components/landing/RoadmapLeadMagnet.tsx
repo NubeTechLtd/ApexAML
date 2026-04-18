@@ -135,12 +135,24 @@ export function RoadmapLeadMagnet() {
             {/* RIGHT — Form */}
             <div className="space-y-4 lg:pl-8 lg:border-l lg:border-white/[0.06]">
               {done ? (
-                <div className="flex items-center gap-3 rounded-xl border border-risk-low/30 bg-risk-low/10 p-5">
-                  <CheckCircle2 className="h-6 w-6 text-risk-low shrink-0" />
-                  <div>
-                    <p className="text-sm font-semibold text-white">Download started</p>
-                    <p className="text-xs text-white/50">Check your downloads folder for the template.</p>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3 rounded-xl border border-risk-low/30 bg-risk-low/10 p-5">
+                    <CheckCircle2 className="h-6 w-6 text-risk-low shrink-0" />
+                    <div>
+                      <p className="text-sm font-semibold text-white">Download started</p>
+                      <p className="text-xs text-white/50">Check your downloads folder for the template.</p>
+                    </div>
                   </div>
+                  <a
+                    href={WHATSAPP_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 w-full rounded-lg bg-[#25D366] hover:bg-[#25D366]/90 text-white font-semibold text-sm h-11 px-4 transition-colors group"
+                  >
+                    <WhatsAppIcon size={18} />
+                    Get a faster response — message us on WhatsApp
+                    <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
+                  </a>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2.5">

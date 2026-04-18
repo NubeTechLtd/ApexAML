@@ -90,18 +90,18 @@ export function LeadCaptureForm() {
             </div>
           </div>
           <a
-            href="https://wa.me/2348XXXXXXXX"
+            href={WHATSAPP_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-start gap-3 rounded-xl bg-[hsl(142,70%,45%)]/10 border border-[hsl(142,70%,45%)]/30 hover:bg-[hsl(142,70%,45%)]/15 transition-colors p-4 text-left group"
+            className="flex items-start gap-3 rounded-xl bg-[#25D366]/10 border border-[#25D366]/30 hover:bg-[#25D366]/15 transition-colors p-4 text-left group"
           >
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[hsl(142,70%,45%)] text-white">
-              <MessageCircle className="h-4 w-4" />
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#25D366] text-white">
+              <WhatsAppIcon size={16} />
             </div>
             <div className="space-y-1 flex-1">
-              <p className="text-xs uppercase tracking-wider text-[hsl(142,70%,55%)] font-semibold">Option 2</p>
+              <p className="text-xs uppercase tracking-wider text-[hsl(142,70%,55%)] font-semibold">Option 2 — Faster</p>
               <p className="text-sm text-white/80 font-medium">
-                Message us on WhatsApp for immediate response
+                Get a faster response — message us on WhatsApp
                 <ArrowRight className="inline h-3.5 w-3.5 ml-1 group-hover:translate-x-0.5 transition-transform" />
               </p>
             </div>
