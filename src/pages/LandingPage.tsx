@@ -12,6 +12,7 @@ import { ComparisonSection } from '@/components/landing/ComparisonSection';
 import { RoadmapLeadMagnet } from '@/components/landing/RoadmapLeadMagnet';
 import { StickyComplianceBar } from '@/components/landing/StickyComplianceBar';
 import { FAQSection } from '@/components/landing/FAQSection';
+import { PricingSection } from '@/components/landing/PricingSection';
 import { WhatsAppFloatingButton } from '@/components/landing/WhatsAppFloatingButton';
 import { WhatsAppIcon } from '@/components/landing/WhatsAppIcon';
 import { WHATSAPP_URL } from '@/lib/whatsapp';
