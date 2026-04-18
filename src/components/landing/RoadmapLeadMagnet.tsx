@@ -7,6 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { WhatsAppIcon } from './WhatsAppIcon';
 import { WHATSAPP_URL } from '@/lib/whatsapp';
+import { NDPRConsent } from './NDPRConsent';
 
 const ROADMAP_CONTENT = `CBN AML COMPLIANCE ROADMAP TEMPLATE
 Circular: BSD/DIR/PUB/LAB/019/002
@@ -57,6 +58,7 @@ export function RoadmapLeadMagnet() {
   const [email, setEmail] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
+  const [consent, setConsent] = useState(false);
   const { toast } = useToast();
 
   const urgencyDate = useMemo(() => {
@@ -79,7 +81,7 @@ export function RoadmapLeadMagnet() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (submitting) return;
+    if (submitting || !consent) return;
     const trimmed = email.trim();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
       toast({ title: 'Invalid email', description: 'Please enter a valid work email.', variant: 'destructive' });
@@ -89,7 +91,7 @@ export function RoadmapLeadMagnet() {
     const { error } = await supabase.from('leads').insert({
       email: trimmed,
       source: 'roadmap_magnet',
-      ndpr_consent: true,
+      ndpr_consent: consent,
     });
     setSubmitting(false);
     if (error) {
@@ -157,32 +159,35 @@ export function RoadmapLeadMagnet() {
                   </a>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2.5">
-                  <Input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="you@institution.com"
-                    aria-label="Work email"
-                    maxLength={255}
-                    className="flex-1 bg-white/[0.04] border-white/10 text-white placeholder:text-white/25 h-12 rounded-lg"
-                  />
-                  <Button
-                    type="submit"
-                    disabled={submitting}
-                    className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg h-12 px-5 font-semibold whitespace-nowrap group disabled:opacity-60"
-                  >
-                    {submitting ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <>
-                        <Download className="h-4 w-4" />
-                        Download Free Template
-                        <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
-                      </>
-                    )}
-                  </Button>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="flex flex-col sm:flex-row gap-2.5">
+                    <Input
+                      type="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="you@institution.com"
+                      aria-label="Work email"
+                      maxLength={255}
+                      className="flex-1 bg-white/[0.04] border-white/10 text-white placeholder:text-white/25 h-12 rounded-lg"
+                    />
+                    <Button
+                      type="submit"
+                      disabled={submitting || !consent}
+                      className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg h-12 px-5 font-semibold whitespace-nowrap group disabled:opacity-40"
+                    >
+                      {submitting ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <>
+                          <Download className="h-4 w-4" />
+                          Download Free Template
+                          <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                  <NDPRConsent checked={consent} onCheckedChange={setConsent} id="ndpr-roadmap" />
                 </form>
               )}
 

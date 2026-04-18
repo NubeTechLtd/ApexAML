@@ -4,7 +4,7 @@ import { ArrowRight, ArrowLeft, Loader2, CheckCircle2, Mail } from 'lucide-react
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
+import { NDPRConsent } from './NDPRConsent';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
@@ -157,8 +157,6 @@ export function LeadCaptureForm() {
               <Input id="lc-email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@bank.com" className={inputCls} />
             </div>
 
-            <ConsentRow consent={consent} setConsent={setConsent} />
-
             <Button
               type="submit"
               size="lg"
@@ -168,6 +166,8 @@ export function LeadCaptureForm() {
               Continue
               <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
             </Button>
+
+            <NDPRConsent checked={consent} onCheckedChange={setConsent} id="ndpr-step1" />
           </motion.form>
         ) : (
           <motion.form
@@ -224,8 +224,6 @@ export function LeadCaptureForm() {
               </div>
             </div>
 
-            <ConsentRow consent={consent} setConsent={setConsent} />
-
             <div className="flex gap-3">
               <Button
                 type="button"
@@ -245,6 +243,8 @@ export function LeadCaptureForm() {
                 {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Request Private Access'}
               </Button>
             </div>
+
+            <NDPRConsent checked={consent} onCheckedChange={setConsent} id="ndpr-step2" />
           </motion.form>
         )}
       </AnimatePresence>
@@ -252,17 +252,3 @@ export function LeadCaptureForm() {
   );
 }
 
-function ConsentRow({ consent, setConsent }: { consent: boolean; setConsent: (v: boolean) => void }) {
-  return (
-    <label className="flex items-start gap-3 cursor-pointer pt-2">
-      <Checkbox
-        checked={consent}
-        onCheckedChange={(c) => setConsent(c === true)}
-        className="mt-0.5 border-white/30 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-      />
-      <span className="text-xs text-white/50 leading-relaxed">
-        I consent to being contacted in accordance with the Nigeria Data Protection Act 2023.
-      </span>
-    </label>
-  );
-}

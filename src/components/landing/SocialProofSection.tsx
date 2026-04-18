@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, ChevronLeft, ChevronRight, ShieldCheck, Server, FileCheck2, Award, Plug } from 'lucide-react';
+import { Star, ChevronLeft, ChevronRight, ShieldCheck, Cloud, FileCheck2, Award, Plug } from 'lucide-react';
 
 const INSTITUTION_PILLS = [
   'Licensed PSP',
@@ -46,7 +46,7 @@ const TESTIMONIALS = [
 
 const TRUST_BADGES = [
   { icon: ShieldCheck, label: 'NDPR Compliant' },
-  { icon: Server, label: 'AWS Nigeria Hosted' },
+  { icon: Cloud, label: 'Data hosted in Nigeria (AWS)' },
   { icon: FileCheck2, label: 'goAML XML Certified' },
   { icon: Award, label: 'ISO 27001 In Progress' },
   { icon: Plug, label: 'NFIU goAML API Integration' },

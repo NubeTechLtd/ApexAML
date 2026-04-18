@@ -17,6 +17,7 @@ import Customer360 from "./pages/Customer360.tsx";
 import AlertWorkspace from "./pages/AlertWorkspace.tsx";
 import SanctionsScreening from "./pages/SanctionsScreening.tsx";
 import LandingPage from "./pages/LandingPage.tsx";
+import Privacy from "./pages/Privacy.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -43,6 +44,7 @@ const App = () => (
             <Route path="/audit" element={<SystemAudit />} />
             <Route path="/workspace" element={<AlertWorkspace />} />
             <Route path="/sanctions" element={<SanctionsScreening />} />
+            <Route path="/privacy" element={<Privacy />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
