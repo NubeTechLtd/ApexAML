@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
-import { Shield, Sparkles, SlidersHorizontal, Lock, ArrowRight, Download, CheckCircle2, Loader2, MessageCircle, Menu, X } from 'lucide-react';
+import { Shield, Sparkles, SlidersHorizontal, Lock, ArrowRight, Download, CheckCircle2, Loader2, MessageCircle, Menu, X, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { BookDemoSheet } from '@/components/landing/BookDemoSheet';
@@ -28,9 +28,9 @@ const fadeUp = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' as const } },
 };
 
-function AnimatedSection({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
+function AnimatedSection({ children, className = '', delay = 0, once = true }: { children: React.ReactNode; className?: string; delay?: number; once?: boolean }) {
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-60px' });
+  const inView = useInView(ref, { once, margin: '-60px' });
   return (
     <motion.div
       ref={ref}
@@ -56,15 +56,24 @@ const features = [
 // ── AI Mock Component ────────────────────────────────────────────────────
 
 function AIMockUI() {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const inView = useInView(containerRef, { margin: '-80px' });
   const [step, setStep] = useState(0);
+  const [runId, setRunId] = useState(0);
+
+  // Reset & restart timer chain whenever the section comes back into view
+  // or the user clicks Replay (runId increments).
   useEffect(() => {
+    if (!inView) return;
+    setStep(0);
     const timers = [
       setTimeout(() => setStep(1), 800),
       setTimeout(() => setStep(2), 2200),
       setTimeout(() => setStep(3), 3400),
+      setTimeout(() => setStep(4), 5000),
     ];
     return () => timers.forEach(clearTimeout);
-  }, []);
+  }, [inView, runId]);
 
   const lines = [
     { label: 'Analyzing transaction cluster…', done: step >= 1 },
@@ -73,11 +82,21 @@ function AIMockUI() {
   ];
 
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 font-mono text-xs space-y-4 shadow-2xl">
+    <div ref={containerRef} className="relative rounded-xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 font-mono text-xs space-y-4 shadow-2xl">
       <div className="flex items-center gap-2 text-primary">
         <Sparkles className="h-4 w-4" />
         <span className="font-semibold tracking-wide uppercase text-[10px]">Sentinel AI Co-Pilot</span>
         <span className="ml-auto rounded-full bg-risk-low/20 text-risk-low px-2 py-0.5 text-[10px]">Live</span>
+        {step >= 4 && (
+          <button
+            type="button"
+            onClick={() => setRunId((r) => r + 1)}
+            aria-label="Replay demo"
+            className="rounded-md p-1 text-white/40 hover:text-white hover:bg-white/10 transition-colors"
+          >
+            <RotateCcw className="h-3.5 w-3.5" />
+          </button>
+        )}
       </div>
       <div className="h-px bg-white/10" />
       <div className="space-y-3">
@@ -100,10 +119,24 @@ function AIMockUI() {
         >
           <p className="text-[10px] uppercase tracking-wider text-primary font-semibold">Generated STR Excerpt</p>
           <p className="text-muted-foreground leading-relaxed text-[11px]">
-            "Subject <span className="text-foreground">Adewale O.</span> conducted <span className="text-risk-high">47 POS transactions</span> across 
-            12 terminals in Lekki within <span className="text-risk-critical">72 hours</span>, totalling ₦14.8M. Pattern consistent with 
+            "Subject <span className="text-foreground">Adewale O.</span> conducted <span className="text-risk-high">47 POS transactions</span> across
+            12 terminals in Lekki within <span className="text-risk-critical">72 hours</span>, totalling ₦14.8M. Pattern consistent with
             <span className="text-risk-high"> structuring typology T-NG-204</span>. Recommend escalation to NFIU…"
           </p>
+        </motion.div>
+      )}
+      {step >= 4 && (
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="flex items-start gap-2 rounded-lg border border-risk-low/30 bg-risk-low/10 p-3"
+        >
+          <CheckCircle2 className="h-4 w-4 text-risk-low shrink-0 mt-0.5" />
+          <div className="space-y-0.5">
+            <p className="text-[11px] text-foreground/90">Filing to NFIU goAML portal… <span className="text-risk-low font-semibold">Submitted.</span></p>
+            <p className="text-[10px] text-muted-foreground">Reference: <span className="text-foreground/80 font-semibold">STR-2026-0041</span> ✓</p>
+          </div>
         </motion.div>
       )}
     </div>
