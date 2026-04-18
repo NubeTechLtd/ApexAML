@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { NDPRConsent } from './NDPRConsent';
 
 interface Props {
   open: boolean;
@@ -21,13 +22,14 @@ export function BookDemoSheet({ open, onOpenChange }: Props) {
   const [institutionType, setInstitutionType] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [consent, setConsent] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (submitting) return;
+    if (submitting || !consent) return;
     setSubmitting(true);
     const { error } = await supabase.from('leads').insert({
       email,
@@ -36,6 +38,7 @@ export function BookDemoSheet({ open, onOpenChange }: Props) {
       institution_type: institutionType,
       phone: `+234${phone.replace(/^\+?234/, '')}`,
       source: 'book_demo_sheet',
+      ndpr_consent: consent,
     });
     setSubmitting(false);
     if (error) {
