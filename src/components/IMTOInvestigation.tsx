@@ -127,12 +127,23 @@ interface IMTOInvestigationProps {
 
 export function IMTOInvestigation({ alert, isResolved }: IMTOInvestigationProps) {
   const { toast } = useToast();
-  const { rate, formatUSD } = useCBNRate();
+  const { rate } = useCBNRate();
   const [blockOpen, setBlockOpen] = useState(false);
   const [blocked, setBlocked] = useState(false);
 
+  // Dismissal flow (gated for IMTO_OUTBOUND_VIOLATION / IMTO_FX_SETTLEMENT_VIOLATION)
+  const [dismissOpen, setDismissOpen] = useState(false);
+  const [dismissJustification, setDismissJustification] = useState('');
+  const [supervisorApproved, setSupervisorApproved] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
+
   const imto = alert.imto;
-  if (!imto) return null;
+  const roundTrip = alert.bdcRoundTrip;
+  const isOutbound = alert.alertType === 'IMTO_OUTBOUND_VIOLATION';
+  const isFxSettlement = alert.alertType === 'IMTO_FX_SETTLEMENT_VIOLATION';
+  const isRoundTrip = alert.alertType === 'IMTO_ROUNDTRIP_SUSPECTED';
+  const isSmurfing = alert.alertType === 'IMTO_CASH_SMURFING';
+  const requiresGatedDismissal = alert.requiresSupervisorApproval === true;
 
   const formatNGN = (n: number) =>
     new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(n);
@@ -140,9 +151,10 @@ export function IMTOInvestigation({ alert, isResolved }: IMTOInvestigationProps)
   const formatTime = (iso: string) =>
     new Date(iso).toLocaleString('en-NG', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
 
-  const thresholdBreachPct = Math.round(((imto.usdEquivalent - 200) / 200) * 100);
+  const thresholdBreachPct = imto ? Math.round(((imto.usdEquivalent - 200) / 200) * 100) : 0;
 
   const confirmBlock = () => {
+    if (!imto) return;
     setBlocked(true);
     setBlockOpen(false);
     toast({
@@ -151,8 +163,149 @@ export function IMTOInvestigation({ alert, isResolved }: IMTOInvestigationProps)
     });
   };
 
+  const confirmGatedDismissal = () => {
+    if (dismissJustification.trim().length < 20 || !supervisorApproved) return;
+    setDismissed(true);
+    setDismissOpen(false);
+    toast({
+      title: 'Alert dismissed with supervisor override',
+      description: `${alert.caseId} dismissed. Justification logged (${dismissJustification.trim().length} chars). Audit trail created.`,
+    });
+  };
+
+  // Violation banner config
+  type Banner = { title: string; body: string; cta?: string } | null;
+  const banner: Banner = isOutbound
+    ? {
+        title: 'CRITICAL: Outbound transfer detected — CBN IMTO licence violation. Immediate escalation required.',
+        body: 'Nigerian IMTO licences are strictly INBOUND-only under CBN IMTO Guidelines §4.2. Any outbound transfer from a licensed IMTO settlement account constitutes a licence-terminating offence.',
+        cta: 'Cannot be dismissed without compliance officer justification and supervisor approval.',
+      }
+    : isFxSettlement
+      ? {
+          title: 'Non-Naira settlement detected — licence-terminating offence under CBN 2025 directives.',
+          body: 'All IMTO payouts on Nigerian soil must be settled in NGN. Foreign-currency settlement requires immediate CBN Payments System Department notification.',
+          cta: 'Cannot be dismissed without compliance officer justification and supervisor approval.',
+        }
+      : isRoundTrip
+        ? {
+            title: 'Suspected IMTO → BDC round-trip — parallel-market FX arbitrage.',
+            body: 'A debit to a Bureau de Change was observed within 48 hours of an inbound IMTO remittance credit. This pattern is prohibited under the CBN 2025 directives prohibiting FX-arbitrage use of remittance corridors.',
+          }
+        : null;
+
   return (
     <>
+      {/* ── CRITICAL VIOLATION BANNER (OUTBOUND / FX / ROUND-TRIP) ─ */}
+      {banner && (
+        <div
+          role="alert"
+          className="rounded-lg border-2 border-destructive bg-destructive/10 p-4 space-y-2"
+        >
+          <div className="flex items-start gap-3">
+            <ShieldAlert className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
+            <div className="flex-1 space-y-1">
+              <p className="text-sm font-bold text-destructive uppercase tracking-wide leading-snug">
+                {banner.title}
+              </p>
+              <p className="text-xs text-foreground/90 leading-relaxed">{banner.body}</p>
+              {banner.cta && (
+                <p className="text-[11px] text-destructive font-semibold pt-1 flex items-center gap-1.5">
+                  <ShieldAlert className="h-3 w-3" />
+                  {banner.cta}
+                </p>
+              )}
+              {dismissed && (
+                <Badge variant="outline" className="bg-muted text-muted-foreground text-[10px] mt-1.5 gap-1">
+                  <CheckCircle2 className="h-3 w-3" /> Dismissed with supervisor override
+                </Badge>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── BDC ROUND-TRIP DETAIL CARD ─────────────────── */}
+      {isRoundTrip && roundTrip && (
+        <Card className="border-l-4 border-l-destructive bg-destructive/[0.02]">
+          <CardHeader className="pb-3">
+            <div className="flex items-center gap-2 flex-wrap">
+              <Repeat className="h-4 w-4 text-destructive" />
+              <CardTitle className="text-sm font-semibold">BDC Round-Trip Detection</CardTitle>
+              <Badge className="bg-destructive text-destructive-foreground border-0 text-[10px] font-bold uppercase tracking-wide gap-1">
+                <Banknote className="h-3 w-3" />
+                48h Window
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div className="rounded-lg border bg-card p-3">
+                <p className="text-[10px] uppercase tracking-wider text-muted-foreground">BDC Entity</p>
+                <p className="text-sm font-semibold text-destructive mt-0.5">{roundTrip.bdcEntityName}</p>
+                <p className="text-[10px] text-muted-foreground mt-0.5">CBN-licensed BDC</p>
+              </div>
+              <div className="rounded-lg border bg-card p-3">
+                <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Remittance Amount</p>
+                <p className="text-sm font-semibold text-foreground tabular-nums mt-0.5">{formatNGN(roundTrip.remittanceAmountNGN)}</p>
+                <p className="text-[10px] text-muted-foreground mt-0.5">≈ ${(roundTrip.remittanceAmountNGN / rate).toFixed(0)} USD</p>
+              </div>
+              <div className="rounded-lg border bg-card p-3">
+                <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Time Gap (credit → BDC)</p>
+                <p className="text-sm font-semibold text-destructive tabular-nums mt-0.5">
+                  {Math.floor(roundTrip.timeGapMinutes / 60)}h {roundTrip.timeGapMinutes % 60}m
+                </p>
+                <p className="text-[10px] text-muted-foreground mt-0.5">well inside 48h window</p>
+              </div>
+            </div>
+
+            {/* Round-trip flow visual */}
+            <div className="flex items-center gap-2 text-xs flex-wrap">
+              <Badge variant="outline" className="gap-1 bg-primary/10 text-primary border-primary/30">
+                <ArrowUpFromLine className="h-3 w-3 rotate-180" /> Inbound IMTO Credit
+              </Badge>
+              <ArrowRightLeft className="h-3 w-3 text-muted-foreground" />
+              <Badge variant="outline" className="gap-1 bg-muted text-muted-foreground">
+                IMTO Settlement Account
+              </Badge>
+              <ArrowRightLeft className="h-3 w-3 text-destructive" />
+              <Badge variant="outline" className="gap-1 bg-destructive/10 text-destructive border-destructive/30">
+                <Banknote className="h-3 w-3" /> {roundTrip.bdcEntityName}
+              </Badge>
+            </div>
+
+            {requiresGatedDismissal && (
+              <div className="flex justify-end pt-1">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setDismissOpen(true)}
+                  disabled={isResolved || dismissed}
+                >
+                  Dismiss with supervisor override
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* ── OUTBOUND / FX VIOLATION — gated dismissal affordance ── */}
+      {(isOutbound || isFxSettlement) && requiresGatedDismissal && (
+        <div className="flex justify-end">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setDismissOpen(true)}
+            disabled={isResolved || dismissed}
+          >
+            Dismiss with supervisor override
+          </Button>
+        </div>
+      )}
+
+      {/* ── IMTO SMURFING HEADER CARD (unchanged) ─────── */}
+      {isSmurfing && imto && (
       {/* ── IMTO Header Card ──────────────────────────── */}
       <Card className="border-l-4 border-l-destructive bg-destructive/[0.02]">
         <CardHeader className="pb-3">
