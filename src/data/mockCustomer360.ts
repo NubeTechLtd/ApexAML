@@ -1,7 +1,13 @@
 export interface ConnectedEntity {
   id: string;
   label: string;
-  type: 'Shared Device ID' | 'Frequent Transfer Target' | 'Shared Address' | 'Common Beneficiary' | 'Common IP Address';
+  type:
+    | 'Shared Device ID'
+    | 'Frequent Transfer Target'
+    | 'Shared Address'
+    | 'Common Beneficiary'
+    | 'Common IP Address'
+    | 'Bureau de Change (BDC)';
   detail: string;
 }
 
