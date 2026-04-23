@@ -2,7 +2,15 @@ export type RiskLevel = 'Critical' | 'High' | 'Medium' | 'Low';
 
 export type TxChannel = 'POS' | 'Mobile Transfer' | 'USSD' | 'ATM Withdrawal' | 'Online Banking' | 'Card Payment' | 'Cash Deposit' | 'IMTO Cash Payout';
 
-export type AlertType = 'STANDARD' | 'IMTO_CASH_SMURFING';
+export type AlertType =
+  | 'STANDARD'
+  | 'IMTO_CASH_SMURFING'
+  | 'IMTO_OUTBOUND_VIOLATION'
+  | 'IMTO_FX_SETTLEMENT_VIOLATION'
+  | 'IMTO_ROUNDTRIP_SUSPECTED';
+
+export type TransferDirection = 'INBOUND' | 'OUTBOUND';
+export type SettlementCurrency = 'NGN' | 'USD' | 'GBP' | 'EUR';
 
 export interface Transaction {
   id: string;
@@ -16,6 +24,12 @@ export interface Transaction {
   agentLocation?: string;
   /** IMTO operator name (e.g. Western Union, MoneyGram) */
   imtoOperator?: string;
+  /** Direction of IMTO flow. INBOUND is the only legal direction for Nigerian IMTO licences. */
+  transferDirection?: TransferDirection;
+  /** Currency the payout/settlement was executed in. Must be NGN under CBN 2025 directives. */
+  settlementCurrency?: SettlementCurrency;
+  /** True if the debit is routed to a Bureau de Change (used for round-trip detection). */
+  isBDCPayout?: boolean;
 }
 
 export interface CustomerProfile {
@@ -42,6 +56,16 @@ export interface IMTOContext {
   triggerThreshold: string;
 }
 
+/** Details of a suspected BDC round-trip (licence-terminating). */
+export interface BDCRoundTripContext {
+  bdcEntityName: string;
+  remittanceTxId: string;
+  bdcTxId: string;
+  remittanceAmountNGN: number;
+  /** Minutes between the inbound remittance credit and the BDC debit. */
+  timeGapMinutes: number;
+}
+
 export interface Alert {
   id: string;
   caseId: string;
@@ -57,6 +81,9 @@ export interface Alert {
   behavioralRedFlags: string[];
   alertType?: AlertType;
   imto?: IMTOContext;
+  bdcRoundTrip?: BDCRoundTripContext;
+  /** If true, dismissal requires justification + supervisor approval. */
+  requiresSupervisorApproval?: boolean;
 }
 
 export const mockAlerts: Alert[] = [
