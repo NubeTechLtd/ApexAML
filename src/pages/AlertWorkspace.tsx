@@ -695,7 +695,14 @@ export default function AlertWorkspace() {
                                       <p className={`text-sm font-semibold ${tx.type === 'Credit' ? 'text-emerald-600 dark:text-emerald-400' : 'text-destructive'}`}>
                                         {tx.type === 'Credit' ? '+' : '-'}{formatNGN(tx.amountNGN)}
                                       </p>
-                                      <p className="text-[10px] text-muted-foreground">Bal: {formatNGN(tx.balanceAfter)}</p>
+                                      {tx.channel === 'IMTO Cash Payout' ? (
+                                        <p className="text-[10px] text-muted-foreground tabular-nums">
+                                          ≈ ${(tx.amountNGN / cbnRate).toFixed(0)} USD
+                                          {tx.agentLocation && <span className="ml-1">· {tx.agentLocation}</span>}
+                                        </p>
+                                      ) : (
+                                        <p className="text-[10px] text-muted-foreground">Bal: {formatNGN(tx.balanceAfter)}</p>
+                                      )}
                                     </div>
                                   </div>
                                 </div>
