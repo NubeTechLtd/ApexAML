@@ -458,6 +458,13 @@ export default function AlertWorkspace() {
             <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
               <ScrollArea className="flex-1">
                 <div className="p-6 space-y-6">
+                  {/* IMTO-specific investigation panel (only for IMTO_CASH_SMURFING alerts) */}
+                  {selected.alertType === 'IMTO_CASH_SMURFING' && (
+                    <motion.div key={`imto-${selected.id}`} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+                      <IMTOInvestigation alert={selected} isResolved={isResolved} />
+                    </motion.div>
+                  )}
+
                   {/* Case Header */}
                   <motion.div key={selected.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
                     <Card className={`border-l-4 ${isResolved ? 'border-l-muted-foreground' : 'border-l-destructive'}`}>
