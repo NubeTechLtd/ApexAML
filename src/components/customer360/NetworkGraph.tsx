@@ -6,7 +6,7 @@ import type { Customer360Data } from '@/data/mockCustomer360';
 interface NetworkNode {
   id: string;
   label: string;
-  type: 'customer' | 'linked_account' | 'employer' | 'relative' | 'business';
+  type: 'customer' | 'linked_account' | 'employer' | 'relative' | 'business' | 'bdc';
   riskScore: number;
   x: number;
   y: number;
@@ -26,6 +26,7 @@ const nodeTypeColors: Record<string, string> = {
   employer: 'hsl(215, 14%, 55%)',       // gray
   relative: 'hsl(142, 61%, 45%)',       // green
   business: 'hsl(35, 85%, 50%)',        // amber
+  bdc: 'hsl(var(--destructive))',       // red — Bureau de Change
 };
 
 const nodeTypeLabels: Record<string, string> = {
@@ -34,6 +35,7 @@ const nodeTypeLabels: Record<string, string> = {
   employer: 'Employer',
   relative: 'Family Member',
   business: 'Associated Business',
+  bdc: 'Bureau de Change (BDC)',
 };
 
 const relationshipLabels: Record<string, string> = {
@@ -43,6 +45,7 @@ const relationshipLabels: Record<string, string> = {
   family: 'Family',
   employment: 'Employment',
   beneficial_owner: 'Beneficial Owner',
+  bdc_payout: 'BDC Payout',
 };
 
 function nodeRadius(score: number): number {
@@ -72,6 +75,7 @@ function buildGraph(customer: Customer360Data): { nodes: NetworkNode[]; edges: N
     else if (e.type === 'Shared Address') { type = 'linked_account'; relationship = 'shared_address'; }
     else if (e.type === 'Common IP Address') { type = 'linked_account'; relationship = 'shared_device'; riskScore = 60; }
     else if (e.type === 'Common Beneficiary') { type = 'business'; relationship = 'beneficial_owner'; }
+    else if (e.type === 'Bureau de Change (BDC)') { type = 'bdc'; relationship = 'bdc_payout'; riskScore = 92; }
 
     connected.push({ id: e.id, label: e.label, type, riskScore, relationship });
   });

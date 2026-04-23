@@ -47,6 +47,27 @@ const typologyTemplates: TypologyTemplate[] = [
     category: 'IMTO',
     badge: 'Cross-agent · 24h window',
   },
+  {
+    name: 'IMTO Outbound Violation',
+    desc: 'Fires Critical on any OUTBOUND transfer from a Nigerian IMTO settlement account. Licences are strictly inbound-only under CBN IMTO Guidelines §4.2 — any outbound is a licence-terminating offence.',
+    risk: 'Critical',
+    category: 'IMTO',
+    badge: 'Direction check',
+  },
+  {
+    name: 'IMTO FX Settlement Violation',
+    desc: 'Fires Critical if settlementCurrency ≠ NGN. CBN 2025 directives require Naira-only settlement of IMTO payouts on Nigerian soil.',
+    risk: 'Critical',
+    category: 'IMTO',
+    badge: 'Currency check',
+  },
+  {
+    name: 'BDC Round-Tripping',
+    desc: 'Detects IMTO settlement accounts debiting a Bureau de Change within 48 hours of receiving a remittance credit — classic parallel-market FX-arbitrage typology.',
+    risk: 'Critical',
+    category: 'FX/BDC',
+    badge: '48h window',
+  },
 ];
 
 const CATEGORY_ORDER: TypologyCategory[] = ['POS', 'FX/BDC', 'Digital Channels', 'IMTO', 'Account Lifecycle', 'Crypto', 'Insider/PEP', 'Trade-Based'];
