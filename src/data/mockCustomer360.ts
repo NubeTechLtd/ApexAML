@@ -49,6 +49,7 @@ export const customer360Data: Record<number, Customer360Data> = {
       { id: 'ce2', label: 'Chioma Adekunle', type: 'Frequent Transfer Target', detail: '₦9.5M transferred in last 30 days' },
       { id: 'ce3', label: '192.168.44.x', type: 'Common IP Address', detail: 'Matches CUS-65520 (Fatima Abdullahi)' },
       { id: 'ce4', label: '14 Admiralty Way, Lekki', type: 'Shared Address', detail: 'Registered to 3 accounts' },
+      { id: 'ce-bdc-1', label: 'Crown BDC Ltd (Lagos Island)', type: 'Bureau de Change (BDC)', detail: '₦6.25M debit — 1h 37m after IMTO remittance credit (round-trip pattern)' },
     ],
     eddDocuments: [
       { name: 'Source_of_Wealth_Declaration.pdf', type: 'EDD', uploadedAt: '2026-03-20' },
