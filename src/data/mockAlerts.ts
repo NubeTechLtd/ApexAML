@@ -1,6 +1,8 @@
 export type RiskLevel = 'Critical' | 'High' | 'Medium' | 'Low';
 
-export type TxChannel = 'POS' | 'Mobile Transfer' | 'USSD' | 'ATM Withdrawal' | 'Online Banking' | 'Card Payment' | 'Cash Deposit';
+export type TxChannel = 'POS' | 'Mobile Transfer' | 'USSD' | 'ATM Withdrawal' | 'Online Banking' | 'Card Payment' | 'Cash Deposit' | 'IMTO Cash Payout';
+
+export type AlertType = 'STANDARD' | 'IMTO_CASH_SMURFING';
 
 export interface Transaction {
   id: string;
@@ -10,6 +12,10 @@ export interface Transaction {
   counterparty: string;
   balanceAfter: number;
   channel: TxChannel;
+  /** Agent city (IMTO only) */
+  agentLocation?: string;
+  /** IMTO operator name (e.g. Western Union, MoneyGram) */
+  imtoOperator?: string;
 }
 
 export interface CustomerProfile {
@@ -21,6 +27,19 @@ export interface CustomerProfile {
   occupation: string;
   registeredAddress: string;
   riskScore: number;
+}
+
+export interface IMTOContext {
+  senderCountry: 'UK' | 'US' | 'CA';
+  beneficiaryName: string;
+  beneficiaryPhone: string;
+  beneficiaryNIN?: string;
+  cashPickupCount: number;
+  totalCashNGN: number;
+  /** Calculated at CBN daily rate */
+  usdEquivalent: number;
+  agentLocations: string[];
+  triggerThreshold: string;
 }
 
 export interface Alert {
@@ -36,6 +55,8 @@ export interface Alert {
   customerProfile: CustomerProfile;
   transactions: Transaction[];
   behavioralRedFlags: string[];
+  alertType?: AlertType;
+  imto?: IMTOContext;
 }
 
 export const mockAlerts: Alert[] = [
