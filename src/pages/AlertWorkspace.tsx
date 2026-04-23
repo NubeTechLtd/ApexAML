@@ -242,6 +242,7 @@ export default function AlertWorkspace() {
   // Assignment state
   const [assignments, setAssignments] = useState<Record<string, string>>(DEFAULT_ASSIGNMENTS);
   const { append: addAuditEntry } = useAuditLog();
+  const { rate: cbnRate } = useCBNRate();
 
   const getStatus = useCallback((alertId: string, original: string): CaseStatus => {
     return statusOverrides[alertId] ?? (original as CaseStatus);
