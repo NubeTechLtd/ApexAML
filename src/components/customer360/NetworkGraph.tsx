@@ -75,6 +75,7 @@ function buildGraph(customer: Customer360Data): { nodes: NetworkNode[]; edges: N
     else if (e.type === 'Shared Address') { type = 'linked_account'; relationship = 'shared_address'; }
     else if (e.type === 'Common IP Address') { type = 'linked_account'; relationship = 'shared_device'; riskScore = 60; }
     else if (e.type === 'Common Beneficiary') { type = 'business'; relationship = 'beneficial_owner'; }
+    else if (e.type === 'Bureau de Change (BDC)') { type = 'bdc'; relationship = 'bdc_payout'; riskScore = 92; }
 
     connected.push({ id: e.id, label: e.label, type, riskScore, relationship });
   });
