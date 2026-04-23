@@ -1,6 +1,8 @@
 export type RiskLevel = 'Critical' | 'High' | 'Medium' | 'Low';
 
-export type TxChannel = 'POS' | 'Mobile Transfer' | 'USSD' | 'ATM Withdrawal' | 'Online Banking' | 'Card Payment' | 'Cash Deposit';
+export type TxChannel = 'POS' | 'Mobile Transfer' | 'USSD' | 'ATM Withdrawal' | 'Online Banking' | 'Card Payment' | 'Cash Deposit' | 'IMTO Cash Payout';
+
+export type AlertType = 'STANDARD' | 'IMTO_CASH_SMURFING';
 
 export interface Transaction {
   id: string;
@@ -10,6 +12,10 @@ export interface Transaction {
   counterparty: string;
   balanceAfter: number;
   channel: TxChannel;
+  /** Agent city (IMTO only) */
+  agentLocation?: string;
+  /** IMTO operator name (e.g. Western Union, MoneyGram) */
+  imtoOperator?: string;
 }
 
 export interface CustomerProfile {
@@ -21,6 +27,19 @@ export interface CustomerProfile {
   occupation: string;
   registeredAddress: string;
   riskScore: number;
+}
+
+export interface IMTOContext {
+  senderCountry: 'UK' | 'US' | 'CA';
+  beneficiaryName: string;
+  beneficiaryPhone: string;
+  beneficiaryNIN?: string;
+  cashPickupCount: number;
+  totalCashNGN: number;
+  /** Calculated at CBN daily rate */
+  usdEquivalent: number;
+  agentLocations: string[];
+  triggerThreshold: string;
 }
 
 export interface Alert {
@@ -36,6 +55,8 @@ export interface Alert {
   customerProfile: CustomerProfile;
   transactions: Transaction[];
   behavioralRedFlags: string[];
+  alertType?: AlertType;
+  imto?: IMTOContext;
 }
 
 export const mockAlerts: Alert[] = [
@@ -172,5 +193,54 @@ export const mockAlerts: Alert[] = [
     ],
     aiDraftedNarrative:
       'The subject, Chioma Obi-Nwankwo, an import/export trader, executed a ₦15,000,000 outbound SWIFT transfer to Dubai Trading FZE in the United Arab Emirates. The UAE is currently on the FATF grey list of jurisdictions under increased monitoring. Prior to the wire transfer, the account received two domestic NEFT credits totaling ₦18,000,000 from various sources in Lagos and Onitsha over a 3-day period. This aggregation-before-outflow pattern, combined with the high-risk jurisdiction and trade-based ML indicators, warrants enhanced due diligence and potential STR filing.',
+  },
+  {
+    id: 'ALT-2026-0895',
+    caseId: 'CAS-2026-0895-NG',
+    status: 'Open',
+    riskLevel: 'Critical',
+    ruleTriggered: 'IMTO Cash Limit Smurfing ($200 CBN Threshold)',
+    timestamp: '2026-04-09T12:00:00Z',
+    timeElapsed: '4h ago',
+    description:
+      'Beneficiary received 6 cash payouts across 4 IMTO agents in 3 cities within 19 hours, cumulatively breaching the $200 USD CBN cash payout threshold (CBN IMTO Guidelines 2021).',
+    alertType: 'IMTO_CASH_SMURFING',
+    imto: {
+      senderCountry: 'UK',
+      beneficiaryName: 'Kelechi Onyekachi Okoro',
+      beneficiaryPhone: '+234 803 412 8899',
+      beneficiaryNIN: '81923445667',
+      cashPickupCount: 6,
+      totalCashNGN: 1706400, // ~$1,080 USD at ₦1,580
+      usdEquivalent: 1080,
+      agentLocations: ['Lagos — Ikeja', 'Lagos — Surulere', 'Abuja — Wuse', 'Port Harcourt — GRA'],
+      triggerThreshold: '$200 USD equivalent',
+    },
+    customerProfile: {
+      fullName: 'Kelechi Onyekachi Okoro',
+      bvn: '22891234567',
+      nin: '81923445667',
+      nuban: 'N/A (IMTO Beneficiary)',
+      kycTier: 'IMTO Walk-In (Tier 1 Equivalent)',
+      occupation: 'Unverified',
+      registeredAddress: '27 Allen Avenue, Ikeja, Lagos',
+      riskScore: 91,
+    },
+    transactions: [
+      { id: 'tx-15', date: '2026-04-08T17:10:00Z', type: 'Credit', amountNGN: 284400, counterparty: 'Western Union / Sender: J. Okoro (UK)', balanceAfter: 0, channel: 'IMTO Cash Payout', agentLocation: 'Lagos — Ikeja', imtoOperator: 'Western Union' },
+      { id: 'tx-16', date: '2026-04-08T19:45:00Z', type: 'Credit', amountNGN: 284400, counterparty: 'MoneyGram / Sender: J. Okoro (UK)', balanceAfter: 0, channel: 'IMTO Cash Payout', agentLocation: 'Lagos — Surulere', imtoOperator: 'MoneyGram' },
+      { id: 'tx-17', date: '2026-04-08T23:02:00Z', type: 'Credit', amountNGN: 284400, counterparty: 'Ria Money / Sender: A. Bello (UK)', balanceAfter: 0, channel: 'IMTO Cash Payout', agentLocation: 'Abuja — Wuse', imtoOperator: 'Ria Money Transfer' },
+      { id: 'tx-18', date: '2026-04-09T06:25:00Z', type: 'Credit', amountNGN: 284400, counterparty: 'WorldRemit / Sender: J. Okoro (UK)', balanceAfter: 0, channel: 'IMTO Cash Payout', agentLocation: 'Port Harcourt — GRA', imtoOperator: 'WorldRemit' },
+      { id: 'tx-19', date: '2026-04-09T09:15:00Z', type: 'Credit', amountNGN: 284400, counterparty: 'Western Union / Sender: M. Okoro (UK)', balanceAfter: 0, channel: 'IMTO Cash Payout', agentLocation: 'Lagos — Ikeja', imtoOperator: 'Western Union' },
+      { id: 'tx-20', date: '2026-04-09T11:40:00Z', type: 'Credit', amountNGN: 284400, counterparty: 'MoneyGram / Sender: M. Okoro (UK)', balanceAfter: 0, channel: 'IMTO Cash Payout', agentLocation: 'Lagos — Surulere', imtoOperator: 'MoneyGram' },
+    ],
+    behavioralRedFlags: [
+      'Identity match across operators: Same NIN (81923445667) + phone (+234 803 412 8899) collected cash at 4 different IMTO operators in 19 hours.',
+      'Threshold evasion: Each individual pickup was structured just below $200 USD (₦284,400 ≈ $180) to avoid per-transaction scrutiny.',
+      'Geographic velocity anomaly: Pickups span Lagos → Abuja → Port Harcourt → Lagos — physically implausible without air travel, suggesting coordinated mule network or identity abuse.',
+      'Sender rotation: Multiple UK-based senders with overlapping surname "Okoro" — possible family-network layering or single controller using alias senders.',
+    ],
+    aiDraftedNarrative:
+      'The beneficiary, Kelechi Onyekachi Okoro (NIN 81923445667, +234 803 412 8899), received six (6) IMTO cash payouts within a rolling 24-hour window ending 2026-04-09 11:40 WAT. Payouts were collected across four distinct IMTO operators (Western Union, MoneyGram, Ria Money Transfer, WorldRemit) at agent locations in Lagos (Ikeja, Surulere), Abuja (Wuse), and Port Harcourt (GRA). Individual pickups were structured at ₦284,400 (≈ $180 USD) each — deliberately positioned below the $200 USD per-transaction threshold prescribed under CBN IMTO Guidelines (2021). Cumulative cash disbursed: ₦1,706,400 (≈ $1,080 USD), representing a 540% breach of the single-identity cash cap. Senders trace to multiple UK-based individuals sharing the surname "Okoro", indicating potential family-network layering or coordinated alias use. The physical-geography velocity of pickups (Lagos → Abuja → Port Harcourt → Lagos in 19 hours) is implausible for a single individual, strongly suggesting either (a) identity-document abuse by a mule network, or (b) third-party collection under proxy. Recommend: immediate block on subsequent IMTO cash pickups for this beneficiary identity across all Zuia-connected operators, NFIU escalation, and coordinated review with originating UK corridor.',
   },
 ];

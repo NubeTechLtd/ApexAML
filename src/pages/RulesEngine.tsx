@@ -21,16 +21,35 @@ const kpis = [
   { label: 'Pending Validation', value: '2', icon: Clock, accent: 'text-[hsl(var(--risk-critical))]' },
 ];
 
-const typologyTemplates = [
-  { name: 'POS Round-Trip', desc: 'Detects cash-out via POS followed by immediate re-deposit to evade monitoring thresholds.', risk: 'High' },
-  { name: 'BDC Smurfing', desc: 'Identifies structured foreign exchange purchases across multiple Bureau de Change operators.', risk: 'Critical' },
-  { name: 'USSD Layering', desc: 'Monitors rapid USSD-initiated transfers layered through multiple wallets within minutes.', risk: 'High' },
-  { name: 'Dormant Activation', desc: 'Flags dormant accounts (>12 months) receiving sudden large inflows without prior history.', risk: 'Medium' },
-  { name: 'Crypto P2P', desc: 'Detects peer-to-peer crypto patterns — fiat in, crypto out via unregistered exchanges.', risk: 'Critical' },
-  { name: 'Salary Mule', desc: 'Identifies salary accounts acting as mule conduits with rapid onward transfers post-credit.', risk: 'High' },
-  { name: 'Real Estate Front', desc: 'Flags disproportionate real-estate-linked transactions relative to declared income.', risk: 'Medium' },
-  { name: 'PEP Spending Spike', desc: 'Monitors PEP-linked accounts for expenditure spikes exceeding historical baseline.', risk: 'High' },
+type TypologyCategory = 'POS' | 'FX/BDC' | 'Digital Channels' | 'Account Lifecycle' | 'Crypto' | 'Insider/PEP' | 'Trade-Based' | 'IMTO';
+
+interface TypologyTemplate {
+  name: string;
+  desc: string;
+  risk: 'Critical' | 'High' | 'Medium';
+  category: TypologyCategory;
+  badge?: string;
+}
+
+const typologyTemplates: TypologyTemplate[] = [
+  { name: 'POS Round-Trip', desc: 'Detects cash-out via POS followed by immediate re-deposit to evade monitoring thresholds.', risk: 'High', category: 'POS' },
+  { name: 'BDC Smurfing', desc: 'Identifies structured foreign exchange purchases across multiple Bureau de Change operators.', risk: 'Critical', category: 'FX/BDC' },
+  { name: 'USSD Layering', desc: 'Monitors rapid USSD-initiated transfers layered through multiple wallets within minutes.', risk: 'High', category: 'Digital Channels' },
+  { name: 'Dormant Activation', desc: 'Flags dormant accounts (>12 months) receiving sudden large inflows without prior history.', risk: 'Medium', category: 'Account Lifecycle' },
+  { name: 'Crypto P2P', desc: 'Detects peer-to-peer crypto patterns — fiat in, crypto out via unregistered exchanges.', risk: 'Critical', category: 'Crypto' },
+  { name: 'Salary Mule', desc: 'Identifies salary accounts acting as mule conduits with rapid onward transfers post-credit.', risk: 'High', category: 'Account Lifecycle' },
+  { name: 'Real Estate Front', desc: 'Flags disproportionate real-estate-linked transactions relative to declared income.', risk: 'Medium', category: 'Trade-Based' },
+  { name: 'PEP Spending Spike', desc: 'Monitors PEP-linked accounts for expenditure spikes exceeding historical baseline.', risk: 'High', category: 'Insider/PEP' },
+  {
+    name: 'IMTO Cash Limit Smurfing',
+    desc: 'Tracks cumulative cash payouts to the same beneficiary identity (full name + phone + NIN) across ALL IMTO agents in a rolling 24h window. Flags breaches of the $200 USD CBN threshold (CBN IMTO Guidelines 2021).',
+    risk: 'Critical',
+    category: 'IMTO',
+    badge: 'Cross-agent · 24h window',
+  },
 ];
+
+const CATEGORY_ORDER: TypologyCategory[] = ['POS', 'FX/BDC', 'Digital Channels', 'IMTO', 'Account Lifecycle', 'Crypto', 'Insider/PEP', 'Trade-Based'];
 
 const riskBadgeClass: Record<string, string> = {
   Critical: 'bg-[hsl(var(--risk-critical)/0.15)] text-[hsl(var(--risk-critical))] border-0',
@@ -105,28 +124,60 @@ const RulesEngine = () => {
                 <RulesTable />
 
                 {/* Nigeria Typology Library */}
-                <div className="space-y-3">
+                <div className="space-y-4">
                   <div className="flex items-center gap-2">
                     <BookOpen className="h-4 w-4 text-primary" />
                     <h2 className="text-sm font-semibold text-foreground">Nigeria Typology Library</h2>
                     <span className="text-xs text-muted-foreground">— Pre-built detection templates</span>
                   </div>
-                  <div className="grid grid-cols-4 gap-3">
-                    {typologyTemplates.map(t => (
-                      <Card key={t.name} className="hover:shadow-md transition-shadow">
-                        <CardContent className="p-4 space-y-2.5">
-                          <div className="flex items-center justify-between">
-                            <p className="text-sm font-semibold text-foreground">{t.name}</p>
-                            <Badge variant="outline" className={cn('text-[10px] font-semibold', riskBadgeClass[t.risk])}>{t.risk}</Badge>
-                          </div>
-                          <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3">{t.desc}</p>
-                          <Button variant="outline" size="sm" className="w-full h-7 text-xs gap-1" onClick={() => addTemplate(t.name)}>
-                            <Plus className="h-3 w-3" /> Add to Rulebook
-                          </Button>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
+
+                  {CATEGORY_ORDER.map(cat => {
+                    const templates = typologyTemplates.filter(t => t.category === cat);
+                    if (templates.length === 0) return null;
+                    const isIMTO = cat === 'IMTO';
+                    return (
+                      <div key={cat} className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <h3 className={cn('text-xs font-semibold uppercase tracking-wider', isIMTO ? 'text-destructive' : 'text-muted-foreground')}>
+                            {cat}
+                          </h3>
+                          {isIMTO && (
+                            <Badge variant="outline" className="text-[9px] h-4 px-1.5 bg-destructive/10 text-destructive border-destructive/30">
+                              New · CBN IMTO Guidelines
+                            </Badge>
+                          )}
+                          <div className="flex-1 h-px bg-border" />
+                        </div>
+                        <div className="grid grid-cols-4 gap-3">
+                          {templates.map(t => (
+                            <Card
+                              key={t.name}
+                              className={cn(
+                                'hover:shadow-md transition-shadow',
+                                isIMTO && 'border-destructive/40 bg-destructive/[0.02]',
+                              )}
+                            >
+                              <CardContent className="p-4 space-y-2.5">
+                                <div className="flex items-center justify-between gap-2">
+                                  <p className="text-sm font-semibold text-foreground">{t.name}</p>
+                                  <Badge variant="outline" className={cn('text-[10px] font-semibold shrink-0', riskBadgeClass[t.risk])}>{t.risk}</Badge>
+                                </div>
+                                {t.badge && (
+                                  <Badge variant="outline" className="text-[9px] h-4 px-1.5 bg-muted text-muted-foreground">
+                                    {t.badge}
+                                  </Badge>
+                                )}
+                                <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3">{t.desc}</p>
+                                <Button variant="outline" size="sm" className="w-full h-7 text-xs gap-1" onClick={() => addTemplate(t.name)}>
+                                  <Plus className="h-3 w-3" /> Add to Rulebook
+                                </Button>
+                              </CardContent>
+                            </Card>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </TabsContent>
 

@@ -33,6 +33,7 @@ const mockRules: Rule[] = [
   { id: 'R-006', name: 'Salary Mule Detection', typology: 'Salary Mule', threshold: 1500000, alertsTriggered7d: 19, falsePositivePct: 35, validationStatus: 'Overdue', lastValidated: '2024-12-01', enabled: true },
   { id: 'R-007', name: 'Real Estate Front Flows', typology: 'Real Estate Front', threshold: 50000000, alertsTriggered7d: 3, falsePositivePct: 8, validationStatus: 'Pending', lastValidated: '2025-09-15', enabled: true },
   { id: 'R-008', name: 'PEP Spending Spike', typology: 'PEP Spending Spike', threshold: 20000000, alertsTriggered7d: 12, falsePositivePct: 15, validationStatus: 'Validated', lastValidated: '2026-03-22', enabled: true },
+  { id: 'R-009', name: 'Cash Limit Smurfing Detector — $200 CBN Threshold', typology: 'IMTO Cash Smurfing', threshold: 316000, alertsTriggered7d: 23, falsePositivePct: 9, validationStatus: 'Validated', lastValidated: '2026-04-01', enabled: true },
 ];
 
 const validationBadgeClass: Record<string, string> = {

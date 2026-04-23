@@ -26,7 +26,9 @@ import { Label } from '@/components/ui/label';
 import { mockAlerts, type Alert, type TxChannel } from '@/data/mockAlerts';
 import { useToast } from '@/hooks/use-toast';
 import { useAuditLog } from '@/hooks/useAuditLog';
+import { useCBNRate } from '@/hooks/useCBNRate';
 import { generateGoAMLXml, downloadXmlFile } from '@/lib/generateGoAMLXml';
+import { IMTOInvestigation } from '@/components/IMTOInvestigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, AlertTriangle, Sparkles, Bot, Send, FileDown,
@@ -76,6 +78,7 @@ const channelColors: Record<TxChannel, string> = {
   'Online Banking': 'bg-primary/10 text-primary',
   'Card Payment': 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400',
   'Cash Deposit': 'bg-destructive/15 text-destructive',
+  'IMTO Cash Payout': 'bg-destructive/15 text-destructive',
 };
 
 type CaseStatus = 'Open' | 'Under Review' | 'Escalated' | 'Closed';
@@ -239,6 +242,7 @@ export default function AlertWorkspace() {
   // Assignment state
   const [assignments, setAssignments] = useState<Record<string, string>>(DEFAULT_ASSIGNMENTS);
   const { append: addAuditEntry } = useAuditLog();
+  const { rate: cbnRate } = useCBNRate();
 
   const getStatus = useCallback((alertId: string, original: string): CaseStatus => {
     return statusOverrides[alertId] ?? (original as CaseStatus);
@@ -454,6 +458,13 @@ export default function AlertWorkspace() {
             <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
               <ScrollArea className="flex-1">
                 <div className="p-6 space-y-6">
+                  {/* IMTO-specific investigation panel (only for IMTO_CASH_SMURFING alerts) */}
+                  {selected.alertType === 'IMTO_CASH_SMURFING' && (
+                    <motion.div key={`imto-${selected.id}`} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+                      <IMTOInvestigation alert={selected} isResolved={isResolved} />
+                    </motion.div>
+                  )}
+
                   {/* Case Header */}
                   <motion.div key={selected.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
                     <Card className={`border-l-4 ${isResolved ? 'border-l-muted-foreground' : 'border-l-destructive'}`}>
@@ -684,7 +695,14 @@ export default function AlertWorkspace() {
                                       <p className={`text-sm font-semibold ${tx.type === 'Credit' ? 'text-emerald-600 dark:text-emerald-400' : 'text-destructive'}`}>
                                         {tx.type === 'Credit' ? '+' : '-'}{formatNGN(tx.amountNGN)}
                                       </p>
-                                      <p className="text-[10px] text-muted-foreground">Bal: {formatNGN(tx.balanceAfter)}</p>
+                                      {tx.channel === 'IMTO Cash Payout' ? (
+                                        <p className="text-[10px] text-muted-foreground tabular-nums">
+                                          ≈ ${(tx.amountNGN / cbnRate).toFixed(0)} USD
+                                          {tx.agentLocation && <span className="ml-1">· {tx.agentLocation}</span>}
+                                        </p>
+                                      ) : (
+                                        <p className="text-[10px] text-muted-foreground">Bal: {formatNGN(tx.balanceAfter)}</p>
+                                      )}
                                     </div>
                                   </div>
                                 </div>
