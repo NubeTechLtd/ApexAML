@@ -26,7 +26,9 @@ import { Label } from '@/components/ui/label';
 import { mockAlerts, type Alert, type TxChannel } from '@/data/mockAlerts';
 import { useToast } from '@/hooks/use-toast';
 import { useAuditLog } from '@/hooks/useAuditLog';
+import { useCBNRate } from '@/hooks/useCBNRate';
 import { generateGoAMLXml, downloadXmlFile } from '@/lib/generateGoAMLXml';
+import { IMTOInvestigation } from '@/components/IMTOInvestigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, AlertTriangle, Sparkles, Bot, Send, FileDown,
