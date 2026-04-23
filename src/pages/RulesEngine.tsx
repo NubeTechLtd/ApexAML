@@ -21,16 +21,35 @@ const kpis = [
   { label: 'Pending Validation', value: '2', icon: Clock, accent: 'text-[hsl(var(--risk-critical))]' },
 ];
 
-const typologyTemplates = [
-  { name: 'POS Round-Trip', desc: 'Detects cash-out via POS followed by immediate re-deposit to evade monitoring thresholds.', risk: 'High' },
-  { name: 'BDC Smurfing', desc: 'Identifies structured foreign exchange purchases across multiple Bureau de Change operators.', risk: 'Critical' },
-  { name: 'USSD Layering', desc: 'Monitors rapid USSD-initiated transfers layered through multiple wallets within minutes.', risk: 'High' },
-  { name: 'Dormant Activation', desc: 'Flags dormant accounts (>12 months) receiving sudden large inflows without prior history.', risk: 'Medium' },
-  { name: 'Crypto P2P', desc: 'Detects peer-to-peer crypto patterns — fiat in, crypto out via unregistered exchanges.', risk: 'Critical' },
-  { name: 'Salary Mule', desc: 'Identifies salary accounts acting as mule conduits with rapid onward transfers post-credit.', risk: 'High' },
-  { name: 'Real Estate Front', desc: 'Flags disproportionate real-estate-linked transactions relative to declared income.', risk: 'Medium' },
-  { name: 'PEP Spending Spike', desc: 'Monitors PEP-linked accounts for expenditure spikes exceeding historical baseline.', risk: 'High' },
+type TypologyCategory = 'POS' | 'FX/BDC' | 'Digital Channels' | 'Account Lifecycle' | 'Crypto' | 'Insider/PEP' | 'Trade-Based' | 'IMTO';
+
+interface TypologyTemplate {
+  name: string;
+  desc: string;
+  risk: 'Critical' | 'High' | 'Medium';
+  category: TypologyCategory;
+  badge?: string;
+}
+
+const typologyTemplates: TypologyTemplate[] = [
+  { name: 'POS Round-Trip', desc: 'Detects cash-out via POS followed by immediate re-deposit to evade monitoring thresholds.', risk: 'High', category: 'POS' },
+  { name: 'BDC Smurfing', desc: 'Identifies structured foreign exchange purchases across multiple Bureau de Change operators.', risk: 'Critical', category: 'FX/BDC' },
+  { name: 'USSD Layering', desc: 'Monitors rapid USSD-initiated transfers layered through multiple wallets within minutes.', risk: 'High', category: 'Digital Channels' },
+  { name: 'Dormant Activation', desc: 'Flags dormant accounts (>12 months) receiving sudden large inflows without prior history.', risk: 'Medium', category: 'Account Lifecycle' },
+  { name: 'Crypto P2P', desc: 'Detects peer-to-peer crypto patterns — fiat in, crypto out via unregistered exchanges.', risk: 'Critical', category: 'Crypto' },
+  { name: 'Salary Mule', desc: 'Identifies salary accounts acting as mule conduits with rapid onward transfers post-credit.', risk: 'High', category: 'Account Lifecycle' },
+  { name: 'Real Estate Front', desc: 'Flags disproportionate real-estate-linked transactions relative to declared income.', risk: 'Medium', category: 'Trade-Based' },
+  { name: 'PEP Spending Spike', desc: 'Monitors PEP-linked accounts for expenditure spikes exceeding historical baseline.', risk: 'High', category: 'Insider/PEP' },
+  {
+    name: 'IMTO Cash Limit Smurfing',
+    desc: 'Tracks cumulative cash payouts to the same beneficiary identity (full name + phone + NIN) across ALL IMTO agents in a rolling 24h window. Flags breaches of the $200 USD CBN threshold (CBN IMTO Guidelines 2021).',
+    risk: 'Critical',
+    category: 'IMTO',
+    badge: 'Cross-agent · 24h window',
+  },
 ];
+
+const CATEGORY_ORDER: TypologyCategory[] = ['POS', 'FX/BDC', 'Digital Channels', 'IMTO', 'Account Lifecycle', 'Crypto', 'Insider/PEP', 'Trade-Based'];
 
 const riskBadgeClass: Record<string, string> = {
   Critical: 'bg-[hsl(var(--risk-critical)/0.15)] text-[hsl(var(--risk-critical))] border-0',
