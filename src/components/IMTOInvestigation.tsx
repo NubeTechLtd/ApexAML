@@ -306,8 +306,8 @@ export function IMTOInvestigation({ alert, isResolved }: IMTOInvestigationProps)
 
       {/* ── IMTO SMURFING HEADER CARD (unchanged) ─────── */}
       {isSmurfing && imto && (
-      {/* ── IMTO Header Card ──────────────────────────── */}
       <Card className="border-l-4 border-l-destructive bg-destructive/[0.02]">
+
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between gap-4">
             <div className="space-y-1.5">
