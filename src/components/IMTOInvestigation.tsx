@@ -417,8 +417,10 @@ export function IMTOInvestigation({ alert, isResolved }: IMTOInvestigationProps)
           </div>
         </CardContent>
       </Card>
+      )}
 
       {/* ── Block confirmation dialog ─────────────────── */}
+      {imto && (
       <AlertDialog open={blockOpen} onOpenChange={setBlockOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -452,6 +454,77 @@ export function IMTOInvestigation({ alert, isResolved }: IMTOInvestigationProps)
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Confirm Block
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      )}
+
+      {/* ── Gated dismissal dialog (OUTBOUND / FX / ROUND-TRIP) ── */}
+      <AlertDialog open={dismissOpen} onOpenChange={setDismissOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <ShieldAlert className="h-5 w-5 text-destructive" />
+              Dismiss Critical IMTO Violation?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              This alert is flagged as a CBN licence-terminating violation. Dismissal requires
+              a written compliance-officer justification and explicit supervisor approval.
+              The action will be written to the immutable audit log.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="space-y-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="dismissal-justification" className="text-xs font-semibold">
+                Compliance officer justification
+                <span className="text-destructive ml-1">*</span>
+                <span className="text-muted-foreground font-normal ml-1">(min 20 characters)</span>
+              </Label>
+              <Textarea
+                id="dismissal-justification"
+                value={dismissJustification}
+                onChange={(e) => setDismissJustification(e.target.value)}
+                placeholder="Document the reasoning for dismissing this critical violation, including evidence reviewed, stakeholders consulted, and regulatory basis…"
+                rows={4}
+                className="text-sm"
+              />
+              <p className="text-[10px] text-muted-foreground text-right">
+                {dismissJustification.trim().length}/20 chars
+              </p>
+            </div>
+            <div className="flex items-start gap-2 rounded-md border bg-muted/40 p-3">
+              <Checkbox
+                id="supervisor-approved"
+                checked={supervisorApproved}
+                onCheckedChange={(v) => setSupervisorApproved(v === true)}
+                className="mt-0.5"
+              />
+              <Label htmlFor="supervisor-approved" className="text-xs leading-relaxed cursor-pointer">
+                I confirm that a named supervisor (Chief Compliance Officer or designated alternate)
+                has reviewed and approved this dismissal. I understand this decision will be
+                audited against CBN IMTO Guidelines and the 2025 directives.
+              </Label>
+            </div>
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              onClick={() => {
+                setDismissJustification('');
+                setSupervisorApproved(false);
+              }}
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmGatedDismissal}
+              disabled={dismissJustification.trim().length < 20 || !supervisorApproved}
+              className={cn(
+                'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+                (dismissJustification.trim().length < 20 || !supervisorApproved) && 'opacity-50 cursor-not-allowed',
+              )}
+            >
+              Confirm Dismissal
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
