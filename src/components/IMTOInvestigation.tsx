@@ -2,11 +2,17 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Ban, Globe2, MapPin, Banknote, Clock, ShieldAlert, Phone, Fingerprint } from 'lucide-react';
+import {
+  Ban, Globe2, MapPin, Clock, ShieldAlert, Phone, Fingerprint,
+  ArrowUpFromLine, Banknote, Repeat, CheckCircle2, ArrowRightLeft,
+} from 'lucide-react';
 import { useCBNRate } from '@/hooks/useCBNRate';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
