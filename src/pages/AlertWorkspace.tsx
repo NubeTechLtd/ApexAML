@@ -76,6 +76,7 @@ const channelColors: Record<TxChannel, string> = {
   'Online Banking': 'bg-primary/10 text-primary',
   'Card Payment': 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400',
   'Cash Deposit': 'bg-destructive/15 text-destructive',
+  'IMTO Cash Payout': 'bg-destructive/15 text-destructive',
 };
 
 type CaseStatus = 'Open' | 'Under Review' | 'Escalated' | 'Closed';
