@@ -124,28 +124,60 @@ const RulesEngine = () => {
                 <RulesTable />
 
                 {/* Nigeria Typology Library */}
-                <div className="space-y-3">
+                <div className="space-y-4">
                   <div className="flex items-center gap-2">
                     <BookOpen className="h-4 w-4 text-primary" />
                     <h2 className="text-sm font-semibold text-foreground">Nigeria Typology Library</h2>
                     <span className="text-xs text-muted-foreground">— Pre-built detection templates</span>
                   </div>
-                  <div className="grid grid-cols-4 gap-3">
-                    {typologyTemplates.map(t => (
-                      <Card key={t.name} className="hover:shadow-md transition-shadow">
-                        <CardContent className="p-4 space-y-2.5">
-                          <div className="flex items-center justify-between">
-                            <p className="text-sm font-semibold text-foreground">{t.name}</p>
-                            <Badge variant="outline" className={cn('text-[10px] font-semibold', riskBadgeClass[t.risk])}>{t.risk}</Badge>
-                          </div>
-                          <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3">{t.desc}</p>
-                          <Button variant="outline" size="sm" className="w-full h-7 text-xs gap-1" onClick={() => addTemplate(t.name)}>
-                            <Plus className="h-3 w-3" /> Add to Rulebook
-                          </Button>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
+
+                  {CATEGORY_ORDER.map(cat => {
+                    const templates = typologyTemplates.filter(t => t.category === cat);
+                    if (templates.length === 0) return null;
+                    const isIMTO = cat === 'IMTO';
+                    return (
+                      <div key={cat} className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <h3 className={cn('text-xs font-semibold uppercase tracking-wider', isIMTO ? 'text-destructive' : 'text-muted-foreground')}>
+                            {cat}
+                          </h3>
+                          {isIMTO && (
+                            <Badge variant="outline" className="text-[9px] h-4 px-1.5 bg-destructive/10 text-destructive border-destructive/30">
+                              New · CBN IMTO Guidelines
+                            </Badge>
+                          )}
+                          <div className="flex-1 h-px bg-border" />
+                        </div>
+                        <div className="grid grid-cols-4 gap-3">
+                          {templates.map(t => (
+                            <Card
+                              key={t.name}
+                              className={cn(
+                                'hover:shadow-md transition-shadow',
+                                isIMTO && 'border-destructive/40 bg-destructive/[0.02]',
+                              )}
+                            >
+                              <CardContent className="p-4 space-y-2.5">
+                                <div className="flex items-center justify-between gap-2">
+                                  <p className="text-sm font-semibold text-foreground">{t.name}</p>
+                                  <Badge variant="outline" className={cn('text-[10px] font-semibold shrink-0', riskBadgeClass[t.risk])}>{t.risk}</Badge>
+                                </div>
+                                {t.badge && (
+                                  <Badge variant="outline" className="text-[9px] h-4 px-1.5 bg-muted text-muted-foreground">
+                                    {t.badge}
+                                  </Badge>
+                                )}
+                                <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3">{t.desc}</p>
+                                <Button variant="outline" size="sm" className="w-full h-7 text-xs gap-1" onClick={() => addTemplate(t.name)}>
+                                  <Plus className="h-3 w-3" /> Add to Rulebook
+                                </Button>
+                              </CardContent>
+                            </Card>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </TabsContent>
 
