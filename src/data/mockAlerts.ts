@@ -7,7 +7,26 @@ export type AlertType =
   | 'IMTO_CASH_SMURFING'
   | 'IMTO_OUTBOUND_VIOLATION'
   | 'IMTO_FX_SETTLEMENT_VIOLATION'
-  | 'IMTO_ROUNDTRIP_SUSPECTED';
+  | 'IMTO_ROUNDTRIP_SUSPECTED'
+  | 'CROSS_BORDER_FLAG';
+
+export type OriginatingCountry = 'UK' | 'US' | 'CA' | 'EU';
+
+export type OverseasFlagReason =
+  | 'Stolen card'
+  | 'Fraud pattern'
+  | 'Sanctions match'
+  | 'Terrorism financing';
+
+/** Extra metadata when an alert is raised by an overseas IMTO compliance team. */
+export interface CrossBorderContext {
+  originatingCountry: OriginatingCountry;
+  overseasReferenceId: string;
+  /** ISO timestamp — this is when the 24-hour NFIU filing clock started. */
+  overseasFlaggedAt: string;
+  overseasFlagReason: OverseasFlagReason;
+  overseasFlaggedBy: string;
+}
 
 export type TransferDirection = 'INBOUND' | 'OUTBOUND';
 export type SettlementCurrency = 'NGN' | 'USD' | 'GBP' | 'EUR';
@@ -84,6 +103,20 @@ export interface Alert {
   bdcRoundTrip?: BDCRoundTripContext;
   /** If true, dismissal requires justification + supervisor approval. */
   requiresSupervisorApproval?: boolean;
+  /** Cross-border IMTO flag metadata — present when alertType === 'CROSS_BORDER_FLAG'. */
+  crossBorder?: CrossBorderContext;
+}
+
+/**
+ * Country flag emoji for an originating jurisdiction.
+ */
+export function countryFlagEmoji(country: OriginatingCountry): string {
+  switch (country) {
+    case 'UK': return '🇬🇧';
+    case 'US': return '🇺🇸';
+    case 'CA': return '🇨🇦';
+    case 'EU': return '🇪🇺';
+  }
 }
 
 export const mockAlerts: Alert[] = [
