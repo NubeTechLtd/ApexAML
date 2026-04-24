@@ -31,6 +31,7 @@ import { generateGoAMLXml, downloadXmlFile } from '@/lib/generateGoAMLXml';
 import { IMTOInvestigation } from '@/components/IMTOInvestigation';
 import { CrossBorderSLACard } from '@/components/CrossBorderSLACard';
 import { PhantomPayrollNetwork } from '@/components/PhantomPayrollNetwork';
+import { CommingleAlertCard } from '@/components/CommingleAlertCard';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, AlertTriangle, Sparkles, Bot, Send, FileDown,
@@ -483,6 +484,13 @@ export default function AlertWorkspace() {
                   {selected.alertType === 'B2P_PHANTOM_PAYROLL_PATTERN' && selected.phantomPayroll && (
                     <motion.div key={`pp-${selected.id}`} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
                       <PhantomPayrollNetwork context={selected.phantomPayroll} />
+                    </motion.div>
+                  )}
+
+                  {/* IMTO Settlement Account commingling card */}
+                  {selected.alertType === 'IMTO_ACCOUNT_COMMINGLING' && selected.commingling && (
+                    <motion.div key={`cm-${selected.id}`} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+                      <CommingleAlertCard alert={selected} />
                     </motion.div>
                   )}
 

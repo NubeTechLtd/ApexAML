@@ -75,6 +75,13 @@ const typologyTemplates: TypologyTemplate[] = [
     category: 'IMTO',
     badge: '72h · 50+ tx · multi-bank',
   },
+  {
+    name: 'IMTO Settlement Account Commingling',
+    desc: 'Applies only to tagged IMTO Designated Settlement Accounts. Fires Critical when a credit originates from any entity NOT in the account\'s approved correspondent banks list. May 2026 CBN Circular violation — partner bank carries joint liability.',
+    risk: 'Critical',
+    category: 'IMTO',
+    badge: 'Tagged accounts only · joint liability',
+  },
 ];
 
 const CATEGORY_ORDER: TypologyCategory[] = ['POS', 'FX/BDC', 'Digital Channels', 'IMTO', 'Account Lifecycle', 'Crypto', 'Insider/PEP', 'Trade-Based'];

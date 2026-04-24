@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
-import { Search, Lock, Shield, Eye, UserCog, Users } from 'lucide-react';
+import { Search, Lock, Shield, Eye, UserCog, Users, Building2 } from 'lucide-react';
 import { NotificationBell } from '@/components/NotificationBell';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { cn } from '@/lib/utils';
@@ -37,6 +37,8 @@ const auditLog: AuditEntry[] = [
 const roleData = [
   { role: 'Admin', users: ['Ngozi Ibe', 'Chukwudi Obi'], icon: UserCog, color: 'bg-[hsl(var(--risk-critical)/0.12)] text-[hsl(var(--risk-critical))]' },
   { role: 'Analyst', users: ['Adeola Kemi', 'Ibrahim Sani', 'Fatima Bello'], icon: Shield, color: 'bg-[hsl(var(--risk-medium)/0.12)] text-[hsl(var(--risk-medium))]' },
+  { role: 'Reviewer', users: ['Chioma Adeyemi'], icon: Users, color: 'bg-[hsl(var(--risk-high)/0.12)] text-[hsl(var(--risk-high))]' },
+  { role: 'Partner Bank Officer', users: ['Adaeze Okolo (Access Bank)', 'Tunde Olatunji (GTBank)'], icon: Building2, color: 'bg-teal-500/15 text-teal-700 dark:text-teal-300' },
   { role: 'Read-Only', users: ['Yusuf Maina'], icon: Eye, color: 'bg-muted text-muted-foreground' },
 ];
 
