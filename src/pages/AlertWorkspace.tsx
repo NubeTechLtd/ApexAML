@@ -459,6 +459,13 @@ export default function AlertWorkspace() {
             <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
               <ScrollArea className="flex-1">
                 <div className="p-6 space-y-6">
+                  {/* Cross-border SLA banner — overseas-flagged STR clock */}
+                  {selected.alertType === 'CROSS_BORDER_FLAG' && selected.crossBorder && (
+                    <motion.div key={`xb-${selected.id}`} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+                      <CrossBorderSLACard context={selected.crossBorder} />
+                    </motion.div>
+                  )}
+
                   {/* IMTO-specific investigation panel */}
                   {selected.alertType && selected.alertType.startsWith('IMTO_') && (
                     <motion.div key={`imto-${selected.id}`} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
