@@ -62,6 +62,18 @@ const statusColors: Record<CustomerStatus, string> = {
 };
 
 const RISK_ORDER: Record<string, number> = { High: 3, Medium: 2, Low: 1 };
+
+const entityIconFor = (type?: EntityType) => {
+  switch (type) {
+    case 'Foreign Business': return Globe2;
+    case 'Nigerian Business': return Building2;
+    case 'Sole Trader': return Briefcase;
+    case 'IMTO Agent': return Banknote;
+    default: return null;
+  }
+};
+const isBusiness = (type?: EntityType) =>
+  type === 'Foreign Business' || type === 'Nigerian Business' || type === 'Sole Trader' || type === 'IMTO Agent';
 const PAGE_SIZE_OPTIONS = [5, 10, 20];
 
 function SortIcon({ column, sortKey, sortDir }: { column: SortKey; sortKey: SortKey | null; sortDir: SortDir }) {
