@@ -29,6 +29,7 @@ import { useAuditLog } from '@/hooks/useAuditLog';
 import { useCBNRate } from '@/hooks/useCBNRate';
 import { generateGoAMLXml, downloadXmlFile } from '@/lib/generateGoAMLXml';
 import { IMTOInvestigation } from '@/components/IMTOInvestigation';
+import { CrossBorderSLACard } from '@/components/CrossBorderSLACard';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, AlertTriangle, Sparkles, Bot, Send, FileDown,
