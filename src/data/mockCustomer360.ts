@@ -141,6 +141,7 @@ export const customer360Data: Record<number, Customer360Data> = {
     bvnVerified: true, livenessCheck: 'Pending', accountStatus: 'Restricted', alerts: 8,
     email: 'fatima.bello@email.com', phone: '+234 804 444 5566',
     address: '3 Sultan Road, Kaduna',
+    entityType: 'IMTO Agent',
     radarScores: [
       { axis: 'PEP Exposure', value: 88 }, { axis: 'Cross-Border Vol.', value: 78 },
       { axis: 'Cash Intensity', value: 72 }, { axis: 'BVN/NIN Integrity', value: 65 },
@@ -178,6 +179,8 @@ export const customer360Data: Record<number, Customer360Data> = {
     bvnVerified: true, livenessCheck: 'Pass', accountStatus: 'Active', alerts: 3,
     email: 'ngozi.okafor@email.com', phone: '+234 806 666 7788',
     address: '7 Awolowo Road, Ikoyi, Lagos',
+    entityType: 'Nigerian Business',
+    cacNumber: 'RC-1843027',
     radarScores: [
       { axis: 'PEP Exposure', value: 20 }, { axis: 'Cross-Border Vol.', value: 45 },
       { axis: 'Cash Intensity', value: 55 }, { axis: 'BVN/NIN Integrity', value: 15 },
