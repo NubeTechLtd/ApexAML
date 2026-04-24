@@ -524,6 +524,52 @@ export const mockAlerts: Alert[] = [
     aiDraftedNarrative:
       '[CROSS-BORDER PRE-DRAFT — completed by overseas referral]\n\nOn the date and time recorded in the OverseasFlagTimestamp field, WorldRemit UK FinCrime Operations (officer: Sarah Whitfield) issued cross-border flag WR-UK-2026-4421 against the corridor remittance subsequently collected on Nigerian soil by Tunde Bamidele Akinwale (NIN 81600445522). The originating funding instrument — a UK-issued payment card ending 4419 — was reported stolen approximately six (6) hours prior to the corridor funding, placing this transaction within the FATF Recommendation 16 wire-transfer integrity scope and obliging Nigerian receipt-side notification to the NFIU within 24 hours of the overseas flag.\n\n[ANALYST TO COMPLETE]\n• Nigerian transaction reference and agent till record\n• Confirmation of cash-out CCTV preservation\n• Beneficiary EDD outcome\n• Recommended NFIU disposition\n',
   },
+  /* ── IMTO_ACCOUNT_COMMINGLING (May 2026 CBN Circular violation) ──── */
+  {
+    id: 'ALT-2026-0901',
+    caseId: 'CAS-2026-0901-NG',
+    status: 'Open',
+    riskLevel: 'Critical',
+    ruleTriggered: 'IMTO Settlement Account Commingling',
+    timestamp: '2026-04-09T11:42:00Z',
+    timeElapsed: '4h ago',
+    alertType: 'IMTO_ACCOUNT_COMMINGLING',
+    requiresSupervisorApproval: true,
+    description:
+      'Tagged IMTO Settlement Account 5566778899 (LemFi · Access Bank) received a credit from Sunrise Trading Nigeria Ltd — an entity NOT in the approved correspondent banks list. Commingling of operating funds with regulated remittance settlement is a May 2026 CBN Circular violation; the partner bank is jointly liable.',
+    commingling: {
+      settlementAccountNuban: '5566778899',
+      imtoName: 'LemFi',
+      cbnLicenceNumber: 'CBN/IMTO/2022/00318',
+      partnerBank: 'Access Bank',
+      partnerBankCO: 'Mrs. Adaeze Okolo',
+      sourceEntity: 'Sunrise Trading Nigeria Ltd',
+      amountNGN: 4_250_000,
+      creditedAt: '2026-04-09T11:42:00Z',
+    },
+    customerProfile: {
+      fullName: 'LemFi NG Settlement Account',
+      bvn: 'N/A (IMTO Settlement)',
+      nin: 'N/A',
+      nuban: '5566778899',
+      kycTier: 'Corporate · IMTO Designated',
+      occupation: 'Regulated remittance settlement',
+      registeredAddress: 'Access Bank PLC, Plot 999 Danmole Street, V/I, Lagos',
+      riskScore: 92,
+    },
+    transactions: [
+      { id: 'tx-cm-1', date: '2026-04-09T11:42:00Z', type: 'Credit', amountNGN: 4_250_000, counterparty: 'Sunrise Trading Nigeria Ltd (UNAPPROVED)', balanceAfter: 18_400_000, channel: 'Mobile Transfer' },
+      { id: 'tx-cm-2', date: '2026-04-09T09:15:00Z', type: 'Credit', amountNGN: 1_280_000, counterparty: 'LemFi UK Ltd (Approved Correspondent)', balanceAfter: 14_150_000, channel: 'Online Banking' },
+      { id: 'tx-cm-3', date: '2026-04-09T07:48:00Z', type: 'Credit', amountNGN: 940_000, counterparty: 'LemFi Inc (US) (Approved Correspondent)', balanceAfter: 12_870_000, channel: 'Online Banking' },
+    ],
+    behavioralRedFlags: [
+      'Source entity Sunrise Trading Nigeria Ltd is a domestic corporate — incompatible with the inbound-only remittance settlement licence on this account.',
+      'Credit value (₦4.25M) exceeds typical single-corridor remittance settlement size, suggesting bulk operating funds rather than aggregated individual remittances.',
+      'No FX-corridor footprint: the counterparty is not registered with any approved overseas correspondent bank for this IMTO licence.',
+    ],
+    aiDraftedNarrative:
+      'On 2026-04-09 at 11:42 WAT, IMTO Designated Settlement Account NUBAN 5566778899 — held at Access Bank for LemFi (CBN IMTO Licence CBN/IMTO/2022/00318) — received a credit of ₦4,250,000 from Sunrise Trading Nigeria Ltd. The originating entity is not registered as an approved correspondent bank for this licence (approved list: LemFi UK Ltd, LemFi Inc (US), LemFi Canada Ltd, LemFi EU OÜ). This commingling of operating-corporate funds with regulated remittance settlement contravenes the May 2026 CBN Circular on IMTO Settlement Account Segregation, exposing both LemFi and Access Bank (joint liability) to enforcement action. Recommend: immediate freeze of the offending credit pending source-of-funds documentation, written notification to Access Bank Compliance Officer (Mrs. Adaeze Okolo), and inclusion in the next monthly CBN Payments System Department report.',
+  },
   /* ── B2P_PHANTOM_PAYROLL_PATTERN (foreign business burst remittance) ── */
   (() => {
     const NIGERIAN_BANKS = ['GTBank', 'First Bank', 'Zenith', 'Access', 'UBA', 'Fidelity', 'Stanbic IBTC', 'Wema'];
