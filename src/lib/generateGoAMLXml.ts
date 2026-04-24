@@ -31,6 +31,18 @@ export function generateGoAMLXml(alert: Alert, strDraft: string): string {
       </Transaction>`
   ).join('\n');
 
+  // NFIU goAML mandatory cross-border block — only emitted when the alert
+  // originated from an overseas IMTO compliance referral.
+  const crossBorderBlock = alert.crossBorder
+    ? `  <CrossBorderFlag>true</CrossBorderFlag>
+  <OriginatingCountry>${escapeXml(alert.crossBorder.originatingCountry)}</OriginatingCountry>
+  <OverseasInstitutionReference>${escapeXml(alert.crossBorder.overseasReferenceId)}</OverseasInstitutionReference>
+  <OverseasFlagTimestamp>${escapeXml(alert.crossBorder.overseasFlaggedAt)}</OverseasFlagTimestamp>
+  <OverseasFlagReason>${escapeXml(alert.crossBorder.overseasFlagReason)}</OverseasFlagReason>
+  <OverseasFlaggedBy>${escapeXml(alert.crossBorder.overseasFlaggedBy)}</OverseasFlaggedBy>
+`
+    : '  <CrossBorderFlag>false</CrossBorderFlag>\n';
+
   return `<?xml version="1.0" encoding="UTF-8"?>
 <STRReport xmlns="urn:nfiu:goaml:3.0" version="3.0">
   <ReportHeader>
@@ -38,7 +50,7 @@ export function generateGoAMLXml(alert: Alert, strDraft: string): string {
     <ReportingDate>${today}</ReportingDate>
     <Currency>NGN</Currency>
   </ReportHeader>
-  <ReportingEntity>
+${crossBorderBlock}  <ReportingEntity>
     <EntityType>BANK</EntityType>
     <EntityName>Sentinel Financial Institution</EntityName>
     <RCNumber>RC-123456</RCNumber>

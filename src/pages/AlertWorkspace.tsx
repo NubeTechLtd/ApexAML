@@ -29,6 +29,7 @@ import { useAuditLog } from '@/hooks/useAuditLog';
 import { useCBNRate } from '@/hooks/useCBNRate';
 import { generateGoAMLXml, downloadXmlFile } from '@/lib/generateGoAMLXml';
 import { IMTOInvestigation } from '@/components/IMTOInvestigation';
+import { CrossBorderSLACard } from '@/components/CrossBorderSLACard';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, AlertTriangle, Sparkles, Bot, Send, FileDown,
@@ -312,9 +313,14 @@ export default function AlertWorkspace() {
 
   // Reset STR state when alert changes
   useEffect(() => {
-    setStrDraft('');
+    const currentAlert = mockAlerts.find(a => a.id === selectedId);
+    // Cross-border flags arrive with the overseas referral data already in
+    // the narrative — pre-populate the draft so the analyst only fills in
+    // the Nigerian transaction tail.
+    const isCrossBorder = currentAlert?.alertType === 'CROSS_BORDER_FLAG';
+    setStrDraft(isCrossBorder ? currentAlert!.aiDraftedNarrative : '');
     setStrLoading(false);
-    setStrGenerated(false);
+    setStrGenerated(isCrossBorder);
     setChatMessages([]);
     setEditVersion(0);
     setChannelFilter('All');
@@ -458,6 +464,13 @@ export default function AlertWorkspace() {
             <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
               <ScrollArea className="flex-1">
                 <div className="p-6 space-y-6">
+                  {/* Cross-border SLA banner — overseas-flagged STR clock */}
+                  {selected.alertType === 'CROSS_BORDER_FLAG' && selected.crossBorder && (
+                    <motion.div key={`xb-${selected.id}`} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+                      <CrossBorderSLACard context={selected.crossBorder} />
+                    </motion.div>
+                  )}
+
                   {/* IMTO-specific investigation panel */}
                   {selected.alertType && selected.alertType.startsWith('IMTO_') && (
                     <motion.div key={`imto-${selected.id}`} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
