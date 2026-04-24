@@ -68,6 +68,13 @@ const typologyTemplates: TypologyTemplate[] = [
     category: 'FX/BDC',
     badge: '48h window',
   },
+  {
+    name: 'B2P Phantom Payroll Pattern',
+    desc: 'Fires when a single foreign business sends 50+ remittances in 72h with uniform amounts (±5%), 100% Tier 1 recipients, <20% prior history, and fan-out across multiple banks. Classic phantom-payroll laundering.',
+    risk: 'Critical',
+    category: 'IMTO',
+    badge: '72h · 50+ tx · multi-bank',
+  },
 ];
 
 const CATEGORY_ORDER: TypologyCategory[] = ['POS', 'FX/BDC', 'Digital Channels', 'IMTO', 'Account Lifecycle', 'Crypto', 'Insider/PEP', 'Trade-Based'];
