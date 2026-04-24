@@ -73,6 +73,19 @@ export const customer360Data: Record<number, Customer360Data> = {
     bvnVerified: true, livenessCheck: 'Pass', accountStatus: 'Active', alerts: 5,
     email: 'adebayo.ogunlesi@email.com', phone: '+234 801 111 2233',
     address: '5 Bourdillon Road, Ikoyi, Lagos',
+    entityType: 'Foreign Business',
+    foreignKYB: {
+      countryOfRegistration: 'United Kingdom',
+      companyRegistrationNumber: 'UK-CRN-09384772',
+      beneficialOwners: [
+        { id: 'bo1', name: 'Adebayo Ogunlesi', ownershipPct: 55, pepStatus: 'Match' },
+        { id: 'bo2', name: 'Helen Ogunlesi', ownershipPct: 25, pepStatus: 'Clear' },
+        { id: 'bo3', name: 'Tunde Ogunlesi', ownershipPct: 12, pepStatus: 'Pending' },
+        { id: 'bo4', name: 'Atlas Holdings (Nominee)', ownershipPct: 8, pepStatus: 'Clear' },
+      ],
+      declaredRemittancePurpose: 'Payroll',
+      averageMonthlyTransferVolumeNGN: 480_000_000,
+    },
     radarScores: [
       { axis: 'PEP Exposure', value: 75 }, { axis: 'Cross-Border Vol.', value: 82 },
       { axis: 'Cash Intensity', value: 45 }, { axis: 'BVN/NIN Integrity', value: 18 },
