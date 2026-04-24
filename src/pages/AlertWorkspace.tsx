@@ -30,6 +30,7 @@ import { useCBNRate } from '@/hooks/useCBNRate';
 import { generateGoAMLXml, downloadXmlFile } from '@/lib/generateGoAMLXml';
 import { IMTOInvestigation } from '@/components/IMTOInvestigation';
 import { CrossBorderSLACard } from '@/components/CrossBorderSLACard';
+import { PhantomPayrollNetwork } from '@/components/PhantomPayrollNetwork';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, AlertTriangle, Sparkles, Bot, Send, FileDown,
@@ -475,6 +476,13 @@ export default function AlertWorkspace() {
                   {selected.alertType && selected.alertType.startsWith('IMTO_') && (
                     <motion.div key={`imto-${selected.id}`} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
                       <IMTOInvestigation alert={selected} isResolved={isResolved} />
+                    </motion.div>
+                  )}
+
+                  {/* Phantom Payroll hub-and-spoke network */}
+                  {selected.alertType === 'B2P_PHANTOM_PAYROLL_PATTERN' && selected.phantomPayroll && (
+                    <motion.div key={`pp-${selected.id}`} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+                      <PhantomPayrollNetwork context={selected.phantomPayroll} />
                     </motion.div>
                   )}
 
