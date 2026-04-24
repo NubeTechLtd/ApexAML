@@ -1,4 +1,4 @@
-import { LayoutDashboard, Inbox, Users, Settings2, FileText, Shield, Fingerprint, ShieldAlert, Search } from 'lucide-react';
+import { LayoutDashboard, Inbox, Users, Settings2, FileText, Shield, Fingerprint, ShieldAlert, Search, Banknote, Building2 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import {
   Sidebar,
@@ -21,6 +21,8 @@ const mainNav = [
   { title: 'Sanctions Screening', url: '/sanctions', icon: ShieldAlert },
   { title: 'Identity & KYC', url: '/identity', icon: Fingerprint },
   { title: 'Customers', url: '/customers', icon: Users },
+  { title: 'Accounts', url: '/accounts', icon: Banknote },
+  { title: 'Partner Bank Dashboard', url: '/partner-bank', icon: Building2 },
   { title: 'Rules Engine', url: '/rules', icon: Settings2 },
 ];
 
