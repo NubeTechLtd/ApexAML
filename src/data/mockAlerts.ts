@@ -435,4 +435,47 @@ export const mockAlerts: Alert[] = [
     aiDraftedNarrative:
       'The subject, Ifeoluwa Adeniran (NUBAN 5566778899), received an inbound IMTO remittance of ₦6,320,000 from Ria Money Transfer\'s UK corridor at 19:08 WAT on 2026-04-08. At 20:45 WAT — 1 hour 37 minutes later — the subject debited ₦6,250,000 (98.9% of the inbound) to Crown BDC Ltd (Lagos Island), a CBN-licensed Bureau de Change. This pattern — inbound IMTO credit immediately recycled through a BDC — is a textbook FX-arbitrage round-trip typology. Whilst the BDC is licensed, the rapid turnaround and near-full-value transfer suggest the IMTO settlement account is being used as a pass-through conduit for parallel-market foreign-exchange conversion, in contravention of the CBN IMTO Guidelines spirit and the 2025 directives prohibiting FX-arbitrage usage of remittance corridors. Recommend: immediate case freeze on the settlement account, BDC counterparty review, and joint NFIU / CBN Payments System Department notification.',
   },
+  /* ── CROSS_BORDER_FLAG (overseas IMTO compliance referral) ───────── */
+  {
+    id: 'ALT-2026-0899',
+    caseId: 'CAS-2026-0899-NG',
+    status: 'Open',
+    riskLevel: 'Critical',
+    ruleTriggered: 'Cross-Border Flag — Overseas IMTO Referral',
+    // The Nigerian analyst sees this 21h after the overseas team flagged it.
+    timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
+    timeElapsed: '30m ago',
+    description:
+      'WorldRemit UK compliance team flagged this remittance as funded by a stolen card before the funds were collected in Nigeria. The 24-hour NFIU filing clock started when the overseas team raised the flag — not when this Nigerian alert was created.',
+    alertType: 'CROSS_BORDER_FLAG',
+    requiresSupervisorApproval: true,
+    crossBorder: {
+      originatingCountry: 'UK',
+      overseasReferenceId: 'WR-UK-2026-4421',
+      // 21h ago → ~3h remaining → countdown should be in pulse-red state.
+      overseasFlaggedAt: new Date(Date.now() - 1000 * 60 * 60 * 21).toISOString(),
+      overseasFlagReason: 'Stolen card',
+      overseasFlaggedBy: 'Sarah Whitfield · WorldRemit UK FinCrime Ops',
+    },
+    customerProfile: {
+      fullName: 'Tunde Bamidele Akinwale',
+      bvn: '22117788990',
+      nin: '81600445522',
+      nuban: 'N/A (IMTO Beneficiary)',
+      kycTier: 'IMTO Walk-In (Tier 1 Equivalent)',
+      occupation: 'Unverified',
+      registeredAddress: '12 Awolowo Road, Ikoyi, Lagos',
+      riskScore: 95,
+    },
+    transactions: [
+      { id: 'tx-26', date: new Date(Date.now() - 1000 * 60 * 60 * 20).toISOString(), type: 'Credit', amountNGN: 1185000, counterparty: 'WorldRemit / Sender: card-funded (UK)', balanceAfter: 0, channel: 'IMTO Cash Payout', imtoOperator: 'WorldRemit', agentLocation: 'Lagos — Ikoyi', transferDirection: 'INBOUND', settlementCurrency: 'NGN' },
+    ],
+    behavioralRedFlags: [
+      'Overseas-originated flag: WorldRemit UK FinCrime confirmed source-card (ending 4419) reported stolen 6h before funding the remittance.',
+      'Speed of pickup: Beneficiary collected the cash within 47 minutes of the corridor settlement — faster than typical recipient behaviour for the agent location.',
+      'KYC weakness: Beneficiary verified only at IMTO walk-in Tier 1 equivalent — insufficient for restitution / chargeback liability.',
+    ],
+    aiDraftedNarrative:
+      '[CROSS-BORDER PRE-DRAFT — completed by overseas referral]\n\nOn the date and time recorded in the OverseasFlagTimestamp field, WorldRemit UK FinCrime Operations (officer: Sarah Whitfield) issued cross-border flag WR-UK-2026-4421 against the corridor remittance subsequently collected on Nigerian soil by Tunde Bamidele Akinwale (NIN 81600445522). The originating funding instrument — a UK-issued payment card ending 4419 — was reported stolen approximately six (6) hours prior to the corridor funding, placing this transaction within the FATF Recommendation 16 wire-transfer integrity scope and obliging Nigerian receipt-side notification to the NFIU within 24 hours of the overseas flag.\n\n[ANALYST TO COMPLETE]\n• Nigerian transaction reference and agent till record\n• Confirmation of cash-out CCTV preservation\n• Beneficiary EDD outcome\n• Recommended NFIU disposition\n',
+  },
 ];
