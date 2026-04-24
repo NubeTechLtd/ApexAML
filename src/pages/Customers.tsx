@@ -3,7 +3,9 @@ import { useSearchParams } from 'react-router-dom';
 import { ActiveFilterChip } from '@/components/ActiveFilterChip';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
-import { Users, Search, Filter, ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown, Download, ShieldAlert, ShieldCheck, X, UserCheck, Clock, Snowflake } from 'lucide-react';
+import { Users, Search, Filter, ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown, Download, ShieldAlert, ShieldCheck, X, UserCheck, Clock, Snowflake, Building2, Globe2, Briefcase, Banknote } from 'lucide-react';
+import { customer360Data } from '@/data/mockCustomer360';
+import type { EntityType } from '@/data/mockCustomer360';
 import { NotificationBell } from '@/components/NotificationBell';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { AuditBell } from '@/components/AuditBell';
@@ -60,6 +62,18 @@ const statusColors: Record<CustomerStatus, string> = {
 };
 
 const RISK_ORDER: Record<string, number> = { High: 3, Medium: 2, Low: 1 };
+
+const entityIconFor = (type?: EntityType) => {
+  switch (type) {
+    case 'Foreign Business': return Globe2;
+    case 'Nigerian Business': return Building2;
+    case 'Sole Trader': return Briefcase;
+    case 'IMTO Agent': return Banknote;
+    default: return null;
+  }
+};
+const isBusiness = (type?: EntityType) =>
+  type === 'Foreign Business' || type === 'Nigerian Business' || type === 'Sole Trader' || type === 'IMTO Agent';
 const PAGE_SIZE_OPTIONS = [5, 10, 20];
 
 function SortIcon({ column, sortKey, sortDir }: { column: SortKey; sortKey: SortKey | null; sortDir: SortDir }) {
@@ -332,7 +346,31 @@ export default function Customers() {
                     <TableCell onClick={e => e.stopPropagation()}>
                       <Checkbox checked={checkedIds.has(c.id)} onCheckedChange={() => toggleRow(c.id)} />
                     </TableCell>
-                    <TableCell className="font-medium" onClick={() => setSelectedId(c.id)}>{c.name}</TableCell>
+                    <TableCell className="font-medium" onClick={() => setSelectedId(c.id)}>
+                      {(() => {
+                        const et = customer360Data[c.id]?.entityType;
+                        const Icon = entityIconFor(et);
+                        return (
+                          <span className="inline-flex items-center gap-1.5">
+                            {Icon && (
+                              <span
+                                className="inline-flex h-5 w-5 items-center justify-center rounded-md bg-primary/10 text-primary shrink-0"
+                                title={et}
+                                aria-label={et}
+                              >
+                                <Icon className="h-3 w-3" />
+                              </span>
+                            )}
+                            <span>{c.name}</span>
+                            {isBusiness(et) && (
+                              <Badge variant="outline" className="text-[9px] px-1 py-0 h-4 bg-primary/5 text-primary border-primary/20">
+                                {et}
+                              </Badge>
+                            )}
+                          </span>
+                        );
+                      })()}
+                    </TableCell>
                     <TableCell className="font-mono text-xs text-muted-foreground" onClick={() => setSelectedId(c.id)}>{c.bvn}</TableCell>
                     <TableCell onClick={() => setSelectedId(c.id)}>
                       <Badge variant="outline" className={riskColors[c.riskLevel]}>{c.riskLevel}</Badge>

@@ -11,6 +11,34 @@ export interface ConnectedEntity {
   detail: string;
 }
 
+export type EntityType =
+  | 'Individual'
+  | 'Sole Trader'
+  | 'Nigerian Business'
+  | 'Foreign Business'
+  | 'IMTO Agent';
+
+export type RemittancePurpose =
+  | 'Payroll'
+  | 'Trade Payment'
+  | 'Family Support'
+  | 'Business Expense';
+
+export interface BeneficialOwner {
+  id: string;
+  name: string;
+  ownershipPct: number;
+  pepStatus: 'Clear' | 'Match' | 'Pending';
+}
+
+export interface ForeignBusinessKYB {
+  countryOfRegistration: string;
+  companyRegistrationNumber: string;
+  beneficialOwners: BeneficialOwner[];
+  declaredRemittancePurpose: RemittancePurpose;
+  averageMonthlyTransferVolumeNGN: number;
+}
+
 export interface Customer360Data {
   id: number;
   name: string;
@@ -27,6 +55,12 @@ export interface Customer360Data {
   email: string;
   phone: string;
   address: string;
+  /** Entity classification — drives KYB requirements. Defaults to Individual when unset. */
+  entityType?: EntityType;
+  /** CAC registration number (Nigerian Business only). */
+  cacNumber?: string;
+  /** Extended KYB block — required when entityType === 'Foreign Business'. */
+  foreignKYB?: ForeignBusinessKYB;
   radarScores: { axis: string; value: number }[];
   connectedEntities: ConnectedEntity[];
   eddDocuments: { name: string; type: string; uploadedAt: string }[];
@@ -39,6 +73,19 @@ export const customer360Data: Record<number, Customer360Data> = {
     bvnVerified: true, livenessCheck: 'Pass', accountStatus: 'Active', alerts: 5,
     email: 'adebayo.ogunlesi@email.com', phone: '+234 801 111 2233',
     address: '5 Bourdillon Road, Ikoyi, Lagos',
+    entityType: 'Foreign Business',
+    foreignKYB: {
+      countryOfRegistration: 'United Kingdom',
+      companyRegistrationNumber: 'UK-CRN-09384772',
+      beneficialOwners: [
+        { id: 'bo1', name: 'Adebayo Ogunlesi', ownershipPct: 55, pepStatus: 'Match' },
+        { id: 'bo2', name: 'Helen Ogunlesi', ownershipPct: 25, pepStatus: 'Clear' },
+        { id: 'bo3', name: 'Tunde Ogunlesi', ownershipPct: 12, pepStatus: 'Pending' },
+        { id: 'bo4', name: 'Atlas Holdings (Nominee)', ownershipPct: 8, pepStatus: 'Clear' },
+      ],
+      declaredRemittancePurpose: 'Payroll',
+      averageMonthlyTransferVolumeNGN: 480_000_000,
+    },
     radarScores: [
       { axis: 'PEP Exposure', value: 75 }, { axis: 'Cross-Border Vol.', value: 82 },
       { axis: 'Cash Intensity', value: 45 }, { axis: 'BVN/NIN Integrity', value: 18 },
@@ -94,6 +141,7 @@ export const customer360Data: Record<number, Customer360Data> = {
     bvnVerified: true, livenessCheck: 'Pending', accountStatus: 'Restricted', alerts: 8,
     email: 'fatima.bello@email.com', phone: '+234 804 444 5566',
     address: '3 Sultan Road, Kaduna',
+    entityType: 'IMTO Agent',
     radarScores: [
       { axis: 'PEP Exposure', value: 88 }, { axis: 'Cross-Border Vol.', value: 78 },
       { axis: 'Cash Intensity', value: 72 }, { axis: 'BVN/NIN Integrity', value: 65 },
@@ -131,6 +179,8 @@ export const customer360Data: Record<number, Customer360Data> = {
     bvnVerified: true, livenessCheck: 'Pass', accountStatus: 'Active', alerts: 3,
     email: 'ngozi.okafor@email.com', phone: '+234 806 666 7788',
     address: '7 Awolowo Road, Ikoyi, Lagos',
+    entityType: 'Nigerian Business',
+    cacNumber: 'RC-1843027',
     radarScores: [
       { axis: 'PEP Exposure', value: 20 }, { axis: 'Cross-Border Vol.', value: 45 },
       { axis: 'Cash Intensity', value: 55 }, { axis: 'BVN/NIN Integrity', value: 15 },
