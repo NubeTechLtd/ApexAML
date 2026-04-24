@@ -505,4 +505,77 @@ export const mockAlerts: Alert[] = [
     aiDraftedNarrative:
       '[CROSS-BORDER PRE-DRAFT — completed by overseas referral]\n\nOn the date and time recorded in the OverseasFlagTimestamp field, WorldRemit UK FinCrime Operations (officer: Sarah Whitfield) issued cross-border flag WR-UK-2026-4421 against the corridor remittance subsequently collected on Nigerian soil by Tunde Bamidele Akinwale (NIN 81600445522). The originating funding instrument — a UK-issued payment card ending 4419 — was reported stolen approximately six (6) hours prior to the corridor funding, placing this transaction within the FATF Recommendation 16 wire-transfer integrity scope and obliging Nigerian receipt-side notification to the NFIU within 24 hours of the overseas flag.\n\n[ANALYST TO COMPLETE]\n• Nigerian transaction reference and agent till record\n• Confirmation of cash-out CCTV preservation\n• Beneficiary EDD outcome\n• Recommended NFIU disposition\n',
   },
+  /* ── B2P_PHANTOM_PAYROLL_PATTERN (foreign business burst remittance) ── */
+  (() => {
+    const NIGERIAN_BANKS = ['GTBank', 'First Bank', 'Zenith', 'Access', 'UBA', 'Fidelity', 'Stanbic IBTC', 'Wema'];
+    const FIRST_NAMES = ['Adekunle', 'Chioma', 'Emeka', 'Fatima', 'Ibrahim', 'Ngozi', 'Olumide', 'Aisha', 'Tunde', 'Blessing', 'Yemi', 'Obinna', 'Zainab', 'Kunle', 'Amina', 'Ifeanyi', 'Halima', 'Chinedu', 'Bukola', 'Sade'];
+    const LAST_NAMES = ['Okonkwo', 'Adebayo', 'Eze', 'Bello', 'Mohammed', 'Okafor', 'Adeyemi', 'Yusuf', 'Bakare', 'Alade', 'Suleiman', 'Agu', 'Nwosu', 'Abdullahi', 'Afolabi', 'Onyeka', 'Ibrahim', 'Sani', 'Olawale', 'Eluemuno'];
+    const recipients: PhantomPayrollRecipient[] = Array.from({ length: 52 }).map((_, i) => {
+      const name = `${FIRST_NAMES[i % FIRST_NAMES.length]} ${LAST_NAMES[(i * 7) % LAST_NAMES.length]}`;
+      // Deterministic pseudo-random — keep results stable across renders.
+      const noise = Math.sin(i * 9.3) * 0.5; // ±0.5%
+      const variance = 1 + (noise * 0.05);
+      return {
+        id: `pp-r-${i + 1}`,
+        name,
+        bank: NIGERIAN_BANKS[i % NIGERIAN_BANKS.length],
+        amountNGN: Math.round(395_000 * variance),
+        kycTier: 'Tier 1',
+        hasPriorHistory: i % 7 === 0, // ~14% have prior history
+      };
+    });
+    const phantomCtx: PhantomPayrollContext = {
+      senderEntityName: 'Atlas Energy Services Ltd',
+      senderCountry: 'United Kingdom',
+      senderCRN: 'UK-CRN-09384772',
+      windowHours: 71,
+      totalRemittances: recipients.length,
+      uniformAmountNGN: 395_000,
+      amountVariancePct: 5,
+      pctTier1Recipients: 100,
+      pctNoPriorHistory: Math.round((recipients.filter(r => !r.hasPriorHistory).length / recipients.length) * 100),
+      uniqueBanks: new Set(recipients.map(r => r.bank)).size,
+      recipients,
+    };
+    return {
+      id: 'ALT-2026-0900',
+      caseId: 'CAS-2026-0900-NG',
+      status: 'Open' as const,
+      riskLevel: 'Critical' as const,
+      ruleTriggered: 'B2P Phantom Payroll Pattern (Foreign Business Burst Remittance)',
+      timestamp: '2026-04-09T15:10:00Z',
+      timeElapsed: '1h ago',
+      description:
+        'Foreign business "Atlas Energy Services Ltd" (UK-CRN-09384772) executed 52 near-identical remittances to 52 different Nigerian recipients across 8 banks within 71 hours. All recipients are Tier 1 KYC, 86% have no prior relationship with the sender — classic phantom-payroll laundering typology.',
+      alertType: 'B2P_PHANTOM_PAYROLL_PATTERN' as const,
+      requiresSupervisorApproval: true,
+      phantomPayroll: phantomCtx,
+      customerProfile: {
+        fullName: 'Atlas Energy Services Ltd',
+        bvn: 'N/A (Foreign Business)',
+        nin: 'N/A (Foreign Business)',
+        nuban: '8800219944',
+        kycTier: 'Foreign Business — Tier 3 KYB',
+        occupation: 'Declared: Oil & Gas Services',
+        registeredAddress: '5 Bourdillon Road, Ikoyi, Lagos (NG branch)',
+        riskScore: 96,
+      },
+      transactions: [
+        { id: 'tx-pp-1', date: '2026-04-06T16:02:00Z', type: 'Credit', amountNGN: 21_000_000, counterparty: 'Atlas Energy Services Ltd / UK Corridor', balanceAfter: 21_120_000, channel: 'Online Banking', transferDirection: 'INBOUND', settlementCurrency: 'NGN' },
+        { id: 'tx-pp-2', date: '2026-04-06T17:08:00Z', type: 'Debit', amountNGN: 395_000, counterparty: `Payroll #001 / ${recipients[0].name} (${recipients[0].bank})`, balanceAfter: 20_725_000, channel: 'Mobile Transfer', transferDirection: 'OUTBOUND', settlementCurrency: 'NGN' },
+        { id: 'tx-pp-3', date: '2026-04-07T09:14:00Z', type: 'Debit', amountNGN: 395_000, counterparty: `Payroll #017 / ${recipients[16].name} (${recipients[16].bank})`, balanceAfter: 14_010_000, channel: 'Mobile Transfer', transferDirection: 'OUTBOUND', settlementCurrency: 'NGN' },
+        { id: 'tx-pp-4', date: '2026-04-08T12:41:00Z', type: 'Debit', amountNGN: 395_000, counterparty: `Payroll #034 / ${recipients[33].name} (${recipients[33].bank})`, balanceAfter: 7_295_000, channel: 'Mobile Transfer', transferDirection: 'OUTBOUND', settlementCurrency: 'NGN' },
+        { id: 'tx-pp-5', date: '2026-04-09T14:55:00Z', type: 'Debit', amountNGN: 395_000, counterparty: `Payroll #052 / ${recipients[51].name} (${recipients[51].bank})`, balanceAfter: 580_000, channel: 'Mobile Transfer', transferDirection: 'OUTBOUND', settlementCurrency: 'NGN' },
+      ],
+      behavioralRedFlags: [
+        `Burst velocity: ${recipients.length} outbound remittances in ${phantomCtx.windowHours}h from a single foreign-business settlement account.`,
+        `Amount uniformity: All payouts within ±${phantomCtx.amountVariancePct}% of ₦${phantomCtx.uniformAmountNGN.toLocaleString('en-NG')} — synthetic salary pattern.`,
+        `KYC weakness: 100% of recipients are Tier 1 (₦50k/day cap). Legitimate corporate payroll would use Tier 2/3 employee accounts.`,
+        `Counterparty novelty: ${phantomCtx.pctNoPriorHistory}% of recipients have no prior transactional relationship with the sender — incompatible with declared "Payroll" purpose.`,
+        `Bank fan-out: Disbursements span ${phantomCtx.uniqueBanks} different Nigerian banks — defeats single-bank velocity controls.`,
+      ],
+      aiDraftedNarrative:
+        `Atlas Energy Services Ltd (UK-CRN-09384772), classified as a Foreign Business with declared remittance purpose "Payroll", executed ${recipients.length} outbound disbursements from its Nigerian settlement account (NUBAN 8800219944) within a 71-hour window ending 2026-04-09 14:55 WAT. Each disbursement was structured at ₦${phantomCtx.uniformAmountNGN.toLocaleString('en-NG')} ± ${phantomCtx.amountVariancePct}% — a near-uniform synthetic salary pattern. All ${recipients.length} recipient accounts hold only Tier 1 KYC verification (₦50,000 daily transaction cap), and ${phantomCtx.pctNoPriorHistory}% have no prior transactional relationship with the sender. Disbursements were fanned out across ${phantomCtx.uniqueBanks} distinct Nigerian banks (GTBank, First Bank, Zenith, Access, UBA, Fidelity, Stanbic IBTC, Wema), defeating single-institution velocity controls. This typology — known as "phantom payroll" — is a high-risk laundering pattern in which a foreign corporate front fragments illicit proceeds through a fabricated payroll list. Recommend: immediate freeze of the Atlas Energy NG settlement account, EDD on the foreign parent (UK Companies House review), recipient-account profiling for mule-network linkage, and joint NFIU / CBN Trade & Exchange Department escalation.`,
+    };
+  })(),
 ];
