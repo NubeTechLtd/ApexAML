@@ -86,6 +86,31 @@ export interface BDCRoundTripContext {
   timeGapMinutes: number;
 }
 
+/** Phantom payroll spoke — one recipient on the hub-and-spoke diagram. */
+export interface PhantomPayrollRecipient {
+  id: string;
+  name: string;
+  bank: string;
+  amountNGN: number;
+  kycTier: 'Tier 1' | 'Tier 2' | 'Tier 3';
+  hasPriorHistory: boolean;
+}
+
+/** Aggregated context for a B2P phantom-payroll detection. */
+export interface PhantomPayrollContext {
+  senderEntityName: string;
+  senderCountry: string;
+  senderCRN: string;
+  windowHours: number;
+  totalRemittances: number;
+  uniformAmountNGN: number;
+  amountVariancePct: number;
+  pctTier1Recipients: number;
+  pctNoPriorHistory: number;
+  uniqueBanks: number;
+  recipients: PhantomPayrollRecipient[];
+}
+
 export interface Alert {
   id: string;
   caseId: string;
@@ -102,6 +127,7 @@ export interface Alert {
   alertType?: AlertType;
   imto?: IMTOContext;
   bdcRoundTrip?: BDCRoundTripContext;
+  phantomPayroll?: PhantomPayrollContext;
   /** If true, dismissal requires justification + supervisor approval. */
   requiresSupervisorApproval?: boolean;
   /** Cross-border IMTO flag metadata — present when alertType === 'CROSS_BORDER_FLAG'. */
