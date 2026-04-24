@@ -313,9 +313,14 @@ export default function AlertWorkspace() {
 
   // Reset STR state when alert changes
   useEffect(() => {
-    setStrDraft('');
+    const currentAlert = mockAlerts.find(a => a.id === selectedId);
+    // Cross-border flags arrive with the overseas referral data already in
+    // the narrative — pre-populate the draft so the analyst only fills in
+    // the Nigerian transaction tail.
+    const isCrossBorder = currentAlert?.alertType === 'CROSS_BORDER_FLAG';
+    setStrDraft(isCrossBorder ? currentAlert!.aiDraftedNarrative : '');
     setStrLoading(false);
-    setStrGenerated(false);
+    setStrGenerated(isCrossBorder);
     setChatMessages([]);
     setEditVersion(0);
     setChannelFilter('All');
