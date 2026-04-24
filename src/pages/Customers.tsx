@@ -346,7 +346,31 @@ export default function Customers() {
                     <TableCell onClick={e => e.stopPropagation()}>
                       <Checkbox checked={checkedIds.has(c.id)} onCheckedChange={() => toggleRow(c.id)} />
                     </TableCell>
-                    <TableCell className="font-medium" onClick={() => setSelectedId(c.id)}>{c.name}</TableCell>
+                    <TableCell className="font-medium" onClick={() => setSelectedId(c.id)}>
+                      {(() => {
+                        const et = customer360Data[c.id]?.entityType;
+                        const Icon = entityIconFor(et);
+                        return (
+                          <span className="inline-flex items-center gap-1.5">
+                            {Icon && (
+                              <span
+                                className="inline-flex h-5 w-5 items-center justify-center rounded-md bg-primary/10 text-primary shrink-0"
+                                title={et}
+                                aria-label={et}
+                              >
+                                <Icon className="h-3 w-3" />
+                              </span>
+                            )}
+                            <span>{c.name}</span>
+                            {isBusiness(et) && (
+                              <Badge variant="outline" className="text-[9px] px-1 py-0 h-4 bg-primary/5 text-primary border-primary/20">
+                                {et}
+                              </Badge>
+                            )}
+                          </span>
+                        );
+                      })()}
+                    </TableCell>
                     <TableCell className="font-mono text-xs text-muted-foreground" onClick={() => setSelectedId(c.id)}>{c.bvn}</TableCell>
                     <TableCell onClick={() => setSelectedId(c.id)}>
                       <Badge variant="outline" className={riskColors[c.riskLevel]}>{c.riskLevel}</Badge>
