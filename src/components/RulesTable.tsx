@@ -38,6 +38,7 @@ const mockRules: Rule[] = [
   { id: 'R-011', name: 'IMTO Non-Naira Settlement Violation', typology: 'IMTO FX Settlement', threshold: 1, alertsTriggered7d: 1, falsePositivePct: 0, validationStatus: 'Validated', lastValidated: '2026-04-05', enabled: true },
   { id: 'R-012', name: 'IMTO → BDC Round-Trip Detector (48h)', typology: 'BDC Round-Tripping', threshold: 1000000, alertsTriggered7d: 4, falsePositivePct: 11, validationStatus: 'Validated', lastValidated: '2026-04-02', enabled: true },
   { id: 'R-013', name: 'B2P Phantom Payroll Pattern (Foreign Business Burst)', typology: 'Phantom Payroll', threshold: 50, alertsTriggered7d: 3, falsePositivePct: 7, validationStatus: 'Validated', lastValidated: '2026-04-08', enabled: true },
+  { id: 'R-014', name: 'IMTO Settlement Account Commingling (May 2026 Circular)', typology: 'IMTO Account Commingling', threshold: 1, alertsTriggered7d: 5, falsePositivePct: 4, validationStatus: 'Validated', lastValidated: '2026-04-09', enabled: true },
 ];
 
 const validationBadgeClass: Record<string, string> = {
