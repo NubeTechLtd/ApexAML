@@ -9,7 +9,8 @@ export type AlertType =
   | 'IMTO_FX_SETTLEMENT_VIOLATION'
   | 'IMTO_ROUNDTRIP_SUSPECTED'
   | 'B2P_PHANTOM_PAYROLL_PATTERN'
-  | 'CROSS_BORDER_FLAG';
+  | 'CROSS_BORDER_FLAG'
+  | 'IMTO_ACCOUNT_COMMINGLING';
 
 export type OriginatingCountry = 'UK' | 'US' | 'CA' | 'EU';
 
@@ -132,6 +133,24 @@ export interface Alert {
   requiresSupervisorApproval?: boolean;
   /** Cross-border IMTO flag metadata — present when alertType === 'CROSS_BORDER_FLAG'. */
   crossBorder?: CrossBorderContext;
+  /** Commingling context — present when alertType === 'IMTO_ACCOUNT_COMMINGLING'. */
+  commingling?: CommingleContext;
+}
+
+/**
+ * Commingling detection context — fired when a tagged IMTO Settlement
+ * Account receives a credit from an entity NOT in its approved
+ * correspondent banks list. May 2026 CBN Circular violation.
+ */
+export interface CommingleContext {
+  settlementAccountNuban: string;
+  imtoName: string;
+  cbnLicenceNumber: string;
+  partnerBank: string;
+  partnerBankCO: string;
+  sourceEntity: string;
+  amountNGN: number;
+  creditedAt: string;
 }
 
 /**
