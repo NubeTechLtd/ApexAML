@@ -8,6 +8,7 @@ export type AlertType =
   | 'IMTO_OUTBOUND_VIOLATION'
   | 'IMTO_FX_SETTLEMENT_VIOLATION'
   | 'IMTO_ROUNDTRIP_SUSPECTED'
+  | 'B2P_PHANTOM_PAYROLL_PATTERN'
   | 'CROSS_BORDER_FLAG';
 
 export type OriginatingCountry = 'UK' | 'US' | 'CA' | 'EU';
