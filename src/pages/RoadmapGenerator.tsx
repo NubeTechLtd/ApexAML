@@ -7,7 +7,17 @@ import { NotificationBell } from '@/components/NotificationBell';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Card } from '@/components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { useCountdown } from '@/hooks/useCountdown';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -16,7 +26,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
-import { FileText, Loader2, Sparkles, ArrowRight, Download, CheckCircle2, Check, AlertTriangle } from 'lucide-react';
+import { FileText, Loader2, Sparkles, ArrowRight, Download, CheckCircle2, Check, AlertTriangle, ArrowLeft, CalendarClock } from 'lucide-react';
 
 type Step = 'hook' | 'form' | 'loading' | 'roadmap';
 
@@ -44,17 +54,95 @@ const fade = {
   transition: { duration: 0.25 },
 };
 
+const INSTITUTION_TYPES = [
+  'Deposit Money Bank (DMB)',
+  'Fintech',
+  'Neobank',
+  'Payment Service Provider (PSP)',
+  'Mobile Money Operator (MMO)',
+  'Microfinance Bank (MFB)',
+  'International Money Transfer Operator (IMTO)',
+  'Bureau de Change (BDC)',
+  'Non-Bank Financial Institution (NBFI)',
+];
+
+const AML_SETUP_OPTIONS = [
+  'No formal system',
+  'Manual spreadsheets or checklists',
+  'Legacy software (non-CBN compliant)',
+  'Partial automation',
+  'Advanced — needs CBN circular alignment',
+];
+
+const VOLUME_OPTIONS = ['Under 10,000', '10,000–100,000', '100,000–1,000,000', 'Over 1,000,000'];
+
+function getDeadlineForType(type: string): { label: string; tone: 'amber' | 'green' } | null {
+  if (!type) return null;
+  if (type === 'Deposit Money Bank (DMB)') {
+    return { label: 'Your full compliance deadline: September 2027', tone: 'amber' };
+  }
+  return { label: 'Your full compliance deadline: March 2028', tone: 'green' };
+}
+
 const RoadmapGenerator = () => {
+  const { toast } = useToast();
   const [step, setStep] = useState<Step>('hook');
-  const [institution, setInstitution] = useState('');
-  const [licenceType, setLicenceType] = useState('');
+
+  // Form state
+  const [institutionName, setInstitutionName] = useState('');
+  const [institutionType, setInstitutionType] = useState('');
+  const [amlSetup, setAmlSetup] = useState('');
+  const [volume, setVolume] = useState('');
+  const [contactName, setContactName] = useState('');
+  const [contactTitle, setContactTitle] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [showError, setShowError] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const handleStart = () => setStep('form');
-  const handleSubmit = (e: React.FormEvent) => {
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const requiredOk =
+      institutionName.trim() &&
+      institutionType &&
+      amlSetup &&
+      volume &&
+      contactName.trim() &&
+      contactTitle.trim() &&
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+    if (!requiredOk) {
+      setShowError(true);
+      return;
+    }
+    setShowError(false);
+    setSubmitting(true);
+    const { error } = await supabase.from('roadmap_leads').insert({
+      institution_name: institutionName.trim(),
+      institution_type: institutionType,
+      aml_setup: amlSetup,
+      volume,
+      contact_name: contactName.trim(),
+      title: contactTitle.trim(),
+      email: email.trim(),
+      phone: phone.trim() || null,
+      source: 'roadmap_generator',
+    });
+    setSubmitting(false);
+    if (error) {
+      toast({
+        title: 'Submission failed',
+        description: 'Please try again in a moment.',
+        variant: 'destructive',
+      });
+      return;
+    }
     setStep('loading');
     setTimeout(() => setStep('roadmap'), 2200);
   };
+
+  const deadlinePreview = getDeadlineForType(institutionType);
 
   return (
     <SidebarProvider>
