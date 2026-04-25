@@ -56,6 +56,48 @@ export type Database = {
         }
         Relationships: []
       }
+      roadmap_leads: {
+        Row: {
+          aml_setup: string
+          contact_name: string
+          created_at: string
+          email: string
+          id: string
+          institution_name: string
+          institution_type: string
+          phone: string | null
+          source: string
+          title: string
+          volume: string
+        }
+        Insert: {
+          aml_setup: string
+          contact_name: string
+          created_at?: string
+          email: string
+          id?: string
+          institution_name: string
+          institution_type: string
+          phone?: string | null
+          source?: string
+          title: string
+          volume: string
+        }
+        Update: {
+          aml_setup?: string
+          contact_name?: string
+          created_at?: string
+          email?: string
+          id?: string
+          institution_name?: string
+          institution_type?: string
+          phone?: string | null
+          source?: string
+          title?: string
+          volume?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
