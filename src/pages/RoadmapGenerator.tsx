@@ -646,11 +646,51 @@ Managing Director:                                    Signature: _______________
                 )}
 
                 {step === 'loading' && (
-                  <motion.section key="loading" {...fade} className="text-center space-y-4 py-24">
-                    <Loader2 className="h-10 w-10 mx-auto text-primary animate-spin" />
-                    <p className="text-sm text-muted-foreground">
-                      Building your CBN-aligned roadmap…
-                    </p>
+                  <motion.section
+                    key="loading"
+                    {...fade}
+                    className="py-12"
+                    aria-live="polite"
+                    aria-busy="true"
+                  >
+                    <Card className="p-10 flex flex-col items-center text-center space-y-6">
+                      <Loader2 className="h-8 w-8 text-primary animate-spin" />
+                      <div className="min-h-[60px] flex items-center justify-center w-full">
+                        <AnimatePresence mode="wait">
+                          <motion.p
+                            key={loadingStatusIdx}
+                            initial={{ opacity: 0, y: 4 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -4 }}
+                            transition={{ duration: 0.3 }}
+                            className="text-base md:text-lg font-medium tracking-tight text-foreground max-w-md"
+                          >
+                            {loadingStatuses[loadingStatusIdx]}
+                          </motion.p>
+                        </AnimatePresence>
+                      </div>
+                      <div className="flex flex-wrap justify-center gap-2 max-w-lg">
+                        {CAPABILITY_AREAS.map((area, i) => (
+                          <motion.span
+                            key={area}
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={
+                              i < revealedChips
+                                ? { opacity: 1, scale: 1 }
+                                : { opacity: 0, scale: 0.9 }
+                            }
+                            transition={{ duration: 0.3 }}
+                            className="inline-flex items-center gap-1 rounded-full border border-primary/25 bg-primary/10 px-2.5 py-1 text-[11px] font-medium text-primary"
+                          >
+                            <Check className="h-3 w-3" strokeWidth={3} />
+                            {area}
+                          </motion.span>
+                        ))}
+                      </div>
+                      <p className="text-[11px] text-muted-foreground">
+                        Mapping all 10 CBN capability areas — this usually takes 5–15 seconds.
+                      </p>
+                    </Card>
                   </motion.section>
                 )}
 
