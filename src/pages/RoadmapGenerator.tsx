@@ -271,39 +271,221 @@ const RoadmapGenerator = () => {
                 )}
 
                 {step === 'form' && (
-                  <motion.section key="form" {...fade} className="space-y-6">
-                    <div className="space-y-1">
-                      <h2 className="text-2xl font-semibold tracking-tight">Tell us about your institution</h2>
-                      <p className="text-sm text-muted-foreground">
-                        We'll tailor the roadmap to your licence type and reporting obligations.
-                      </p>
-                    </div>
-                    <form onSubmit={handleSubmit} className="space-y-4 rounded-xl border bg-card p-6">
-                      <div className="space-y-2">
-                        <Label htmlFor="institution">Institution name</Label>
-                        <Input
-                          id="institution"
-                          required
-                          value={institution}
-                          onChange={(e) => setInstitution(e.target.value)}
-                          placeholder="e.g. Sterling Bank Plc"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="licence">Licence type</Label>
-                        <Input
-                          id="licence"
-                          required
-                          value={licenceType}
-                          onChange={(e) => setLicenceType(e.target.value)}
-                          placeholder="DMB / Fintech / PSP / MFB / IMTO"
-                        />
-                      </div>
-                      <Button type="submit" className="w-full">
-                        Generate roadmap
-                        <ArrowRight className="h-4 w-4" />
+                  <motion.section key="form" {...fade} className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setShowError(false);
+                          setStep('hook');
+                        }}
+                        className="-ml-2 text-muted-foreground hover:text-foreground"
+                      >
+                        <ArrowLeft className="h-4 w-4" />
+                        Back
                       </Button>
-                    </form>
+                      {/* Progress dots — step 2 of 3 active */}
+                      <div className="flex items-center gap-1.5" aria-label="Step 2 of 3">
+                        {[0, 1, 2].map((i) => (
+                          <span
+                            key={i}
+                            className={
+                              'h-1.5 rounded-full transition-all ' +
+                              (i <= 1 ? 'w-6 bg-primary' : 'w-3 bg-muted')
+                            }
+                          />
+                        ))}
+                      </div>
+                    </div>
+
+                    <Card className="p-6 space-y-5">
+                      <div className="space-y-1">
+                        <h2 className="text-xl font-semibold tracking-tight">
+                          Tell us about your institution
+                        </h2>
+                        <p className="text-xs text-muted-foreground">
+                          Step 2 of 3 — takes about 60 seconds.
+                        </p>
+                      </div>
+
+                      <form onSubmit={handleSubmit} className="space-y-4">
+                        {/* 1. Institution Name */}
+                        <div className="space-y-1.5">
+                          <Label htmlFor="institutionName">
+                            Institution Name <span className="text-destructive">*</span>
+                          </Label>
+                          <Input
+                            id="institutionName"
+                            value={institutionName}
+                            onChange={(e) => setInstitutionName(e.target.value)}
+                            placeholder="e.g. Fidelity Pay Limited"
+                            maxLength={150}
+                          />
+                        </div>
+
+                        {/* 2. Institution Type */}
+                        <div className="space-y-1.5">
+                          <Label htmlFor="institutionType">
+                            Institution Type <span className="text-destructive">*</span>
+                          </Label>
+                          <Select value={institutionType} onValueChange={setInstitutionType}>
+                            <SelectTrigger id="institutionType">
+                              <SelectValue placeholder="Select your institution type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {INSTITUTION_TYPES.map((opt) => (
+                                <SelectItem key={opt} value={opt}>
+                                  {opt}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          {deadlinePreview && (
+                            <div
+                              className={
+                                'mt-2 inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-medium border ' +
+                                (deadlinePreview.tone === 'amber'
+                                  ? 'border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400'
+                                  : 'border-risk-low/30 bg-risk-low/10 text-risk-low')
+                              }
+                            >
+                              <CalendarClock className="h-3 w-3" />
+                              {deadlinePreview.label}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* 3. Current AML setup */}
+                        <div className="space-y-1.5">
+                          <Label htmlFor="amlSetup">
+                            Current AML setup <span className="text-destructive">*</span>
+                          </Label>
+                          <Select value={amlSetup} onValueChange={setAmlSetup}>
+                            <SelectTrigger id="amlSetup">
+                              <SelectValue placeholder="Select your current AML setup" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {AML_SETUP_OPTIONS.map((opt) => (
+                                <SelectItem key={opt} value={opt}>
+                                  {opt}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        {/* 4. Monthly transaction volume */}
+                        <div className="space-y-1.5">
+                          <Label htmlFor="volume">
+                            Monthly transaction volume <span className="text-destructive">*</span>
+                          </Label>
+                          <Select value={volume} onValueChange={setVolume}>
+                            <SelectTrigger id="volume">
+                              <SelectValue placeholder="Select monthly volume" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {VOLUME_OPTIONS.map((opt) => (
+                                <SelectItem key={opt} value={opt}>
+                                  {opt}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        {/* 5 + 6. Full name & Title */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="space-y-1.5">
+                            <Label htmlFor="contactName">
+                              Full name <span className="text-destructive">*</span>
+                            </Label>
+                            <Input
+                              id="contactName"
+                              value={contactName}
+                              onChange={(e) => setContactName(e.target.value)}
+                              placeholder="Ngozi Adeyemi"
+                              maxLength={100}
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <Label htmlFor="contactTitle">
+                              Your title <span className="text-destructive">*</span>
+                            </Label>
+                            <Input
+                              id="contactTitle"
+                              value={contactTitle}
+                              onChange={(e) => setContactTitle(e.target.value)}
+                              placeholder="Chief Compliance Officer"
+                              maxLength={100}
+                            />
+                          </div>
+                        </div>
+
+                        {/* 7. Email */}
+                        <div className="space-y-1.5">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <Label htmlFor="email">
+                              Email address <span className="text-destructive">*</span>
+                            </Label>
+                            <span className="inline-flex items-center rounded-full bg-primary/10 border border-primary/25 px-2 py-0.5 text-[10px] font-medium text-primary">
+                              roadmap sent here
+                            </span>
+                          </div>
+                          <Input
+                            id="email"
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="ngozi@institution.com.ng"
+                            maxLength={255}
+                          />
+                        </div>
+
+                        {/* 8. WhatsApp */}
+                        <div className="space-y-1.5">
+                          <Label htmlFor="phone">
+                            WhatsApp{' '}
+                            <span className="text-muted-foreground font-normal">
+                              (optional — for faster follow-up)
+                            </span>
+                          </Label>
+                          <Input
+                            id="phone"
+                            type="tel"
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
+                            placeholder="+234 80X XXXX XXX"
+                            maxLength={32}
+                          />
+                        </div>
+
+                        {showError && (
+                          <div className="flex items-start gap-3 rounded-lg border border-destructive/30 bg-destructive/10 p-3">
+                            <AlertTriangle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
+                            <p className="text-[13px] text-destructive leading-relaxed">
+                              Please complete all required fields — your roadmap cannot be generated
+                              without this information.
+                            </p>
+                          </div>
+                        )}
+
+                        <Button
+                          type="submit"
+                          disabled={submitting}
+                          className="w-full h-11 font-semibold group"
+                        >
+                          {submitting ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <>
+                              Generate my CBN roadmap
+                              <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
+                            </>
+                          )}
+                        </Button>
+                      </form>
+                    </Card>
                   </motion.section>
                 )}
 
