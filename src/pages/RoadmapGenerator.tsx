@@ -16,7 +16,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
-import { FileText, Loader2, Sparkles, ArrowRight, Download, CheckCircle2 } from 'lucide-react';
+import { FileText, Loader2, Sparkles, ArrowRight, Download, CheckCircle2, Check, AlertTriangle } from 'lucide-react';
 
 type Step = 'hook' | 'form' | 'loading' | 'roadmap';
 
@@ -88,26 +88,97 @@ const RoadmapGenerator = () => {
           </div>
 
           <main className="flex-1 px-6 py-8">
-            <div className="mx-auto max-w-3xl">
+            <div className="mx-auto max-w-[640px]">
               <AnimatePresence mode="wait">
                 {step === 'hook' && (
-                  <motion.section key="hook" {...fade} className="text-center space-y-6 py-12">
-                    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/15 border border-primary/25 text-primary">
-                      <Sparkles className="h-8 w-8" strokeWidth={1.75} />
-                    </div>
-                    <div className="space-y-3">
-                      <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
-                        Generate your CBN AML compliance roadmap in 60 seconds
-                      </h2>
-                      <p className="text-muted-foreground max-w-xl mx-auto">
-                        Pre-formatted for Circular BSD/DIR/PUB/LAB/019/002. Tailored to your institution
-                        type, with a remediation timeline aligned to the June 10, 2026 deadline.
+                  <motion.section key="hook" {...fade} className="space-y-8">
+                    {/* Urgency Banner */}
+                    <div className="flex items-start gap-3 rounded-lg border border-destructive/30 border-l-4 border-l-destructive bg-destructive/5 p-4">
+                      <span className="relative mt-1 flex h-2 w-2 shrink-0">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-destructive opacity-75" />
+                        <span className="relative inline-flex h-2 w-2 rounded-full bg-destructive" />
+                      </span>
+                      <p className="text-[13px] leading-relaxed text-foreground/90">
+                        <span className="font-medium text-destructive">CBN Circular BSD/DIR/PUB/LAB/019/002</span> requires
+                        every regulated institution to submit an AML implementation roadmap by{' '}
+                        <span className="font-medium">10 June 2026</span>. Failure to submit is a regulatory infraction.
                       </p>
                     </div>
-                    <Button size="lg" onClick={handleStart} className="group">
-                      Start now
+
+                    {/* Headline */}
+                    <div className="space-y-3">
+                      <h2 className="text-2xl font-medium tracking-tight leading-tight">
+                        Your CBN-ready AML roadmap, generated in 60 seconds.
+                      </h2>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        We generate your institution-specific roadmap automatically — formatted to CBN's exact
+                        requirements, pre-mapped to all 10 mandated capability areas, and ready to submit.
+                      </p>
+                    </div>
+
+                    {/* Benefit list */}
+                    <ul className="space-y-3">
+                      {[
+                        { variant: 'tick' as const, text: 'Pre-mapped to all 10 CBN capability areas in Circular BSD/DIR/PUB/LAB/019/002' },
+                        { variant: 'tick' as const, text: 'Deadline-aware: correct milestones for DMBs, Fintechs, PSPs, MFBs, and IMTOs' },
+                        { variant: 'tick' as const, text: 'Includes IMTO-specific rules: $200 cash-limit, 24-hour cross-border STR, settlement segregation' },
+                        { variant: 'arrow' as const, text: 'Emailed to you instantly — forward directly to CBN Compliance Department' },
+                        { variant: 'warn' as const, text: 'Over 60% of regulated institutions have not yet submitted their roadmap' },
+                      ].map((item, idx) => (
+                        <li key={idx} className="flex items-start gap-3">
+                          <span
+                            className={
+                              'flex h-5 w-5 shrink-0 items-center justify-center rounded-full ' +
+                              (item.variant === 'tick'
+                                ? 'bg-risk-low/15 text-risk-low'
+                                : item.variant === 'arrow'
+                                  ? 'bg-primary/15 text-primary'
+                                  : 'bg-destructive/15 text-destructive')
+                            }
+                          >
+                            {item.variant === 'tick' && <Check className="h-3 w-3" strokeWidth={3} />}
+                            {item.variant === 'arrow' && <ArrowRight className="h-3 w-3" strokeWidth={3} />}
+                            {item.variant === 'warn' && <AlertTriangle className="h-3 w-3" strokeWidth={2.5} />}
+                          </span>
+                          <span className="text-sm text-foreground/90 leading-relaxed">{item.text}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    {/* Primary CTA */}
+                    <Button size="lg" onClick={handleStart} className="w-full group h-12 text-sm font-semibold">
+                      Generate my CBN roadmap — free
                       <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
                     </Button>
+
+                    {/* Social proof */}
+                    <div className="rounded-xl border bg-card p-5 space-y-3">
+                      <p className="text-sm italic text-foreground/85 leading-relaxed">
+                        "We submitted our CBN roadmap within 2 hours of generating it with Zuia. The format was
+                        exactly what the examiner expected."
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        — Head of Compliance, Licensed PSP, Lagos · Beta Programme 2026
+                      </p>
+                    </div>
+
+                    {/* Trust badges */}
+                    <div className="flex flex-wrap gap-2">
+                      {[
+                        'CBN circular aligned',
+                        'NFIU goAML format',
+                        'NDPR compliant',
+                        'AWS Nigeria hosted',
+                        'Free — no account required',
+                      ].map((badge) => (
+                        <span
+                          key={badge}
+                          className="inline-flex items-center rounded-full border border-border bg-muted/40 px-2.5 py-1 text-[11px] font-medium text-muted-foreground"
+                        >
+                          {badge}
+                        </span>
+                      ))}
+                    </div>
                   </motion.section>
                 )}
 
