@@ -507,10 +507,10 @@ const RoadmapGenerator = () => {
                           Roadmap ready
                         </div>
                         <h2 className="text-2xl font-semibold tracking-tight">
-                          {institution || 'Your institution'} — CBN AML Roadmap
+                          {institutionName || 'Your institution'} — CBN AML Roadmap
                         </h2>
                         <p className="text-sm text-muted-foreground">
-                          Licence type: {licenceType || 'N/A'} · Deadline: 10 June 2026
+                          Licence type: {institutionType || 'N/A'} · Deadline: 10 June 2026
                         </p>
                       </div>
                       <Button>
