@@ -20,6 +20,7 @@ import LandingPage from "./pages/LandingPage.tsx";
 import Privacy from "./pages/Privacy.tsx";
 import Accounts from "./pages/Accounts.tsx";
 import PartnerBankDashboard from "./pages/PartnerBankDashboard.tsx";
+import RoadmapGenerator from "./pages/RoadmapGenerator.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -48,6 +49,7 @@ const App = () => (
             <Route path="/sanctions" element={<SanctionsScreening />} />
             <Route path="/accounts" element={<Accounts />} />
             <Route path="/partner-bank" element={<PartnerBankDashboard />} />
+            <Route path="/roadmap" element={<RoadmapGenerator />} />
             <Route path="/privacy" element={<Privacy />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
