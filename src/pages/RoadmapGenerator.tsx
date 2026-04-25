@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
@@ -84,6 +84,24 @@ function getDeadlineForType(type: string): { label: string; tone: 'amber' | 'gre
   return { label: 'Your full compliance deadline: March 2028', tone: 'green' };
 }
 
+function getDeadlinePlain(type: string): string {
+  if (type === 'Deposit Money Bank (DMB)') return 'September 2027';
+  return 'March 2028';
+}
+
+const CAPABILITY_AREAS = [
+  'KYC/CDD',
+  'Sanctions screening',
+  'Transaction monitoring',
+  'Case management',
+  'STR reporting',
+  'CTR reporting',
+  'Audit trail',
+  'AI/ML governance',
+  'Fraud monitoring',
+  'Entity profiling',
+];
+
 const RoadmapGenerator = () => {
   const { toast } = useToast();
   const [step, setStep] = useState<Step>('hook');
@@ -99,6 +117,106 @@ const RoadmapGenerator = () => {
   const [phone, setPhone] = useState('');
   const [showError, setShowError] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  // Loading + result state
+  const [loadingStatusIdx, setLoadingStatusIdx] = useState(0);
+  const [revealedChips, setRevealedChips] = useState(0);
+  const [generatedRoadmap, setGeneratedRoadmap] = useState('');
+  const statusIntervalRef = useRef<number | null>(null);
+  const chipIntervalRef = useRef<number | null>(null);
+
+  const loadingStatuses = [
+    `Analysing ${institutionName || 'your institution'}'s regulatory profile...`,
+    `Mapping ${institutionType || 'your licence'} obligations to CBN Circular BSD/DIR/PUB/LAB/019/002...`,
+    'Calculating milestone schedule for your compliance deadline...',
+    'Generating institution-specific implementation roadmap...',
+    'Formatting for CBN submission standards...',
+    `Preparing email dispatch to ${email || 'your inbox'}...`,
+  ];
+
+  // Cycle status messages + reveal capability chips while step === 'loading'
+  useEffect(() => {
+    if (step !== 'loading') return;
+    setLoadingStatusIdx(0);
+    setRevealedChips(0);
+
+    statusIntervalRef.current = window.setInterval(() => {
+      setLoadingStatusIdx((i) => (i + 1) % loadingStatuses.length);
+    }, 2000);
+
+    chipIntervalRef.current = window.setInterval(() => {
+      setRevealedChips((n) => (n < CAPABILITY_AREAS.length ? n + 1 : n));
+    }, 400);
+
+    return () => {
+      if (statusIntervalRef.current) window.clearInterval(statusIntervalRef.current);
+      if (chipIntervalRef.current) window.clearInterval(chipIntervalRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step]);
+
+  function buildFallbackRoadmap(): string {
+    const isImto = /IMTO/i.test(institutionType);
+    const deadline = getDeadlinePlain(institutionType);
+    const imtoBlock = isImto
+      ? `\n- $200 USD cash-limit structuring detection across all IMTO agents (rolling 24h beneficiary window).\n- Inbound-only validation on Nigerian IMTO settlement accounts; block outbound.\n- 24-hour cross-border STR webhook for overseas-flag intake.\n- Phantom payroll detection on corporate sender accounts.\n- May 2026 settlement account segregation (designated accounts + approved correspondents).`
+      : '';
+    return `CBN AML IMPLEMENTATION ROADMAP
+Prepared for: ${institutionName}
+Institution type: ${institutionType}
+Compliance Officer: ${contactName}, ${contactTitle}
+Initial CBN submission deadline: 10 June 2026
+Full compliance deadline: ${deadline}
+
+EXECUTIVE SUMMARY
+${institutionName} will implement a comprehensive AML/CFT control framework aligned to CBN Circular BSD/DIR/PUB/LAB/019/002 and the NFIU goAML reporting standard. Programme spans 24 months from initial submission and is sized for a monthly transaction volume of ${volume}. Current state: ${amlSetup}.
+
+REGULATORY CONTEXT
+The May 2026 CBN AML Circular requires every regulated institution to file an implementation roadmap by 10 June 2026 and to reach full compliance by ${deadline}. Failure to file is a regulatory infraction. ${institutionName} is regulated as a ${institutionType}.
+
+PHASE 1 — FOUNDATION (Months 1-3)
+- Board-approved AML/CFT policy refresh; appointment letter for ${contactName}.
+- Enterprise-wide ML/TF risk assessment.
+- Tiered KYC matrix with BVN/NIN linkage.
+- Sanctions screening live for UN/OFAC/EU/NFIU-domestic lists.
+- Initial gap-analysis report submitted to CBN Compliance Department.
+
+PHASE 2 — CORE IMPLEMENTATION (Months 4-9)
+- Transaction monitoring engine cut over with Nigerian typology rule library.
+- Case management workflow with 4-eyes review and immutable audit trail.
+- STR drafting and NFIU goAML XML export pipeline operational.
+- CTR aggregation and daily reporting automation.
+- First independent internal-audit cycle.${imtoBlock}
+
+PHASE 3 — ADVANCED COMPLIANCE (Months 10-18)
+- AI/ML governance charter; model-risk register and explainability evidence.
+- Customer 360 entity-network profiling with PEP and adverse-media surveillance.
+- Fraud-monitoring integration with AML case routing.
+- Enhanced Due Diligence workspace operational for high-risk segments.
+- Tabletop examiner walkthrough with mock CBN/NFIU inspection.
+
+PHASE 4 — FULL COMPLIANCE CERTIFICATION (Months 18-24)
+- External audit attestation against CBN Circular BSD/DIR/PUB/LAB/019/002.
+- Full coverage demonstrated across all 10 CBN capability areas.
+- 5-year record-retention archive validated and examiner-ready.
+- Board sign-off and submission of full compliance certification to CBN before ${deadline}.
+
+KEY RISKS AND MITIGATIONS
+- Data quality on legacy customer records — mitigated by a Phase 1 BVN/NIN remediation sprint.
+- Rule-tuning false-positive load — mitigated by sandbox back-testing before promotion.
+- Staff capacity — mitigated by quarterly AML training and dedicated FIU liaison.
+- Vendor lock-in — mitigated by storing all rules and evidence in portable formats.
+
+ATTESTATION
+This roadmap has been prepared for ${institutionName} and is to be filed with the CBN Compliance Department in accordance with Circular BSD/DIR/PUB/LAB/019/002.
+
+Compliance Officer: ${contactName} (${contactTitle})    Signature: ____________________    Date: __________
+
+Chief Risk Officer:                                   Signature: ____________________    Date: __________
+
+Managing Director:                                    Signature: ____________________    Date: __________
+`;
+  }
 
   const handleStart = () => setStep('form');
 
@@ -139,7 +257,45 @@ const RoadmapGenerator = () => {
       return;
     }
     setStep('loading');
-    setTimeout(() => setStep('roadmap'), 2200);
+
+    // Kick off generation. Always end with a roadmap — never an error.
+    const startedAt = Date.now();
+    const deadline = getDeadlinePlain(institutionType);
+    let roadmapText = '';
+    try {
+      const { data, error: fnError } = await supabase.functions.invoke('generate-roadmap', {
+        body: {
+          institutionName: institutionName.trim(),
+          institutionType,
+          amlSetup,
+          volume,
+          contactName: contactName.trim(),
+          title: contactTitle.trim(),
+          email: email.trim(),
+          phone: phone.trim() || null,
+          deadline,
+        },
+      });
+      if (fnError) throw fnError;
+      roadmapText = (data && (data as { roadmap?: string }).roadmap) || '';
+    } catch (err) {
+      console.warn('Roadmap generation failed, using fallback', err);
+    }
+    if (!roadmapText || roadmapText.trim().length < 200) {
+      roadmapText = buildFallbackRoadmap();
+    }
+
+    // Ensure the loading UX runs at least ~5s so the cycling messages are visible.
+    const elapsed = Date.now() - startedAt;
+    const minMs = 5000;
+    if (elapsed < minMs) {
+      await new Promise((r) => setTimeout(r, minMs - elapsed));
+    }
+
+    if (statusIntervalRef.current) window.clearInterval(statusIntervalRef.current);
+    if (chipIntervalRef.current) window.clearInterval(chipIntervalRef.current);
+    setGeneratedRoadmap(roadmapText);
+    setStep('roadmap');
   };
 
   const deadlinePreview = getDeadlineForType(institutionType);
@@ -490,11 +646,51 @@ const RoadmapGenerator = () => {
                 )}
 
                 {step === 'loading' && (
-                  <motion.section key="loading" {...fade} className="text-center space-y-4 py-24">
-                    <Loader2 className="h-10 w-10 mx-auto text-primary animate-spin" />
-                    <p className="text-sm text-muted-foreground">
-                      Building your CBN-aligned roadmap…
-                    </p>
+                  <motion.section
+                    key="loading"
+                    {...fade}
+                    className="py-12"
+                    aria-live="polite"
+                    aria-busy="true"
+                  >
+                    <Card className="p-10 flex flex-col items-center text-center space-y-6">
+                      <Loader2 className="h-8 w-8 text-primary animate-spin" />
+                      <div className="min-h-[60px] flex items-center justify-center w-full">
+                        <AnimatePresence mode="wait">
+                          <motion.p
+                            key={loadingStatusIdx}
+                            initial={{ opacity: 0, y: 4 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -4 }}
+                            transition={{ duration: 0.3 }}
+                            className="text-base md:text-lg font-medium tracking-tight text-foreground max-w-md"
+                          >
+                            {loadingStatuses[loadingStatusIdx]}
+                          </motion.p>
+                        </AnimatePresence>
+                      </div>
+                      <div className="flex flex-wrap justify-center gap-2 max-w-lg">
+                        {CAPABILITY_AREAS.map((area, i) => (
+                          <motion.span
+                            key={area}
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={
+                              i < revealedChips
+                                ? { opacity: 1, scale: 1 }
+                                : { opacity: 0, scale: 0.9 }
+                            }
+                            transition={{ duration: 0.3 }}
+                            className="inline-flex items-center gap-1 rounded-full border border-primary/25 bg-primary/10 px-2.5 py-1 text-[11px] font-medium text-primary"
+                          >
+                            <Check className="h-3 w-3" strokeWidth={3} />
+                            {area}
+                          </motion.span>
+                        ))}
+                      </div>
+                      <p className="text-[11px] text-muted-foreground">
+                        Mapping all 10 CBN capability areas — this usually takes 5–15 seconds.
+                      </p>
+                    </Card>
                   </motion.section>
                 )}
 
