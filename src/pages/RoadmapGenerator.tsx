@@ -302,6 +302,68 @@ Managing Director:                                    Signature: _______________
 
   const deadlinePreview = getDeadlineForType(institutionType);
 
+  // Stable reference number + today's formatted date for the roadmap header card.
+  const referenceNumber = useMemo(
+    () => `ZUA-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+    [],
+  );
+  const todayFormatted = useMemo(
+    () =>
+      new Date().toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      }),
+    [],
+  );
+  const fullDeadline = institutionType ? getDeadlinePlain(institutionType) : 'March 2028';
+  const isImto = /IMTO/i.test(institutionType);
+  const fullDeadlineTone: 'amber' | 'green' =
+    institutionType === 'Deposit Money Bank (DMB)' ? 'amber' : 'green';
+
+  const handleDownloadRoadmap = () => {
+    const safeName = (institutionName || 'Institution').replace(/[^a-zA-Z0-9_-]+/g, '_');
+    const blob = new Blob([generatedRoadmap], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `CBN_AML_Roadmap_${safeName}_2026.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast({ title: 'Download started', description: 'Your CBN roadmap is downloading.' });
+  };
+
+  const handleShareWhatsApp = () => {
+    const message = `I just generated my CBN AML implementation roadmap for ${institutionName} using Zuia (zuia.ng) — pre-formatted for CBN Circular BSD/DIR/PUB/LAB/019/002. Submission deadline is 10 June 2026. You can generate yours free at zuia.ng/roadmap.`;
+    window.open(buildWhatsAppUrl(message), '_blank', 'noopener,noreferrer');
+  };
+
+  // Render roadmap body, bolding section headers as visual dividers.
+  const SECTION_HEADER_RE =
+    /^(EXECUTIVE SUMMARY|REGULATORY CONTEXT|PHASE \d+[^\n]*|KEY RISKS AND MITIGATIONS|ATTESTATION|SECTION \d+[^\n]*|INSTITUTION PROFILE|GAP ASSESSMENT|TEN CBN CAPABILITY AREAS[^\n]*|REMEDIATION TIMELINE|SIGN-OFF)\s*$/;
+
+  const renderRoadmapBody = (text: string) =>
+    text.split('\n').map((line, idx) => {
+      if (SECTION_HEADER_RE.test(line.trim())) {
+        return (
+          <div
+            key={idx}
+            className="mt-4 mb-1 text-[13px] font-bold text-foreground border-t border-border pt-3 first:border-t-0 first:pt-0 first:mt-0"
+          >
+            {line.trim()}
+          </div>
+        );
+      }
+      return (
+        <div key={idx} className="whitespace-pre">
+          {line || '\u00A0'}
+        </div>
+      );
+    });
+
+
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
