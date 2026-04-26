@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { buildWhatsAppUrl } from '@/lib/whatsapp';
 import { AnimatePresence, motion } from 'framer-motion';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
@@ -26,7 +27,8 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
-import { FileText, Loader2, Sparkles, ArrowRight, Download, CheckCircle2, Check, AlertTriangle, ArrowLeft, CalendarClock } from 'lucide-react';
+import { FileText, Loader2, Sparkles, ArrowRight, Download, CheckCircle2, Check, AlertTriangle, ArrowLeft, CalendarClock, Mail, Info } from 'lucide-react';
+import { WhatsAppIcon } from '@/components/landing/WhatsAppIcon';
 
 type Step = 'hook' | 'form' | 'loading' | 'roadmap';
 
@@ -299,6 +301,68 @@ Managing Director:                                    Signature: _______________
   };
 
   const deadlinePreview = getDeadlineForType(institutionType);
+
+  // Stable reference number + today's formatted date for the roadmap header card.
+  const referenceNumber = useMemo(
+    () => `ZUA-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+    [],
+  );
+  const todayFormatted = useMemo(
+    () =>
+      new Date().toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      }),
+    [],
+  );
+  const fullDeadline = institutionType ? getDeadlinePlain(institutionType) : 'March 2028';
+  const isImto = /IMTO/i.test(institutionType);
+  const fullDeadlineTone: 'amber' | 'green' =
+    institutionType === 'Deposit Money Bank (DMB)' ? 'amber' : 'green';
+
+  const handleDownloadRoadmap = () => {
+    const safeName = (institutionName || 'Institution').replace(/[^a-zA-Z0-9_-]+/g, '_');
+    const blob = new Blob([generatedRoadmap], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `CBN_AML_Roadmap_${safeName}_2026.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast({ title: 'Download started', description: 'Your CBN roadmap is downloading.' });
+  };
+
+  const handleShareWhatsApp = () => {
+    const message = `I just generated my CBN AML implementation roadmap for ${institutionName} using Zuia (zuia.ng) — pre-formatted for CBN Circular BSD/DIR/PUB/LAB/019/002. Submission deadline is 10 June 2026. You can generate yours free at zuia.ng/roadmap.`;
+    window.open(buildWhatsAppUrl(message), '_blank', 'noopener,noreferrer');
+  };
+
+  // Render roadmap body, bolding section headers as visual dividers.
+  const SECTION_HEADER_RE =
+    /^(EXECUTIVE SUMMARY|REGULATORY CONTEXT|PHASE \d+[^\n]*|KEY RISKS AND MITIGATIONS|ATTESTATION|SECTION \d+[^\n]*|INSTITUTION PROFILE|GAP ASSESSMENT|TEN CBN CAPABILITY AREAS[^\n]*|REMEDIATION TIMELINE|SIGN-OFF)\s*$/;
+
+  const renderRoadmapBody = (text: string) =>
+    text.split('\n').map((line, idx) => {
+      if (SECTION_HEADER_RE.test(line.trim())) {
+        return (
+          <div
+            key={idx}
+            className="mt-4 mb-1 text-[13px] font-bold text-foreground border-t border-border pt-3 first:border-t-0 first:pt-0 first:mt-0"
+          >
+            {line.trim()}
+          </div>
+        );
+      }
+      return (
+        <div key={idx} className="whitespace-pre">
+          {line || '\u00A0'}
+        </div>
+      );
+    });
+
 
   return (
     <SidebarProvider>
@@ -695,49 +759,128 @@ Managing Director:                                    Signature: _______________
                 )}
 
                 {step === 'roadmap' && (
-                  <motion.section key="roadmap" {...fade} className="space-y-6">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="space-y-1">
-                        <div className="inline-flex items-center gap-1.5 text-xs text-risk-low">
-                          <CheckCircle2 className="h-4 w-4" />
-                          Roadmap ready
-                        </div>
-                        <h2 className="text-2xl font-semibold tracking-tight">
-                          {institutionName || 'Your institution'} — CBN AML Roadmap
-                        </h2>
-                        <p className="text-sm text-muted-foreground">
-                          Licence type: {institutionType || 'N/A'} · Deadline: 10 June 2026
+                  <motion.section key="roadmap" {...fade} className="space-y-5">
+                    {/* Email confirmation banner */}
+                    <div className="flex items-start gap-3 rounded-lg border border-risk-low/30 bg-risk-low/10 p-4">
+                      <CheckCircle2 className="h-5 w-5 text-risk-low shrink-0 mt-0.5" />
+                      <div className="space-y-0.5">
+                        <p className="text-[13px] font-medium text-foreground">
+                          Roadmap generated — a copy has been sent to{' '}
+                          <span className="font-semibold">{email}</span>.
+                        </p>
+                        <p className="text-[12px] text-muted-foreground leading-relaxed">
+                          Forward it directly to CBN Compliance Department or share with your MD/CEO for
+                          sign-off.
                         </p>
                       </div>
-                      <Button>
+                    </div>
+
+                    {/* Roadmap header card */}
+                    <Card className="p-5 space-y-4">
+                      <div className="flex items-start justify-between gap-4 flex-wrap">
+                        <div>
+                          <div className="text-[20px] font-medium leading-none tracking-tight text-foreground">
+                            Zuia
+                          </div>
+                          <div className="text-[11px] text-muted-foreground mt-1">
+                            CBN AML Compliance Platform
+                          </div>
+                        </div>
+                        <div className="text-right space-y-0.5">
+                          <div className="text-[12px] font-mono font-medium text-foreground">
+                            {referenceNumber}
+                          </div>
+                          <div className="text-[11px] text-muted-foreground font-mono">
+                            CBN Ref: BSD/DIR/PUB/LAB/019/002
+                          </div>
+                          <div className="text-[11px] text-muted-foreground">{todayFormatted}</div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-1 pt-1 border-t border-border">
+                        <div className="text-[16px] font-medium text-foreground pt-3">
+                          {institutionName || 'Your institution'}
+                        </div>
+                        <div className="text-[13px] text-muted-foreground">
+                          {institutionType || 'Institution type'} · {contactName || 'Contact'},{' '}
+                          {contactTitle || 'Title'}
+                        </div>
+                      </div>
+
+                      <div className="flex flex-wrap gap-2">
+                        <span className="inline-flex items-center gap-1.5 rounded-md border border-destructive/30 bg-destructive/10 px-2.5 py-1 text-[11px] font-medium text-destructive">
+                          <CalendarClock className="h-3 w-3" />
+                          Roadmap deadline: 10 June 2026
+                        </span>
+                        <span
+                          className={
+                            'inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-medium border ' +
+                            (fullDeadlineTone === 'amber'
+                              ? 'border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400'
+                              : 'border-risk-low/30 bg-risk-low/10 text-risk-low')
+                          }
+                        >
+                          <CalendarClock className="h-3 w-3" />
+                          Full compliance deadline: {fullDeadline}
+                        </span>
+                      </div>
+                    </Card>
+
+                    {/* Roadmap body */}
+                    <div
+                      className="rounded-md border bg-muted/40 p-4 overflow-y-auto font-mono text-[12px] leading-[1.8] text-foreground/90"
+                      style={{ maxHeight: 500 }}
+                    >
+                      {renderRoadmapBody(generatedRoadmap)}
+                    </div>
+
+                    {/* IMTO pack callout */}
+                    {isImto && (
+                      <div className="flex items-start gap-3 rounded-lg border border-primary/30 bg-primary/10 p-4">
+                        <Info className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                        <div className="space-y-1">
+                          <p className="text-[13px] font-semibold text-foreground">
+                            IMTO Regulatory Pack included
+                          </p>
+                          <p className="text-[12px] text-foreground/80 leading-relaxed">
+                            This roadmap covers the $200 cash-limit structuring rule, inbound-only and
+                            naira-only validation, 24-hour cross-border STR auto-countdown, phantom payroll
+                            network detection, and May 2026 settlement account segregation monitoring. These
+                            are pre-configured in Zuia's IMTO module.
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Action row */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <Button onClick={handleDownloadRoadmap} className="h-11 font-semibold">
                         <Download className="h-4 w-4" />
-                        Download PDF
+                        Download roadmap
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={handleShareWhatsApp}
+                        className="h-11 font-semibold"
+                      >
+                        <WhatsAppIcon size={16} />
+                        Share via WhatsApp
                       </Button>
                     </div>
 
-                    <div className="rounded-xl border bg-card divide-y">
-                      {[
-                        { weeks: 'Weeks 1–2', task: 'Gap analysis & risk assessment' },
-                        { weeks: 'Weeks 3–5', task: 'Policy & procedure refresh' },
-                        { weeks: 'Weeks 6–9', task: 'Technology deployment & rule tuning' },
-                        { weeks: 'Weeks 10–11', task: 'Staff training & UAT' },
-                        { weeks: 'Week 12', task: 'Internal audit & CBN attestation' },
-                      ].map((row) => (
-                        <div key={row.weeks} className="flex items-center justify-between gap-4 p-4">
-                          <div className="flex items-center gap-3">
-                            <FileText className="h-4 w-4 text-primary" />
-                            <span className="text-sm font-medium">{row.task}</span>
-                          </div>
-                          <span className="text-xs text-muted-foreground tabular-nums">{row.weeks}</span>
-                        </div>
-                      ))}
+                    <div className="flex justify-center">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setStep('hook')}
+                        className="text-muted-foreground"
+                      >
+                        Generate another roadmap
+                      </Button>
                     </div>
-
-                    <Button variant="outline" onClick={() => setStep('hook')}>
-                      Generate another
-                    </Button>
                   </motion.section>
                 )}
+
               </AnimatePresence>
             </div>
           </main>
