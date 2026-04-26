@@ -1034,8 +1034,85 @@ Managing Director:                                    Signature: _______________
             </div>
           </main>
         </div>
+
+        {/* Floating WhatsApp button — only visible on the roadmap step */}
+        {step === 'roadmap' && (
+          <button
+            type="button"
+            onClick={handleImplementationWhatsApp}
+            aria-label="Get implementation support on WhatsApp"
+            className="group fixed bottom-5 right-5 z-50 flex items-center"
+          >
+            <span className="hidden md:inline-flex items-center mr-3 px-3 py-2 rounded-lg bg-card border border-border text-foreground text-xs font-medium opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 shadow-xl pointer-events-none whitespace-nowrap">
+              Get implementation support →
+            </span>
+            <span className="flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_8px_30px_-4px_rgba(37,211,102,0.5)] hover:scale-105 active:scale-95 transition-transform">
+              <WhatsAppIcon size={28} />
+            </span>
+          </button>
+        )}
+
+        {/* Demo booking sheet */}
+        <Sheet open={demoOpen} onOpenChange={setDemoOpen}>
+          <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
+            <SheetHeader className="space-y-2 text-left">
+              <SheetTitle>Book a 20-minute Zuia demo</SheetTitle>
+              <SheetDescription>
+                We will walk you through how Zuia operates the controls in your CBN roadmap.
+              </SheetDescription>
+            </SheetHeader>
+
+            <form onSubmit={handleSubmitDemo} className="mt-6 space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="demoName">Name</Label>
+                <Input id="demoName" value={contactName} readOnly className="bg-muted/40" />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="demoInstitution">Institution</Label>
+                <Input
+                  id="demoInstitution"
+                  value={institutionName}
+                  readOnly
+                  className="bg-muted/40"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="demoDate">Preferred date</Label>
+                <Input
+                  id="demoDate"
+                  type="date"
+                  value={demoDate}
+                  onChange={(e) => setDemoDate(e.target.value)}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="demoMessage">Message</Label>
+                <Textarea
+                  id="demoMessage"
+                  rows={4}
+                  value={demoMessage}
+                  onChange={(e) => setDemoMessage(e.target.value)}
+                />
+              </div>
+              <Button type="submit" disabled={demoSubmitting} className="w-full h-11 font-semibold">
+                {demoSubmitting ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <>
+                    Request demo
+                    <ArrowRight className="h-4 w-4" />
+                  </>
+                )}
+              </Button>
+              <p className="text-[11px] text-muted-foreground text-center">
+                We will reply within 24 hours to confirm a time.
+              </p>
+            </form>
+          </SheetContent>
+        </Sheet>
       </div>
     </SidebarProvider>
+
   );
 };
 
