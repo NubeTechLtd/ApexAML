@@ -932,7 +932,91 @@ Managing Director:                                    Signature: _______________
                       </Button>
                     </div>
 
-                    <div className="flex justify-center">
+                    {/* CONVERSION SECTION — implement with Zuia */}
+                    <section className="mt-10 pt-8 border-t border-border space-y-6">
+                      <div className="space-y-2">
+                        <h3 className="text-[16px] font-medium tracking-tight text-foreground">
+                          Your next step: implement this roadmap with Zuia
+                        </h3>
+                        <p className="text-[13px] text-muted-foreground leading-relaxed">
+                          Your roadmap is the plan. Zuia is the platform that executes it — covering all 10
+                          CBN capability areas with AI-powered STR drafting, real-time transaction
+                          monitoring, and a pre-built NFIU goAML export. Institutions using Zuia meet their
+                          CBN roadmap milestones in weeks, not months.
+                        </p>
+                      </div>
+
+                      {/* Metric grid 2x2 */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {[
+                          {
+                            icon: Clock,
+                            label: 'Time to first CBN milestone',
+                            value: '48 hours after API connection',
+                          },
+                          {
+                            icon: Zap,
+                            label: 'STR filing time',
+                            value: '11 minutes average vs 3 hours manual',
+                          },
+                          {
+                            icon: Wallet,
+                            label: 'Starting from',
+                            value: '₦800,000/month — less than one compliance analyst salary',
+                          },
+                          {
+                            icon: Plug,
+                            label: 'Setup time',
+                            value: '48-hour integration — no IT project required',
+                          },
+                        ].map(({ icon: Icon, label, value }) => (
+                          <Card key={label} className="p-4 space-y-2">
+                            <div className="flex items-center gap-2 text-muted-foreground">
+                              <Icon className="h-3.5 w-3.5" />
+                              <span className="text-[11px] font-medium uppercase tracking-wider">
+                                {label}
+                              </span>
+                            </div>
+                            <div className="text-[14px] font-medium text-foreground leading-snug">
+                              {value}
+                            </div>
+                          </Card>
+                        ))}
+                      </div>
+
+                      {/* Offer callout */}
+                      <div className="flex items-start gap-3 rounded-lg border border-risk-low/30 bg-risk-low/10 p-4">
+                        <Gift className="h-5 w-5 text-risk-low shrink-0 mt-0.5" />
+                        <div className="space-y-1">
+                          <p className="text-[13px] font-semibold text-foreground">
+                            First month free — for institutions submitting their CBN roadmap before 10 June
+                            2026.
+                          </p>
+                          <p className="text-[12px] text-foreground/80 leading-relaxed">
+                            Book your demo this week and we will waive the first month's subscription fee.
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Conversion CTAs */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <Button onClick={handleOpenDemo} className="h-11 font-semibold group">
+                          Book a 20-minute demo
+                          <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          onClick={handleImplementationWhatsApp}
+                          className="h-11 font-semibold group"
+                        >
+                          <WhatsAppIcon size={16} />
+                          Chat on WhatsApp
+                          <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
+                        </Button>
+                      </div>
+                    </section>
+
+                    <div className="flex justify-center pt-2">
                       <Button
                         variant="ghost"
                         size="sm"
@@ -942,6 +1026,7 @@ Managing Director:                                    Signature: _______________
                         Generate another roadmap
                       </Button>
                     </div>
+
                   </motion.section>
                 )}
 
