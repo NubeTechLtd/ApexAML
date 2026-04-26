@@ -27,8 +27,10 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
-import { FileText, Loader2, Sparkles, ArrowRight, Download, CheckCircle2, Check, AlertTriangle, ArrowLeft, CalendarClock, Mail, Info } from 'lucide-react';
+import { FileText, Loader2, Sparkles, ArrowRight, Download, CheckCircle2, Check, AlertTriangle, ArrowLeft, CalendarClock, Mail, Info, Clock, Zap, Wallet, Plug, Gift } from 'lucide-react';
 import { WhatsAppIcon } from '@/components/landing/WhatsAppIcon';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { Textarea } from '@/components/ui/textarea';
 
 type Step = 'hook' | 'form' | 'loading' | 'roadmap';
 
@@ -126,6 +128,12 @@ const RoadmapGenerator = () => {
   const [generatedRoadmap, setGeneratedRoadmap] = useState('');
   const statusIntervalRef = useRef<number | null>(null);
   const chipIntervalRef = useRef<number | null>(null);
+
+  // Demo booking sheet state
+  const [demoOpen, setDemoOpen] = useState(false);
+  const [demoDate, setDemoDate] = useState('');
+  const [demoMessage, setDemoMessage] = useState('');
+  const [demoSubmitting, setDemoSubmitting] = useState(false);
 
   const loadingStatuses = [
     `Analysing ${institutionName || 'your institution'}'s regulatory profile...`,
@@ -351,6 +359,48 @@ Managing Director:                                    Signature: _______________
 
   const handleShareWhatsApp = () => {
     const message = `I just generated my CBN AML implementation roadmap for ${institutionName} using Zuia (zuia.ng) — pre-formatted for CBN Circular BSD/DIR/PUB/LAB/019/002. Submission deadline is 10 June 2026. You can generate yours free at zuia.ng/roadmap.`;
+    window.open(buildWhatsAppUrl(message), '_blank', 'noopener,noreferrer');
+  };
+
+  const handleOpenDemo = () => {
+    if (!demoMessage) {
+      setDemoMessage(
+        `I have generated my CBN roadmap ${referenceNumber} and want to implement it with Zuia.`,
+      );
+    }
+    setDemoOpen(true);
+  };
+
+  const handleSubmitDemo = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (demoSubmitting) return;
+    setDemoSubmitting(true);
+    const { error } = await supabase.from('demo_requests').insert({
+      contact_name: contactName.trim() || 'Compliance Officer',
+      institution_name: institutionName.trim() || 'Unknown institution',
+      email: email.trim() || null,
+      preferred_date: demoDate || null,
+      message: demoMessage,
+      source: 'post_roadmap',
+    });
+    setDemoSubmitting(false);
+    if (error) {
+      toast({
+        title: 'Could not book demo',
+        description: 'Please try WhatsApp instead — link below.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    toast({
+      title: 'Demo booked',
+      description: 'We will be in touch within 24 hours to confirm.',
+    });
+    setDemoOpen(false);
+  };
+
+  const handleImplementationWhatsApp = () => {
+    const message = `Hi Zuia — I just generated my CBN AML roadmap (Ref ${referenceNumber}) for ${institutionName}. I'd like implementation support. Can we talk?`;
     window.open(buildWhatsAppUrl(message), '_blank', 'noopener,noreferrer');
   };
 
@@ -882,7 +932,91 @@ Managing Director:                                    Signature: _______________
                       </Button>
                     </div>
 
-                    <div className="flex justify-center">
+                    {/* CONVERSION SECTION — implement with Zuia */}
+                    <section className="mt-10 pt-8 border-t border-border space-y-6">
+                      <div className="space-y-2">
+                        <h3 className="text-[16px] font-medium tracking-tight text-foreground">
+                          Your next step: implement this roadmap with Zuia
+                        </h3>
+                        <p className="text-[13px] text-muted-foreground leading-relaxed">
+                          Your roadmap is the plan. Zuia is the platform that executes it — covering all 10
+                          CBN capability areas with AI-powered STR drafting, real-time transaction
+                          monitoring, and a pre-built NFIU goAML export. Institutions using Zuia meet their
+                          CBN roadmap milestones in weeks, not months.
+                        </p>
+                      </div>
+
+                      {/* Metric grid 2x2 */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {[
+                          {
+                            icon: Clock,
+                            label: 'Time to first CBN milestone',
+                            value: '48 hours after API connection',
+                          },
+                          {
+                            icon: Zap,
+                            label: 'STR filing time',
+                            value: '11 minutes average vs 3 hours manual',
+                          },
+                          {
+                            icon: Wallet,
+                            label: 'Starting from',
+                            value: '₦800,000/month — less than one compliance analyst salary',
+                          },
+                          {
+                            icon: Plug,
+                            label: 'Setup time',
+                            value: '48-hour integration — no IT project required',
+                          },
+                        ].map(({ icon: Icon, label, value }) => (
+                          <Card key={label} className="p-4 space-y-2">
+                            <div className="flex items-center gap-2 text-muted-foreground">
+                              <Icon className="h-3.5 w-3.5" />
+                              <span className="text-[11px] font-medium uppercase tracking-wider">
+                                {label}
+                              </span>
+                            </div>
+                            <div className="text-[14px] font-medium text-foreground leading-snug">
+                              {value}
+                            </div>
+                          </Card>
+                        ))}
+                      </div>
+
+                      {/* Offer callout */}
+                      <div className="flex items-start gap-3 rounded-lg border border-risk-low/30 bg-risk-low/10 p-4">
+                        <Gift className="h-5 w-5 text-risk-low shrink-0 mt-0.5" />
+                        <div className="space-y-1">
+                          <p className="text-[13px] font-semibold text-foreground">
+                            First month free — for institutions submitting their CBN roadmap before 10 June
+                            2026.
+                          </p>
+                          <p className="text-[12px] text-foreground/80 leading-relaxed">
+                            Book your demo this week and we will waive the first month's subscription fee.
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Conversion CTAs */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <Button onClick={handleOpenDemo} className="h-11 font-semibold group">
+                          Book a 20-minute demo
+                          <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          onClick={handleImplementationWhatsApp}
+                          className="h-11 font-semibold group"
+                        >
+                          <WhatsAppIcon size={16} />
+                          Chat on WhatsApp
+                          <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
+                        </Button>
+                      </div>
+                    </section>
+
+                    <div className="flex justify-center pt-2">
                       <Button
                         variant="ghost"
                         size="sm"
@@ -892,6 +1026,7 @@ Managing Director:                                    Signature: _______________
                         Generate another roadmap
                       </Button>
                     </div>
+
                   </motion.section>
                 )}
 
@@ -899,8 +1034,85 @@ Managing Director:                                    Signature: _______________
             </div>
           </main>
         </div>
+
+        {/* Floating WhatsApp button — only visible on the roadmap step */}
+        {step === 'roadmap' && (
+          <button
+            type="button"
+            onClick={handleImplementationWhatsApp}
+            aria-label="Get implementation support on WhatsApp"
+            className="group fixed bottom-5 right-5 z-50 flex items-center"
+          >
+            <span className="hidden md:inline-flex items-center mr-3 px-3 py-2 rounded-lg bg-card border border-border text-foreground text-xs font-medium opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 shadow-xl pointer-events-none whitespace-nowrap">
+              Get implementation support →
+            </span>
+            <span className="flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_8px_30px_-4px_rgba(37,211,102,0.5)] hover:scale-105 active:scale-95 transition-transform">
+              <WhatsAppIcon size={28} />
+            </span>
+          </button>
+        )}
+
+        {/* Demo booking sheet */}
+        <Sheet open={demoOpen} onOpenChange={setDemoOpen}>
+          <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
+            <SheetHeader className="space-y-2 text-left">
+              <SheetTitle>Book a 20-minute Zuia demo</SheetTitle>
+              <SheetDescription>
+                We will walk you through how Zuia operates the controls in your CBN roadmap.
+              </SheetDescription>
+            </SheetHeader>
+
+            <form onSubmit={handleSubmitDemo} className="mt-6 space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="demoName">Name</Label>
+                <Input id="demoName" value={contactName} readOnly className="bg-muted/40" />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="demoInstitution">Institution</Label>
+                <Input
+                  id="demoInstitution"
+                  value={institutionName}
+                  readOnly
+                  className="bg-muted/40"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="demoDate">Preferred date</Label>
+                <Input
+                  id="demoDate"
+                  type="date"
+                  value={demoDate}
+                  onChange={(e) => setDemoDate(e.target.value)}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="demoMessage">Message</Label>
+                <Textarea
+                  id="demoMessage"
+                  rows={4}
+                  value={demoMessage}
+                  onChange={(e) => setDemoMessage(e.target.value)}
+                />
+              </div>
+              <Button type="submit" disabled={demoSubmitting} className="w-full h-11 font-semibold">
+                {demoSubmitting ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <>
+                    Request demo
+                    <ArrowRight className="h-4 w-4" />
+                  </>
+                )}
+              </Button>
+              <p className="text-[11px] text-muted-foreground text-center">
+                We will reply within 24 hours to confirm a time.
+              </p>
+            </form>
+          </SheetContent>
+        </Sheet>
       </div>
     </SidebarProvider>
+
   );
 };
 
