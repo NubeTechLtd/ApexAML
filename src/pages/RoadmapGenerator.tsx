@@ -27,7 +27,8 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
-import { FileText, Loader2, Sparkles, ArrowRight, Download, CheckCircle2, Check, AlertTriangle, ArrowLeft, CalendarClock } from 'lucide-react';
+import { FileText, Loader2, Sparkles, ArrowRight, Download, CheckCircle2, Check, AlertTriangle, ArrowLeft, CalendarClock, Mail, Info } from 'lucide-react';
+import { WhatsAppIcon } from '@/components/landing/WhatsAppIcon';
 
 type Step = 'hook' | 'form' | 'loading' | 'roadmap';
 
