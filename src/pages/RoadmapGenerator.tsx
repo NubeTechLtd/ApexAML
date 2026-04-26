@@ -129,6 +129,12 @@ const RoadmapGenerator = () => {
   const statusIntervalRef = useRef<number | null>(null);
   const chipIntervalRef = useRef<number | null>(null);
 
+  // Demo booking sheet state
+  const [demoOpen, setDemoOpen] = useState(false);
+  const [demoDate, setDemoDate] = useState('');
+  const [demoMessage, setDemoMessage] = useState('');
+  const [demoSubmitting, setDemoSubmitting] = useState(false);
+
   const loadingStatuses = [
     `Analysing ${institutionName || 'your institution'}'s regulatory profile...`,
     `Mapping ${institutionType || 'your licence'} obligations to CBN Circular BSD/DIR/PUB/LAB/019/002...`,
