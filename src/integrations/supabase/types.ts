@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      demo_requests: {
+        Row: {
+          contact_name: string
+          created_at: string
+          email: string | null
+          id: string
+          institution_name: string
+          message: string | null
+          preferred_date: string | null
+          source: string
+        }
+        Insert: {
+          contact_name: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          institution_name: string
+          message?: string | null
+          preferred_date?: string | null
+          source?: string
+        }
+        Update: {
+          contact_name?: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          institution_name?: string
+          message?: string | null
+          preferred_date?: string | null
+          source?: string
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           compliance_timeline: string | null
