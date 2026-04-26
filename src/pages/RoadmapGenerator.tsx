@@ -287,6 +287,20 @@ Managing Director:                                    Signature: _______________
       roadmapText = buildFallbackRoadmap();
     }
 
+    // Fire-and-forget: email the roadmap. Failures are silent — in-app display is primary.
+    supabase.functions
+      .invoke('send-roadmap-email', {
+        body: {
+          to: email.trim(),
+          name: contactName.trim(),
+          institution: institutionName.trim(),
+          type: institutionType,
+          roadmapText,
+          refNumber: referenceNumber,
+        },
+      })
+      .catch((err) => console.warn('Roadmap email dispatch failed', err));
+
     // Ensure the loading UX runs at least ~5s so the cycling messages are visible.
     const elapsed = Date.now() - startedAt;
     const minMs = 5000;
