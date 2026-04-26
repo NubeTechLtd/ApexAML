@@ -27,8 +27,10 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
-import { FileText, Loader2, Sparkles, ArrowRight, Download, CheckCircle2, Check, AlertTriangle, ArrowLeft, CalendarClock, Mail, Info } from 'lucide-react';
+import { FileText, Loader2, Sparkles, ArrowRight, Download, CheckCircle2, Check, AlertTriangle, ArrowLeft, CalendarClock, Mail, Info, Clock, Zap, Wallet, Plug, Gift } from 'lucide-react';
 import { WhatsAppIcon } from '@/components/landing/WhatsAppIcon';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { Textarea } from '@/components/ui/textarea';
 
 type Step = 'hook' | 'form' | 'loading' | 'roadmap';
 
