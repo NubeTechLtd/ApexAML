@@ -362,6 +362,48 @@ Managing Director:                                    Signature: _______________
     window.open(buildWhatsAppUrl(message), '_blank', 'noopener,noreferrer');
   };
 
+  const handleOpenDemo = () => {
+    if (!demoMessage) {
+      setDemoMessage(
+        `I have generated my CBN roadmap ${referenceNumber} and want to implement it with Zuia.`,
+      );
+    }
+    setDemoOpen(true);
+  };
+
+  const handleSubmitDemo = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (demoSubmitting) return;
+    setDemoSubmitting(true);
+    const { error } = await supabase.from('demo_requests').insert({
+      contact_name: contactName.trim() || 'Compliance Officer',
+      institution_name: institutionName.trim() || 'Unknown institution',
+      email: email.trim() || null,
+      preferred_date: demoDate || null,
+      message: demoMessage,
+      source: 'post_roadmap',
+    });
+    setDemoSubmitting(false);
+    if (error) {
+      toast({
+        title: 'Could not book demo',
+        description: 'Please try WhatsApp instead — link below.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    toast({
+      title: 'Demo booked',
+      description: 'We will be in touch within 24 hours to confirm.',
+    });
+    setDemoOpen(false);
+  };
+
+  const handleImplementationWhatsApp = () => {
+    const message = `Hi Zuia — I just generated my CBN AML roadmap (Ref ${referenceNumber}) for ${institutionName}. I'd like implementation support. Can we talk?`;
+    window.open(buildWhatsAppUrl(message), '_blank', 'noopener,noreferrer');
+  };
+
   // Render roadmap body, bolding section headers as visual dividers.
   const SECTION_HEADER_RE =
     /^(EXECUTIVE SUMMARY|REGULATORY CONTEXT|PHASE \d+[^\n]*|KEY RISKS AND MITIGATIONS|ATTESTATION|SECTION \d+[^\n]*|INSTITUTION PROFILE|GAP ASSESSMENT|TEN CBN CAPABILITY AREAS[^\n]*|REMEDIATION TIMELINE|SIGN-OFF)\s*$/;
