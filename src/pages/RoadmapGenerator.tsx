@@ -439,6 +439,16 @@ Managing Director:                                    Signature: _______________
         })
         .catch((err) => console.warn('WhatsApp mark_demo_booked failed', err));
     }
+    // Stop the email drip sequence too — the lead has converted.
+    supabase.functions
+      .invoke('email-sequence-dispatch', {
+        body: {
+          action: 'mark_demo_booked',
+          email: email.trim() || null,
+          refNumber: referenceNumber,
+        },
+      })
+      .catch((err) => console.warn('Email drip mark_demo_booked failed', err));
     toast({
       title: 'Demo booked',
       description: 'We will be in touch within 24 hours to confirm.',
