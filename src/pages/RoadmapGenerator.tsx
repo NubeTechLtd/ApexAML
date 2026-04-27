@@ -309,6 +309,25 @@ Managing Director:                                    Signature: _______________
       })
       .catch((err) => console.warn('Roadmap email dispatch failed', err));
 
+    // Fire-and-forget: enqueue the WhatsApp follow-up sequence (M1 sent immediately;
+    // M2 at 48h and M3 at 7d are dispatched by the pg_cron tick). Only if a phone was given.
+    if (phone.trim()) {
+      supabase.functions
+        .invoke('whatsapp-followup', {
+          body: {
+            action: 'enqueue',
+            contactName: contactName.trim(),
+            institutionName: institutionName.trim(),
+            institutionType,
+            phone: phone.trim(),
+            email: email.trim(),
+            refNumber: referenceNumber,
+            deadline,
+          },
+        })
+        .catch((err) => console.warn('WhatsApp follow-up enqueue failed', err));
+    }
+
     // Ensure the loading UX runs at least ~5s so the cycling messages are visible.
     const elapsed = Date.now() - startedAt;
     const minMs = 5000;
@@ -391,6 +410,18 @@ Managing Director:                                    Signature: _______________
         variant: 'destructive',
       });
       return;
+    }
+    // Stop the WhatsApp follow-up sequence — the lead has converted.
+    if (phone.trim() || referenceNumber) {
+      supabase.functions
+        .invoke('whatsapp-followup', {
+          body: {
+            action: 'mark_demo_booked',
+            phone: phone.trim() || null,
+            refNumber: referenceNumber,
+          },
+        })
+        .catch((err) => console.warn('WhatsApp mark_demo_booked failed', err));
     }
     toast({
       title: 'Demo booked',

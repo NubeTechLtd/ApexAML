@@ -131,6 +131,63 @@ export type Database = {
         }
         Relationships: []
       }
+      whatsapp_sequences: {
+        Row: {
+          contact_name: string
+          created_at: string
+          deadline: string
+          demo_booked: boolean
+          email: string | null
+          id: string
+          institution_name: string
+          institution_type: string | null
+          last_error: string | null
+          lead_id: string | null
+          message_1_sent_at: string | null
+          message_2_sent_at: string | null
+          message_3_sent_at: string | null
+          phone: string
+          ref_number: string
+          updated_at: string
+        }
+        Insert: {
+          contact_name: string
+          created_at?: string
+          deadline?: string
+          demo_booked?: boolean
+          email?: string | null
+          id?: string
+          institution_name: string
+          institution_type?: string | null
+          last_error?: string | null
+          lead_id?: string | null
+          message_1_sent_at?: string | null
+          message_2_sent_at?: string | null
+          message_3_sent_at?: string | null
+          phone: string
+          ref_number: string
+          updated_at?: string
+        }
+        Update: {
+          contact_name?: string
+          created_at?: string
+          deadline?: string
+          demo_booked?: boolean
+          email?: string | null
+          id?: string
+          institution_name?: string
+          institution_type?: string | null
+          last_error?: string | null
+          lead_id?: string | null
+          message_1_sent_at?: string | null
+          message_2_sent_at?: string | null
+          message_3_sent_at?: string | null
+          phone?: string
+          ref_number?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
