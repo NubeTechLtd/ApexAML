@@ -328,6 +328,22 @@ Managing Director:                                    Signature: _______________
         .catch((err) => console.warn('WhatsApp follow-up enqueue failed', err));
     }
 
+    // Fire-and-forget: enqueue the 5-email Resend drip sequence. Email 1 is the
+    // roadmap email (already dispatched above); emails 2-5 are sent on day 3/7/14/21
+    // by the pg_cron tick unless the lead books a demo or unsubscribes.
+    supabase.functions
+      .invoke('email-sequence-dispatch', {
+        body: {
+          action: 'enqueue',
+          contactName: contactName.trim(),
+          institutionName: institutionName.trim(),
+          institutionType,
+          email: email.trim(),
+          refNumber: referenceNumber,
+          deadline,
+        },
+      })
+      .catch((err) => console.warn('Email drip enqueue failed', err));
     // Ensure the loading UX runs at least ~5s so the cycling messages are visible.
     const elapsed = Date.now() - startedAt;
     const minMs = 5000;
@@ -423,6 +439,16 @@ Managing Director:                                    Signature: _______________
         })
         .catch((err) => console.warn('WhatsApp mark_demo_booked failed', err));
     }
+    // Stop the email drip sequence too — the lead has converted.
+    supabase.functions
+      .invoke('email-sequence-dispatch', {
+        body: {
+          action: 'mark_demo_booked',
+          email: email.trim() || null,
+          refNumber: referenceNumber,
+        },
+      })
+      .catch((err) => console.warn('Email drip mark_demo_booked failed', err));
     toast({
       title: 'Demo booked',
       description: 'We will be in touch within 24 hours to confirm.',
