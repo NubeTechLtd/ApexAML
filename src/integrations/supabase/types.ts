@@ -47,6 +47,33 @@ export type Database = {
         }
         Relationships: []
       }
+      landing_page_clicks: {
+        Row: {
+          created_at: string
+          event: string
+          id: string
+          page_path: string | null
+          referrer: string | null
+          source: string
+        }
+        Insert: {
+          created_at?: string
+          event?: string
+          id?: string
+          page_path?: string | null
+          referrer?: string | null
+          source: string
+        }
+        Update: {
+          created_at?: string
+          event?: string
+          id?: string
+          page_path?: string | null
+          referrer?: string | null
+          source?: string
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           compliance_timeline: string | null
