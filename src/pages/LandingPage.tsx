@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
-import { Shield, Sparkles, SlidersHorizontal, Lock, ArrowRight, Download, CheckCircle2, Loader2, Menu, X, RotateCcw, ExternalLink } from 'lucide-react';
+import { Shield, Sparkles, SlidersHorizontal, Lock, ArrowRight, Download, CheckCircle2, Loader2, Menu, X, RotateCcw, ExternalLink, FileText, Clock } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { BookDemoSheet } from '@/components/landing/BookDemoSheet';
