@@ -411,6 +411,18 @@ Managing Director:                                    Signature: _______________
       });
       return;
     }
+    // Stop the WhatsApp follow-up sequence — the lead has converted.
+    if (phone.trim() || referenceNumber) {
+      supabase.functions
+        .invoke('whatsapp-followup', {
+          body: {
+            action: 'mark_demo_booked',
+            phone: phone.trim() || null,
+            refNumber: referenceNumber,
+          },
+        })
+        .catch((err) => console.warn('WhatsApp mark_demo_booked failed', err));
+    }
     toast({
       title: 'Demo booked',
       description: 'We will be in touch within 24 hours to confirm.',
