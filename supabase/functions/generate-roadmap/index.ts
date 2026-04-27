@@ -23,8 +23,42 @@ const BodySchema = z.object({
 
 type Body = z.infer<typeof BodySchema>;
 
+function institutionTypeBlock(type: string): string {
+  const t = type.toLowerCase();
+  if (/dmb|deposit money/.test(t)) {
+    return "This is a Deposit Money Bank. Emphasise correspondent banking due diligence, cross-border transaction monitoring, and the 18-month full compliance timeline to September 2027. Include NIBSS integration milestones.";
+  }
+  if (/imto/.test(t)) {
+    return "This is an IMTO. Include specific milestones for: (1) the $200 USD equivalent cash-payout threshold structuring rule with cumulative 24-hour beneficiary tracking, (2) inbound-only and naira-only settlement validation, (3) the 24-hour cross-border STR mandate with overseas compliance API webhook, (4) B2B/B2P phantom payroll detection for the newly permitted business remittance channels, (5) May 2026 settlement account segregation monitoring. These are IMTO-specific CBN obligations.";
+  }
+  if (/mfb|microfinance/.test(t)) {
+    return "This is a Microfinance Bank. Emphasise agent banking network monitoring, Tier 1/2/3 KYC upgrade workflows, and rural transaction pattern analysis.";
+  }
+  if (/psp|fintech|payment/.test(t)) {
+    return "This is a payment service provider. Emphasise API-first integration, POS terminal network monitoring, real-time transaction velocity checks, and the 24-month compliance timeline to March 2028.";
+  }
+  return `This institution is regulated as a ${type}. Tailor every milestone to its licence-specific CBN obligations.`;
+}
+
+function amlSetupBlock(setup: string): string {
+  const s = setup.toLowerCase();
+  if (/none|no\s|nothing|absent/.test(s)) {
+    return "This institution has no existing AML infrastructure — Phase 1 must include a vendor selection milestone.";
+  }
+  if (/manual|spreadsheet|excel/.test(s)) {
+    return "Phase 1 should include migration from manual processes with a parallel-run period.";
+  }
+  if (/legacy|old|existing system|in-house|inhouse/.test(s)) {
+    return "Include a legacy system decommission milestone in Phase 2.";
+  }
+  return `Current AML maturity: ${setup}. Calibrate Phase 1 deliverables accordingly.`;
+}
+
 function buildPrompt(d: Body): string {
-  return `You are a senior Nigerian financial-services compliance consultant. Generate a formal CBN AML implementation roadmap for the institution below.
+  const typeBlock = institutionTypeBlock(d.institutionType);
+  const setupBlock = amlSetupBlock(d.amlSetup);
+
+  return `You are Nigeria's most experienced AML compliance consultant. You have advised the CBN, NFIU, and 200+ Nigerian financial institutions. Generate a formal, examination-ready CBN AML implementation roadmap. Use official CBN regulatory language throughout. Every milestone must reference a specific CBN capability area number from Circular BSD/DIR/PUB/LAB/019/002.
 
 INSTITUTION DETAILS
 - Institution Name: ${d.institutionName}
@@ -36,6 +70,12 @@ INSTITUTION DETAILS
 - WhatsApp: ${d.phone || "not provided"}
 - Full compliance deadline: ${d.deadline}
 - CBN initial submission deadline: 10 June 2026 (Circular BSD/DIR/PUB/LAB/019/002)
+
+INSTITUTION-TYPE GUIDANCE
+${typeBlock}
+
+CURRENT-STATE GUIDANCE
+${setupBlock}
 
 OUTPUT FORMAT
 Plain text only. NO markdown, NO asterisks, NO hashes, NO bullet characters other than hyphens. Use these EXACT section headings in upper case, each on its own line:
@@ -49,11 +89,11 @@ PHASE 4 — FULL COMPLIANCE CERTIFICATION (Months 18-24)
 KEY RISKS AND MITIGATIONS
 ATTESTATION
 
-Each phase must list 4-6 concrete deliverables with target months. Reference CBN Circular BSD/DIR/PUB/LAB/019/002 explicitly. Tailor every section to the institution's specific licence type and stated current AML maturity.
+Each phase must list 4-6 concrete deliverables with target months. Every deliverable MUST cite the specific CBN capability area number it addresses (e.g. "Capability Area 3 — Sanctions Screening"). Reference CBN Circular BSD/DIR/PUB/LAB/019/002 explicitly throughout. Tailor every section to ${d.institutionName}'s specific licence type and stated AML maturity — do not produce generic content.
 
-If this is an IMTO, include specific milestones for the $200 cash-limit structuring rule, inbound-only validation, 24-hour cross-border STR webhook, phantom payroll detection, and May 2026 settlement account segregation.
+The ATTESTATION section MUST end with this exact attestation block, verbatim, with the placeholders replaced:
 
-The ATTESTATION section must include signature lines for the Compliance Officer (${d.contactName}), Chief Risk Officer, and Managing Director, plus a line stating the document was generated for ${d.institutionName}.
+ATTESTATION — I, ${d.contactName}, ${d.title} of ${d.institutionName}, hereby certify that this roadmap represents our institution's genuine commitment to AML/CFT/CPF compliance in accordance with CBN Circular BSD/DIR/PUB/LAB/019/002. Signature: _______________ Date: _______________ CBN Licence Number: _______________
 
 Return only the roadmap text. No preamble, no closing remarks.`;
 }
