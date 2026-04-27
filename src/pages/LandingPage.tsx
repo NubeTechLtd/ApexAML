@@ -160,6 +160,102 @@ function AIMockUI() {
   );
 }
 
+// ── Roadmap Generator band (highest-converting offer on landing) ─────────
+
+function RoadmapGeneratorBand() {
+  const { days } = useCountdown(new Date('2026-06-10T00:00:00'));
+
+  const handleClick = () => {
+    // Fire-and-forget analytics. Failures must never block the navigation.
+    supabase
+      .from('landing_page_clicks')
+      .insert({
+        source: 'landing_hero_roadmap',
+        event: 'roadmap_cta_click',
+        page_path: typeof window !== 'undefined' ? window.location.pathname : null,
+        referrer: typeof document !== 'undefined' ? document.referrer || null : null,
+      })
+      .then(({ error }) => {
+        if (error) console.warn('landing_page_clicks insert failed', error);
+      });
+  };
+
+  const trustChips = ['No credit card', 'Instant download', 'Covers all 10 CBN capability areas'];
+
+  return (
+    <section
+      id="free-roadmap"
+      className="relative py-20 px-6 border-l-4 border-primary"
+      style={{ backgroundColor: 'hsl(220 25% 10%)' }}
+    >
+      <div className="mx-auto max-w-6xl">
+        <div className="grid lg:grid-cols-5 gap-10 lg:gap-12 items-center">
+          {/* Left 60% */}
+          <AnimatedSection className="lg:col-span-3 space-y-6">
+            <div className="inline-flex items-center justify-center h-12 w-12 rounded-xl bg-primary/10 ring-1 ring-primary/20">
+              <FileText className="h-8 w-8 text-primary" strokeWidth={1.75} />
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight leading-tight">
+              Free: generate your CBN AML roadmap in 60 seconds
+            </h2>
+            <p className="text-base md:text-lg text-white/60 leading-relaxed max-w-2xl">
+              Pre-formatted for Circular BSD/DIR/PUB/LAB/019/002. Tailored to your institution
+              type and deadline. Used by 50+ compliance teams. Emailed instantly.
+            </p>
+            <div className="flex flex-wrap gap-2 pt-1">
+              {trustChips.map((chip) => (
+                <span
+                  key={chip}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs text-white/70"
+                >
+                  <CheckCircle2 className="h-3.5 w-3.5 text-risk-low" />
+                  {chip}
+                </span>
+              ))}
+            </div>
+            <blockquote className="border-l-2 border-primary/40 pl-4 mt-6 text-sm text-white/50 italic">
+              "Took 90 seconds. Submitted to CBN the same afternoon."
+              <span className="block not-italic text-xs text-white/35 mt-1">
+                — CCO, Tier-3 Fintech, Abuja
+              </span>
+            </blockquote>
+          </AnimatedSection>
+
+          {/* Right 40% */}
+          <AnimatedSection delay={0.15} className="lg:col-span-2">
+            <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] backdrop-blur-md p-6 md:p-8 space-y-5">
+              <Button
+                asChild
+                size="lg"
+                className="w-full h-14 text-base font-semibold shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-shadow"
+              >
+                <Link
+                  to="/roadmap?utm_source=landing_page&utm_campaign=roadmap_cta"
+                  data-event="roadmap_cta_click"
+                  onClick={handleClick}
+                >
+                  Generate your roadmap
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
+              </Button>
+
+              <div className="flex items-center justify-center gap-2 text-sm text-white/70 bg-primary/5 border border-primary/15 rounded-lg py-3 px-4">
+                <Clock className="h-4 w-4 text-primary" />
+                <span className="tabular-nums font-semibold text-white">{days}</span>
+                <span className="text-white/60">days until the CBN deadline</span>
+              </div>
+
+              <p className="text-xs text-center text-white/40 leading-relaxed">
+                or scroll down to enter your email for a demo call.
+              </p>
+            </div>
+          </AnimatedSection>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // ── Main Page ────────────────────────────────────────────────────────────
 
 export default function LandingPage() {
