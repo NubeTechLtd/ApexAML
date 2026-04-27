@@ -47,6 +47,122 @@ export type Database = {
         }
         Relationships: []
       }
+      email_events: {
+        Row: {
+          created_at: string
+          email: string | null
+          email_step: number | null
+          event_type: string
+          id: string
+          ip: string | null
+          metadata: Json | null
+          sequence_id: string | null
+          url: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          email_step?: number | null
+          event_type: string
+          id?: string
+          ip?: string | null
+          metadata?: Json | null
+          sequence_id?: string | null
+          url?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          email_step?: number | null
+          event_type?: string
+          id?: string
+          ip?: string | null
+          metadata?: Json | null
+          sequence_id?: string | null
+          url?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_events_sequence_id_fkey"
+            columns: ["sequence_id"]
+            isOneToOne: false
+            referencedRelation: "email_sequences"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      email_sequences: {
+        Row: {
+          bounced_at: string | null
+          contact_name: string
+          created_at: string
+          deadline: string
+          demo_booked: boolean
+          email: string
+          email_1_sent_at: string | null
+          email_2_sent_at: string | null
+          email_3_sent_at: string | null
+          email_4_sent_at: string | null
+          email_5_sent_at: string | null
+          id: string
+          institution_name: string
+          institution_type: string | null
+          last_error: string | null
+          lead_id: string | null
+          ref_number: string
+          tracking_token: string
+          unsubscribed_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          bounced_at?: string | null
+          contact_name: string
+          created_at?: string
+          deadline?: string
+          demo_booked?: boolean
+          email: string
+          email_1_sent_at?: string | null
+          email_2_sent_at?: string | null
+          email_3_sent_at?: string | null
+          email_4_sent_at?: string | null
+          email_5_sent_at?: string | null
+          id?: string
+          institution_name: string
+          institution_type?: string | null
+          last_error?: string | null
+          lead_id?: string | null
+          ref_number: string
+          tracking_token?: string
+          unsubscribed_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          bounced_at?: string | null
+          contact_name?: string
+          created_at?: string
+          deadline?: string
+          demo_booked?: boolean
+          email?: string
+          email_1_sent_at?: string | null
+          email_2_sent_at?: string | null
+          email_3_sent_at?: string | null
+          email_4_sent_at?: string | null
+          email_5_sent_at?: string | null
+          id?: string
+          institution_name?: string
+          institution_type?: string | null
+          last_error?: string | null
+          lead_id?: string | null
+          ref_number?: string
+          tracking_token?: string
+          unsubscribed_at?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       landing_page_clicks: {
         Row: {
           created_at: string
