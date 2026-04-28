@@ -20,14 +20,16 @@ export async function trackEvent(
   opts: { source?: string; metadata?: Record<string, unknown> } = {}
 ) {
   try {
-    await supabase.from('page_events').insert({
-      event_name: eventName,
-      session_id: getSessionId(),
-      path: typeof window !== 'undefined' ? window.location.pathname : null,
-      source: opts.source ?? null,
-      metadata: opts.metadata ?? null,
-      user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : null,
-    });
+    await supabase.from('page_events').insert([
+      {
+        event_name: eventName,
+        session_id: getSessionId(),
+        path: typeof window !== 'undefined' ? window.location.pathname : null,
+        source: opts.source ?? null,
+        metadata: (opts.metadata ?? null) as never,
+        user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : null,
+      },
+    ]);
   } catch {
     // Best-effort tracking — never throw to UI.
   }
