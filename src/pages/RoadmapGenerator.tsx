@@ -31,6 +31,7 @@ import { FileText, Loader2, Sparkles, ArrowRight, Download, CheckCircle2, Check,
 import { WhatsAppIcon } from '@/components/landing/WhatsAppIcon';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Textarea } from '@/components/ui/textarea';
+import { trackEvent } from '@/lib/analytics';
 
 type Step = 'hook' | 'form' | 'loading' | 'roadmap';
 
@@ -109,6 +110,10 @@ const CAPABILITY_AREAS = [
 const RoadmapGenerator = () => {
   const { toast } = useToast();
   const [step, setStep] = useState<Step>('hook');
+
+  useEffect(() => {
+    if (step === 'hook') trackEvent('hook_view', { source: 'roadmap_generator' });
+  }, [step]);
 
   // Form state
   const [institutionName, setInstitutionName] = useState('');
@@ -228,7 +233,10 @@ Managing Director:                                    Signature: _______________
 `;
   }
 
-  const handleStart = () => setStep('form');
+  const handleStart = () => {
+    trackEvent('form_started', { source: 'roadmap_generator' });
+    setStep('form');
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -266,6 +274,7 @@ Managing Director:                                    Signature: _______________
       });
       return;
     }
+    trackEvent('form_completed', { source: 'roadmap_generator', metadata: { institutionType } });
     setStep('loading');
 
     // Kick off generation. Always end with a roadmap — never an error.
