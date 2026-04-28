@@ -111,6 +111,10 @@ const RoadmapGenerator = () => {
   const { toast } = useToast();
   const [step, setStep] = useState<Step>('hook');
 
+  useEffect(() => {
+    if (step === 'hook') trackEvent('hook_view', { source: 'roadmap_generator' });
+  }, [step]);
+
   // Form state
   const [institutionName, setInstitutionName] = useState('');
   const [institutionType, setInstitutionType] = useState('');
