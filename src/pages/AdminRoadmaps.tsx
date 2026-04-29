@@ -166,6 +166,9 @@ export default function AdminRoadmaps() {
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [demoFilter, setDemoFilter] = useState<string>('all');
   const [page, setPage] = useState(1);
+  const [adminSheetOpen, setAdminSheetOpen] = useState(false);
+  const [newAdminEmail, setNewAdminEmail] = useState('');
+  const [grantingAdmin, setGrantingAdmin] = useState(false);
 
   const loadAll = async () => {
     const [l, s, d, ev, pe] = await Promise.all([
