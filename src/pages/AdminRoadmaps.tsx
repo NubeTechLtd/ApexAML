@@ -702,9 +702,11 @@ export default function AdminRoadmaps() {
               )}
             </>
           )}
-        </Card>
-      </main>
-    </div>
+          </Card>
+          </main>
+        </div>
+      </div>
+    </SidebarProvider>
   );
 }
 
