@@ -240,20 +240,20 @@ export default function AdminRoadmaps() {
   }, [leads]);
 
   // Funnel
-  const hookViews = pageEvents.filter((e) => e.event_name === 'hook_view').length;
+  const hookViews = pageEvents.filter((e) => e.event_name === 'hook_viewed').length;
   const formStarted = pageEvents.filter((e) => e.event_name === 'form_started').length;
-  const formCompleted = pageEvents.filter((e) => e.event_name === 'form_completed').length;
   const generated = totalRoadmaps;
   const opened = new Set(emailEvents.filter((e) => e.event_type === 'open').map((e) => e.email)).size;
+  const demoCtaClicked = pageEvents.filter((e) => e.event_name === 'demo_cta_clicked').length;
   const booked = demoCount;
 
   const funnel = [
-    { label: 'Hook page views', value: hookViews, tracked: hookViews > 0 },
-    { label: 'Form started', value: formStarted, tracked: formStarted > 0 },
-    { label: 'Form completed', value: formCompleted, tracked: formCompleted > 0 },
-    { label: 'Roadmap generated', value: generated, tracked: true },
-    { label: 'Email opened', value: opened, tracked: true },
-    { label: 'Demo booked', value: booked, tracked: true },
+    { label: 'Hook viewed', value: hookViews, accumulating: hookViews <= 10 },
+    { label: 'Form started', value: formStarted, accumulating: formStarted <= 10 },
+    { label: 'Roadmap generated', value: generated, accumulating: false },
+    { label: 'Email opened', value: opened, accumulating: false },
+    { label: 'Demo CTA clicked', value: demoCtaClicked, accumulating: false },
+    { label: 'Demo booked', value: booked, accumulating: false },
   ];
   const funnelMax = Math.max(...funnel.map((f) => f.value), 1);
 
@@ -494,32 +494,41 @@ export default function AdminRoadmaps() {
               <h2 className="font-semibold">Conversion Funnel</h2>
               <Mail className="h-4 w-4 text-muted-foreground" />
             </div>
-            <div className="space-y-2.5">
+            <div className="space-y-3">
               {funnel.map((f, i) => {
                 const pct = (f.value / funnelMax) * 100;
                 const prev = i > 0 ? funnel[i - 1].value : null;
                 const drop = prev && prev > 0 ? Math.round(((prev - f.value) / prev) * 100) : null;
                 return (
                   <div key={f.label}>
-                    <div className="flex items-center justify-between text-xs mb-1">
-                      <span className="font-medium">{f.label}</span>
-                      <span className="tabular-nums text-muted-foreground">
-                        {f.value.toLocaleString()}
-                        {drop !== null && drop > 0 && (
-                          <span className="ml-2 text-destructive">−{drop}%</span>
+                    <div className="flex items-center justify-between gap-3 mb-1">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="text-[10px] tabular-nums text-muted-foreground w-4 shrink-0">
+                          {i + 1}.
+                        </span>
+                        <span className="text-xs font-medium truncate">{f.label}</span>
+                        {f.accumulating && (
+                          <span className="text-[9px] uppercase tracking-wide px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-500 border border-amber-500/30 whitespace-nowrap">
+                            Tracking just enabled
+                          </span>
                         )}
-                      </span>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className="text-base font-semibold tabular-nums">
+                          {f.value.toLocaleString()}
+                        </span>
+                        {drop !== null && drop > 0 && (
+                          <span className="text-[10px] tabular-nums text-destructive">
+                            ↓ {drop}% drop
+                          </span>
+                        )}
+                      </div>
                     </div>
-                    <div className="h-7 rounded-md bg-muted/40 overflow-hidden relative">
+                    <div className="h-6 rounded-md bg-muted/40 overflow-hidden">
                       <div
                         className="h-full bg-primary/80 transition-all"
                         style={{ width: `${Math.max(pct, 2)}%` }}
                       />
-                      {!f.tracked && (
-                        <span className="absolute inset-0 flex items-center justify-center text-[10px] text-muted-foreground italic">
-                          tracking just enabled
-                        </span>
-                      )}
                     </div>
                   </div>
                 );

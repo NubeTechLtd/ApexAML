@@ -112,7 +112,7 @@ const RoadmapGenerator = () => {
   const [step, setStep] = useState<Step>('hook');
 
   useEffect(() => {
-    if (step === 'hook') trackEvent('hook_view', { source: 'roadmap_generator' });
+    if (step === 'hook') trackEvent('hook_viewed', { source: 'roadmap_generator' });
   }, [step]);
 
   // Form state
@@ -274,7 +274,7 @@ Managing Director:                                    Signature: _______________
       });
       return;
     }
-    trackEvent('form_completed', { source: 'roadmap_generator', metadata: { institutionType } });
+    trackEvent('form_completed', { source: 'roadmap_generator', metadata: { institution_type: institutionType } });
     setStep('loading');
 
     // Kick off generation. Always end with a roadmap — never an error.
@@ -364,6 +364,10 @@ Managing Director:                                    Signature: _______________
     if (chipIntervalRef.current) window.clearInterval(chipIntervalRef.current);
     setGeneratedRoadmap(roadmapText);
     setStep('roadmap');
+    trackEvent('roadmap_generated', {
+      source: 'roadmap_generator',
+      metadata: { institution_type: institutionType, ref_number: referenceNumber },
+    });
   };
 
   const deadlinePreview = getDeadlineForType(institutionType);
@@ -388,6 +392,7 @@ Managing Director:                                    Signature: _______________
     institutionType === 'Deposit Money Bank (DMB)' ? 'amber' : 'green';
 
   const handleDownloadRoadmap = () => {
+    trackEvent('roadmap_downloaded', { source: 'roadmap_generator' });
     const safeName = (institutionName || 'Institution').replace(/[^a-zA-Z0-9_-]+/g, '_');
     const blob = new Blob([generatedRoadmap], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
@@ -407,6 +412,7 @@ Managing Director:                                    Signature: _______________
   };
 
   const handleOpenDemo = () => {
+    trackEvent('demo_cta_clicked', { source: 'roadmap_generator' });
     if (!demoMessage) {
       setDemoMessage(
         `I have generated my CBN roadmap ${referenceNumber} and want to implement it with Zuia.`,
