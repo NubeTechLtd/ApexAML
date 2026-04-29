@@ -595,7 +595,7 @@ export default function AdminRoadmaps() {
               </Select>
               <Button variant="outline" size="sm" onClick={exportCSV}>
                 <Download className="h-4 w-4 mr-2" />
-                CSV
+                Export CSV
               </Button>
             </div>
           </div>
