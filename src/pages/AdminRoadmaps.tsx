@@ -3,6 +3,19 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { useAuth } from '@/hooks/useAuth';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { AppSidebar } from '@/components/AppSidebar';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
+import { toast } from 'sonner';
+import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -56,6 +69,7 @@ import {
   Search,
   ShieldCheck,
   TrendingUp,
+  UserPlus,
   Users,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -152,6 +166,9 @@ export default function AdminRoadmaps() {
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [demoFilter, setDemoFilter] = useState<string>('all');
   const [page, setPage] = useState(1);
+  const [adminSheetOpen, setAdminSheetOpen] = useState(false);
+  const [newAdminEmail, setNewAdminEmail] = useState('');
+  const [grantingAdmin, setGrantingAdmin] = useState(false);
 
   const loadAll = async () => {
     const [l, s, d, ev, pe] = await Promise.all([
@@ -172,9 +189,10 @@ export default function AdminRoadmaps() {
     if (state !== 'admin') return;
     loadAll();
     const ch = supabase
-      .channel('admin-roadmaps')
+      .channel('admin-realtime')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'roadmap_leads' }, () => loadAll())
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'demo_requests' }, () => loadAll())
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'email_events' }, () => loadAll())
       .subscribe();
     return () => {
       supabase.removeChannel(ch);
@@ -308,9 +326,30 @@ export default function AdminRoadmaps() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `roadmap-leads-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = `zuia_leads_${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
     URL.revokeObjectURL(url);
+  };
+
+  const exportFilename = `zuia_leads_${new Date().toISOString().slice(0, 10)}.csv`;
+
+  const handleGrantAdmin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const email = newAdminEmail.trim().toLowerCase();
+    if (!email) return;
+    setGrantingAdmin(true);
+    const { data, error } = await supabase.functions.invoke('grant-admin-role', {
+      body: { email },
+    });
+    setGrantingAdmin(false);
+    if (error || (data && (data as { error?: string }).error)) {
+      const msg = (data as { error?: string } | null)?.error ?? error?.message ?? 'Failed to grant admin access.';
+      toast.error(msg);
+      return;
+    }
+    toast.success(`${email} now has admin access.`);
+    setNewAdminEmail('');
+    setAdminSheetOpen(false);
   };
 
   const handleSignOut = async () => {
@@ -340,29 +379,74 @@ export default function AdminRoadmaps() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b bg-card/40 backdrop-blur sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div>
-            <h1 className="text-lg font-semibold flex items-center gap-2">
-              <ShieldCheck className="h-5 w-5 text-primary" />
-              Roadmap Generator — Admin
-            </h1>
-            <p className="text-xs text-muted-foreground">Live monitoring · {adminEmail}</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
-            <Button variant="outline" size="sm" onClick={handleSignOut}>
-              <LogOut className="h-4 w-4 mr-2" />
-              Sign out
-            </Button>
-          </div>
-        </div>
-      </header>
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full bg-background">
+        <AppSidebar />
+        <div className="flex-1 flex flex-col min-w-0">
+          <header className="border-b bg-card/40 backdrop-blur sticky top-0 z-10">
+            <div className="px-6 py-4 flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3 min-w-0">
+                <SidebarTrigger />
+                <div className="min-w-0">
+                  <h1 className="text-lg font-semibold flex items-center gap-2">
+                    <ShieldCheck className="h-5 w-5 text-primary" />
+                    Roadmap Analytics
+                  </h1>
+                  <p className="text-xs text-muted-foreground truncate">
+                    CBN AML roadmap lead intelligence — Zuia admin
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-[12px] text-muted-foreground hidden sm:inline">
+                  {adminEmail}
+                </span>
+                <Sheet open={adminSheetOpen} onOpenChange={setAdminSheetOpen}>
+                  <SheetTrigger asChild>
+                    <Button variant="outline" size="sm">
+                      <UserPlus className="h-4 w-4 mr-2" />
+                      Add admin user
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent>
+                    <SheetHeader>
+                      <SheetTitle>Grant admin access</SheetTitle>
+                      <SheetDescription>
+                        The user must already have a Zuia account. Their email will be promoted to the admin role.
+                      </SheetDescription>
+                    </SheetHeader>
+                    <form onSubmit={handleGrantAdmin} className="space-y-4 py-6">
+                      <div className="space-y-1.5">
+                        <Label htmlFor="new-admin-email">Email</Label>
+                        <Input
+                          id="new-admin-email"
+                          type="email"
+                          required
+                          placeholder="teammate@zuia.io"
+                          value={newAdminEmail}
+                          onChange={(e) => setNewAdminEmail(e.target.value)}
+                        />
+                      </div>
+                      <SheetFooter>
+                        <Button type="submit" disabled={grantingAdmin} className="w-full">
+                          {grantingAdmin ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Grant admin access'}
+                        </Button>
+                      </SheetFooter>
+                    </form>
+                  </SheetContent>
+                </Sheet>
+                <ThemeToggle />
+                <Button variant="ghost" size="sm" onClick={handleSignOut}>
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sign out
+                </Button>
+              </div>
+            </div>
+          </header>
 
-      <main className="max-w-7xl mx-auto px-6 py-8 space-y-8">
-        {/* KPI cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <main className="flex-1 px-6 py-8 space-y-8">
+            {/* KPI cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <KPI icon={<FileText className="h-4 w-4" />} label="Total Roadmaps" value={totalRoadmaps} loading={leads === null} />
           <KPI icon={<CalendarDays className="h-4 w-4" />} label="This Week" value={roadmapsThisWeek} loading={leads === null} />
           <KPI icon={<Users className="h-4 w-4" />} label="Demo Requests" value={demoCount} loading={leads === null} />
@@ -511,7 +595,7 @@ export default function AdminRoadmaps() {
               </Select>
               <Button variant="outline" size="sm" onClick={exportCSV}>
                 <Download className="h-4 w-4 mr-2" />
-                CSV
+                Export CSV
               </Button>
             </div>
           </div>
@@ -618,9 +702,11 @@ export default function AdminRoadmaps() {
               )}
             </>
           )}
-        </Card>
-      </main>
-    </div>
+          </Card>
+          </main>
+        </div>
+      </div>
+    </SidebarProvider>
   );
 }
 
