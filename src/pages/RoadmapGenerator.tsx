@@ -112,7 +112,7 @@ const RoadmapGenerator = () => {
   const [step, setStep] = useState<Step>('hook');
 
   useEffect(() => {
-    if (step === 'hook') trackEvent('hook_view', { source: 'roadmap_generator' });
+    if (step === 'hook') trackEvent('hook_viewed', { source: 'roadmap_generator' });
   }, [step]);
 
   // Form state
