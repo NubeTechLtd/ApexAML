@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,16 +10,23 @@ import { Loader2, Shield } from 'lucide-react';
 
 export default function Login() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(
+    searchParams.get('error') === 'unauthorized'
+      ? 'Your account does not have admin access. Contact hello@zuia.io.'
+      : null,
+  );
 
   useEffect(() => {
+    if (searchParams.get('error') === 'unauthorized') return;
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) navigate('/admin/roadmaps', { replace: true });
     });
-  }, [navigate]);
+  }, [navigate, searchParams]);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
