@@ -3,6 +3,21 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { useAuth } from '@/hooks/useAuth';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { AppSidebar } from '@/components/AppSidebar';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
+import { toast } from 'sonner';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -56,6 +71,7 @@ import {
   Search,
   ShieldCheck,
   TrendingUp,
+  UserPlus,
   Users,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -172,9 +188,10 @@ export default function AdminRoadmaps() {
     if (state !== 'admin') return;
     loadAll();
     const ch = supabase
-      .channel('admin-roadmaps')
+      .channel('admin-realtime')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'roadmap_leads' }, () => loadAll())
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'demo_requests' }, () => loadAll())
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'email_events' }, () => loadAll())
       .subscribe();
     return () => {
       supabase.removeChannel(ch);
