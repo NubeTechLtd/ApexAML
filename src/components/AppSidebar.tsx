@@ -1,5 +1,7 @@
-import { LayoutDashboard, Inbox, Users, Settings2, FileText, Shield, Fingerprint, ShieldAlert, Search, Banknote, Building2 } from 'lucide-react';
+import { LayoutDashboard, Inbox, Users, Settings2, FileText, Shield, Fingerprint, ShieldAlert, Search, Banknote, Building2, BarChart2, LogOut } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
+import { useAuth } from '@/hooks/useAuth';
+import { Button } from '@/components/ui/button';
 import {
   Sidebar,
   SidebarContent,
@@ -35,9 +37,14 @@ const toolsNav = [
   { title: 'CBN Roadmap Generator', url: '/roadmap', icon: FileText },
 ];
 
+const adminNav = [
+  { title: 'Roadmap Analytics', url: '/admin/roadmaps', icon: BarChart2 },
+];
+
 export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === 'collapsed';
+  const { session, signOut } = useAuth();
 
   return (
     <Sidebar collapsible="icon" className="border-r-0">
@@ -152,14 +159,50 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-sidebar-muted text-[10px] uppercase tracking-wider">
+            {!collapsed && 'Admin'}
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {adminNav.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <NavLink
+                      to={item.url}
+                      end
+                      className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
+                      activeClassName="bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                    >
+                      <item.icon className="mr-2 h-4 w-4" />
+                      {!collapsed && <span>{item.title}</span>}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="p-4">
+      <SidebarFooter className="p-4 space-y-3">
         {!collapsed && (
           <div className="rounded-lg bg-sidebar-accent p-3">
             <p className="text-[10px] text-sidebar-muted">Last sync</p>
             <p className="text-xs font-medium text-sidebar-primary">Today, 08:32 WAT</p>
           </div>
+        )}
+        {session && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => signOut()}
+            className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+          >
+            <LogOut className="h-4 w-4" />
+            {!collapsed && <span className="ml-2">Sign out</span>}
+          </Button>
         )}
       </SidebarFooter>
     </Sidebar>
