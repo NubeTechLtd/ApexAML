@@ -326,9 +326,30 @@ export default function AdminRoadmaps() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `roadmap-leads-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = `zuia_leads_${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
     URL.revokeObjectURL(url);
+  };
+
+  const exportFilename = `zuia_leads_${new Date().toISOString().slice(0, 10)}.csv`;
+
+  const handleGrantAdmin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const email = newAdminEmail.trim().toLowerCase();
+    if (!email) return;
+    setGrantingAdmin(true);
+    const { data, error } = await supabase.functions.invoke('grant-admin-role', {
+      body: { email },
+    });
+    setGrantingAdmin(false);
+    if (error || (data && (data as { error?: string }).error)) {
+      const msg = (data as { error?: string } | null)?.error ?? error?.message ?? 'Failed to grant admin access.';
+      toast.error(msg);
+      return;
+    }
+    toast.success(`${email} now has admin access.`);
+    setNewAdminEmail('');
+    setAdminSheetOpen(false);
   };
 
   const handleSignOut = async () => {
