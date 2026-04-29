@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
+import { useAuth } from '@/hooks/useAuth';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -136,6 +138,7 @@ function csvEscape(v: unknown) {
 
 export default function AdminRoadmaps() {
   const { state, email: adminEmail } = useAdminAuth();
+  const { signOut } = useAuth();
   const navigate = useNavigate();
   const chart = useChartTheme();
 
@@ -311,8 +314,7 @@ export default function AdminRoadmaps() {
   };
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    navigate('/login', { replace: true });
+    await signOut();
   };
 
   if (state === 'loading') {
@@ -348,10 +350,13 @@ export default function AdminRoadmaps() {
             </h1>
             <p className="text-xs text-muted-foreground">Live monitoring · {adminEmail}</p>
           </div>
-          <Button variant="outline" size="sm" onClick={handleSignOut}>
-            <LogOut className="h-4 w-4 mr-2" />
-            Sign out
-          </Button>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <Button variant="outline" size="sm" onClick={handleSignOut}>
+              <LogOut className="h-4 w-4 mr-2" />
+              Sign out
+            </Button>
+          </div>
         </div>
       </header>
 
