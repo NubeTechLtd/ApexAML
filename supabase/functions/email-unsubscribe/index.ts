@@ -10,7 +10,7 @@ const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const admin = createClient(SUPABASE_URL, SERVICE_ROLE, { auth: { persistSession: false } });
 
 function page(opts: { title: string; body: string }): Response {
-  const html = `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${opts.title} — Zuia</title>
+  const html = `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${opts.title} — ApexAML</title>
 <style>
   *{box-sizing:border-box} body{margin:0;font-family:Helvetica,Arial,sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
   .card{max-width:480px;width:100%;background:#1e293b;border:1px solid #334155;border-radius:12px;padding:32px}
@@ -21,7 +21,7 @@ function page(opts: { title: string; body: string }): Response {
   .btn:hover{background:#1e40af}
   .muted{color:#64748b;font-size:12px;margin-top:24px}
 </style></head>
-<body><div class="card"><div class="brand">Zuia AML</div>${opts.body}<p class="muted">If you keep receiving these in error, reply <a style="color:#93c5fd" href="mailto:hello@zuia.io">hello@zuia.io</a>.</p></div></body></html>`;
+<body><div class="card"><div class="brand">ApexAML AML</div>${opts.body}<p class="muted">If you keep receiving these in error, reply <a style="color:#93c5fd" href="mailto:hello@apexaml.com">hello@apexaml.com</a>.</p></div></body></html>`;
   return new Response(html, { status: 200, headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" } });
 }
 
@@ -63,13 +63,13 @@ Deno.serve(async (req) => {
   // Browser GET → confirm page (auto-unsubscribe; mailbox providers also pre-fetch links)
   const res = await unsubscribe(token);
   if (!res.found) {
-    return page({ title: "Not found", body: `<h1>We couldn't find that subscription</h1><p>The link may have expired. If you'd like to opt out, email hello@zuia.io.</p>` });
+    return page({ title: "Not found", body: `<h1>We couldn't find that subscription</h1><p>The link may have expired. If you'd like to opt out, email hello@apexaml.com.</p>` });
   }
   if (res.alreadyDone) {
     return page({ title: "Already unsubscribed", body: `<h1>You're already unsubscribed</h1><p>${res.email ?? "Your address"} is no longer in the CBN roadmap follow-up sequence.</p>` });
   }
   return page({
     title: "Unsubscribed",
-    body: `<h1>You're unsubscribed</h1><p>${res.email ?? "Your address"} has been removed from the CBN roadmap follow-up sequence. You may still receive transactional emails (e.g. roadmap copies you generate yourself).</p><a class="btn" href="https://zuia.io">Back to Zuia</a>`,
+    body: `<h1>You're unsubscribed</h1><p>${res.email ?? "Your address"} has been removed from the CBN roadmap follow-up sequence. You may still receive transactional emails (e.g. roadmap copies you generate yourself).</p><a class="btn" href="https://apexaml.com">Back to ApexAML</a>`,
   });
 });

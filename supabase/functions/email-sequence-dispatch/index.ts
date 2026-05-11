@@ -18,9 +18,9 @@ const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 
-const FROM = "Zuia AML <onboarding@resend.dev>"; // swap to verified domain when ready
-const REPLY_TO = "hello@zuia.io";
-const APP_BASE = "https://zuia.io"; // public-facing site for CTAs
+const FROM = "ApexAML AML <onboarding@resend.dev>"; // swap to verified domain when ready
+const REPLY_TO = "hello@apexaml.com";
+const APP_BASE = "https://apexaml.com"; // public-facing site for CTAs
 const FN_BASE = `${SUPABASE_URL}/functions/v1`;
 const DEADLINE_DATE = new Date("2026-06-10T00:00:00Z");
 
@@ -76,18 +76,18 @@ function shell(opts: {
   token: string; step: number;
 }): string {
   const unsub = unsubscribeUrl(opts.token);
-  return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Zuia AML</title></head>
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>ApexAML AML</title></head>
 <body style="margin:0;padding:0;background:#ffffff;color:#1a1a1a;font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:1.55">
 <div style="display:none;max-height:0;overflow:hidden;color:transparent">${escapeHtml(opts.preheader)}</div>
 <table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" style="padding:24px 16px">
 <table width="560" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;width:100%">
-<tr><td style="padding:0 0 16px 0;font-weight:600;color:#0f172a;font-size:16px">Zuia <span style="color:#64748b;font-weight:400">— CBN AML Compliance</span></td></tr>
+<tr><td style="padding:0 0 16px 0;font-weight:600;color:#0f172a;font-size:16px">ApexAML <span style="color:#64748b;font-weight:400">— CBN AML Compliance</span></td></tr>
 <tr><td>${opts.bodyHtml}</td></tr>
 <tr><td style="padding:24px 0 8px 0">
   <a href="${opts.ctaUrl}" style="display:inline-block;background:#1d4ed8;color:#ffffff;text-decoration:none;padding:12px 20px;border-radius:6px;font-weight:600">${escapeHtml(opts.ctaText)}</a>
 </td></tr>
 <tr><td style="padding:24px 0 0 0;font-size:12px;color:#64748b;border-top:1px solid #e2e8f0;margin-top:24px">
-  <p style="margin:16px 0 4px 0">Zuia AML — CBN/NFIU compliance platform</p>
+  <p style="margin:16px 0 4px 0">ApexAML AML — CBN/NFIU compliance platform</p>
   <p style="margin:0 0 4px 0">Reply to this email or contact <a href="mailto:${REPLY_TO}" style="color:#1d4ed8">${REPLY_TO}</a></p>
   <p style="margin:8px 0 0 0">Don't want these? <a href="${unsub}" style="color:#64748b;text-decoration:underline">Unsubscribe</a> · NDPR: we only contact compliance officers who generated a CBN roadmap with us.</p>
 </td></tr>
@@ -113,7 +113,7 @@ function tmplEmail3(r: Row) {
   const cta = trackedLink(r.tracking_token, 3, `${APP_BASE}/?utm_source=drip&utm_campaign=cbn_followup&utm_content=email3#book-demo`);
   const html = shell({
     preheader: `What CBN does to institutions that miss the June 10 deadline.`,
-    step: 3, token: r.tracking_token, ctaText: "Start your Zuia implementation →", ctaUrl: cta,
+    step: 3, token: r.tracking_token, ctaText: "Start your ApexAML implementation →", ctaUrl: cta,
     bodyHtml: `<p>Hi ${escapeHtml(r.contact_name.split(" ")[0])},</p>
 <p>What happens if <strong>${escapeHtml(r.institution_name)}</strong> misses the 10 June 2026 CBN AML roadmap deadline? Based on prior CBN enforcement patterns under Circular BSD/DIR/PUB/LAB/019/002 and earlier AML guidance:</p>
 <ol style="padding-left:18px;margin:0 0 16px 0">
@@ -122,7 +122,7 @@ function tmplEmail3(r: Row) {
 <li><strong>Conditional licence renewal</strong> with mandated remediation milestones, additional capital reporting, or restrictions on new product launches.</li>
 <li><strong>Public publication</strong> in the CBN's enforcement bulletin — visible to correspondent banks and counterparties.</li>
 </ol>
-<p>Zuia clients have already submitted their roadmaps. You can too — covering all 10 CBN capability areas, live in 48 hours.</p>`,
+<p>ApexAML clients have already submitted their roadmaps. You can too — covering all 10 CBN capability areas, live in 48 hours.</p>`,
   });
   return { subject: `What happens if ${r.institution_name} misses the June 10 CBN deadline?`, html };
 }
@@ -131,18 +131,18 @@ function tmplEmail4(r: Row) {
   const peer = (r.institution_type || "Nigerian financial institution").trim();
   const cta = trackedLink(r.tracking_token, 4, `${APP_BASE}/?utm_source=drip&utm_campaign=cbn_followup&utm_content=email4#how-it-works`);
   const html = shell({
-    preheader: `How ${peer}s in your peer group are using Zuia today.`,
-    step: 4, token: r.tracking_token, ctaText: `See how ${peer}s use Zuia →`, ctaUrl: cta,
+    preheader: `How ${peer}s in your peer group are using ApexAML today.`,
+    step: 4, token: r.tracking_token, ctaText: `See how ${peer}s use ApexAML →`, ctaUrl: cta,
     bodyHtml: `<p>Hi ${escapeHtml(r.contact_name.split(" ")[0])},</p>
-<p>Your peers — other ${escapeHtml(peer)}s — are already live on Zuia.</p>
+<p>Your peers — other ${escapeHtml(peer)}s — are already live on ApexAML.</p>
 <blockquote style="margin:16px 0;padding:12px 16px;border-left:3px solid #1d4ed8;background:#f1f5f9;font-style:italic;color:#1e293b">
-"Took 90 seconds to generate the roadmap, 48 hours to go live, and we filed our first NFIU goAML STR through Zuia the same week."<br/>
+"Took 90 seconds to generate the roadmap, 48 hours to go live, and we filed our first NFIU goAML STR through ApexAML the same week."<br/>
 <span style="font-style:normal;font-size:12px;color:#64748b">— CCO, Tier-3 ${escapeHtml(peer)}, Lagos</span>
 </blockquote>
-<p style="margin:16px 0"><strong>Average Zuia client goes from zero to CBN milestone 1 in 48 hours.</strong></p>
+<p style="margin:16px 0"><strong>Average ApexAML client goes from zero to CBN milestone 1 in 48 hours.</strong></p>
 <p>Don't let <strong>${escapeHtml(r.institution_name)}</strong> be the one explaining to the BSD why your roadmap is still in draft.</p>`,
   });
-  return { subject: `Your ${peer} peers are already live on Zuia`, html };
+  return { subject: `Your ${peer} peers are already live on ApexAML`, html };
 }
 
 function tmplEmail5(r: Row) {

@@ -18,7 +18,7 @@ const corsHeaders = {
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const TERMII_API_KEY = Deno.env.get("TERMII_API_KEY");
-const TERMII_SENDER_ID = Deno.env.get("TERMII_SENDER_ID") ?? "Zuia";
+const TERMII_SENDER_ID = Deno.env.get("TERMII_SENDER_ID") ?? "ApexAML";
 
 const admin = createClient(SUPABASE_URL, SERVICE_ROLE, {
   auth: { persistSession: false },
@@ -63,15 +63,15 @@ function normalisePhone(raw: string): string {
 
 function msgOne(name: string, institution: string, ref: string, email: string | null): string {
   const emailFrag = email ? ` It has been sent to ${email}.` : "";
-  return `Hello ${name}, your CBN AML roadmap for ${institution} has been generated (Ref: ${ref}).${emailFrag} The CBN roadmap submission deadline is June 10, 2026. Reply DEMO to book a 20-minute implementation session with our compliance team. — Zuia AML`;
+  return `Hello ${name}, your CBN AML roadmap for ${institution} has been generated (Ref: ${ref}).${emailFrag} The CBN roadmap submission deadline is June 10, 2026. Reply DEMO to book a 20-minute implementation session with our compliance team. — ApexAML AML`;
 }
 
 function msgTwo(name: string, institution: string, daysLeft: number): string {
-  return `Hi ${name}, just checking — did you receive your CBN roadmap for ${institution}? Your submission deadline is in ${daysLeft} days. Institutions that submit early avoid last-minute CBN scrutiny. If you need help implementing the roadmap, reply HELP or visit zuia.io — Zuia AML`;
+  return `Hi ${name}, just checking — did you receive your CBN roadmap for ${institution}? Your submission deadline is in ${daysLeft} days. Institutions that submit early avoid last-minute CBN scrutiny. If you need help implementing the roadmap, reply HELP or visit apexaml.com — ApexAML AML`;
 }
 
 function msgThree(institution: string, daysLeft: number): string {
-  return `Final reminder for ${institution}: the CBN roadmap deadline is in ${daysLeft} days. Zuia can have your AML system live within 48 hours — covering all 10 CBN capability areas. First month free for institutions that book before June 10. Reply DEMO to claim. — Zuia AML`;
+  return `Final reminder for ${institution}: the CBN roadmap deadline is in ${daysLeft} days. ApexAML can have your AML system live within 48 hours — covering all 10 CBN capability areas. First month free for institutions that book before June 10. Reply DEMO to claim. — ApexAML AML`;
 }
 
 async function sendWhatsApp(to: string, message: string): Promise<{ ok: boolean; error?: string }> {
