@@ -6,7 +6,7 @@ interface Row {
   feature: string;
   manual: { value: string; tone?: Tone };
   enterprise: { value: string; tone?: Tone };
-  sentinel: string;
+  apexaml: string;
 }
 
 const ROWS: Row[] = [
@@ -14,37 +14,37 @@ const ROWS: Row[] = [
     feature: 'Setup Time',
     manual: { value: '6–12 months hiring', tone: 'bad' },
     enterprise: { value: '18–24 months', tone: 'bad' },
-    sentinel: '48-hour API integration',
+    apexaml: '48-hour API integration',
   },
   {
     feature: 'Monthly Cost',
     manual: { value: '₦3–8M salary/analyst', tone: 'mid' },
     enterprise: { value: '₦15M+ licensing', tone: 'bad' },
-    sentinel: 'From ₦800k/month',
+    apexaml: 'From ₦800k/month',
   },
   {
     feature: 'goAML XML Export',
     manual: { value: 'Manual, error-prone', tone: 'bad' },
     enterprise: { value: 'Yes', tone: 'ok' },
-    sentinel: 'One-click, auto-formatted',
+    apexaml: 'One-click, auto-formatted',
   },
   {
     feature: 'Nigerian Typology Library',
     manual: { value: 'Ad-hoc', tone: 'bad' },
     enterprise: { value: 'Generic global', tone: 'mid' },
-    sentinel: '8 Nigerian-specific rules pre-loaded',
+    apexaml: '8 Nigerian-specific rules pre-loaded',
   },
   {
     feature: 'CBN Roadmap Support',
     manual: { value: 'None', tone: 'bad' },
     enterprise: { value: 'None', tone: 'bad' },
-    sentinel: 'Template included, co-authored',
+    apexaml: 'Template included, co-authored',
   },
   {
     feature: 'AI STR Drafting',
     manual: { value: '3–5 hours per STR', tone: 'bad' },
     enterprise: { value: 'Partial', tone: 'mid' },
-    sentinel: '11 minutes average',
+    apexaml: '11 minutes average',
   },
 ];
 
@@ -70,7 +70,7 @@ export function ComparisonSection() {
         <div className="text-center space-y-4 max-w-2xl mx-auto">
           <p className="text-xs uppercase tracking-[0.2em] text-primary font-semibold">The Comparison</p>
           <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight">
-            Why Nigerian fintechs choose Sentinel
+            Why Nigerian fintechs choose ApexAML
           </h2>
         </div>
 
@@ -93,7 +93,7 @@ export function ComparisonSection() {
                 <Sparkles className="h-3 w-3" /> Recommended
               </span>
               <p className="text-[10px] uppercase tracking-[0.18em] text-primary font-semibold">Modern platform</p>
-              <p className="text-sm text-white font-semibold mt-1">Sentinel</p>
+              <p className="text-sm text-white font-semibold mt-1">ApexAML</p>
               <p className="text-[10px] text-primary/70 mt-0.5">Built for Nigeria</p>
             </div>
 
@@ -112,7 +112,7 @@ export function ComparisonSection() {
                 <div className={`p-5 ${i < ROWS.length - 1 ? 'border-b border-primary/15' : ''} border-l border-primary/30 bg-primary/[0.07]`}>
                   <div className="flex items-start gap-2">
                     <Check className="h-3.5 w-3.5 text-risk-low shrink-0 mt-0.5" strokeWidth={3} />
-                    <span className="text-sm text-risk-low font-medium leading-relaxed">{row.sentinel}</span>
+                    <span className="text-sm text-risk-low font-medium leading-relaxed">{row.apexaml}</span>
                   </div>
                 </div>
               </div>
@@ -125,7 +125,7 @@ export function ComparisonSection() {
           {[
             { title: 'Manual Compliance Team', subtitle: 'In-house', key: 'manual' as const, recommended: false },
             { title: 'Enterprise AML', subtitle: 'NICE Actimize, etc.', key: 'enterprise' as const, recommended: false },
-            { title: 'Sentinel', subtitle: 'Built for Nigeria', key: 'sentinel' as const, recommended: true },
+            { title: 'ApexAML', subtitle: 'Built for Nigeria', key: 'apexaml' as const, recommended: true },
           ].map((col) => (
             <div
               key={col.key}
@@ -146,10 +146,10 @@ export function ComparisonSection() {
                 {ROWS.map((row) => (
                   <div key={row.feature} className="pt-3 first:pt-0">
                     <p className="text-[10px] uppercase tracking-wider text-white/40 font-semibold">{row.feature}</p>
-                    {col.key === 'sentinel' ? (
+                    {col.key === 'apexaml' ? (
                       <div className="flex items-start gap-2 mt-1.5">
                         <Check className="h-3.5 w-3.5 text-risk-low shrink-0 mt-0.5" strokeWidth={3} />
-                        <span className="text-sm text-risk-low font-medium">{row.sentinel}</span>
+                        <span className="text-sm text-risk-low font-medium">{row.apexaml}</span>
                       </div>
                     ) : (
                       <div className="mt-1.5">

@@ -17,11 +17,11 @@ interface FAQ {
 
 const FAQS: FAQ[] = [
   {
-    q: 'Does Sentinel satisfy the June 2026 CBN circular requirements?',
+    q: 'Does ApexAML satisfy the June 2026 CBN circular requirements?',
     a: (
       <div className="space-y-3">
         <p>
-          Yes. Sentinel was engineered specifically to satisfy the 10 capability areas mandated by Circular{' '}
+          Yes. ApexAML was engineered specifically to satisfy the 10 capability areas mandated by Circular{' '}
           <span className="font-mono text-white/80 text-[12px]">BSD/DIR/PUB/LAB/019/002</span>:
         </p>
         <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1.5 text-[13px] text-white/55 list-disc list-inside marker:text-primary">
@@ -43,7 +43,7 @@ const FAQS: FAQ[] = [
     q: 'Where is our data stored — is it in Nigeria?',
     a: (
       <p>
-        Sentinel is hosted on AWS <span className="text-white/80 font-mono text-[12px]">af-south-1</span> (Cape Town) — the closest AWS region with dedicated data-residency guarantees acceptable under the Nigeria Data Protection Act 2023. PII never crosses borders without your written instruction, and we sign a data processing addendum (DPA) at contract signing.
+        ApexAML is hosted on AWS <span className="text-white/80 font-mono text-[12px]">af-south-1</span> (Cape Town) — the closest AWS region with dedicated data-residency guarantees acceptable under the Nigeria Data Protection Act 2023. PII never crosses borders without your written instruction, and we sign a data processing addendum (DPA) at contract signing.
       </p>
     ),
   },
@@ -64,18 +64,18 @@ const FAQS: FAQ[] = [
     ),
   },
   {
-    q: 'Can Sentinel submit STRs directly to the NFIU goAML portal?',
+    q: 'Can ApexAML submit STRs directly to the NFIU goAML portal?',
     a: (
       <p>
-        Today, Sentinel exports each STR as a fully-validated <span className="text-white/80 font-mono text-[12px]">goAML XML</span> file ready for one-click upload via the NFIU portal — no manual reformatting, no rejected submissions. Direct API submission to NFIU is on our <span className="text-primary font-semibold">Q3 2026</span> roadmap, pending NFIU API access.
+        Today, ApexAML exports each STR as a fully-validated <span className="text-white/80 font-mono text-[12px]">goAML XML</span> file ready for one-click upload via the NFIU portal — no manual reformatting, no rejected submissions. Direct API submission to NFIU is on our <span className="text-primary font-semibold">Q3 2026</span> roadmap, pending NFIU API access.
       </p>
     ),
   },
   {
-    q: 'Is Sentinel CBN-approved?',
+    q: 'Is ApexAML CBN-approved?',
     a: (
       <p>
-        The CBN does not maintain an official certified-vendor list for AML platforms. Sentinel is built exactly to the specifications laid out in Circular <span className="font-mono text-white/80 text-[12px]">BSD/DIR/PUB/LAB/019/002</span>, and we provide a clause-by-clause compliance mapping document with every deployment so your compliance officer can demonstrate fitness during examination.
+        The CBN does not maintain an official certified-vendor list for AML platforms. ApexAML is built exactly to the specifications laid out in Circular <span className="font-mono text-white/80 text-[12px]">BSD/DIR/PUB/LAB/019/002</span>, and we provide a clause-by-clause compliance mapping document with every deployment so your compliance officer can demonstrate fitness during examination.
       </p>
     ),
   },
@@ -84,7 +84,7 @@ const FAQS: FAQ[] = [
     a: (
       <div className="space-y-2">
         <p>
-          Examiners typically request: (a) the institution's AML policy, (b) a sample of recent STRs, (c) the case-management trail for flagged customers, and (d) evidence of independent review. Sentinel produces all four on demand:
+          Examiners typically request: (a) the institution's AML policy, (b) a sample of recent STRs, (c) the case-management trail for flagged customers, and (d) evidence of independent review. ApexAML produces all four on demand:
         </p>
         <ul className="space-y-1 text-[13px] text-white/55 list-disc list-inside marker:text-primary">
           <li>One-click <span className="text-white/80">examiner pack</span> exporting any date range as a sealed PDF bundle</li>

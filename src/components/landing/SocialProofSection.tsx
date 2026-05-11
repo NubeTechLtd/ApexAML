@@ -30,7 +30,7 @@ const TESTIMONIALS = [
     title: 'Head of Financial Crime',
     institution: 'Licensed Fintech, Abuja',
     quote:
-      "Sentinel's CBN roadmap template got us through first review without a single rework. The AI co-pilot now drafts narratives our examiners actually accept.",
+      "ApexAML's CBN roadmap template got us through first review without a single rework. The AI co-pilot now drafts narratives our examiners actually accept.",
     rating: 5,
   },
   {

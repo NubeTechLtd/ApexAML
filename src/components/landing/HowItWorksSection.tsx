@@ -4,7 +4,7 @@ const STEPS = [
   {
     icon: Plug,
     title: 'Connect in 48 hours',
-    desc: 'Sentinel integrates with your core banking system or Paystack/Flutterwave via REST API. No legacy middleware.',
+    desc: 'ApexAML integrates with your core banking system or Paystack/Flutterwave via REST API. No legacy middleware.',
   },
   {
     icon: SlidersHorizontal,
