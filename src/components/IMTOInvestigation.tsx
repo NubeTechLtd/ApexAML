@@ -159,7 +159,7 @@ export function IMTOInvestigation({ alert, isResolved }: IMTOInvestigationProps)
     setBlockOpen(false);
     toast({
       title: 'Pickups blocked',
-      description: `${imto.beneficiaryName} cannot collect further IMTO cash at any Zuia-connected agent for 24 hours.`,
+      description: `${imto.beneficiaryName} cannot collect further IMTO cash at any ApexAML-connected agent for 24 hours.`,
     });
   };
 
@@ -325,7 +325,7 @@ export function IMTOInvestigation({ alert, isResolved }: IMTOInvestigationProps)
                 )}
               </div>
               <p className="text-[11px] text-muted-foreground">
-                Cumulative cash collected against a single beneficiary identity across all Zuia-connected IMTO agents (rolling 24h window).
+                Cumulative cash collected against a single beneficiary identity across all ApexAML-connected IMTO agents (rolling 24h window).
               </p>
             </div>
             <Button
@@ -432,14 +432,14 @@ export function IMTOInvestigation({ alert, isResolved }: IMTOInvestigationProps)
               <div className="space-y-3 pt-1">
                 <p className="text-sm">
                   This will prevent this beneficiary from receiving further cash at any
-                  Zuia-connected IMTO agent for 24 hours.
+                  ApexAML-connected IMTO agent for 24 hours.
                 </p>
                 <div className="rounded-md border bg-muted/40 p-3 text-xs space-y-1">
                   <div className="flex justify-between"><span className="text-muted-foreground">Beneficiary</span><span className="font-medium text-foreground">{imto.beneficiaryName}</span></div>
                   <div className="flex justify-between"><span className="text-muted-foreground">Phone</span><span className="font-mono text-foreground">{imto.beneficiaryPhone}</span></div>
                   {imto.beneficiaryNIN && <div className="flex justify-between"><span className="text-muted-foreground">NIN</span><span className="font-mono text-foreground">{imto.beneficiaryNIN}</span></div>}
                   <div className="flex justify-between"><span className="text-muted-foreground">Block duration</span><span className="font-medium text-foreground">24 hours</span></div>
-                  <div className="flex justify-between"><span className="text-muted-foreground">Scope</span><span className="font-medium text-foreground">All Zuia IMTO agents</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Scope</span><span className="font-medium text-foreground">All ApexAML IMTO agents</span></div>
                 </div>
                 <p className="text-[11px] text-muted-foreground">
                   Action will be recorded to the immutable audit log and notified to assigned compliance officer.

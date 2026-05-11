@@ -16,7 +16,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(
     searchParams.get('error') === 'unauthorized'
-      ? 'Your account does not have admin access. Contact hello@zuia.io.'
+      ? 'Your account does not have admin access. Contact hello@apexaml.com.'
       : null,
   );
 
@@ -38,7 +38,7 @@ export default function Login() {
     });
     setLoading(false);
     if (signInError) {
-      setError('Invalid email or password. Contact your Zuia administrator.');
+      setError('Invalid email or password. Contact your ApexAML administrator.');
       return;
     }
     navigate('/admin/roadmaps', { replace: true });
@@ -50,10 +50,10 @@ export default function Login() {
         <div className="flex flex-col items-center text-center mb-6">
           <div className="flex items-center gap-2 mb-2">
             <Shield className="h-6 w-6 text-primary" />
-            <span className="text-2xl font-bold tracking-tight">Zuia</span>
+            <span className="text-2xl font-bold tracking-tight">ApexAML</span>
           </div>
           <p className="text-sm text-muted-foreground">
-            Zuia Admin — Compliance Intelligence Platform
+            ApexAML Admin — Compliance Intelligence Platform
           </p>
         </div>
 
@@ -71,7 +71,7 @@ export default function Login() {
               type="email"
               autoComplete="email"
               required
-              placeholder="admin@zuia.io"
+              placeholder="admin@apexaml.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -94,9 +94,9 @@ export default function Login() {
         </form>
 
         <p className="mt-6 text-xs text-center text-muted-foreground">
-          Zuia admin access is restricted. Contact{' '}
-          <a href="mailto:hello@zuia.io" className="underline hover:text-foreground">
-            hello@zuia.io
+          ApexAML admin access is restricted. Contact{' '}
+          <a href="mailto:hello@apexaml.com" className="underline hover:text-foreground">
+            hello@apexaml.com
           </a>{' '}
           for access.
         </p>

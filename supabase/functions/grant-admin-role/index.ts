@@ -69,7 +69,7 @@ Deno.serve(async (req) => {
     page += 1;
   }
   if (!target) {
-    return json({ error: `No Zuia account found for ${email}. Ask them to sign up first.` }, 404);
+    return json({ error: `No ApexAML account found for ${email}. Ask them to sign up first.` }, 404);
   }
 
   // 4) Insert role (idempotent via unique constraint).

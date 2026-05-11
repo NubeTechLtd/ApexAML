@@ -42,8 +42,8 @@ function buildHtml(p: RoadmapEmailPayload): string {
     year: 'numeric',
   });
   const ctaUrl =
-    'https://zuia.io/?utm_source=roadmap_email&utm_medium=email&utm_campaign=cbn_roadmap';
-  const unsubUrl = `https://zuia.io/unsubscribe?email=${encodeURIComponent(p.to)}`;
+    'https://apexaml.com/?utm_source=roadmap_email&utm_medium=email&utm_campaign=cbn_roadmap';
+  const unsubUrl = `https://apexaml.com/unsubscribe?email=${encodeURIComponent(p.to)}`;
 
   return `<!doctype html>
 <html lang="en">
@@ -60,7 +60,7 @@ function buildHtml(p: RoadmapEmailPayload): string {
             <!-- HEADER -->
             <tr>
               <td style="background:#1a1a2e;padding:24px 28px;">
-                <div style="font-size:22px;font-weight:600;color:#ffffff;letter-spacing:-0.01em;">Zuia</div>
+                <div style="font-size:22px;font-weight:600;color:#ffffff;letter-spacing:-0.01em;">ApexAML</div>
                 <div style="font-size:12px;color:rgba(255,255,255,0.55);margin-top:4px;">CBN AML Compliance Platform</div>
               </td>
             </tr>
@@ -97,14 +97,14 @@ function buildHtml(p: RoadmapEmailPayload): string {
               <td style="padding:24px 28px 8px 28px;">
                 <div style="font-size:13px;font-weight:600;color:#1a1a2e;margin:0 0 8px;text-transform:uppercase;letter-spacing:0.04em;">What next?</div>
                 <p style="font-size:14px;line-height:1.7;color:#3a3a4e;margin:0 0 20px;">
-                  This roadmap covers the controls — Zuia is the platform that operates them. Sanctions screening,
+                  This roadmap covers the controls — ApexAML is the platform that operates them. Sanctions screening,
                   transaction monitoring, NFIU goAML STRs, and the full IMTO regulatory pack are all live and
                   CBN-aligned.
                 </p>
                 <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px;">
                   <tr>
                     <td style="background:#1a1a2e;border-radius:6px;">
-                      <a href="${ctaUrl}" style="display:inline-block;padding:12px 22px;font-size:14px;font-weight:600;color:#ffffff;text-decoration:none;">Implement this roadmap with Zuia →</a>
+                      <a href="${ctaUrl}" style="display:inline-block;padding:12px 22px;font-size:14px;font-weight:600;color:#ffffff;text-decoration:none;">Implement this roadmap with ApexAML →</a>
                     </td>
                   </tr>
                 </table>
@@ -119,12 +119,12 @@ function buildHtml(p: RoadmapEmailPayload): string {
                   <div><strong style="color:#3a3a4e;">Generated:</strong> ${today}</div>
                   <div style="margin-top:10px;">
                     This email contains regulatory guidance prepared for ${safeInst}. NDPR notice: your contact
-                    details were collected with consent at zuia.io/roadmap and are processed solely to deliver this
+                    details were collected with consent at apexaml.com/roadmap and are processed solely to deliver this
                     roadmap and respond to compliance enquiries. We do not share your data with third parties.
                   </div>
                   <div style="margin-top:10px;">
                     <a href="${unsubUrl}" style="color:#6b6b80;text-decoration:underline;">Unsubscribe</a>
-                    &nbsp;·&nbsp; Zuia · hello@zuia.io
+                    &nbsp;·&nbsp; ApexAML · hello@apexaml.com
                   </div>
                 </div>
               </td>
@@ -199,9 +199,9 @@ Deno.serve(async (req: Request) => {
         'X-Connection-Api-Key': RESEND_API_KEY,
       },
       body: JSON.stringify({
-        from: 'Zuia <onboarding@resend.dev>',
+        from: 'ApexAML <onboarding@resend.dev>',
         to: [payload.to],
-        reply_to: 'hello@zuia.io',
+        reply_to: 'hello@apexaml.com',
         subject,
         html,
       }),

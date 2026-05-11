@@ -55,7 +55,7 @@ export function AppSidebar() {
           </div>
           {!collapsed && (
             <div className="flex flex-col">
-              <span className="text-sm font-semibold text-sidebar-primary">SentinelAML</span>
+              <span className="text-sm font-semibold text-sidebar-primary">ApexAML</span>
               <span className="text-[10px] text-sidebar-muted">Compliance Suite v2.4</span>
             </div>
           )}

@@ -407,7 +407,7 @@ Managing Director:                                    Signature: _______________
   };
 
   const handleShareWhatsApp = () => {
-    const message = `I just generated my CBN AML implementation roadmap for ${institutionName} using Zuia (zuia.ng) — pre-formatted for CBN Circular BSD/DIR/PUB/LAB/019/002. Submission deadline is 10 June 2026. You can generate yours free at zuia.ng/roadmap.`;
+    const message = `I just generated my CBN AML implementation roadmap for ${institutionName} using ApexAML (apexaml.com) — pre-formatted for CBN Circular BSD/DIR/PUB/LAB/019/002. Submission deadline is 10 June 2026. You can generate yours free at apexaml.com/roadmap.`;
     window.open(buildWhatsAppUrl(message), '_blank', 'noopener,noreferrer');
   };
 
@@ -415,7 +415,7 @@ Managing Director:                                    Signature: _______________
     trackEvent('demo_cta_clicked', { source: 'roadmap_generator' });
     if (!demoMessage) {
       setDemoMessage(
-        `I have generated my CBN roadmap ${referenceNumber} and want to implement it with Zuia.`,
+        `I have generated my CBN roadmap ${referenceNumber} and want to implement it with ApexAML.`,
       );
     }
     setDemoOpen(true);
@@ -472,7 +472,7 @@ Managing Director:                                    Signature: _______________
   };
 
   const handleImplementationWhatsApp = () => {
-    const message = `Hi Zuia — I just generated my CBN AML roadmap (Ref ${referenceNumber}) for ${institutionName}. I'd like implementation support. Can we talk?`;
+    const message = `Hi ApexAML — I just generated my CBN AML roadmap (Ref ${referenceNumber}) for ${institutionName}. I'd like implementation support. Can we talk?`;
     window.open(buildWhatsAppUrl(message), '_blank', 'noopener,noreferrer');
   };
 
@@ -598,7 +598,7 @@ Managing Director:                                    Signature: _______________
                     {/* Social proof */}
                     <div className="rounded-xl border bg-card p-5 space-y-3">
                       <p className="text-sm italic text-foreground/85 leading-relaxed">
-                        "We submitted our CBN roadmap within 2 hours of generating it with Zuia. The format was
+                        "We submitted our CBN roadmap within 2 hours of generating it with ApexAML. The format was
                         exactly what the examiner expected."
                       </p>
                       <p className="text-xs text-muted-foreground">
@@ -916,7 +916,7 @@ Managing Director:                                    Signature: _______________
                       <div className="flex items-start justify-between gap-4 flex-wrap">
                         <div>
                           <div className="text-[20px] font-medium leading-none tracking-tight text-foreground">
-                            Zuia
+                            ApexAML
                           </div>
                           <div className="text-[11px] text-muted-foreground mt-1">
                             CBN AML Compliance Platform
@@ -982,7 +982,7 @@ Managing Director:                                    Signature: _______________
                             This roadmap covers the $200 cash-limit structuring rule, inbound-only and
                             naira-only validation, 24-hour cross-border STR auto-countdown, phantom payroll
                             network detection, and May 2026 settlement account segregation monitoring. These
-                            are pre-configured in Zuia's IMTO module.
+                            are pre-configured in ApexAML's IMTO module.
                           </p>
                         </div>
                       </div>
@@ -1004,16 +1004,16 @@ Managing Director:                                    Signature: _______________
                       </Button>
                     </div>
 
-                    {/* CONVERSION SECTION — implement with Zuia */}
+                    {/* CONVERSION SECTION — implement with ApexAML */}
                     <section className="mt-10 pt-8 border-t border-border space-y-6">
                       <div className="space-y-2">
                         <h3 className="text-[16px] font-medium tracking-tight text-foreground">
-                          Your next step: implement this roadmap with Zuia
+                          Your next step: implement this roadmap with ApexAML
                         </h3>
                         <p className="text-[13px] text-muted-foreground leading-relaxed">
-                          Your roadmap is the plan. Zuia is the platform that executes it — covering all 10
+                          Your roadmap is the plan. ApexAML is the platform that executes it — covering all 10
                           CBN capability areas with AI-powered STR drafting, real-time transaction
-                          monitoring, and a pre-built NFIU goAML export. Institutions using Zuia meet their
+                          monitoring, and a pre-built NFIU goAML export. Institutions using ApexAML meet their
                           CBN roadmap milestones in weeks, not months.
                         </p>
                       </div>
@@ -1128,9 +1128,9 @@ Managing Director:                                    Signature: _______________
         <Sheet open={demoOpen} onOpenChange={setDemoOpen}>
           <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
             <SheetHeader className="space-y-2 text-left">
-              <SheetTitle>Book a 20-minute Zuia demo</SheetTitle>
+              <SheetTitle>Book a 20-minute ApexAML demo</SheetTitle>
               <SheetDescription>
-                We will walk you through how Zuia operates the controls in your CBN roadmap.
+                We will walk you through how ApexAML operates the controls in your CBN roadmap.
               </SheetDescription>
             </SheetHeader>
 

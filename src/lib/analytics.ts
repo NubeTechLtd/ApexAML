@@ -1,6 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 
-const SESSION_KEY = 'zuia_session_id';
+const SESSION_KEY = 'apexaml_session_id';
 
 function getSessionId(): string {
   try {
