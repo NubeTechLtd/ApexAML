@@ -67,7 +67,7 @@ ${events}
 
 4. NFIU FORMATTING & COMPLIANCE
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   Reporting Entity:       SentinelAML Compliance Suite
+   Reporting Entity:       ApexAML Compliance Suite
    Report Category:        Suspicious Transaction Report
    Filing Deadline:        Within 24 hours of determination
    Regulatory Reference:   CBN AML/CFT Regulations 2023, Section 11
