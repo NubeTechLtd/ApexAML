@@ -56,7 +56,7 @@ export function BookDemoSheet({ open, onOpenChange }: Props) {
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/15 border border-primary/30 text-primary">
             <CalendarCheck className="h-5 w-5" />
           </div>
-          <SheetTitle className="text-white text-xl">Book a Sentinel Demo</SheetTitle>
+          <SheetTitle className="text-white text-xl">Book a ApexAML Demo</SheetTitle>
           <SheetDescription className="text-white/50">
             30-minute walkthrough tailored to your institution. We'll reach out within 24 hours.
           </SheetDescription>
@@ -69,7 +69,7 @@ export function BookDemoSheet({ open, onOpenChange }: Props) {
             </div>
             <h3 className="text-white font-semibold text-lg">Request received</h3>
             <p className="text-white/50 text-sm max-w-xs">
-              A Sentinel specialist will email you to schedule your private walkthrough.
+              A ApexAML specialist will email you to schedule your private walkthrough.
             </p>
           </div>
         ) : (

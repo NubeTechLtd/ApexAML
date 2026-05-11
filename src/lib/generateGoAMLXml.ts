@@ -52,7 +52,7 @@ export function generateGoAMLXml(alert: Alert, strDraft: string): string {
   </ReportHeader>
 ${crossBorderBlock}  <ReportingEntity>
     <EntityType>BANK</EntityType>
-    <EntityName>Sentinel Financial Institution</EntityName>
+    <EntityName>ApexAML Financial Institution</EntityName>
     <RCNumber>RC-123456</RCNumber>
   </ReportingEntity>
   <SubjectInformation>
@@ -94,7 +94,7 @@ export function generateGoAMLXmlFromLegacy(alert: AlertData, strDraft: string): 
   </ReportHeader>
   <ReportingEntity>
     <EntityType>BANK</EntityType>
-    <EntityName>Sentinel Financial Institution</EntityName>
+    <EntityName>ApexAML Financial Institution</EntityName>
     <RCNumber>RC-123456</RCNumber>
   </ReportingEntity>
   <SubjectInformation>

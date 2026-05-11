@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 const SECTIONS = [
   {
     h: '1. Who we are',
-    p: 'Sentinel Technologies Limited ("Sentinel", "we") is a Nigerian-incorporated software vendor providing AML compliance technology to regulated financial institutions. We act as a Data Processor on behalf of our institutional clients, who remain the Data Controller for their customers\' personal data.',
+    p: 'ApexAML Technologies Limited ("ApexAML", "we") is a Nigerian-incorporated software vendor providing AML compliance technology to regulated financial institutions. We act as a Data Processor on behalf of our institutional clients, who remain the Data Controller for their customers\' personal data.',
   },
   {
     h: '2. Data we collect from this website',
@@ -21,15 +21,15 @@ const SECTIONS = [
   },
   {
     h: '5. Retention',
-    p: 'Lead data is retained for 24 months from the date of last contact, after which it is deleted. You may request deletion at any time by emailing privacy@sentinel.ng — we will action verified requests within 30 days as required by NDPA Section 36.',
+    p: 'Lead data is retained for 24 months from the date of last contact, after which it is deleted. You may request deletion at any time by emailing privacy@apexaml.com — we will action verified requests within 30 days as required by NDPA Section 36.',
   },
   {
     h: '6. Your rights',
-    p: 'You have the right to access, rectify, port, restrict processing of, object to, or delete your personal data. To exercise any right contact our Data Protection Officer at privacy@sentinel.ng. You may also lodge a complaint with the Nigeria Data Protection Commission (NDPC) at ndpc.gov.ng.',
+    p: 'You have the right to access, rectify, port, restrict processing of, object to, or delete your personal data. To exercise any right contact our Data Protection Officer at privacy@apexaml.com. You may also lodge a complaint with the Nigeria Data Protection Commission (NDPC) at ndpc.gov.ng.',
   },
   {
     h: '7. Contact',
-    p: 'Data Protection Officer — privacy@sentinel.ng. Sentinel Technologies Limited, Lagos, Nigeria.',
+    p: 'Data Protection Officer — privacy@apexaml.com. ApexAML Technologies Limited, Lagos, Nigeria.',
   },
 ];
 
@@ -41,7 +41,7 @@ export default function Privacy() {
         <div className="mx-auto max-w-3xl flex items-center justify-between px-6 h-16">
           <Link to="/" className="flex items-center gap-2">
             <Shield className="h-5 w-5 text-primary" />
-            <span className="font-bold text-base text-white tracking-tight">Sentinel</span>
+            <span className="font-bold text-base text-white tracking-tight">ApexAML</span>
           </Link>
           <Button asChild size="sm" variant="ghost" className="text-white/60 hover:text-white hover:bg-white/5">
             <Link to="/">
@@ -76,13 +76,13 @@ export default function Privacy() {
           <Mail className="h-5 w-5 text-primary shrink-0 mt-0.5" />
           <div className="text-sm text-white/70 space-y-1">
             <p className="font-medium text-white">Need to exercise a data right?</p>
-            <p>Email <a href="mailto:privacy@sentinel.ng" className="text-primary hover:underline">privacy@sentinel.ng</a> — we respond within 30 days.</p>
+            <p>Email <a href="mailto:privacy@apexaml.com" className="text-primary hover:underline">privacy@apexaml.com</a> — we respond within 30 days.</p>
           </div>
         </div>
 
         <p className="text-xs text-white/30 pt-6 border-t border-white/[0.06]">
           A signed Data Processing Agreement (DPA) is provided to all institutional clients at contract signing. Request a copy at{' '}
-          <a href="mailto:privacy@sentinel.ng" className="text-primary hover:underline">privacy@sentinel.ng</a>.
+          <a href="mailto:privacy@apexaml.com" className="text-primary hover:underline">privacy@apexaml.com</a>.
         </p>
       </main>
     </div>

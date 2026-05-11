@@ -26,7 +26,7 @@ export function NDPRConsent({ checked, onCheckedChange, id = 'ndpr-consent', cla
           aria-required="true"
         />
         <span className="text-xs text-white/55 leading-relaxed">
-          I agree to Sentinel's{' '}
+          I agree to ApexAML's{' '}
           <Link
             to="/privacy"
             target="_blank"

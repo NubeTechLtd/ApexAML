@@ -42,7 +42,7 @@ export const AUDIENCES: Record<AudienceKey, AudienceProfile> = {
     description: 'Switching, processing, and acquiring providers including agency banking & POS aggregators.',
     features: [
       { title: 'Identity & KYC Ops', desc: 'Verify agents, merchants, and end-customers through a unified BVN/NIN flow — flag mule terminals automatically.' },
-      { title: 'AI STR Co-Pilot', desc: 'Detects and drafts STRs for POS structuring across agent networks — Sentinel-trained on Nigerian typology T-NG-204.' },
+      { title: 'AI STR Co-Pilot', desc: 'Detects and drafts STRs for POS structuring across agent networks — ApexAML-trained on Nigerian typology T-NG-204.' },
       { title: 'No-Code Rules Engine', desc: 'Set velocity, geography, and basket-size rules per merchant tier without engineering tickets.' },
       { title: 'Immutable Audit Trail', desc: 'Settle disputes with chargeback-proof records — every authorization and reversal logged forever.' },
     ],

@@ -89,7 +89,7 @@ export function RulesSandbox() {
     const rule = RULES.find(r => r.id === selectedRule);
     const now = new Date();
     const content = `
-SENTINEL — AML/CFT COMPLIANCE PLATFORM
+APEXAML — AML/CFT COMPLIANCE PLATFORM
 VALIDATION CERTIFICATE
 ${'='.repeat(50)}
 
@@ -121,7 +121,7 @@ This validation was performed in accordance with CBN
 AML/CFT/CPF Compliance Framework requirements for
 annual model validation of automated detection rules.
 
-Validated by: Sentinel Compliance Platform
+Validated by: ApexAML Compliance Platform
 Timestamp: ${now.toISOString()}
 
 ${'='.repeat(50)}

@@ -30,7 +30,7 @@ export function AudienceSelector() {
         <div className="text-center space-y-2">
           <p className="text-[10px] uppercase tracking-[0.2em] text-primary font-semibold">Pick your institution type</p>
           <h2 className="text-xl md:text-2xl font-bold text-white tracking-tight">
-            See Sentinel through your lens
+            See ApexAML through your lens
           </h2>
         </div>
 
@@ -84,7 +84,7 @@ export function AudienceSelector() {
             animate={{ opacity: 1 }}
             className="text-center text-xs text-white/45"
           >
-            Showing Sentinel tailored for{' '}
+            Showing ApexAML tailored for{' '}
             <span className="text-primary font-semibold">{AUDIENCES[audience].label}</span>.{' '}
             <button
               type="button"
