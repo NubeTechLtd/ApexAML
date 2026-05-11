@@ -326,12 +326,12 @@ export default function AdminRoadmaps() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `zuia_leads_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = `apexaml_leads_${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };
 
-  const exportFilename = `zuia_leads_${new Date().toISOString().slice(0, 10)}.csv`;
+  const exportFilename = `apexaml_leads_${new Date().toISOString().slice(0, 10)}.csv`;
 
   const handleGrantAdmin = async (e: React.FormEvent) => {
     e.preventDefault();
