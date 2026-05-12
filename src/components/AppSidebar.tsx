@@ -1,6 +1,7 @@
 import { LayoutDashboard, Inbox, Users, Settings2, FileText, Shield, Fingerprint, ShieldAlert, Search, Banknote, Building2, BarChart2, LogOut } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { useAuth } from '@/hooks/useAuth';
+import logo from '@/assets/logo.svg';
 import { Button } from '@/components/ui/button';
 import {
   Sidebar,
@@ -50,9 +51,7 @@ export function AppSidebar() {
     <Sidebar collapsible="icon" className="border-r-0">
       <SidebarHeader className="p-4">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-sidebar-accent">
-            <Shield className="h-4 w-4 text-sidebar-primary" />
-          </div>
+          <img src={logo} alt="ApexAML" className="h-8 w-8 shrink-0" />
           {!collapsed && (
             <div className="flex flex-col">
               <span className="text-sm font-semibold text-sidebar-primary">ApexAML</span>
