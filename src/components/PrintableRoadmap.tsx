@@ -831,17 +831,37 @@ export const PrintableRoadmap = forwardRef<HTMLDivElement, PrintableRoadmapProps
         {/* FOOTER */}
         <div
           style={{
-            marginTop: '24px',
+            marginTop: '32px',
             paddingTop: '12px',
-            borderTop: `1px solid ${BORDER}`,
+            borderTop: `2px solid ${NAVY}`,
             display: 'flex',
             justifyContent: 'space-between',
+            alignItems: 'center',
             fontSize: '9px',
             color: MUTED,
           }}
         >
-          <div>ApexAML · apexaml.com · CBN Circular BSD/DIR/PUB/LAB/019/002</div>
-          <div>Ref {referenceNumber} · {todayFormatted}</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span
+              style={{
+                display: 'inline-block',
+                width: '6px',
+                height: '6px',
+                background: GOLD,
+                borderRadius: '50%',
+              }}
+            />
+            <span style={{ fontWeight: 600, color: SLATE }}>
+              Prepared in accordance with CBN Circular BSD/DIR/PUB/LAB/019/002
+            </span>
+          </div>
+          <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+            <span>Ref {referenceNumber}</span>
+            <span style={{ color: BORDER }}>|</span>
+            <span>{todayFormatted}</span>
+            <span style={{ color: BORDER }}>|</span>
+            <span style={{ fontWeight: 600, color: SLATE }}>Page 1 of 1</span>
+          </div>
         </div>
       </div>
     );
