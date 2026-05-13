@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Slider } from '@/components/ui/slider';
 import { useToast } from '@/hooks/use-toast';
 import { mockSanctionsMatches, type SanctionsMatch } from '@/data/mockSanctions';
 import { BulkDismissDialog } from '@/components/sanctions/BulkDismissDialog';
