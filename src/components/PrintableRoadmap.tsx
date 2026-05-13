@@ -67,8 +67,11 @@ const GOLD = '#d4a843';
 const SLATE = '#1f2937';
 const MUTED = '#64748b';
 const BORDER = '#e2e8f0';
+const CONFIDENTIAL_RED = '#b91c1c';
+const AMBER = '#b45309';
+const GREEN = '#15803d';
 
-// Gantt phases (months, 1-indexed across 24 months)
+// Strategic 24-month Gantt phases
 const PHASES = [
   { name: 'Phase 1 — Foundation', start: 1, end: 3, color: '#1e3a8a' },
   { name: 'Phase 2 — Core Implementation', start: 4, end: 9, color: '#0e7490' },
@@ -77,6 +80,24 @@ const PHASES = [
 ];
 
 const TOTAL_MONTHS = 24;
+
+// 12-Week tactical remediation Gantt (CBN initial submission window)
+const WEEK_PHASES = [
+  { name: 'Gap Analysis & Risk Assessment', start: 1, end: 2, color: '#1e3a8a' },
+  { name: 'Policy & Procedure Refresh', start: 3, end: 5, color: '#0e7490' },
+  { name: 'Technology Deployment & Rule Tuning', start: 6, end: 9, color: '#15803d' },
+  { name: 'Staff Training & UAT', start: 10, end: 11, color: '#b45309' },
+  { name: 'Internal Audit & CBN Attestation', start: 12, end: 12, color: '#b91c1c' },
+];
+
+const TOTAL_WEEKS = 12;
+
+// Returns colour for the deadline pill — amber if within 90 days, green otherwise
+function deadlineTone(deadline: Date): { bg: string; fg: string; label: string } {
+  const days = Math.ceil((deadline.getTime() - Date.now()) / 86_400_000);
+  if (days <= 90) return { bg: '#fef3c7', fg: AMBER, label: `${days} days remaining` };
+  return { bg: '#dcfce7', fg: GREEN, label: `${days} days remaining` };
+}
 
 export const PrintableRoadmap = forwardRef<HTMLDivElement, PrintableRoadmapProps>(
   (props, ref) => {
@@ -96,6 +117,7 @@ export const PrintableRoadmap = forwardRef<HTMLDivElement, PrintableRoadmapProps
     const covered = getCoveredCapabilities(amlSetup);
     const coveredCount = CAPABILITY_AREAS.filter((c) => covered.has(c)).length;
     const gapCount = CAPABILITY_AREAS.length - coveredCount;
+    const deadline = deadlineTone(new Date('2026-06-10T00:00:00'));
 
     return (
       <div
@@ -181,6 +203,21 @@ export const PrintableRoadmap = forwardRef<HTMLDivElement, PrintableRoadmapProps
             </div>
           </div>
           <div style={{ textAlign: 'right', fontSize: '10px', color: MUTED }}>
+            <div
+              style={{
+                display: 'inline-block',
+                background: CONFIDENTIAL_RED,
+                color: '#ffffff',
+                fontSize: '10px',
+                fontWeight: 700,
+                letterSpacing: '0.18em',
+                padding: '4px 10px',
+                borderRadius: '2px',
+                marginBottom: '8px',
+              }}
+            >
+              CONFIDENTIAL
+            </div>
             <div style={{ fontWeight: 600, color: SLATE }}>Ref: {referenceNumber}</div>
             <div>Issued: {todayFormatted}</div>
             <div>CBN Circular BSD/DIR/PUB/LAB/019/002</div>
@@ -217,39 +254,131 @@ export const PrintableRoadmap = forwardRef<HTMLDivElement, PrintableRoadmapProps
           </div>
         </div>
 
-        {/* INSTITUTION FACT TABLE */}
+        {/* EXECUTIVE SUMMARY — 2x2 metadata grid */}
+        <div
+          style={{
+            fontSize: '10px',
+            color: GOLD,
+            fontWeight: 700,
+            letterSpacing: '0.12em',
+            textTransform: 'uppercase',
+            marginBottom: '8px',
+          }}
+        >
+          Executive Summary
+        </div>
+        <table
+          style={{
+            width: '100%',
+            borderCollapse: 'collapse',
+            marginBottom: '14px',
+            fontSize: '11px',
+            tableLayout: 'fixed',
+          }}
+        >
+          <tbody>
+            {[
+              [
+                { k: 'Institution Name', v: institutionName, highlight: false as const },
+                { k: 'Licence Type', v: institutionType, highlight: false as const },
+              ],
+              [
+                { k: 'Monthly Volume', v: volume, highlight: false as const },
+                {
+                  k: 'CBN Target Deadline',
+                  v: '10 June 2026',
+                  highlight: true as const,
+                  pill: deadline,
+                },
+              ],
+            ].map((row, ri) => (
+              <tr key={ri}>
+                {row.map((cell) => (
+                  <td
+                    key={cell.k}
+                    style={{
+                      width: '50%',
+                      border: `1px solid ${BORDER}`,
+                      padding: '12px 14px',
+                      verticalAlign: 'top',
+                      background: '#ffffff',
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: '9px',
+                        color: MUTED,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.1em',
+                        fontWeight: 600,
+                        marginBottom: '4px',
+                      }}
+                    >
+                      {cell.k}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '13px',
+                        fontWeight: 700,
+                        color: NAVY,
+                        lineHeight: 1.3,
+                      }}
+                    >
+                      {cell.v}
+                    </div>
+                    {cell.highlight && cell.pill && (
+                      <div
+                        style={{
+                          display: 'inline-block',
+                          marginTop: '6px',
+                          background: cell.pill.bg,
+                          color: cell.pill.fg,
+                          fontSize: '9px',
+                          fontWeight: 700,
+                          letterSpacing: '0.06em',
+                          textTransform: 'uppercase',
+                          padding: '3px 8px',
+                          borderRadius: '10px',
+                        }}
+                      >
+                        {cell.pill.label}
+                      </div>
+                    )}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        {/* Supporting metadata strip */}
         <table
           style={{
             width: '100%',
             borderCollapse: 'collapse',
             marginBottom: '28px',
-            fontSize: '11px',
+            fontSize: '10px',
           }}
         >
           <tbody>
             {[
-              ['Institution', institutionName],
-              ['Licence type', institutionType],
-              ['Compliance officer', `${contactName}, ${contactTitle}`],
+              ['Compliance Officer', `${contactName}, ${contactTitle}`],
               ['Contact', email],
-              ['Current AML setup', amlSetup],
-              ['Monthly transaction volume', volume],
-              ['Initial CBN submission deadline', '10 June 2026'],
-              ['Full compliance deadline', fullDeadline],
+              ['Current AML Setup', amlSetup],
+              ['Full Compliance Deadline', fullDeadline],
             ].map(([k, v]) => (
               <tr key={k} style={{ borderBottom: `1px solid ${BORDER}` }}>
                 <td
                   style={{
-                    padding: '8px 12px 8px 0',
+                    padding: '6px 12px 6px 0',
                     color: MUTED,
                     fontWeight: 500,
-                    width: '38%',
-                    verticalAlign: 'top',
+                    width: '40%',
                   }}
                 >
                   {k}
                 </td>
-                <td style={{ padding: '8px 0', color: SLATE, fontWeight: 500 }}>{v}</td>
+                <td style={{ padding: '6px 0', color: SLATE, fontWeight: 500 }}>{v}</td>
               </tr>
             ))}
           </tbody>
@@ -338,6 +467,109 @@ export const PrintableRoadmap = forwardRef<HTMLDivElement, PrintableRoadmapProps
                       }}
                     >
                       {isCovered ? 'In place' : 'Gap — remediate'}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        {/* 12-WEEK TACTICAL GANTT — for initial CBN submission */}
+        <div style={{ marginBottom: '28px', pageBreakInside: 'avoid' }}>
+          <h2
+            style={{
+              fontSize: '15px',
+              fontWeight: 700,
+              color: NAVY,
+              margin: '0 0 4px 0',
+              borderBottom: `2px solid ${NAVY}`,
+              paddingBottom: '6px',
+              letterSpacing: '-0.01em',
+            }}
+          >
+            12-Week Remediation Timeline
+          </h2>
+          <div style={{ fontSize: '10px', color: MUTED, marginBottom: '14px' }}>
+            Tactical sprint to deliver the initial CBN roadmap submission by 10 June 2026.
+          </div>
+
+          {/* Week axis */}
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '9px', marginBottom: '4px' }}>
+            <tbody>
+              <tr>
+                <td style={{ width: '36%' }}></td>
+                <td style={{ width: '64%', padding: 0 }}>
+                  <div style={{ display: 'flex', color: MUTED, fontWeight: 500 }}>
+                    {[1, 3, 5, 7, 9, 11].map((w) => (
+                      <div
+                        key={w}
+                        style={{
+                          flex: 1,
+                          textAlign: 'left',
+                          borderLeft: `1px solid ${BORDER}`,
+                          paddingLeft: '4px',
+                        }}
+                      >
+                        W{w}
+                      </div>
+                    ))}
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          {/* Week Gantt rows */}
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <tbody>
+              {WEEK_PHASES.map((p) => {
+                const leftPct = ((p.start - 1) / TOTAL_WEEKS) * 100;
+                const widthPct = ((p.end - p.start + 1) / TOTAL_WEEKS) * 100;
+                return (
+                  <tr key={p.name} style={{ borderBottom: `1px solid ${BORDER}` }}>
+                    <td
+                      style={{
+                        width: '36%',
+                        padding: '8px 12px 8px 0',
+                        fontSize: '10px',
+                        fontWeight: 600,
+                        color: SLATE,
+                        verticalAlign: 'middle',
+                      }}
+                    >
+                      {p.name}
+                    </td>
+                    <td style={{ width: '64%', padding: '8px 0', verticalAlign: 'middle' }}>
+                      <div
+                        style={{
+                          position: 'relative',
+                          height: '20px',
+                          background: '#f1f5f9',
+                          borderRadius: '3px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            position: 'absolute',
+                            top: 0,
+                            bottom: 0,
+                            left: `${leftPct}%`,
+                            width: `${widthPct}%`,
+                            background: p.color,
+                            borderRadius: '3px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            paddingLeft: '8px',
+                            color: '#ffffff',
+                            fontSize: '9px',
+                            fontWeight: 600,
+                            letterSpacing: '0.02em',
+                          }}
+                        >
+                          {p.start === p.end ? `W${p.start}` : `W${p.start}–W${p.end}`}
+                        </div>
+                      </div>
                     </td>
                   </tr>
                 );
@@ -599,17 +831,37 @@ export const PrintableRoadmap = forwardRef<HTMLDivElement, PrintableRoadmapProps
         {/* FOOTER */}
         <div
           style={{
-            marginTop: '24px',
+            marginTop: '32px',
             paddingTop: '12px',
-            borderTop: `1px solid ${BORDER}`,
+            borderTop: `2px solid ${NAVY}`,
             display: 'flex',
             justifyContent: 'space-between',
+            alignItems: 'center',
             fontSize: '9px',
             color: MUTED,
           }}
         >
-          <div>ApexAML · apexaml.com · CBN Circular BSD/DIR/PUB/LAB/019/002</div>
-          <div>Ref {referenceNumber} · {todayFormatted}</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span
+              style={{
+                display: 'inline-block',
+                width: '6px',
+                height: '6px',
+                background: GOLD,
+                borderRadius: '50%',
+              }}
+            />
+            <span style={{ fontWeight: 600, color: SLATE }}>
+              Prepared in accordance with CBN Circular BSD/DIR/PUB/LAB/019/002
+            </span>
+          </div>
+          <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+            <span>Ref {referenceNumber}</span>
+            <span style={{ color: BORDER }}>|</span>
+            <span>{todayFormatted}</span>
+            <span style={{ color: BORDER }}>|</span>
+            <span style={{ fontWeight: 600, color: SLATE }}>Page 1 of 1</span>
+          </div>
         </div>
       </div>
     );
