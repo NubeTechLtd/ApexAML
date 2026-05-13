@@ -475,6 +475,109 @@ export const PrintableRoadmap = forwardRef<HTMLDivElement, PrintableRoadmapProps
           </table>
         </div>
 
+        {/* 12-WEEK TACTICAL GANTT — for initial CBN submission */}
+        <div style={{ marginBottom: '28px', pageBreakInside: 'avoid' }}>
+          <h2
+            style={{
+              fontSize: '15px',
+              fontWeight: 700,
+              color: NAVY,
+              margin: '0 0 4px 0',
+              borderBottom: `2px solid ${NAVY}`,
+              paddingBottom: '6px',
+              letterSpacing: '-0.01em',
+            }}
+          >
+            12-Week Remediation Timeline
+          </h2>
+          <div style={{ fontSize: '10px', color: MUTED, marginBottom: '14px' }}>
+            Tactical sprint to deliver the initial CBN roadmap submission by 10 June 2026.
+          </div>
+
+          {/* Week axis */}
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '9px', marginBottom: '4px' }}>
+            <tbody>
+              <tr>
+                <td style={{ width: '36%' }}></td>
+                <td style={{ width: '64%', padding: 0 }}>
+                  <div style={{ display: 'flex', color: MUTED, fontWeight: 500 }}>
+                    {[1, 3, 5, 7, 9, 11].map((w) => (
+                      <div
+                        key={w}
+                        style={{
+                          flex: 1,
+                          textAlign: 'left',
+                          borderLeft: `1px solid ${BORDER}`,
+                          paddingLeft: '4px',
+                        }}
+                      >
+                        W{w}
+                      </div>
+                    ))}
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          {/* Week Gantt rows */}
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <tbody>
+              {WEEK_PHASES.map((p) => {
+                const leftPct = ((p.start - 1) / TOTAL_WEEKS) * 100;
+                const widthPct = ((p.end - p.start + 1) / TOTAL_WEEKS) * 100;
+                return (
+                  <tr key={p.name} style={{ borderBottom: `1px solid ${BORDER}` }}>
+                    <td
+                      style={{
+                        width: '36%',
+                        padding: '8px 12px 8px 0',
+                        fontSize: '10px',
+                        fontWeight: 600,
+                        color: SLATE,
+                        verticalAlign: 'middle',
+                      }}
+                    >
+                      {p.name}
+                    </td>
+                    <td style={{ width: '64%', padding: '8px 0', verticalAlign: 'middle' }}>
+                      <div
+                        style={{
+                          position: 'relative',
+                          height: '20px',
+                          background: '#f1f5f9',
+                          borderRadius: '3px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            position: 'absolute',
+                            top: 0,
+                            bottom: 0,
+                            left: `${leftPct}%`,
+                            width: `${widthPct}%`,
+                            background: p.color,
+                            borderRadius: '3px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            paddingLeft: '8px',
+                            color: '#ffffff',
+                            fontSize: '9px',
+                            fontWeight: 600,
+                            letterSpacing: '0.02em',
+                          }}
+                        >
+                          {p.start === p.end ? `W${p.start}` : `W${p.start}–W${p.end}`}
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+
         {/* REMEDIATION TIMELINE — pure HTML/CSS Gantt */}
         <div style={{ marginBottom: '28px' }}>
           <h2
