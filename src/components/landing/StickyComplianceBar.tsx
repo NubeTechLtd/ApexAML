@@ -1,18 +1,17 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Clock, X, Download } from 'lucide-react';
+import { Clock, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface Props {
   daysRemaining: number;
   onBookDemo: () => void;
-  onDownloadTemplate: () => void;
   onVisibilityChange?: (visible: boolean) => void;
 }
 
 const DISMISS_KEY = 'apexaml_sticky_bar_dismissed';
 
-export function StickyComplianceBar({ daysRemaining, onBookDemo, onDownloadTemplate, onVisibilityChange }: Props) {
+export function StickyComplianceBar({ daysRemaining, onBookDemo, onVisibilityChange }: Props) {
   const [visible, setVisible] = useState(false);
   const [dismissed, setDismissed] = useState(false);
 
@@ -72,15 +71,6 @@ export function StickyComplianceBar({ daysRemaining, onBookDemo, onDownloadTempl
 
             {/* RIGHT — Actions */}
             <div className="flex items-center gap-2 shrink-0">
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={onDownloadTemplate}
-                className="hidden sm:inline-flex bg-transparent border-white/15 text-white/80 hover:bg-white/5 hover:text-white rounded-lg text-xs h-9 px-3"
-              >
-                <Download className="h-3.5 w-3.5" />
-                Download Template
-              </Button>
               <Button
                 size="sm"
                 onClick={onBookDemo}
