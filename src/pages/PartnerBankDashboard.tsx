@@ -16,6 +16,8 @@ import {
   approvedVsUnapproved,
   type IMTOSettlementAccount,
 } from '@/data/mockSettlementAccounts';
+import { CrossBorder24hTicker } from '@/components/imto/CrossBorder24hTicker';
+import { InboundSmurfingVisualizer } from '@/components/imto/InboundSmurfingVisualizer';
 
 /* ── Donut chart (no external lib) ────────────────────────────────── */
 
