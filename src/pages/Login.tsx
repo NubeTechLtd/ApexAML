@@ -47,6 +47,11 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-6">
+      <Seo
+        title="Sign in | ApexAML"
+        description="Sign in to the ApexAML compliance platform. Restricted to authorised compliance officers and admin users at customer institutions."
+        path="/login"
+      />
       <Card className="w-full max-w-[400px] p-8">
         <div className="flex flex-col items-center text-center mb-6">
           <div className="flex items-center gap-2 mb-2">
