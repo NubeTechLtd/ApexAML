@@ -67,8 +67,11 @@ const GOLD = '#d4a843';
 const SLATE = '#1f2937';
 const MUTED = '#64748b';
 const BORDER = '#e2e8f0';
+const CONFIDENTIAL_RED = '#b91c1c';
+const AMBER = '#b45309';
+const GREEN = '#15803d';
 
-// Gantt phases (months, 1-indexed across 24 months)
+// Strategic 24-month Gantt phases
 const PHASES = [
   { name: 'Phase 1 — Foundation', start: 1, end: 3, color: '#1e3a8a' },
   { name: 'Phase 2 — Core Implementation', start: 4, end: 9, color: '#0e7490' },
@@ -77,6 +80,24 @@ const PHASES = [
 ];
 
 const TOTAL_MONTHS = 24;
+
+// 12-Week tactical remediation Gantt (CBN initial submission window)
+const WEEK_PHASES = [
+  { name: 'Gap Analysis & Risk Assessment', start: 1, end: 2, color: '#1e3a8a' },
+  { name: 'Policy & Procedure Refresh', start: 3, end: 5, color: '#0e7490' },
+  { name: 'Technology Deployment & Rule Tuning', start: 6, end: 9, color: '#15803d' },
+  { name: 'Staff Training & UAT', start: 10, end: 11, color: '#b45309' },
+  { name: 'Internal Audit & CBN Attestation', start: 12, end: 12, color: '#b91c1c' },
+];
+
+const TOTAL_WEEKS = 12;
+
+// Returns colour for the deadline pill — amber if within 90 days, green otherwise
+function deadlineTone(deadline: Date): { bg: string; fg: string; label: string } {
+  const days = Math.ceil((deadline.getTime() - Date.now()) / 86_400_000);
+  if (days <= 90) return { bg: '#fef3c7', fg: AMBER, label: `${days} days remaining` };
+  return { bg: '#dcfce7', fg: GREEN, label: `${days} days remaining` };
+}
 
 export const PrintableRoadmap = forwardRef<HTMLDivElement, PrintableRoadmapProps>(
   (props, ref) => {
