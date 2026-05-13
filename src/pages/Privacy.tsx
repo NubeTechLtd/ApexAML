@@ -37,6 +37,11 @@ const SECTIONS = [
 export default function Privacy() {
   return (
     <div className="min-h-screen bg-[hsl(220,25%,6%)] text-foreground">
+      <Seo
+        title="Privacy Policy | ApexAML"
+        description="How ApexAML collects, processes and stores personal data under the Nigeria Data Protection Act 2023. Data residency, lawful basis, and your NDPA rights."
+        path="/privacy"
+      />
       {/* Header */}
       <header className="border-b border-white/[0.06] bg-[hsl(220,25%,6%)]/70 backdrop-blur-xl">
         <div className="mx-auto max-w-3xl flex items-center justify-between px-6 h-16">
