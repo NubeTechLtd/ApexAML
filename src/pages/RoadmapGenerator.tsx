@@ -1244,6 +1244,33 @@ Managing Director:                                    Signature: _______________
           </SheetContent>
         </Sheet>
       </div>
+
+      {/* Hidden printable roadmap — rendered off-screen so html2canvas can rasterise it. */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'fixed',
+          left: '-10000px',
+          top: 0,
+          width: '800px',
+          pointerEvents: 'none',
+          opacity: 0,
+        }}
+      >
+        <PrintableRoadmap
+          ref={printableRef}
+          institutionName={institutionName || 'Your Institution'}
+          institutionType={institutionType || '—'}
+          contactName={contactName || '—'}
+          contactTitle={contactTitle || '—'}
+          email={email || '—'}
+          amlSetup={amlSetup || '—'}
+          volume={volume || '—'}
+          referenceNumber={referenceNumber}
+          todayFormatted={todayFormatted}
+          fullDeadline={fullDeadline}
+        />
+      </div>
     </SidebarProvider>
 
   );
