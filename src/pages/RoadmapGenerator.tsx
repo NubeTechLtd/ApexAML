@@ -394,19 +394,68 @@ Managing Director:                                    Signature: _______________
   const fullDeadlineTone: 'amber' | 'green' =
     institutionType === 'Deposit Money Bank (DMB)' ? 'amber' : 'green';
 
-  const handleDownloadRoadmap = () => {
+  const printableRef = useRef<HTMLDivElement>(null);
+  const [downloadingPdf, setDownloadingPdf] = useState(false);
+
+  const handleDownloadRoadmap = async () => {
+    if (downloadingPdf) return;
     trackEvent('roadmap_downloaded', { source: 'roadmap_generator' });
     const safeName = (institutionName || 'Institution').replace(/[^a-zA-Z0-9_-]+/g, '_');
-    const blob = new Blob([generatedRoadmap], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `CBN_AML_Roadmap_${safeName}_2026.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    toast({ title: 'Download started', description: 'Your CBN roadmap is downloading.' });
+    const node = printableRef.current;
+    if (!node) {
+      toast({ title: 'Could not generate PDF', description: 'Please try again.', variant: 'destructive' });
+      return;
+    }
+
+    setDownloadingPdf(true);
+    const loadingToast = toast({
+      title: 'Generating PDF…',
+      description: 'Rendering your CBN roadmap. This takes a few seconds.',
+    });
+
+    try {
+      const canvas = await html2canvas(node, {
+        scale: 2,
+        backgroundColor: '#ffffff',
+        useCORS: true,
+        logging: false,
+        windowWidth: node.scrollWidth,
+        windowHeight: node.scrollHeight,
+      });
+
+      const imgData = canvas.toDataURL('image/jpeg', 0.95);
+      const pdf = new jsPDF({ unit: 'pt', format: 'a4', orientation: 'portrait' });
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const imgWidth = pageWidth;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      // Paginate by translating the same image upward each page.
+      let heightLeft = imgHeight;
+      let position = 0;
+      pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+      while (heightLeft > 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
+      pdf.save(`CBN_AML_Roadmap_${safeName}.pdf`);
+      loadingToast.dismiss();
+      toast({ title: 'PDF downloaded', description: 'Your CBN roadmap is ready.' });
+    } catch (err) {
+      console.error('PDF generation failed', err);
+      loadingToast.dismiss();
+      toast({
+        title: 'PDF generation failed',
+        description: 'Please try again or contact support.',
+        variant: 'destructive',
+      });
+    } finally {
+      setDownloadingPdf(false);
+    }
   };
 
   const handleShareWhatsApp = () => {
