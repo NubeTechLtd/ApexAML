@@ -117,6 +117,7 @@ export const PrintableRoadmap = forwardRef<HTMLDivElement, PrintableRoadmapProps
     const covered = getCoveredCapabilities(amlSetup);
     const coveredCount = CAPABILITY_AREAS.filter((c) => covered.has(c)).length;
     const gapCount = CAPABILITY_AREAS.length - coveredCount;
+    const deadline = deadlineTone(new Date('2026-06-10T00:00:00'));
 
     return (
       <div
