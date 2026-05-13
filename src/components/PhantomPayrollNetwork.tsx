@@ -132,68 +132,128 @@ export function PhantomPayrollNetwork({ context }: Props) {
           </div>
         </div>
 
-        {/* Hub and spoke SVG */}
+        {/* Hub and spoke SVG — animated money-flow edges, glassmorphic hub, red glow on no-history recipients. */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div className="lg:col-span-2">
-            <svg
-              viewBox="0 0 400 400"
-              className="w-full h-auto rounded-lg border bg-muted/20"
-              role="img"
-              aria-label={`Hub-and-spoke diagram of ${recipients.length} phantom-payroll recipients colour-coded by bank.`}
-            >
-              {/* Spokes */}
-              {spokes.map(s => (
-                <line
-                  key={`l-${s.id}`}
-                  x1={s.cx}
-                  y1={s.cy}
-                  x2={s.x}
-                  y2={s.y}
-                  stroke={colourFor(s.bank)}
-                  strokeWidth="0.6"
-                  opacity="0.45"
-                />
-              ))}
-              {/* Recipient dots */}
-              {spokes.map(s => (
-                <g key={`d-${s.id}`}>
-                  <circle
-                    cx={s.x}
-                    cy={s.y}
-                    r="4.5"
-                    fill={colourFor(s.bank)}
-                    stroke="hsl(var(--background))"
-                    strokeWidth="0.8"
-                  />
-                  <title>{s.name} · {s.bank} · {formatNGN(s.amountNGN)} · KYC {s.kycTier}{s.hasPriorHistory ? ' · prior history' : ' · NEW'}</title>
+            <div className="relative overflow-hidden rounded-lg border border-border/60 bg-[radial-gradient(circle_at_50%_50%,hsl(var(--destructive)/0.10),transparent_60%)] bg-card">
+              <svg
+                viewBox="0 0 400 400"
+                className="w-full h-auto cursor-grab active:cursor-grabbing select-none"
+                role="img"
+                aria-label={`Network of ${recipients.length} phantom-payroll recipients colour-coded by bank.`}
+                onWheel={onWheel}
+                onPointerDown={onPointerDown}
+                onPointerMove={onPointerMove}
+                onPointerUp={onPointerUp}
+                onPointerCancel={onPointerUp}
+              >
+                <defs>
+                  <filter id="pp-risk-glow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="3" result="b" />
+                    <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+                  </filter>
+                  <filter id="pp-hub-glow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="6" result="b" />
+                    <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+                  </filter>
+                  <pattern id="pp-grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                    <path d="M20 0H0V20" fill="none" stroke="hsl(var(--border))" strokeOpacity="0.4" strokeWidth="0.4" />
+                  </pattern>
+                </defs>
+
+                <rect width="400" height="400" fill="url(#pp-grid)" />
+
+                <g transform={`translate(${pan.x / 2}, ${pan.y / 2}) scale(${zoom})`} style={{ transformOrigin: 'center' }}>
+                  {/* Static spoke lines */}
+                  {spokes.map(s => (
+                    <line
+                      key={`l-${s.id}`}
+                      x1={s.cx}
+                      y1={s.cy}
+                      x2={s.x}
+                      y2={s.y}
+                      stroke={colourFor(s.bank)}
+                      strokeWidth="0.5"
+                      opacity={s.hasPriorHistory ? 0.35 : 0.6}
+                    />
+                  ))}
+                  {/* Animated overlay lines — money flowing OUT from hub */}
+                  {spokes.map(s => (
+                    <line
+                      key={`a-${s.id}`}
+                      x1={s.cx}
+                      y1={s.cy}
+                      x2={s.x}
+                      y2={s.y}
+                      stroke={s.hasPriorHistory ? colourFor(s.bank) : 'hsl(var(--destructive))'}
+                      strokeWidth={s.hasPriorHistory ? 0.8 : 1.1}
+                      strokeDasharray="3 6"
+                      strokeLinecap="round"
+                      opacity="0.9"
+                      style={{ animation: `pp-flow 2.4s linear infinite` }}
+                    />
+                  ))}
+                  {/* High-risk halos behind no-history recipients */}
+                  {spokes.filter(s => !s.hasPriorHistory).map(s => (
+                    <circle
+                      key={`h-${s.id}`}
+                      cx={s.x}
+                      cy={s.y}
+                      r="9"
+                      fill="hsl(var(--destructive))"
+                      opacity="0.25"
+                      filter="url(#pp-risk-glow)"
+                    >
+                      <animate attributeName="opacity" values="0.15;0.40;0.15" dur="2.2s" repeatCount="indefinite" />
+                    </circle>
+                  ))}
+                  {/* Recipient dots */}
+                  {spokes.map(s => (
+                    <g key={`d-${s.id}`}>
+                      <circle
+                        cx={s.x}
+                        cy={s.y}
+                        r="4.5"
+                        fill={colourFor(s.bank)}
+                        stroke={s.hasPriorHistory ? 'hsl(var(--background))' : 'hsl(var(--destructive))'}
+                        strokeWidth={s.hasPriorHistory ? 0.8 : 1.4}
+                      />
+                      <title>{s.name} · {s.bank} · {formatNGN(s.amountNGN)} · KYC {s.kycTier}{s.hasPriorHistory ? ' · prior history' : ' · NEW'}</title>
+                    </g>
+                  ))}
+                  {/* Centre hub — glassmorphic */}
+                  <circle cx="200" cy="200" r="34" fill="hsl(var(--destructive))" opacity="0.20" filter="url(#pp-hub-glow)" />
+                  <circle cx="200" cy="200" r="22" fill="hsl(var(--destructive) / 0.12)" stroke="hsl(var(--destructive))" strokeWidth="1.2" />
+                  <circle cx="200" cy="200" r="14" fill="hsl(var(--destructive))" />
+                  <text x="200" y="203" fontSize="9" fontWeight="700" textAnchor="middle" fill="hsl(var(--destructive-foreground))">
+                    ATLAS
+                  </text>
+                  <text x="200" y="244" fontSize="8" textAnchor="middle" fill="hsl(var(--muted-foreground))">
+                    Foreign Business Sender
+                  </text>
                 </g>
-              ))}
-              {/* Centre hub */}
-              <circle cx="200" cy="200" r="22" fill="hsl(var(--destructive))" opacity="0.15" />
-              <circle cx="200" cy="200" r="14" fill="hsl(var(--destructive))" />
-              <text
-                x="200"
-                y="203"
-                fontSize="9"
-                fontWeight="700"
-                textAnchor="middle"
-                fill="hsl(var(--destructive-foreground))"
-              >
-                ATLAS
-              </text>
-              {/* Hub label */}
-              <text
-                x="200"
-                y="240"
-                fontSize="8"
-                textAnchor="middle"
-                fill="hsl(var(--muted-foreground))"
-              >
-                Foreign Business Sender
-              </text>
-            </svg>
+              </svg>
+
+              {/* Zoom / pan controls */}
+              <div className="absolute bottom-2 right-2 flex flex-col gap-1 rounded-md border border-border/60 bg-card/70 p-1 backdrop-blur-md shadow-lg">
+                <button type="button" onClick={() => setZoom(z => Math.min(2.5, z + 0.2))} aria-label="Zoom in"
+                  className="grid h-6 w-6 place-items-center rounded text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors">
+                  <ZoomIn className="h-3 w-3" />
+                </button>
+                <button type="button" onClick={() => setZoom(z => Math.max(0.5, z - 0.2))} aria-label="Zoom out"
+                  className="grid h-6 w-6 place-items-center rounded text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors">
+                  <ZoomOut className="h-3 w-3" />
+                </button>
+                <button type="button" onClick={resetView} aria-label="Reset view"
+                  className="grid h-6 w-6 place-items-center rounded text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors">
+                  <Maximize2 className="h-3 w-3" />
+                </button>
+              </div>
+
+              <style>{`@keyframes pp-flow { from { stroke-dashoffset: 18; } to { stroke-dashoffset: 0; } }`}</style>
+            </div>
             <p className="text-[10px] text-muted-foreground text-center mt-2">
-              Each dot is one Tier 1 recipient. Hover for name, bank, and amount. Spoke colour = recipient bank.
+              Each dot is one Tier 1 recipient. Red glow = no prior transfer history. Drag to pan, scroll to zoom.
             </p>
           </div>
 
