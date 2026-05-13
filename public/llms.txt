@@ -1,0 +1,15 @@
+# ApexAML
+
+> Compliance Intelligence platform for Nigerian fintechs, banks and IMTOs. CBN-aligned AML controls — AI STR co-pilot, BVN/NIN KYC, transaction monitoring with Nigerian typologies, and NFIU goAML reporting.
+
+ApexAML is built specifically to satisfy the 10 capability areas mandated by CBN Circular BSD/DIR/PUB/LAB/019/002 (initial submission deadline 10 June 2026). Hosted on AWS af-south-1 (Cape Town) with NDPA 2023 data-residency commitments.
+
+## Pages
+
+- [Home](/): Product overview, pricing, FAQ and lead capture for Nigerian financial institutions.
+- [CBN Roadmap Generator](/roadmap): Free tool that generates a CBN-compliant AML implementation roadmap, pre-formatted for Circular BSD/DIR/PUB/LAB/019/002.
+- [Privacy Policy](/privacy): How ApexAML collects, processes and stores personal data under the Nigeria Data Protection Act 2023.
+
+## Optional
+
+- [Sign in](/login): Restricted login for compliance officers at customer institutions.
