@@ -254,39 +254,131 @@ export const PrintableRoadmap = forwardRef<HTMLDivElement, PrintableRoadmapProps
           </div>
         </div>
 
-        {/* INSTITUTION FACT TABLE */}
+        {/* EXECUTIVE SUMMARY — 2x2 metadata grid */}
+        <div
+          style={{
+            fontSize: '10px',
+            color: GOLD,
+            fontWeight: 700,
+            letterSpacing: '0.12em',
+            textTransform: 'uppercase',
+            marginBottom: '8px',
+          }}
+        >
+          Executive Summary
+        </div>
+        <table
+          style={{
+            width: '100%',
+            borderCollapse: 'collapse',
+            marginBottom: '14px',
+            fontSize: '11px',
+            tableLayout: 'fixed',
+          }}
+        >
+          <tbody>
+            {[
+              [
+                { k: 'Institution Name', v: institutionName, highlight: false as const },
+                { k: 'Licence Type', v: institutionType, highlight: false as const },
+              ],
+              [
+                { k: 'Monthly Volume', v: volume, highlight: false as const },
+                {
+                  k: 'CBN Target Deadline',
+                  v: '10 June 2026',
+                  highlight: true as const,
+                  pill: deadline,
+                },
+              ],
+            ].map((row, ri) => (
+              <tr key={ri}>
+                {row.map((cell) => (
+                  <td
+                    key={cell.k}
+                    style={{
+                      width: '50%',
+                      border: `1px solid ${BORDER}`,
+                      padding: '12px 14px',
+                      verticalAlign: 'top',
+                      background: '#ffffff',
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: '9px',
+                        color: MUTED,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.1em',
+                        fontWeight: 600,
+                        marginBottom: '4px',
+                      }}
+                    >
+                      {cell.k}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '13px',
+                        fontWeight: 700,
+                        color: NAVY,
+                        lineHeight: 1.3,
+                      }}
+                    >
+                      {cell.v}
+                    </div>
+                    {cell.highlight && cell.pill && (
+                      <div
+                        style={{
+                          display: 'inline-block',
+                          marginTop: '6px',
+                          background: cell.pill.bg,
+                          color: cell.pill.fg,
+                          fontSize: '9px',
+                          fontWeight: 700,
+                          letterSpacing: '0.06em',
+                          textTransform: 'uppercase',
+                          padding: '3px 8px',
+                          borderRadius: '10px',
+                        }}
+                      >
+                        {cell.pill.label}
+                      </div>
+                    )}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        {/* Supporting metadata strip */}
         <table
           style={{
             width: '100%',
             borderCollapse: 'collapse',
             marginBottom: '28px',
-            fontSize: '11px',
+            fontSize: '10px',
           }}
         >
           <tbody>
             {[
-              ['Institution', institutionName],
-              ['Licence type', institutionType],
-              ['Compliance officer', `${contactName}, ${contactTitle}`],
+              ['Compliance Officer', `${contactName}, ${contactTitle}`],
               ['Contact', email],
-              ['Current AML setup', amlSetup],
-              ['Monthly transaction volume', volume],
-              ['Initial CBN submission deadline', '10 June 2026'],
-              ['Full compliance deadline', fullDeadline],
+              ['Current AML Setup', amlSetup],
+              ['Full Compliance Deadline', fullDeadline],
             ].map(([k, v]) => (
               <tr key={k} style={{ borderBottom: `1px solid ${BORDER}` }}>
                 <td
                   style={{
-                    padding: '8px 12px 8px 0',
+                    padding: '6px 12px 6px 0',
                     color: MUTED,
                     fontWeight: 500,
-                    width: '38%',
-                    verticalAlign: 'top',
+                    width: '40%',
                   }}
                 >
                   {k}
                 </td>
-                <td style={{ padding: '8px 0', color: SLATE, fontWeight: 500 }}>{v}</td>
+                <td style={{ padding: '6px 0', color: SLATE, fontWeight: 500 }}>{v}</td>
               </tr>
             ))}
           </tbody>
