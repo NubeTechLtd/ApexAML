@@ -1042,9 +1042,18 @@ Managing Director:                                    Signature: _______________
 
                     {/* Action row */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <Button onClick={handleDownloadRoadmap} className="h-11 font-semibold">
-                        <Download className="h-4 w-4" />
-                        Download roadmap
+                      <Button onClick={handleDownloadRoadmap} disabled={downloadingPdf} className="h-11 font-semibold">
+                        {downloadingPdf ? (
+                          <>
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            Generating PDF…
+                          </>
+                        ) : (
+                          <>
+                            <Download className="h-4 w-4" />
+                            Download roadmap
+                          </>
+                        )}
                       </Button>
                       <Button
                         variant="outline"
