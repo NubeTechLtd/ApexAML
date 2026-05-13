@@ -134,9 +134,41 @@ export default function SanctionsScreening() {
   const [checkedIds, setCheckedIds] = useState<Set<string>>(new Set());
   const [bulkDismissOpen, setBulkDismissOpen] = useState(false);
   const [bulkEscalateOpen, setBulkEscalateOpen] = useState(false);
+  const [threshold, setThreshold] = useState(80);
 
-  const pendingMatches = matches.filter((m) => m.status === 'Pending');
+  // Hide pending matches below the analyst-tuned fuzzy threshold
+  const visibleMatches = matches.filter((m) => m.status !== 'Pending' || m.matchScore >= threshold);
+  const pendingMatches = visibleMatches.filter((m) => m.status === 'Pending');
+  const hiddenPendingCount = matches.filter((m) => m.status === 'Pending').length - pendingMatches.length;
   const allPendingChecked = pendingMatches.length > 0 && pendingMatches.every((m) => checkedIds.has(m.id));
+
+  const thresholdProfile =
+    threshold > 90
+      ? { label: 'Strict', sub: 'Low False Positives', tone: 'text-emerald-500', dot: 'bg-emerald-500' }
+      : threshold >= 75
+      ? { label: 'Balanced', sub: 'Recommended', tone: 'text-primary', dot: 'bg-primary' }
+      : { label: 'Loose', sub: 'High False Positives', tone: 'text-destructive', dot: 'bg-destructive' };
+
+  // Auto-reselect when current selection is filtered out
+  useEffect(() => {
+    if (!visibleMatches.find((m) => m.id === selectedId) && visibleMatches.length > 0) {
+      setSelectedId(visibleMatches[0].id);
+    }
+  }, [threshold, visibleMatches, selectedId]);
+
+  const handleThresholdCommit = (val: number[]) => {
+    const v = val[0];
+    append({
+      action: 'NFIU_ESCALATION',
+      analyst: 'mock-analyst-001',
+      caseId: 'SCREENING_THRESHOLD',
+      justification: `Fuzzy match tolerance updated to ${v}% by analyst`,
+    });
+    toast({
+      title: 'Algorithm threshold updated',
+      description: `Set to ${v}% — Audit log recorded.`,
+    });
+  };
 
   const toggleCheck = (id: string, checked: boolean) => {
     setCheckedIds((prev) => {
