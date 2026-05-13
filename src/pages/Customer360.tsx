@@ -150,7 +150,7 @@ export default function Customer360() {
                 <Customer360RiskRadar radarScores={customer.radarScores} riskLevel={customer.riskLevel} />
               </motion.div>
               <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
-                <Customer360Entities entities={customer.connectedEntities} />
+                <Customer360Entities entities={customer.connectedEntities} customerName={customer.name} />
               </motion.div>
             </div>
 
