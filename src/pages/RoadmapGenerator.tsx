@@ -32,6 +32,9 @@ import { WhatsAppIcon } from '@/components/landing/WhatsAppIcon';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Textarea } from '@/components/ui/textarea';
 import { trackEvent } from '@/lib/analytics';
+import { PrintableRoadmap } from '@/components/PrintableRoadmap';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 type Step = 'hook' | 'form' | 'loading' | 'roadmap';
 
@@ -391,19 +394,68 @@ Managing Director:                                    Signature: _______________
   const fullDeadlineTone: 'amber' | 'green' =
     institutionType === 'Deposit Money Bank (DMB)' ? 'amber' : 'green';
 
-  const handleDownloadRoadmap = () => {
+  const printableRef = useRef<HTMLDivElement>(null);
+  const [downloadingPdf, setDownloadingPdf] = useState(false);
+
+  const handleDownloadRoadmap = async () => {
+    if (downloadingPdf) return;
     trackEvent('roadmap_downloaded', { source: 'roadmap_generator' });
     const safeName = (institutionName || 'Institution').replace(/[^a-zA-Z0-9_-]+/g, '_');
-    const blob = new Blob([generatedRoadmap], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `CBN_AML_Roadmap_${safeName}_2026.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    toast({ title: 'Download started', description: 'Your CBN roadmap is downloading.' });
+    const node = printableRef.current;
+    if (!node) {
+      toast({ title: 'Could not generate PDF', description: 'Please try again.', variant: 'destructive' });
+      return;
+    }
+
+    setDownloadingPdf(true);
+    const loadingToast = toast({
+      title: 'Generating PDF…',
+      description: 'Rendering your CBN roadmap. This takes a few seconds.',
+    });
+
+    try {
+      const canvas = await html2canvas(node, {
+        scale: 2,
+        backgroundColor: '#ffffff',
+        useCORS: true,
+        logging: false,
+        windowWidth: node.scrollWidth,
+        windowHeight: node.scrollHeight,
+      });
+
+      const imgData = canvas.toDataURL('image/jpeg', 0.95);
+      const pdf = new jsPDF({ unit: 'pt', format: 'a4', orientation: 'portrait' });
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const imgWidth = pageWidth;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      // Paginate by translating the same image upward each page.
+      let heightLeft = imgHeight;
+      let position = 0;
+      pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+      while (heightLeft > 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
+      pdf.save(`CBN_AML_Roadmap_${safeName}.pdf`);
+      loadingToast.dismiss();
+      toast({ title: 'PDF downloaded', description: 'Your CBN roadmap is ready.' });
+    } catch (err) {
+      console.error('PDF generation failed', err);
+      loadingToast.dismiss();
+      toast({
+        title: 'PDF generation failed',
+        description: 'Please try again or contact support.',
+        variant: 'destructive',
+      });
+    } finally {
+      setDownloadingPdf(false);
+    }
   };
 
   const handleShareWhatsApp = () => {
@@ -990,9 +1042,18 @@ Managing Director:                                    Signature: _______________
 
                     {/* Action row */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <Button onClick={handleDownloadRoadmap} className="h-11 font-semibold">
-                        <Download className="h-4 w-4" />
-                        Download roadmap
+                      <Button onClick={handleDownloadRoadmap} disabled={downloadingPdf} className="h-11 font-semibold">
+                        {downloadingPdf ? (
+                          <>
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            Generating PDF…
+                          </>
+                        ) : (
+                          <>
+                            <Download className="h-4 w-4" />
+                            Download roadmap
+                          </>
+                        )}
                       </Button>
                       <Button
                         variant="outline"
@@ -1182,6 +1243,33 @@ Managing Director:                                    Signature: _______________
             </form>
           </SheetContent>
         </Sheet>
+      </div>
+
+      {/* Hidden printable roadmap — rendered off-screen so html2canvas can rasterise it. */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'fixed',
+          left: '-10000px',
+          top: 0,
+          width: '800px',
+          pointerEvents: 'none',
+          opacity: 0,
+        }}
+      >
+        <PrintableRoadmap
+          ref={printableRef}
+          institutionName={institutionName || 'Your Institution'}
+          institutionType={institutionType || '—'}
+          contactName={contactName || '—'}
+          contactTitle={contactTitle || '—'}
+          email={email || '—'}
+          amlSetup={amlSetup || '—'}
+          volume={volume || '—'}
+          referenceNumber={referenceNumber}
+          todayFormatted={todayFormatted}
+          fullDeadline={fullDeadline}
+        />
       </div>
     </SidebarProvider>
 
