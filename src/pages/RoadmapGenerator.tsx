@@ -555,6 +555,11 @@ Managing Director:                                    Signature: _______________
 
   return (
     <SidebarProvider>
+      <Seo
+        title="Free CBN AML Roadmap Generator | ApexAML"
+        description="Generate a CBN-compliant AML implementation roadmap for your Nigerian fintech, MFB or IMTO in 60 seconds. Pre-formatted for Circular BSD/DIR/PUB/LAB/019/002 and the 10 June 2026 deadline."
+        path="/roadmap"
+      />
       <div className="min-h-screen flex w-full">
         <AppSidebar />
         <div className="flex-1 flex flex-col">
