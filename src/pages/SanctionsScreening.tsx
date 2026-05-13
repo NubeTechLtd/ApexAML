@@ -266,9 +266,44 @@ export default function SanctionsScreening() {
 
           <div className="flex flex-1 min-h-0">
             {/* Left pane — Match list */}
-            <div className="w-[260px] border-r flex flex-col bg-muted/20 shrink-0 relative">
+            <div className="w-[280px] border-r flex flex-col bg-muted/20 shrink-0 relative">
+              {/* Threshold tuning */}
+              <div className="p-3 border-b bg-card space-y-2">
+                <div className="flex items-center justify-between">
+                  <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+                    Fuzzy Match Tolerance
+                  </p>
+                  <span className="text-xs font-bold tabular-nums text-foreground">{threshold}%</span>
+                </div>
+                <Slider
+                  value={[threshold]}
+                  onValueChange={(v) => setThreshold(v[0])}
+                  onValueCommit={handleThresholdCommit}
+                  min={0}
+                  max={100}
+                  step={1}
+                  className="w-full"
+                />
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5">
+                    <span className={`h-1.5 w-1.5 rounded-full ${thresholdProfile.dot}`} />
+                    <span className={`text-[10px] font-semibold ${thresholdProfile.tone}`}>
+                      {thresholdProfile.label}
+                    </span>
+                    <span className="text-[10px] text-muted-foreground">· {thresholdProfile.sub}</span>
+                  </div>
+                  {hiddenPendingCount > 0 && (
+                    <span className="text-[9px] text-muted-foreground tabular-nums">
+                      −{hiddenPendingCount} hidden
+                    </span>
+                  )}
+                </div>
+              </div>
+
               <div className="p-3 border-b bg-card flex items-center justify-between">
-                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Fuzzy Matches</p>
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                  Matches ≥ {threshold}%
+                </p>
                 <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
                   <Checkbox
                     checked={allPendingChecked}
@@ -280,7 +315,12 @@ export default function SanctionsScreening() {
               </div>
               <ScrollArea className="flex-1">
                 <div className="p-2 space-y-1">
-                  {matches.map((match) => (
+                  {visibleMatches.length === 0 && (
+                    <p className="text-[11px] text-muted-foreground text-center py-6 px-2">
+                      No matches above {threshold}% threshold. Lower the slider to surface more candidates.
+                    </p>
+                  )}
+                  {visibleMatches.map((match) => (
                     <MatchCard
                       key={match.id}
                       match={match}
