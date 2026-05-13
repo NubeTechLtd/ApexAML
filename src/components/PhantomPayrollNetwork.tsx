@@ -28,6 +28,11 @@ interface Props {
 export function PhantomPayrollNetwork({ context }: Props) {
   const { recipients } = context;
 
+  // Pan/zoom state for the network canvas.
+  const [zoom, setZoom] = useState(1);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const dragRef = useRef<{ x: number; y: number; px: number; py: number } | null>(null);
+
   // Pre-compute spoke geometry (centre at 200,200; ring at radius 160).
   const spokes = useMemo(() => {
     const cx = 200, cy = 200, r = 160;
@@ -48,6 +53,27 @@ export function PhantomPayrollNetwork({ context }: Props) {
     recipients.forEach(r => { counts[r.bank] = (counts[r.bank] ?? 0) + 1; });
     return Object.entries(counts).sort((a, b) => b[1] - a[1]);
   }, [recipients]);
+
+  const onWheel = useCallback((e: React.WheelEvent) => {
+    e.preventDefault();
+    setZoom((z) => Math.min(2.5, Math.max(0.5, z - e.deltaY * 0.0015)));
+  }, []);
+  const onPointerDown = useCallback((e: React.PointerEvent) => {
+    (e.target as Element).setPointerCapture?.(e.pointerId);
+    dragRef.current = { x: e.clientX, y: e.clientY, px: pan.x, py: pan.y };
+  }, [pan]);
+  const onPointerMove = useCallback((e: React.PointerEvent) => {
+    if (!dragRef.current) return;
+    setPan({
+      x: dragRef.current.px + (e.clientX - dragRef.current.x),
+      y: dragRef.current.py + (e.clientY - dragRef.current.y),
+    });
+  }, []);
+  const onPointerUp = useCallback((e: React.PointerEvent) => {
+    (e.target as Element).releasePointerCapture?.(e.pointerId);
+    dragRef.current = null;
+  }, []);
+  const resetView = () => { setZoom(1); setPan({ x: 0, y: 0 }); };
 
   return (
     <Card className="border-l-4 border-l-destructive bg-destructive/[0.02]">
