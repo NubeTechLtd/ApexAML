@@ -225,6 +225,9 @@ function PartnerBankDashboard() {
               </Card>
             </div>
 
+            {/* Cross-Border 24h STR Mandate ticker */}
+            <CrossBorder24hTicker />
+
             <div className="grid grid-cols-12 gap-4">
               {/* Account list */}
               <div className="col-span-4 space-y-3">
@@ -372,6 +375,9 @@ function PartnerBankDashboard() {
                     </Button>
                   </CardContent>
                 </Card>
+
+                {/* Inbound Smurfing Detection */}
+                <InboundSmurfingVisualizer />
               </div>
             </div>
           </main>
