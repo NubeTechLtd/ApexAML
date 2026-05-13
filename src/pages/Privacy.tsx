@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Shield, ArrowLeft, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Seo } from '@/components/Seo';
 
 const SECTIONS = [
   {
