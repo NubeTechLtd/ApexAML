@@ -202,6 +202,21 @@ export const PrintableRoadmap = forwardRef<HTMLDivElement, PrintableRoadmapProps
             </div>
           </div>
           <div style={{ textAlign: 'right', fontSize: '10px', color: MUTED }}>
+            <div
+              style={{
+                display: 'inline-block',
+                background: CONFIDENTIAL_RED,
+                color: '#ffffff',
+                fontSize: '10px',
+                fontWeight: 700,
+                letterSpacing: '0.18em',
+                padding: '4px 10px',
+                borderRadius: '2px',
+                marginBottom: '8px',
+              }}
+            >
+              CONFIDENTIAL
+            </div>
             <div style={{ fontWeight: 600, color: SLATE }}>Ref: {referenceNumber}</div>
             <div>Issued: {todayFormatted}</div>
             <div>CBN Circular BSD/DIR/PUB/LAB/019/002</div>
