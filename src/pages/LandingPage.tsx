@@ -22,6 +22,7 @@ import { WHATSAPP_URL } from '@/lib/whatsapp';
 import { ExitIntentModal } from '@/components/landing/ExitIntentModal';
 import { AudienceProvider, useAudience } from '@/components/landing/AudienceContext';
 import { AudienceSelector } from '@/components/landing/AudienceSelector';
+import { Seo } from '@/components/Seo';
 
 // ── Helpers ──────────────────────────────────────────────────────────────
 
@@ -259,13 +260,61 @@ function RoadmapGeneratorBand() {
 
 // ── Main Page ────────────────────────────────────────────────────────────
 
+const FAQ_FOR_SCHEMA: Array<{ q: string; a: string }> = [
+  {
+    q: 'Does ApexAML satisfy the June 2026 CBN circular requirements?',
+    a: 'Yes. ApexAML covers all 10 capability areas mandated by Circular BSD/DIR/PUB/LAB/019/002, including tiered CDD with BVN/NIN, EDD, PEP and sanctions screening, beneficial-owner identification, transaction monitoring with Nigerian typologies, NFIU goAML STR/CTR submission, immutable audit trail, AML/CFT training and 5-year examiner-ready record retention.',
+  },
+  {
+    q: 'Where is our data stored — is it in Nigeria?',
+    a: 'ApexAML is hosted on AWS af-south-1 (Cape Town) — the closest AWS region with data-residency guarantees acceptable under the Nigeria Data Protection Act 2023. PII never crosses borders without your written instruction, and we sign a DPA at contract signing.',
+  },
+  {
+    q: 'How long does integration take?',
+    a: '48 hours for API-first fintechs (Paystack, Flutterwave, Mono, Okra). For legacy core banking systems (Finacle, T24, Flexcube) we typically deliver in 2 weeks via batch SFTP or middleware adapters. No vendor middleware required.',
+  },
+  {
+    q: 'What does it cost — is it affordable for a tier-3 MFB?',
+    a: 'Pricing starts from ₦800,000/month — less than the loaded cost of a single compliance analyst (₦3–8M/year salary plus benefits). Institutions submitting their CBN roadmap before 10 June 2026 get the first month free.',
+  },
+  {
+    q: 'Can ApexAML submit STRs directly to the NFIU goAML portal?',
+    a: 'Today, ApexAML exports each STR as a fully-validated goAML XML file ready for one-click upload via the NFIU portal — no manual reformatting, no rejected submissions. Direct API submission to NFIU is on our Q3 2026 roadmap, pending NFIU API access.',
+  },
+  {
+    q: 'Is ApexAML CBN-approved?',
+    a: 'The CBN does not maintain an official certified-vendor list for AML platforms. ApexAML is built exactly to the specifications in Circular BSD/DIR/PUB/LAB/019/002, and we provide a clause-by-clause compliance mapping document with every deployment so your compliance officer can demonstrate fitness during examination.',
+  },
+  {
+    q: 'What happens during a CBN examiner visit?',
+    a: 'Examiners typically request the AML policy, sample STRs, the case-management trail for flagged customers, and evidence of independent review. ApexAML produces all four on demand: one-click examiner pack as a sealed PDF bundle, cryptographically-sealed audit trail, per-customer case file with reviewer sign-off and STR linkage, and a live dashboard for the examiner.',
+  },
+];
+
+const LANDING_JSON_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: FAQ_FOR_SCHEMA.map(({ q, a }) => ({
+    '@type': 'Question',
+    name: q,
+    acceptedAnswer: { '@type': 'Answer', text: a },
+  })),
+};
+
 export default function LandingPage() {
   return (
     <AudienceProvider>
+      <Seo
+        title="ApexAML — Compliance Intelligence for Nigerian Fintechs"
+        description="CBN-aligned AML platform for Nigerian fintechs and banks. AI STR co-pilot, BVN/NIN KYC, transaction monitoring, NFIU goAML reporting and examiner-ready audit trails."
+        path="/"
+        jsonLd={LANDING_JSON_LD}
+      />
       <LandingPageInner />
     </AudienceProvider>
   );
 }
+
 
 function LandingPageInner() {
   const countdown = useCountdown(new Date('2026-06-10T00:00:00'));
