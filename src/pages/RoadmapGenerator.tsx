@@ -32,6 +32,9 @@ import { WhatsAppIcon } from '@/components/landing/WhatsAppIcon';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Textarea } from '@/components/ui/textarea';
 import { trackEvent } from '@/lib/analytics';
+import { PrintableRoadmap } from '@/components/PrintableRoadmap';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 type Step = 'hook' | 'form' | 'loading' | 'roadmap';
 
