@@ -22,6 +22,7 @@ import { WHATSAPP_URL } from '@/lib/whatsapp';
 import { ExitIntentModal } from '@/components/landing/ExitIntentModal';
 import { AudienceProvider, useAudience } from '@/components/landing/AudienceContext';
 import { AudienceSelector } from '@/components/landing/AudienceSelector';
+import { Seo } from '@/components/Seo';
 
 // ── Helpers ──────────────────────────────────────────────────────────────
 
