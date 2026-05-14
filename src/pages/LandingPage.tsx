@@ -4,7 +4,7 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { PrintableRoadmap } from '@/components/PrintableRoadmap';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
-import { Shield, Sparkles, SlidersHorizontal, Lock, ArrowRight, Download, CheckCircle2, Loader2, Menu, X, RotateCcw, ExternalLink, FileText, Clock } from 'lucide-react';
+import { Shield, Sparkles, SlidersHorizontal, Lock, ArrowRight, Download, CheckCircle2, Loader2, Menu, X, RotateCcw, ExternalLink, FileText, Clock, Globe, Briefcase, ShieldCheck } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import logo from '@/assets/logo.svg';
 import { Button } from '@/components/ui/button';
@@ -720,6 +720,60 @@ function LandingPageInner() {
 
       {/* ── Roadmap Lead Magnet ────────────────────────────────── */}
       <RoadmapLeadMagnet />
+
+      {/* ── Company & Leadership ───────────────────────────────── */}
+      <section className="relative py-24 px-6 bg-slate-950/40 border-y border-white/[0.06]">
+        <div className="mx-auto max-w-6xl space-y-14">
+          <AnimatedSection className="text-center space-y-3">
+            <p className="text-xs uppercase tracking-[0.25em] text-primary font-semibold drop-shadow-[0_0_12px_hsl(var(--primary)/0.6)]">
+              Company & Leadership
+            </p>
+            <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight max-w-3xl mx-auto">
+              Built by compliance veterans. Secured by UK engineering.
+            </h2>
+          </AnimatedSection>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              {
+                Icon: Globe,
+                title: 'UK Corporate Governance',
+                eyebrow: 'Backed by Nubetech Ltd (UK)',
+                text: 'ApexAML is developed by Nubetech Ltd, a specialized UK technology consultancy. We bring stringent British data governance and stability to the Nigerian compliance ecosystem.',
+              },
+              {
+                Icon: Briefcase,
+                title: 'In-the-Trenches Experience',
+                eyebrow: 'Deep Nigerian Banking Roots',
+                text: 'Built by former Nigerian banking executives who led Client Onboarding, KYC, and Documentation. We understand your NFIU and CBN regulatory bottlenecks because we have lived them.',
+              },
+              {
+                Icon: ShieldCheck,
+                title: 'Vetted Enterprise Security',
+                eyebrow: 'Microsoft-Certified AI & Security',
+                text: 'Architected by Microsoft-Certified AI Consultants with cross-sector financial experience. Our founders undergo rigorous security vetting to ensure your highly sensitive data is never compromised.',
+              },
+            ].map(({ Icon, title, eyebrow, text }, i) => (
+              <AnimatedSection key={title} delay={i * 0.1}>
+                <div className="group h-full bg-white/[0.02] border border-white/10 p-8 rounded-2xl backdrop-blur-md transition-all duration-300 hover:border-primary/50 hover:bg-white/[0.035] hover:shadow-[0_0_40px_-10px_hsl(var(--primary)/0.4)]">
+                  <div className="h-12 w-12 rounded-xl bg-primary/10 border border-primary/25 flex items-center justify-center mb-5 transition-colors group-hover:bg-primary/15 group-hover:border-primary/40">
+                    <Icon className="h-5 w-5 text-primary" />
+                  </div>
+                  <p className="text-[11px] uppercase tracking-[0.18em] text-primary/80 font-semibold mb-2">
+                    {eyebrow}
+                  </p>
+                  <h3 className="text-lg font-semibold text-white mb-3 tracking-tight">
+                    {title}
+                  </h3>
+                  <p className="text-sm text-white/55 leading-relaxed">
+                    {text}
+                  </p>
+                </div>
+              </AnimatedSection>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* ── Trust & CTA ────────────────────────────────────────── */}
       <section id="trust" className="relative py-24 px-6">
