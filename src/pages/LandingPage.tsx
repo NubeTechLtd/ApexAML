@@ -769,6 +769,10 @@ function LandingPageInner() {
               Join the institutions preparing for the June 2026 deadline. Get private access to ApexAML today.
             </p>
             <LeadCaptureForm />
+            <div className="mt-4 flex items-center justify-center gap-2 text-[11px] text-white/30">
+              <Lock className="h-3 w-3" />
+              <span>Bank-grade security. 256-bit encryption. NDPA compliant.</span>
+            </div>
           </AnimatedSection>
         </div>
       </section>
