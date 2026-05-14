@@ -1,13 +1,13 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, ArrowRight, Loader2, Download, X } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
-import { NDPRConsent } from './NDPRConsent';
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Shield, ArrowRight, Loader2, Download, X } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { NDPRConsent } from "./NDPRConsent";
 
-const SESSION_KEY = 'apexaml_exit_intent_shown';
+const SESSION_KEY = "apexaml_exit_intent_shown";
 
 const ROADMAP_CONTENT = `CBN AML COMPLIANCE ROADMAP TEMPLATE
 Circular: BSD/DIR/PUB/LAB/019/002
@@ -22,35 +22,35 @@ interface Props {
 
 export function ExitIntentModal({ daysRemaining }: Props) {
   const [open, setOpen] = useState(false);
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [consent, setConsent] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
     // Desktop only — skip touch devices and small viewports.
-    if (typeof window === 'undefined') return;
-    const isTouch = window.matchMedia('(hover: none)').matches || window.innerWidth < 1024;
+    if (typeof window === "undefined") return;
+    const isTouch = window.matchMedia("(hover: none)").matches || window.innerWidth < 1024;
     if (isTouch) return;
-    if (sessionStorage.getItem(SESSION_KEY) === '1') return;
+    if (sessionStorage.getItem(SESSION_KEY) === "1") return;
 
     const handler = (e: MouseEvent) => {
       if (e.clientY < 20 && !e.relatedTarget) {
-        if (sessionStorage.getItem(SESSION_KEY) === '1') return;
-        sessionStorage.setItem(SESSION_KEY, '1');
+        if (sessionStorage.getItem(SESSION_KEY) === "1") return;
+        sessionStorage.setItem(SESSION_KEY, "1");
         setOpen(true);
       }
     };
-    document.addEventListener('mouseleave', handler);
-    return () => document.removeEventListener('mouseleave', handler);
+    document.addEventListener("mouseleave", handler);
+    return () => document.removeEventListener("mouseleave", handler);
   }, []);
 
   const triggerDownload = () => {
-    const blob = new Blob([ROADMAP_CONTENT], { type: 'application/pdf' });
+    const blob = new Blob([ROADMAP_CONTENT], { type: "application/pdf" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = 'CBN_AML_Roadmap_Template_ApexAML.pdf';
+    a.download = "CBN_AML_Roadmap_Template_ApexAML.pdf";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -62,22 +62,22 @@ export function ExitIntentModal({ daysRemaining }: Props) {
     if (submitting || !consent) return;
     const trimmed = email.trim();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
-      toast({ title: 'Invalid email', description: 'Please enter a valid work email.', variant: 'destructive' });
+      toast({ title: "Invalid email", description: "Please enter a valid work email.", variant: "destructive" });
       return;
     }
     setSubmitting(true);
-    const { error } = await supabase.from('leads').insert({
+    const { error } = await supabase.from("leads").insert({
       email: trimmed,
-      source: 'exit_intent',
+      source: "exit_intent",
       ndpr_consent: consent,
     });
     setSubmitting(false);
     if (error) {
-      toast({ title: 'Submission failed', description: 'Please try again.', variant: 'destructive' });
+      toast({ title: "Submission failed", description: "Please try again.", variant: "destructive" });
       return;
     }
     triggerDownload();
-    toast({ title: 'Download started', description: 'Your CBN roadmap template is downloading.' });
+    toast({ title: "Download started", description: "Your CBN roadmap template is downloading." });
     setOpen(false);
   };
 
@@ -90,14 +90,14 @@ export function ExitIntentModal({ daysRemaining }: Props) {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
           className="fixed inset-0 z-[100] flex items-center justify-center px-6"
-          style={{ backgroundColor: 'rgba(0,0,0,0.6)' }}
+          style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
           onClick={() => setOpen(false)}
         >
           <motion.div
             initial={{ opacity: 0, y: 20, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.98 }}
-            transition={{ duration: 0.25, ease: 'easeOut' }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
             onClick={(e) => e.stopPropagation()}
             className="relative w-full max-w-md rounded-2xl border border-white/10 bg-[hsl(220,25%,10%)] p-7 shadow-[0_0_60px_-10px_hsl(var(--primary)/0.35)]"
           >
@@ -120,8 +120,8 @@ export function ExitIntentModal({ daysRemaining }: Props) {
                   Before you go — the CBN deadline is in {daysRemaining} days
                 </h3>
                 <p className="text-sm text-white/55 leading-relaxed">
-                  Download our free roadmap template — pre-formatted for Circular{' '}
-                  <span className="text-white/75 font-mono text-xs">BSD/DIR/PUB/LAB/019/002</span>. Takes 2 hours to complete. Used by 50+ institutions.
+                  Download our free roadmap template — pre-formatted for Circular{" "}
+                  <span className="text-white/75 font-mono text-xs">BSD/DIR/PUB/LAB/019/002</span>.
                 </p>
               </div>
 
