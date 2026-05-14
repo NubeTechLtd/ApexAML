@@ -360,6 +360,8 @@ function LandingPageInner() {
   const [quickBarOpen, setQuickBarOpen] = useState(false);
   const [pulseActive, setPulseActive] = useState(true);
   const [stickyBarVisible, setStickyBarVisible] = useState(false);
+  const [downloadingPdf, setDownloadingPdf] = useState(false);
+  const printableRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
   useEffect(() => {
