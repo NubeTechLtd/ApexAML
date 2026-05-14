@@ -782,12 +782,20 @@ function LandingPageInner() {
       {/* ── Footer ─────────────────────────────────────────────── */}
       <footer className="border-t border-white/[0.06] py-10 px-6">
         <div className="mx-auto max-w-6xl flex flex-col sm:flex-row items-center justify-between gap-6 text-xs text-white/30">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
             <img src={logo} alt="ApexAML" className="h-5 w-5" />
             <span className="font-semibold text-white/50">ApexAML</span>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 border border-primary/25 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary">
-              NDPR Compliant
-            </span>
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 border border-primary/25 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary">
+                NDPR Compliant
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 border border-primary/25 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary">
+                Architected to SOC 2 Standards
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 border border-primary/25 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary">
+                ISO 27001 In Progress
+              </span>
+            </div>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
             <Link to="/privacy" className="hover:text-white/70 transition-colors">Privacy Policy</Link>
