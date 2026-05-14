@@ -808,6 +808,33 @@ function LandingPageInner() {
       />
       <WhatsAppFloatingButton shifted={stickyBarVisible} />
       <ExitIntentModal daysRemaining={countdown.days} />
+
+      {/* Hidden printable roadmap — rendered off-screen so html2canvas can rasterise it. */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'fixed',
+          left: '-10000px',
+          top: 0,
+          width: '800px',
+          pointerEvents: 'none',
+          opacity: 0,
+        }}
+      >
+        <PrintableRoadmap
+          ref={printableRef}
+          institutionName="[Your Institution Name]"
+          institutionType="[Your Institution Type]"
+          contactName="[Compliance Officer Name]"
+          contactTitle="[Title]"
+          email="[Your Email]"
+          amlSetup="No formal system"
+          volume="[Monthly Volume]"
+          referenceNumber="TEMPLATE-2026-XXXX"
+          todayFormatted={new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+          fullDeadline="March 2028"
+        />
+      </div>
     </div>
   );
 }
