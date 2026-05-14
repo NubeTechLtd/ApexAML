@@ -293,6 +293,10 @@ const FAQ_FOR_SCHEMA: Array<{ q: string; a: string }> = [
     q: 'What happens during a CBN examiner visit?',
     a: 'Examiners typically request the AML policy, sample STRs, the case-management trail for flagged customers, and evidence of independent review. ApexAML produces all four on demand: one-click examiner pack as a sealed PDF bundle, cryptographically-sealed audit trail, per-customer case file with reviewer sign-off and STR linkage, and a live dashboard for the examiner.',
   },
+  {
+    q: 'Is ApexAML SOC 2 or ISO 27001 certified?',
+    a: 'ApexAML is architected from the ground up to meet SOC 2 Type II and ISO 27001 standards. We enforce AES-256 encryption at rest, TLS 1.3 in transit, strict role-based access controls (RBAC), and immutable audit logging. We are currently undergoing our formal readiness assessments for both certifications. In the interim, we provide a comprehensive Vendor Security Questionnaire and our AWS infrastructure compliance reports during procurement.',
+  },
 ];
 
 const LANDING_JSON_LD = {
@@ -769,6 +773,10 @@ function LandingPageInner() {
               Join the institutions preparing for the June 2026 deadline. Get private access to ApexAML today.
             </p>
             <LeadCaptureForm />
+            <div className="mt-4 flex items-center justify-center gap-2 text-[11px] text-white/30">
+              <Lock className="h-3 w-3" />
+              <span>Bank-grade security. 256-bit encryption. NDPA compliant.</span>
+            </div>
           </AnimatedSection>
         </div>
       </section>
@@ -782,12 +790,20 @@ function LandingPageInner() {
       {/* ── Footer ─────────────────────────────────────────────── */}
       <footer className="border-t border-white/[0.06] py-10 px-6">
         <div className="mx-auto max-w-6xl flex flex-col sm:flex-row items-center justify-between gap-6 text-xs text-white/30">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
             <img src={logo} alt="ApexAML" className="h-5 w-5" />
             <span className="font-semibold text-white/50">ApexAML</span>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 border border-primary/25 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary">
-              NDPR Compliant
-            </span>
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 border border-primary/25 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary">
+                NDPR Compliant
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 border border-primary/25 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary">
+                Architected to SOC 2 Standards
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 border border-primary/25 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary">
+                ISO 27001 In Progress
+              </span>
+            </div>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
             <Link to="/privacy" className="hover:text-white/70 transition-colors">Privacy Policy</Link>

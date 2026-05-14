@@ -95,6 +95,14 @@ const FAQS: FAQ[] = [
       </div>
     ),
   },
+  {
+    q: 'Is ApexAML SOC 2 or ISO 27001 certified?',
+    a: (
+      <p>
+        ApexAML is architected from the ground up to meet SOC 2 Type II and ISO 27001 standards. We enforce AES-256 encryption at rest, TLS 1.3 in transit, strict role-based access controls (RBAC), and immutable audit logging. We are currently undergoing our formal readiness assessments for both certifications. In the interim, we provide a comprehensive Vendor Security Questionnaire and our AWS infrastructure compliance reports during procurement.
+      </p>
+    ),
+  },
 ];
 
 export function FAQSection() {
