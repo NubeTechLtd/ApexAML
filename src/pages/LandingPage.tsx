@@ -1,5 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+import { PrintableRoadmap } from '@/components/PrintableRoadmap';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { Shield, Sparkles, SlidersHorizontal, Lock, ArrowRight, Download, CheckCircle2, Loader2, Menu, X, RotateCcw, ExternalLink, FileText, Clock } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
