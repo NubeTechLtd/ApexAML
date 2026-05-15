@@ -188,6 +188,34 @@ Deno.serve(async (req: Request) => {
       refNumber: body.refNumber,
     };
 
+    // Authorize: refNumber + recipient email must match an enqueued sequence row.
+    // The refNumber is a server-generated secret unique to each lead.
+    try {
+      const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2.45.0');
+      const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
+      const SERVICE_ROLE = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+      const admin = createClient(SUPABASE_URL, SERVICE_ROLE, { auth: { persistSession: false } });
+      const { data: seq } = await admin
+        .from('email_sequences')
+        .select('id')
+        .eq('ref_number', payload.refNumber)
+        .ilike('email', payload.to)
+        .maybeSingle();
+      if (!seq) {
+        console.warn('send-roadmap-email: refNumber/email mismatch', { ref: payload.refNumber });
+        return new Response(JSON.stringify({ ok: false, reason: 'unauthorized' }), {
+          status: 200,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+    } catch (e) {
+      console.error('send-roadmap-email: authorization lookup failed', e);
+      return new Response(JSON.stringify({ ok: false, reason: 'auth_check_failed' }), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     const subject = `Your CBN AML Roadmap — ${payload.institution} — Ref ${payload.refNumber}`;
     const html = buildHtml(payload);
 
