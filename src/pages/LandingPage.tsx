@@ -15,6 +15,7 @@ import { LeadCaptureForm } from '@/components/landing/LeadCaptureForm';
 import { SocialProofSection } from '@/components/landing/SocialProofSection';
 import { HowItWorksSection } from '@/components/landing/HowItWorksSection';
 import { ComparisonSection } from '@/components/landing/ComparisonSection';
+import { AITimelineVisualizer } from '@/components/AITimelineVisualizer';
 import { RoadmapLeadMagnet } from '@/components/landing/RoadmapLeadMagnet';
 import { StickyComplianceBar } from '@/components/landing/StickyComplianceBar';
 import { FAQSection } from '@/components/landing/FAQSection';
@@ -680,6 +681,22 @@ function LandingPageInner() {
 
       {/* ── How It Works ───────────────────────────────────────── */}
       <HowItWorksSection />
+
+      {/* ── Inside the Engine: 3-Second STR Pipeline ──────────── */}
+      <section className="relative py-24 px-6 overflow-hidden bg-[#0a0f1c] border-y border-white/5">
+        <div className="mx-auto max-w-3xl text-center space-y-4 mb-14">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-primary">
+            Inside the Engine
+          </span>
+          <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight">
+            The 3-Second STR Pipeline
+          </h2>
+          <p className="text-white/50 leading-relaxed max-w-2xl mx-auto">
+            Legacy software relies on human analysts to manually query NIBSS, cross-reference watchlists, and type out goAML reports. Watch how the ApexAML engine automates the entire regulatory lifecycle.
+          </p>
+        </div>
+        <AITimelineVisualizer />
+      </section>
 
       {/* ── AI Advantage ───────────────────────────────────────── */}
       <section id="ai" className="relative py-24 px-6">
