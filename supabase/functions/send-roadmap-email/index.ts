@@ -41,6 +41,7 @@ interface RoadmapEmailPayload {
   type: string;
   roadmapText: string;
   refNumber: string;
+  leadId?: string;
   contactTitle?: string;
   phoneNumber?: string;
   amlSetup?: string;
