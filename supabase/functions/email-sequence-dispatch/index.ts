@@ -19,7 +19,6 @@ const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 
 const CRON_SECRET = Deno.env.get("CRON_SECRET");
-const ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
 const FROM = "ApexAML AML <onboarding@resend.dev>"; // swap to verified domain when ready
 const REPLY_TO = "hello@apexaml.com";
 const APP_BASE = "https://apexaml.com"; // public-facing site for CTAs
