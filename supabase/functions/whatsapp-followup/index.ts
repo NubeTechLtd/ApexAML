@@ -109,6 +109,22 @@ async function sendWhatsApp(to: string, message: string): Promise<{ ok: boolean;
 }
 
 async function handleEnqueue(p: z.infer<typeof EnqueueSchema>) {
+  // Anti-abuse: only enqueue if leadId matches a roadmap_leads row inserted in
+  // the last 30 minutes AND the phone matches that row.
+  const { data: lead } = await admin
+    .from("roadmap_leads")
+    .select("id, phone, created_at")
+    .eq("id", p.leadId)
+    .maybeSingle();
+  const fresh = lead && Date.now() - new Date(lead.created_at).getTime() <= 30 * 60 * 1000;
+  const phoneMatches = lead && normalisePhone(lead.phone ?? "") === normalisePhone(p.phone);
+  if (!fresh || !phoneMatches) {
+    return new Response(JSON.stringify({ ok: false, error: "unauthorized" }), {
+      status: 403,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
   const { data: row, error: insErr } = await admin
     .from("whatsapp_sequences")
     .insert({
