@@ -258,18 +258,23 @@ Managing Director:                                    Signature: _______________
     }
     setShowError(false);
     setSubmitting(true);
-    const { error } = await supabase.from('roadmap_leads').insert({
-      institution_name: institutionName.trim(),
-      institution_type: institutionType,
-      aml_setup: amlSetup,
-      volume,
-      contact_name: contactName.trim(),
-      title: contactTitle.trim(),
-      email: email.trim(),
-      phone: phone.trim() || null,
-      source: 'roadmap_generator',
-    });
+    const { data: leadRow, error } = await supabase
+      .from('roadmap_leads')
+      .insert({
+        institution_name: institutionName.trim(),
+        institution_type: institutionType,
+        aml_setup: amlSetup,
+        volume,
+        contact_name: contactName.trim(),
+        title: contactTitle.trim(),
+        email: email.trim(),
+        phone: phone.trim() || null,
+        source: 'roadmap_generator',
+      })
+      .select('id')
+      .single();
     setSubmitting(false);
+    const leadId = leadRow?.id ?? null;
     if (error) {
       toast({
         title: 'Submission failed',
