@@ -1,5 +1,6 @@
 // Send the generated CBN AML roadmap to the compliance officer via Resend.
 // Failures are logged to console only — the in-app roadmap is the primary UX.
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -11,6 +12,27 @@ const RESEND_GATEWAY_URL = "https://connector-gateway.lovable.dev/resend";
 
 // Admin alert recipient — swap this out as needed
 const ADMIN_ALERT_EMAIL = "adetokunboogun@yahoo.com";
+
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+const adminDb = createClient(SUPABASE_URL, SERVICE_ROLE, { auth: { persistSession: false } });
+
+// Anti-abuse: verify (leadId, recipient email) corresponds to a roadmap_leads row
+// inserted within the last 30 minutes. Prevents this endpoint from being used as
+// an open relay for ApexAML's verified sender.
+const LEAD_FRESHNESS_MS = 30 * 60 * 1000;
+async function verifyFreshLead(leadId: string | undefined | null, email: string): Promise<boolean> {
+  if (!leadId || typeof leadId !== "string") return false;
+  const { data } = await adminDb
+    .from("roadmap_leads")
+    .select("id, email, created_at")
+    .eq("id", leadId)
+    .maybeSingle();
+  if (!data) return false;
+  if ((data.email ?? "").trim().toLowerCase() !== email.trim().toLowerCase()) return false;
+  const created = new Date(data.created_at).getTime();
+  return Number.isFinite(created) && Date.now() - created <= LEAD_FRESHNESS_MS;
+}
 
 interface RoadmapEmailPayload {
   to: string;
