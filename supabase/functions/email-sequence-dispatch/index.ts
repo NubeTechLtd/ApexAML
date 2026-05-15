@@ -32,7 +32,7 @@ const admin = createClient(SUPABASE_URL, SERVICE_ROLE, {
 
 const EnqueueSchema = z.object({
   action: z.literal("enqueue"),
-  leadId: z.string().uuid().optional().nullable(),
+  leadId: z.string().uuid(),
   contactName: z.string().min(1).max(150),
   institutionName: z.string().min(1).max(200),
   institutionType: z.string().max(100).optional().nullable(),
