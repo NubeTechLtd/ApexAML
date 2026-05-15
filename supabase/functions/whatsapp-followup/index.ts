@@ -277,11 +277,6 @@ Deno.serve(async (req) => {
       }
       return await handleTick();
     }
-    if (!(await isAdmin(req))) {
-      return new Response(JSON.stringify({ error: "Forbidden" }), {
-        status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
     return await handleMarkDemo(parsed.data);
   } catch (e) {
     console.error("whatsapp-followup unexpected error", e);
