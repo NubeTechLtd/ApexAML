@@ -212,15 +212,27 @@ async function handleTick() {
 }
 
 async function handleMarkDemo(p: z.infer<typeof MarkSchema>) {
-  if (!p.refNumber) {
-    return new Response(JSON.stringify({ ok: false, error: "refNumber required" }), {
+  if (!p.refNumber || !p.phone) {
+    return new Response(JSON.stringify({ ok: false, error: "refNumber and phone required" }), {
       status: 400,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-  let q = admin.from("whatsapp_sequences").update({ demo_booked: true }).eq("ref_number", p.refNumber);
-  if (p.phone) q = q.eq("phone", normalisePhone(p.phone));
-  const { error } = await q;
+  // Both refNumber AND phone must match an existing sequence row.
+  const { data: row } = await admin
+    .from("whatsapp_sequences")
+    .select("id")
+    .eq("ref_number", p.refNumber)
+    .eq("phone", normalisePhone(p.phone))
+    .maybeSingle();
+  if (!row) {
+    return new Response(JSON.stringify({ ok: false, error: "not found" }), {
+      status: 404,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+  const { error } = await admin
+    .from("whatsapp_sequences").update({ demo_booked: true }).eq("id", row.id);
   if (error) {
     return new Response(JSON.stringify({ ok: false, error: error.message }), {
       status: 500,
@@ -231,20 +243,6 @@ async function handleMarkDemo(p: z.infer<typeof MarkSchema>) {
     status: 200,
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
-}
-
-async function isAdmin(req: Request): Promise<boolean> {
-  const authHeader = req.headers.get("Authorization");
-  if (!authHeader?.startsWith("Bearer ")) return false;
-  const userClient = createClient(SUPABASE_URL, ANON_KEY, {
-    global: { headers: { Authorization: authHeader } },
-    auth: { persistSession: false },
-  });
-  const { data: u } = await userClient.auth.getUser();
-  if (!u?.user) return false;
-  const { data: role } = await admin
-    .from("user_roles").select("role").eq("user_id", u.user.id).eq("role", "admin").maybeSingle();
-  return !!role;
 }
 
 Deno.serve(async (req) => {
