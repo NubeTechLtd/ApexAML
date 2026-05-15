@@ -297,15 +297,25 @@ async function handleTick() {
 }
 
 async function handleMarkDemo(p: z.infer<typeof MarkSchema>) {
-  if (!p.refNumber) {
-    return new Response(JSON.stringify({ ok: false, error: "refNumber required" }), {
+  if (!p.refNumber || !p.email) {
+    return new Response(JSON.stringify({ ok: false, error: "refNumber and email required" }), {
       status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-  // Require ref_number match. Optional email must also match if provided.
-  let q = admin.from("email_sequences").update({ demo_booked: true }).eq("ref_number", p.refNumber);
-  if (p.email) q = q.ilike("email", p.email);
-  const { error } = await q;
+  // Both refNumber AND email must match an existing sequence row.
+  const { data: row } = await admin
+    .from("email_sequences")
+    .select("id")
+    .eq("ref_number", p.refNumber)
+    .ilike("email", p.email)
+    .maybeSingle();
+  if (!row) {
+    return new Response(JSON.stringify({ ok: false, error: "not found" }), {
+      status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+  const { error } = await admin
+    .from("email_sequences").update({ demo_booked: true }).eq("id", row.id);
   if (error) {
     return new Response(JSON.stringify({ ok: false, error: error.message }), {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
