@@ -289,6 +289,16 @@ Deno.serve(async (req: Request) => {
       });
     }
 
+    // Anti-abuse: only send when we can match this request to a fresh lead row.
+    const leadOk = await verifyFreshLead(body.leadId, body.to);
+    if (!leadOk) {
+      console.warn("send-roadmap-email: lead validation failed", { leadId: body.leadId });
+      return new Response(JSON.stringify({ ok: false, reason: "unauthorized" }), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const payload: RoadmapEmailPayload = {
       to: body.to,
       name: body.name || "Compliance Officer",
