@@ -276,6 +276,22 @@ async function dispatchStep(r: Row, step: 2 | 3 | 4 | 5) {
 // ---------- Handlers ----------
 
 async function handleEnqueue(p: z.infer<typeof EnqueueSchema>) {
+  // Anti-abuse: only enqueue if leadId matches a roadmap_leads row inserted in
+  // the last 30 minutes AND the email matches that row.
+  const { data: lead } = await admin
+    .from("roadmap_leads")
+    .select("id, email, created_at")
+    .eq("id", p.leadId)
+    .maybeSingle();
+  const fresh = lead && Date.now() - new Date(lead.created_at).getTime() <= 30 * 60 * 1000;
+  const emailMatches = lead && (lead.email ?? "").trim().toLowerCase() === p.email.trim().toLowerCase();
+  if (!fresh || !emailMatches) {
+    return new Response(JSON.stringify({ ok: false, error: "unauthorized" }), {
+      status: 403,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
   // Suppression: if previously unsubscribed, do not re-enqueue.
   const { data: sup } = await admin
     .from("email_sequences")
