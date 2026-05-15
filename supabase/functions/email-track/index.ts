@@ -73,8 +73,9 @@ Deno.serve(async (req) => {
     ip: req.headers.get("x-forwarded-for") ?? req.headers.get("cf-connecting-ip"),
   };
 
-  // Click flow
-  if (dest && isSafeUrl(dest)) {
+  // Click flow — only redirect if the token resolves to a real sequence row
+  // AND the destination host is allow-listed.
+  if (dest && seq && isSafeUrl(dest)) {
     await admin.from("email_events").insert({
       ...eventBase, event_type: "click", url: dest,
     });
