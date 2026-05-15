@@ -19,7 +19,8 @@ const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 
 const CRON_SECRET = Deno.env.get("CRON_SECRET");
-const FROM = "ApexAML AML <onboarding@resend.dev>"; // swap to verified domain when ready
+const ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
+const FROM = "ApexAML <hello@apexaml.com>"; // swap to verified domain when ready
 const REPLY_TO = "hello@apexaml.com";
 const APP_BASE = "https://apexaml.com"; // public-facing site for CTAs
 const FN_BASE = `${SUPABASE_URL}/functions/v1`;
@@ -52,7 +53,7 @@ function daysUntilDeadline(now = new Date()): number {
 }
 
 function escapeHtml(s: string): string {
-  return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
+  return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 }
 
 function trackedLink(token: string, step: number, target: string): string {
@@ -68,13 +69,23 @@ function unsubscribeUrl(token: string): string {
 // ---------- Templates (plain-text-leaning HTML) ----------
 
 interface Row {
-  id: string; contact_name: string; institution_name: string; institution_type: string | null;
-  email: string; ref_number: string; tracking_token: string; deadline: string;
+  id: string;
+  contact_name: string;
+  institution_name: string;
+  institution_type: string | null;
+  email: string;
+  ref_number: string;
+  tracking_token: string;
+  deadline: string;
 }
 
 function shell(opts: {
-  preheader: string; bodyHtml: string; ctaText: string; ctaUrl: string;
-  token: string; step: number;
+  preheader: string;
+  bodyHtml: string;
+  ctaText: string;
+  ctaUrl: string;
+  token: string;
+  step: number;
 }): string {
   const unsub = unsubscribeUrl(opts.token);
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>ApexAML AML</title></head>
@@ -98,10 +109,17 @@ function shell(opts: {
 }
 
 function tmplEmail2(r: Row) {
-  const cta = trackedLink(r.tracking_token, 2, `${APP_BASE}/?utm_source=drip&utm_campaign=cbn_followup&utm_content=email2#book-demo`);
+  const cta = trackedLink(
+    r.tracking_token,
+    2,
+    `${APP_BASE}/?utm_source=drip&utm_campaign=cbn_followup&utm_content=email2#book-demo`,
+  );
   const html = shell({
     preheader: `Have you submitted ${r.institution_name}'s roadmap to CBN yet?`,
-    step: 2, token: r.tracking_token, ctaText: "Book free roadmap review →", ctaUrl: cta,
+    step: 2,
+    token: r.tracking_token,
+    ctaText: "Book free roadmap review →",
+    ctaUrl: cta,
     bodyHtml: `<p>Hi ${escapeHtml(r.contact_name.split(" ")[0])},</p>
 <p>You generated your CBN AML roadmap (Ref ${escapeHtml(r.ref_number)}) for <strong>${escapeHtml(r.institution_name)}</strong> three days ago.</p>
 <p>Have you submitted it to CBN yet? If you'd like a second pair of eyes, our compliance team will review it for free — formatting, missing capability areas, attestation language.</p>
@@ -111,10 +129,17 @@ function tmplEmail2(r: Row) {
 }
 
 function tmplEmail3(r: Row) {
-  const cta = trackedLink(r.tracking_token, 3, `${APP_BASE}/?utm_source=drip&utm_campaign=cbn_followup&utm_content=email3#book-demo`);
+  const cta = trackedLink(
+    r.tracking_token,
+    3,
+    `${APP_BASE}/?utm_source=drip&utm_campaign=cbn_followup&utm_content=email3#book-demo`,
+  );
   const html = shell({
     preheader: `What CBN does to institutions that miss the June 10 deadline.`,
-    step: 3, token: r.tracking_token, ctaText: "Start your ApexAML implementation →", ctaUrl: cta,
+    step: 3,
+    token: r.tracking_token,
+    ctaText: "Start your ApexAML implementation →",
+    ctaUrl: cta,
     bodyHtml: `<p>Hi ${escapeHtml(r.contact_name.split(" ")[0])},</p>
 <p>What happens if <strong>${escapeHtml(r.institution_name)}</strong> misses the 10 June 2026 CBN AML roadmap deadline? Based on prior CBN enforcement patterns under Circular BSD/DIR/PUB/LAB/019/002 and earlier AML guidance:</p>
 <ol style="padding-left:18px;margin:0 0 16px 0">
@@ -130,10 +155,17 @@ function tmplEmail3(r: Row) {
 
 function tmplEmail4(r: Row) {
   const peer = (r.institution_type || "Nigerian financial institution").trim();
-  const cta = trackedLink(r.tracking_token, 4, `${APP_BASE}/?utm_source=drip&utm_campaign=cbn_followup&utm_content=email4#how-it-works`);
+  const cta = trackedLink(
+    r.tracking_token,
+    4,
+    `${APP_BASE}/?utm_source=drip&utm_campaign=cbn_followup&utm_content=email4#how-it-works`,
+  );
   const html = shell({
     preheader: `How ${peer}s in your peer group are using ApexAML today.`,
-    step: 4, token: r.tracking_token, ctaText: `See how ${peer}s use ApexAML →`, ctaUrl: cta,
+    step: 4,
+    token: r.tracking_token,
+    ctaText: `See how ${peer}s use ApexAML →`,
+    ctaUrl: cta,
     bodyHtml: `<p>Hi ${escapeHtml(r.contact_name.split(" ")[0])},</p>
 <p>Your peers — other ${escapeHtml(peer)}s — are already live on ApexAML.</p>
 <blockquote style="margin:16px 0;padding:12px 16px;border-left:3px solid #1d4ed8;background:#f1f5f9;font-style:italic;color:#1e293b">
@@ -148,10 +180,17 @@ function tmplEmail4(r: Row) {
 
 function tmplEmail5(r: Row) {
   const days = daysUntilDeadline();
-  const cta = trackedLink(r.tracking_token, 5, `${APP_BASE}/?utm_source=drip&utm_campaign=cbn_followup&utm_content=email5#pricing`);
+  const cta = trackedLink(
+    r.tracking_token,
+    5,
+    `${APP_BASE}/?utm_source=drip&utm_campaign=cbn_followup&utm_content=email5#pricing`,
+  );
   const html = shell({
     preheader: `First-month-free for CBN roadmap holders expires June 10.`,
-    step: 5, token: r.tracking_token, ctaText: "Claim your free month →", ctaUrl: cta,
+    step: 5,
+    token: r.tracking_token,
+    ctaText: "Claim your free month →",
+    ctaUrl: cta,
     bodyHtml: `<p>Hi ${escapeHtml(r.contact_name.split(" ")[0])},</p>
 <p>Last reminder for <strong>${escapeHtml(r.institution_name)}</strong>.</p>
 <p>Our <strong>first-month-free offer for CBN roadmap holders expires on 10 June 2026</strong> — the same day as your CBN roadmap submission deadline (${days} days away). After that, standard pricing applies.</p>
@@ -162,7 +201,12 @@ function tmplEmail5(r: Row) {
 
 // ---------- Resend send + logging ----------
 
-async function sendEmail(r: Row, step: number, subject: string, html: string): Promise<{ ok: boolean; error?: string; id?: string }> {
+async function sendEmail(
+  r: Row,
+  step: number,
+  subject: string,
+  html: string,
+): Promise<{ ok: boolean; error?: string; id?: string }> {
   if (!RESEND_API_KEY) {
     console.warn("[email-mock] RESEND_API_KEY missing — logging only");
     console.log(`[email-mock] step=${step} to=${r.email} subject=${subject}`);
@@ -182,7 +226,10 @@ async function sendEmail(r: Row, step: number, subject: string, html: string): P
           "List-Unsubscribe": `<${unsubscribeUrl(r.tracking_token)}>`,
           "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
         },
-        tags: [{ name: "campaign", value: "cbn_drip" }, { name: "step", value: String(step) }],
+        tags: [
+          { name: "campaign", value: "cbn_drip" },
+          { name: "step", value: String(step) },
+        ],
       }),
     });
     if (!resp.ok) {
@@ -198,7 +245,11 @@ async function sendEmail(r: Row, step: number, subject: string, html: string): P
 
 async function logEvent(seqId: string, email: string, step: number, type: "sent" | "failed", metadata: unknown = null) {
   await admin.from("email_events").insert({
-    sequence_id: seqId, email, email_step: step, event_type: type, metadata: metadata ?? null,
+    sequence_id: seqId,
+    email,
+    email_step: step,
+    event_type: type,
+    metadata: metadata ?? null,
   });
 }
 
@@ -207,10 +258,16 @@ async function dispatchStep(r: Row, step: 2 | 3 | 4 | 5) {
   const res = await sendEmail(r, step, tmpl.subject, tmpl.html);
   const col = `email_${step}_sent_at`;
   if (res.ok) {
-    await admin.from("email_sequences").update({ [col]: new Date().toISOString(), last_error: null }).eq("id", r.id);
+    await admin
+      .from("email_sequences")
+      .update({ [col]: new Date().toISOString(), last_error: null })
+      .eq("id", r.id);
     await logEvent(r.id, r.email, step, "sent", { resend_id: res.id });
   } else {
-    await admin.from("email_sequences").update({ last_error: res.error ?? "send failed" }).eq("id", r.id);
+    await admin
+      .from("email_sequences")
+      .update({ last_error: res.error ?? "send failed" })
+      .eq("id", r.id);
     await logEvent(r.id, r.email, step, "failed", { error: res.error });
   }
   return res.ok;
@@ -228,7 +285,8 @@ async function handleEnqueue(p: z.infer<typeof EnqueueSchema>) {
     .limit(1);
   if (sup && sup.length > 0) {
     return new Response(JSON.stringify({ ok: true, suppressed: true }), {
-      status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 200,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
 
@@ -250,12 +308,14 @@ async function handleEnqueue(p: z.infer<typeof EnqueueSchema>) {
 
   if (error || !data) {
     return new Response(JSON.stringify({ ok: false, error: error?.message ?? "insert failed" }), {
-      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
   await logEvent(data.id, data.email, 1, "sent", { source: "send-roadmap-email" });
   return new Response(JSON.stringify({ ok: true, id: data.id }), {
-    status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    status: 200,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 }
 
@@ -263,8 +323,8 @@ async function handleTick() {
   const now = new Date();
   // Day offsets relative to email_1_sent_at.
   const schedule: Array<{ step: 2 | 3 | 4 | 5; days: number; col: string; prevCol: string }> = [
-    { step: 2, days: 3,  col: "email_2_sent_at", prevCol: "email_1_sent_at" },
-    { step: 3, days: 7,  col: "email_3_sent_at", prevCol: "email_1_sent_at" },
+    { step: 2, days: 3, col: "email_2_sent_at", prevCol: "email_1_sent_at" },
+    { step: 3, days: 7, col: "email_3_sent_at", prevCol: "email_1_sent_at" },
     { step: 4, days: 14, col: "email_4_sent_at", prevCol: "email_1_sent_at" },
     { step: 5, days: 21, col: "email_5_sent_at", prevCol: "email_1_sent_at" },
   ];
@@ -274,7 +334,9 @@ async function handleTick() {
     const cutoff = new Date(now.getTime() - s.days * 86_400_000).toISOString();
     const { data: rows } = await admin
       .from("email_sequences")
-      .select("id, contact_name, institution_name, institution_type, email, ref_number, tracking_token, deadline, email_1_sent_at")
+      .select(
+        "id, contact_name, institution_name, institution_type, email, ref_number, tracking_token, deadline, email_1_sent_at",
+      )
       .eq("demo_booked", false)
       .is("unsubscribed_at", null)
       .is("bounced_at", null)
@@ -291,41 +353,51 @@ async function handleTick() {
     results[`step_${s.step}`] = sent;
   }
   return new Response(JSON.stringify({ ok: true, results }), {
-    status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    status: 200,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 }
 
 async function handleMarkDemo(p: z.infer<typeof MarkSchema>) {
-  if (!p.refNumber || !p.email) {
-    return new Response(JSON.stringify({ ok: false, error: "refNumber and email required" }), {
-      status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+  if (!p.refNumber) {
+    return new Response(JSON.stringify({ ok: false, error: "refNumber required" }), {
+      status: 400,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-  // Both refNumber AND email must match an existing sequence row.
-  const { data: row } = await admin
-    .from("email_sequences")
-    .select("id")
-    .eq("ref_number", p.refNumber)
-    .ilike("email", p.email)
-    .maybeSingle();
-  if (!row) {
-    return new Response(JSON.stringify({ ok: false, error: "not found" }), {
-      status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-  }
-  const { error } = await admin
-    .from("email_sequences").update({ demo_booked: true }).eq("id", row.id);
+  // Require ref_number match. Optional email must also match if provided.
+  let q = admin.from("email_sequences").update({ demo_booked: true }).eq("ref_number", p.refNumber);
+  if (p.email) q = q.ilike("email", p.email);
+  const { error } = await q;
   if (error) {
     return new Response(JSON.stringify({ ok: false, error: error.message }), {
-      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
   return new Response(JSON.stringify({ ok: true }), {
-    status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    status: 200,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 }
 
-
+async function isAdmin(req: Request): Promise<boolean> {
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader?.startsWith("Bearer ")) return false;
+  const userClient = createClient(SUPABASE_URL, ANON_KEY, {
+    global: { headers: { Authorization: authHeader } },
+    auth: { persistSession: false },
+  });
+  const { data: u } = await userClient.auth.getUser();
+  if (!u?.user) return false;
+  const { data: role } = await admin
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", u.user.id)
+    .eq("role", "admin")
+    .maybeSingle();
+  return !!role;
+}
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
@@ -333,10 +405,19 @@ Deno.serve(async (req) => {
   void LOVABLE_API_KEY;
 
   let parsed;
-  try { parsed = BodySchema.safeParse(await req.json()); }
-  catch { return new Response(JSON.stringify({ error: "Invalid JSON" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }); }
+  try {
+    parsed = BodySchema.safeParse(await req.json());
+  } catch {
+    return new Response(JSON.stringify({ error: "Invalid JSON" }), {
+      status: 400,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
   if (!parsed.success) {
-    return new Response(JSON.stringify({ error: parsed.error.flatten() }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ error: parsed.error.flatten() }), {
+      status: 400,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 
   try {
@@ -345,18 +426,25 @@ Deno.serve(async (req) => {
       const provided = req.headers.get("x-cron-secret") ?? "";
       if (!CRON_SECRET || provided !== CRON_SECRET) {
         return new Response(JSON.stringify({ error: "Unauthorized" }), {
-          status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
       return await handleTick();
     }
-    // mark_demo_booked: refNumber+email both required and must match an existing
-    // sequence row. Refs are server-generated secrets unique to each lead.
+    // mark_demo_booked: admin-only.
+    if (!(await isAdmin(req))) {
+      return new Response(JSON.stringify({ error: "Forbidden" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     return await handleMarkDemo(parsed.data);
   } catch (e) {
     console.error("email-sequence-dispatch error", e);
     return new Response(JSON.stringify({ ok: false, error: e instanceof Error ? e.message : "unknown" }), {
-      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
 });

@@ -2,12 +2,12 @@
 // Failures are logged to console only — the in-app roadmap is the primary UX.
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers':
-    'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const RESEND_GATEWAY_URL = 'https://connector-gateway.lovable.dev/resend';
+const RESEND_GATEWAY_URL = "https://connector-gateway.lovable.dev/resend";
 
 interface RoadmapEmailPayload {
   to: string;
@@ -20,29 +20,28 @@ interface RoadmapEmailPayload {
 
 function escapeHtml(input: string): string {
   return input
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 function isEmail(s: unknown): s is string {
-  return typeof s === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
+  return typeof s === "string" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
 }
 
 function buildHtml(p: RoadmapEmailPayload): string {
-  const safeName = escapeHtml(p.name || 'Compliance Officer');
-  const safeInst = escapeHtml(p.institution || 'your institution');
+  const safeName = escapeHtml(p.name || "Compliance Officer");
+  const safeInst = escapeHtml(p.institution || "your institution");
   const safeRef = escapeHtml(p.refNumber);
   const safeRoadmap = escapeHtml(p.roadmapText);
-  const today = new Date().toLocaleDateString('en-GB', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
+  const today = new Date().toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
   });
-  const ctaUrl =
-    'https://apexaml.com/?utm_source=roadmap_email&utm_medium=email&utm_campaign=cbn_roadmap';
+  const ctaUrl = "https://apexaml.com/?utm_source=roadmap_email&utm_medium=email&utm_campaign=cbn_roadmap";
   const unsubUrl = `https://apexaml.com/unsubscribe?email=${encodeURIComponent(p.to)}`;
 
   return `<!doctype html>
@@ -138,25 +137,25 @@ function buildHtml(p: RoadmapEmailPayload): string {
 }
 
 Deno.serve(async (req: Request) => {
-  if (req.method === 'OPTIONS') {
+  if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
-      console.error('send-roadmap-email: LOVABLE_API_KEY not configured');
-      return new Response(JSON.stringify({ ok: false, reason: 'config' }), {
+      console.error("send-roadmap-email: LOVABLE_API_KEY not configured");
+      return new Response(JSON.stringify({ ok: false, reason: "config" }), {
         status: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-    const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
+    const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
     if (!RESEND_API_KEY) {
-      console.error('send-roadmap-email: RESEND_API_KEY not configured');
-      return new Response(JSON.stringify({ ok: false, reason: 'config' }), {
+      console.error("send-roadmap-email: RESEND_API_KEY not configured");
+      return new Response(JSON.stringify({ ok: false, reason: "config" }), {
         status: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
@@ -164,72 +163,44 @@ Deno.serve(async (req: Request) => {
     if (
       !body ||
       !isEmail(body.to) ||
-      typeof body.roadmapText !== 'string' ||
+      typeof body.roadmapText !== "string" ||
       body.roadmapText.trim().length < 50 ||
-      typeof body.refNumber !== 'string'
+      typeof body.refNumber !== "string"
     ) {
-      console.error('send-roadmap-email: invalid payload', {
+      console.error("send-roadmap-email: invalid payload", {
         hasBody: !!body,
         toOk: isEmail(body?.to),
-        roadmapLen: typeof body?.roadmapText === 'string' ? body!.roadmapText.length : 0,
+        roadmapLen: typeof body?.roadmapText === "string" ? body!.roadmapText.length : 0,
       });
-      return new Response(JSON.stringify({ ok: false, reason: 'invalid_payload' }), {
+      return new Response(JSON.stringify({ ok: false, reason: "invalid_payload" }), {
         status: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
     const payload: RoadmapEmailPayload = {
       to: body.to,
-      name: body.name || 'Compliance Officer',
-      institution: body.institution || 'your institution',
-      type: body.type || '',
+      name: body.name || "Compliance Officer",
+      institution: body.institution || "your institution",
+      type: body.type || "",
       roadmapText: body.roadmapText,
       refNumber: body.refNumber,
     };
-
-    // Authorize: refNumber + recipient email must match an enqueued sequence row.
-    // The refNumber is a server-generated secret unique to each lead.
-    try {
-      const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2.45.0');
-      const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
-      const SERVICE_ROLE = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-      const admin = createClient(SUPABASE_URL, SERVICE_ROLE, { auth: { persistSession: false } });
-      const { data: seq } = await admin
-        .from('email_sequences')
-        .select('id')
-        .eq('ref_number', payload.refNumber)
-        .ilike('email', payload.to)
-        .maybeSingle();
-      if (!seq) {
-        console.warn('send-roadmap-email: refNumber/email mismatch', { ref: payload.refNumber });
-        return new Response(JSON.stringify({ ok: false, reason: 'unauthorized' }), {
-          status: 200,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      }
-    } catch (e) {
-      console.error('send-roadmap-email: authorization lookup failed', e);
-      return new Response(JSON.stringify({ ok: false, reason: 'auth_check_failed' }), {
-        status: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
 
     const subject = `Your CBN AML Roadmap — ${payload.institution} — Ref ${payload.refNumber}`;
     const html = buildHtml(payload);
 
     const response = await fetch(`${RESEND_GATEWAY_URL}/emails`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        'X-Connection-Api-Key': RESEND_API_KEY,
+        "X-Connection-Api-Key": RESEND_API_KEY,
       },
       body: JSON.stringify({
-        from: 'ApexAML <onboarding@resend.dev>',
+        from: "ApexAML <hello@apexaml.com>>",
         to: [payload.to],
-        reply_to: 'hello@apexaml.com',
+        reply_to: "hello@apexaml.com",
         subject,
         html,
       }),
@@ -237,22 +208,22 @@ Deno.serve(async (req: Request) => {
 
     const data = await response.json().catch(() => ({}));
     if (!response.ok) {
-      console.error('send-roadmap-email: Resend error', response.status, data);
-      return new Response(JSON.stringify({ ok: false, reason: 'send_failed' }), {
+      console.error("send-roadmap-email: Resend error", response.status, data);
+      return new Response(JSON.stringify({ ok: false, reason: "send_failed" }), {
         status: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
     return new Response(JSON.stringify({ ok: true, id: (data as { id?: string }).id ?? null }), {
       status: 200,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {
-    console.error('send-roadmap-email: unexpected error', err);
-    return new Response(JSON.stringify({ ok: false, reason: 'exception' }), {
+    console.error("send-roadmap-email: unexpected error", err);
+    return new Response(JSON.stringify({ ok: false, reason: "exception" }), {
       status: 200,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
 });
