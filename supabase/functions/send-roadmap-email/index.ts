@@ -303,6 +303,26 @@ Deno.serve(async (req: Request) => {
       });
     }
 
+    // Fire-and-forget internal admin alert — never blocks the user-facing response
+    const alertSubject = `🚨 NEW ENTERPRISE LEAD: ${payload.institution}`;
+    const alertHtml = buildAdminAlertHtml(payload);
+    fetch(`${RESEND_GATEWAY_URL}/emails`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        "X-Connection-Api-Key": RESEND_API_KEY,
+      },
+      body: JSON.stringify({
+        from: "ApexAML System <hello@apexaml.com>",
+        to: [ADMIN_ALERT_EMAIL],
+        subject: alertSubject,
+        html: alertHtml,
+      }),
+    }).catch((alertErr) => {
+      console.error("send-roadmap-email: admin alert dispatch failed", alertErr);
+    });
+
     return new Response(JSON.stringify({ ok: true, id: (data as { id?: string }).id ?? null }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
