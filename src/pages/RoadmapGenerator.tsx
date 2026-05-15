@@ -308,6 +308,26 @@ Managing Director:                                    Signature: _______________
       roadmapText = buildFallbackRoadmap();
     }
 
+    // Enqueue the 5-email Resend drip sequence FIRST. This creates the email_sequences
+    // row that send-roadmap-email validates against. Email 1 (the roadmap email) is
+    // dispatched immediately below; emails 2-5 are sent on day 3/7/14/21 by the
+    // pg_cron tick unless the lead books a demo or unsubscribes.
+    try {
+      await supabase.functions.invoke('email-sequence-dispatch', {
+        body: {
+          action: 'enqueue',
+          contactName: contactName.trim(),
+          institutionName: institutionName.trim(),
+          institutionType,
+          email: email.trim(),
+          refNumber: referenceNumber,
+          deadline,
+        },
+      });
+    } catch (err) {
+      console.warn('Email drip enqueue failed', err);
+    }
+
     // Fire-and-forget: email the roadmap. Failures are silent — in-app display is primary.
     supabase.functions
       .invoke('send-roadmap-email', {
@@ -340,23 +360,6 @@ Managing Director:                                    Signature: _______________
         })
         .catch((err) => console.warn('WhatsApp follow-up enqueue failed', err));
     }
-
-    // Fire-and-forget: enqueue the 5-email Resend drip sequence. Email 1 is the
-    // roadmap email (already dispatched above); emails 2-5 are sent on day 3/7/14/21
-    // by the pg_cron tick unless the lead books a demo or unsubscribes.
-    supabase.functions
-      .invoke('email-sequence-dispatch', {
-        body: {
-          action: 'enqueue',
-          contactName: contactName.trim(),
-          institutionName: institutionName.trim(),
-          institutionType,
-          email: email.trim(),
-          refNumber: referenceNumber,
-          deadline,
-        },
-      })
-      .catch((err) => console.warn('Email drip enqueue failed', err));
     // Ensure the loading UX runs at least ~5s so the cycling messages are visible.
     const elapsed = Date.now() - startedAt;
     const minMs = 5000;

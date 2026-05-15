@@ -18,6 +18,7 @@ const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 
+const CRON_SECRET = Deno.env.get("CRON_SECRET");
 const FROM = "ApexAML AML <onboarding@resend.dev>"; // swap to verified domain when ready
 const REPLY_TO = "hello@apexaml.com";
 const APP_BASE = "https://apexaml.com"; // public-facing site for CTAs
@@ -295,15 +296,25 @@ async function handleTick() {
 }
 
 async function handleMarkDemo(p: z.infer<typeof MarkSchema>) {
-  if (!p.email && !p.refNumber) {
-    return new Response(JSON.stringify({ ok: false, error: "email or refNumber required" }), {
+  if (!p.refNumber || !p.email) {
+    return new Response(JSON.stringify({ ok: false, error: "refNumber and email required" }), {
       status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-  let q = admin.from("email_sequences").update({ demo_booked: true });
-  if (p.refNumber) q = q.eq("ref_number", p.refNumber);
-  if (p.email) q = q.ilike("email", p.email);
-  const { error } = await q;
+  // Both refNumber AND email must match an existing sequence row.
+  const { data: row } = await admin
+    .from("email_sequences")
+    .select("id")
+    .eq("ref_number", p.refNumber)
+    .ilike("email", p.email)
+    .maybeSingle();
+  if (!row) {
+    return new Response(JSON.stringify({ ok: false, error: "not found" }), {
+      status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+  const { error } = await admin
+    .from("email_sequences").update({ demo_booked: true }).eq("id", row.id);
   if (error) {
     return new Response(JSON.stringify({ ok: false, error: error.message }), {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -313,6 +324,8 @@ async function handleMarkDemo(p: z.infer<typeof MarkSchema>) {
     status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 }
+
+
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
@@ -328,7 +341,17 @@ Deno.serve(async (req) => {
 
   try {
     if (parsed.data.action === "enqueue") return await handleEnqueue(parsed.data);
-    if (parsed.data.action === "tick") return await handleTick();
+    if (parsed.data.action === "tick") {
+      const provided = req.headers.get("x-cron-secret") ?? "";
+      if (!CRON_SECRET || provided !== CRON_SECRET) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      return await handleTick();
+    }
+    // mark_demo_booked: refNumber+email both required and must match an existing
+    // sequence row. Refs are server-generated secrets unique to each lead.
     return await handleMarkDemo(parsed.data);
   } catch (e) {
     console.error("email-sequence-dispatch error", e);

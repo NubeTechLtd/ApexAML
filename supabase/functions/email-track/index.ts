@@ -28,10 +28,21 @@ function gifResponse() {
   });
 }
 
+const ALLOWED_REDIRECT_HOSTS = new Set<string>([
+  "apexaml.com",
+  "www.apexaml.com",
+  "apexaml.lovable.app",
+]);
+
 function isSafeUrl(u: string): boolean {
   try {
     const parsed = new URL(u);
-    return parsed.protocol === "https:" || parsed.protocol === "http:";
+    if (parsed.protocol !== "https:" && parsed.protocol !== "http:") return false;
+    const host = parsed.hostname.toLowerCase();
+    if (ALLOWED_REDIRECT_HOSTS.has(host)) return true;
+    // Allow Lovable preview subdomains.
+    if (host.endsWith(".lovable.app") || host.endsWith(".lovable.dev")) return true;
+    return false;
   } catch { return false; }
 }
 
@@ -62,8 +73,9 @@ Deno.serve(async (req) => {
     ip: req.headers.get("x-forwarded-for") ?? req.headers.get("cf-connecting-ip"),
   };
 
-  // Click flow
-  if (dest && isSafeUrl(dest)) {
+  // Click flow — only redirect if the token resolves to a real sequence row
+  // AND the destination host is allow-listed.
+  if (dest && seq && isSafeUrl(dest)) {
     await admin.from("email_events").insert({
       ...eventBase, event_type: "click", url: dest,
     });

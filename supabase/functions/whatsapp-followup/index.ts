@@ -17,6 +17,7 @@ const corsHeaders = {
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+const CRON_SECRET = Deno.env.get("CRON_SECRET");
 const TERMII_API_KEY = Deno.env.get("TERMII_API_KEY");
 const TERMII_SENDER_ID = Deno.env.get("TERMII_SENDER_ID") ?? "ApexAML";
 
@@ -210,16 +211,27 @@ async function handleTick() {
 }
 
 async function handleMarkDemo(p: z.infer<typeof MarkSchema>) {
-  if (!p.phone && !p.refNumber) {
-    return new Response(JSON.stringify({ ok: false, error: "phone or refNumber required" }), {
+  if (!p.refNumber || !p.phone) {
+    return new Response(JSON.stringify({ ok: false, error: "refNumber and phone required" }), {
       status: 400,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-  let q = admin.from("whatsapp_sequences").update({ demo_booked: true });
-  if (p.refNumber) q = q.eq("ref_number", p.refNumber);
-  if (p.phone) q = q.eq("phone", normalisePhone(p.phone));
-  const { error } = await q;
+  // Both refNumber AND phone must match an existing sequence row.
+  const { data: row } = await admin
+    .from("whatsapp_sequences")
+    .select("id")
+    .eq("ref_number", p.refNumber)
+    .eq("phone", normalisePhone(p.phone))
+    .maybeSingle();
+  if (!row) {
+    return new Response(JSON.stringify({ ok: false, error: "not found" }), {
+      status: 404,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+  const { error } = await admin
+    .from("whatsapp_sequences").update({ demo_booked: true }).eq("id", row.id);
   if (error) {
     return new Response(JSON.stringify({ ok: false, error: error.message }), {
       status: 500,
@@ -255,7 +267,15 @@ Deno.serve(async (req) => {
 
   try {
     if (parsed.data.action === "enqueue") return await handleEnqueue(parsed.data);
-    if (parsed.data.action === "tick") return await handleTick();
+    if (parsed.data.action === "tick") {
+      const provided = req.headers.get("x-cron-secret") ?? "";
+      if (!CRON_SECRET || provided !== CRON_SECRET) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      return await handleTick();
+    }
     return await handleMarkDemo(parsed.data);
   } catch (e) {
     console.error("whatsapp-followup unexpected error", e);
