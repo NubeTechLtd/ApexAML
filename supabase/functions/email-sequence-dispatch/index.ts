@@ -353,12 +353,8 @@ Deno.serve(async (req) => {
       }
       return await handleTick();
     }
-    // mark_demo_booked: admin-only.
-    if (!(await isAdmin(req))) {
-      return new Response(JSON.stringify({ error: "Forbidden" }), {
-        status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    // mark_demo_booked: refNumber+email both required and must match an existing
+    // sequence row. Refs are server-generated secrets unique to each lead.
     return await handleMarkDemo(parsed.data);
   } catch (e) {
     console.error("email-sequence-dispatch error", e);
