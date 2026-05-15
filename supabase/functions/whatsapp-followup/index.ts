@@ -212,14 +212,13 @@ async function handleTick() {
 }
 
 async function handleMarkDemo(p: z.infer<typeof MarkSchema>) {
-  if (!p.phone && !p.refNumber) {
-    return new Response(JSON.stringify({ ok: false, error: "phone or refNumber required" }), {
+  if (!p.refNumber) {
+    return new Response(JSON.stringify({ ok: false, error: "refNumber required" }), {
       status: 400,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-  let q = admin.from("whatsapp_sequences").update({ demo_booked: true });
-  if (p.refNumber) q = q.eq("ref_number", p.refNumber);
+  let q = admin.from("whatsapp_sequences").update({ demo_booked: true }).eq("ref_number", p.refNumber);
   if (p.phone) q = q.eq("phone", normalisePhone(p.phone));
   const { error } = await q;
   if (error) {
@@ -232,6 +231,20 @@ async function handleMarkDemo(p: z.infer<typeof MarkSchema>) {
     status: 200,
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
+}
+
+async function isAdmin(req: Request): Promise<boolean> {
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader?.startsWith("Bearer ")) return false;
+  const userClient = createClient(SUPABASE_URL, ANON_KEY, {
+    global: { headers: { Authorization: authHeader } },
+    auth: { persistSession: false },
+  });
+  const { data: u } = await userClient.auth.getUser();
+  if (!u?.user) return false;
+  const { data: role } = await admin
+    .from("user_roles").select("role").eq("user_id", u.user.id).eq("role", "admin").maybeSingle();
+  return !!role;
 }
 
 Deno.serve(async (req) => {
