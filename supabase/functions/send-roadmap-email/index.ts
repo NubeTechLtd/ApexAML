@@ -9,6 +9,9 @@ const corsHeaders = {
 
 const RESEND_GATEWAY_URL = "https://connector-gateway.lovable.dev/resend";
 
+// Admin alert recipient — swap this out as needed
+const ADMIN_ALERT_EMAIL = "adetokunboogun@yahoo.com";
+
 interface RoadmapEmailPayload {
   to: string;
   name: string;
@@ -16,6 +19,9 @@ interface RoadmapEmailPayload {
   type: string;
   roadmapText: string;
   refNumber: string;
+  contactTitle?: string;
+  phoneNumber?: string;
+  amlSetup?: string;
 }
 
 function escapeHtml(input: string): string {
