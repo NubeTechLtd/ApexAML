@@ -338,6 +338,9 @@ Managing Director:                                    Signature: _______________
           type: institutionType,
           roadmapText,
           refNumber: referenceNumber,
+          contactTitle: contactTitle.trim(),
+          phoneNumber: phone.trim() || undefined,
+          amlSetup,
         },
       })
       .catch((err) => console.warn('Roadmap email dispatch failed', err));

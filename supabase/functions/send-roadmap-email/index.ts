@@ -9,6 +9,9 @@ const corsHeaders = {
 
 const RESEND_GATEWAY_URL = "https://connector-gateway.lovable.dev/resend";
 
+// Admin alert recipient — swap this out as needed
+const ADMIN_ALERT_EMAIL = "adetokunboogun@yahoo.com";
+
 interface RoadmapEmailPayload {
   to: string;
   name: string;
@@ -16,6 +19,9 @@ interface RoadmapEmailPayload {
   type: string;
   roadmapText: string;
   refNumber: string;
+  contactTitle?: string;
+  phoneNumber?: string;
+  amlSetup?: string;
 }
 
 function escapeHtml(input: string): string {
@@ -135,7 +141,89 @@ function buildHtml(p: RoadmapEmailPayload): string {
   </body>
 </html>`;
 }
+function buildAdminAlertHtml(p: RoadmapEmailPayload): string {
+  const safeName = escapeHtml(p.name || "Unknown");
+  const safeTitle = escapeHtml(p.contactTitle || "");
+  const safeInst = escapeHtml(p.institution || "Unknown");
+  const safeType = escapeHtml(p.type || "");
+  const safeEmail = escapeHtml(p.to);
+  const safePhone = escapeHtml(p.phoneNumber || "Not provided");
+  const safeSetup = escapeHtml(p.amlSetup || "Unknown");
+  const safeRef = escapeHtml(p.refNumber);
 
+  return `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>New Enterprise Lead</title>
+  </head>
+  <body style="margin:0;padding:0;background:#f4f4f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:#1a1a2e;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f4f4f7;padding:24px 0;">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="640" cellpadding="0" cellspacing="0" border="0" style="max-width:640px;width:100%;background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+            <tr>
+              <td style="background:#dc2626;padding:24px 28px;">
+                <div style="font-size:18px;font-weight:600;color:#ffffff;letter-spacing:-0.01em;">🚨 New Enterprise Lead</div>
+                <div style="font-size:12px;color:rgba(255,255,255,0.75);margin-top:4px;">ApexAML System Alert</div>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:28px;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size:14px;line-height:1.6;">
+                  <tr>
+                    <td style="padding:8px 0;border-bottom:1px solid #e5e5ec;width:140px;color:#6b6b80;vertical-align:top;"><strong>Name</strong></td>
+                    <td style="padding:8px 0;border-bottom:1px solid #e5e5ec;color:#1a1a2e;vertical-align:top;">${safeName}${safeTitle ? ` <span style="color:#6b6b80;">(${safeTitle})</span>` : ""}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:8px 0;border-bottom:1px solid #e5e5ec;color:#6b6b80;vertical-align:top;"><strong>Institution</strong></td>
+                    <td style="padding:8px 0;border-bottom:1px solid #e5e5ec;color:#1a1a2e;vertical-align:top;">${safeInst}${safeType ? ` <span style="color:#6b6b80;">(${safeType})</span>` : ""}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:8px 0;border-bottom:1px solid #e5e5ec;color:#6b6b80;vertical-align:top;"><strong>Email</strong></td>
+                    <td style="padding:8px 0;border-bottom:1px solid #e5e5ec;color:#1a1a2e;vertical-align:top;"><a href="mailto:${safeEmail}" style="color:#1a1a2e;text-decoration:underline;">${safeEmail}</a></td>
+                  </tr>
+                  <tr>
+                    <td style="padding:8px 0;border-bottom:1px solid #e5e5ec;color:#6b6b80;vertical-align:top;"><strong>Phone</strong></td>
+                    <td style="padding:8px 0;border-bottom:1px solid #e5e5ec;color:#1a1a2e;vertical-align:top;">${safePhone}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:8px 0;border-bottom:1px solid #e5e5ec;color:#6b6b80;vertical-align:top;"><strong>Current Setup</strong></td>
+                    <td style="padding:8px 0;border-bottom:1px solid #e5e5ec;color:#1a1a2e;vertical-align:top;">${safeSetup}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:8px 0;color:#6b6b80;vertical-align:top;"><strong>Reference</strong></td>
+                    <td style="padding:8px 0;color:#1a1a2e;vertical-align:top;font-family:'SF Mono',Menlo,Consolas,monospace;font-size:13px;">${safeRef}</td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:0 28px 24px 28px;">
+                <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                  <tr>
+                    <td style="background:#1a1a2e;border-radius:6px;">
+                      <a href="https://apexaml.com/admin/roadmaps" style="display:inline-block;padding:12px 22px;font-size:14px;font-weight:600;color:#ffffff;text-decoration:none;">View in Admin Dashboard →</a>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:16px 28px;background:#fafafc;border-top:1px solid #eeeef3;">
+                <div style="font-size:11px;line-height:1.6;color:#6b6b80;">
+                  This alert was generated automatically by the ApexAML system when a lead requested a CBN AML roadmap.
+                </div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>`;
+}
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -214,6 +302,26 @@ Deno.serve(async (req: Request) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
+    // Fire-and-forget internal admin alert — never blocks the user-facing response
+    const alertSubject = `🚨 NEW ENTERPRISE LEAD: ${payload.institution}`;
+    const alertHtml = buildAdminAlertHtml(payload);
+    fetch(`${RESEND_GATEWAY_URL}/emails`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        "X-Connection-Api-Key": RESEND_API_KEY,
+      },
+      body: JSON.stringify({
+        from: "ApexAML System <hello@apexaml.com>",
+        to: [ADMIN_ALERT_EMAIL],
+        subject: alertSubject,
+        html: alertHtml,
+      }),
+    }).catch((alertErr) => {
+      console.error("send-roadmap-email: admin alert dispatch failed", alertErr);
+    });
 
     return new Response(JSON.stringify({ ok: true, id: (data as { id?: string }).id ?? null }), {
       status: 200,
