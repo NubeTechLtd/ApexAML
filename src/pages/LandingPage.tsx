@@ -15,6 +15,7 @@ import { LeadCaptureForm } from '@/components/landing/LeadCaptureForm';
 import { SocialProofSection } from '@/components/landing/SocialProofSection';
 import { HowItWorksSection } from '@/components/landing/HowItWorksSection';
 import { ComparisonSection } from '@/components/landing/ComparisonSection';
+import { AITimelineVisualizer } from '@/components/AITimelineVisualizer';
 import { RoadmapLeadMagnet } from '@/components/landing/RoadmapLeadMagnet';
 import { StickyComplianceBar } from '@/components/landing/StickyComplianceBar';
 import { FAQSection } from '@/components/landing/FAQSection';
