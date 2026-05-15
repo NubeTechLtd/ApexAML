@@ -321,6 +321,7 @@ Managing Director:                                    Signature: _______________
       await supabase.functions.invoke('email-sequence-dispatch', {
         body: {
           action: 'enqueue',
+          leadId,
           contactName: contactName.trim(),
           institutionName: institutionName.trim(),
           institutionType,
@@ -337,6 +338,7 @@ Managing Director:                                    Signature: _______________
     supabase.functions
       .invoke('send-roadmap-email', {
         body: {
+          leadId,
           to: email.trim(),
           name: contactName.trim(),
           institution: institutionName.trim(),
@@ -357,6 +359,7 @@ Managing Director:                                    Signature: _______________
         .invoke('whatsapp-followup', {
           body: {
             action: 'enqueue',
+            leadId,
             contactName: contactName.trim(),
             institutionName: institutionName.trim(),
             institutionType,
