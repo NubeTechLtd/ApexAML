@@ -344,7 +344,21 @@ Deno.serve(async (req) => {
 
   try {
     if (parsed.data.action === "enqueue") return await handleEnqueue(parsed.data);
-    if (parsed.data.action === "tick") return await handleTick();
+    if (parsed.data.action === "tick") {
+      const provided = req.headers.get("x-cron-secret") ?? "";
+      if (!CRON_SECRET || provided !== CRON_SECRET) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      return await handleTick();
+    }
+    // mark_demo_booked: admin-only.
+    if (!(await isAdmin(req))) {
+      return new Response(JSON.stringify({ error: "Forbidden" }), {
+        status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     return await handleMarkDemo(parsed.data);
   } catch (e) {
     console.error("email-sequence-dispatch error", e);
