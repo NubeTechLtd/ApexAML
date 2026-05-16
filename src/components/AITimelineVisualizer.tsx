@@ -119,7 +119,7 @@ export function AITimelineVisualizer() {
   const isCurrentDone = completed[activeStep];
 
   return (
-    <div className="mx-auto max-w-6xl">
+    <div ref={containerRef} className="mx-auto max-w-6xl">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3 mb-10">
         <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-white/50 font-semibold">
