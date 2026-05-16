@@ -12,6 +12,7 @@ import { NDPRConsent } from './NDPRConsent';
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  prefilledMessage?: string;
 }
 
 const INSTITUTIONS = ['DMB', 'Fintech', 'PSP', 'MMO', 'MFB', 'IMTO'];
