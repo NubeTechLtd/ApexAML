@@ -67,6 +67,8 @@ export function AITimelineVisualizer() {
   );
   const [running, setRunning] = useState(false);
   const intervalRef = useRef<number | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const hasAutoRunRef = useRef(false);
 
   const clearTimer = () => {
     if (intervalRef.current !== null) {
