@@ -20,7 +20,7 @@ const ROWS: Row[] = [
     feature: 'Monthly Cost',
     manual: { value: '₦3–8M salary/analyst', tone: 'mid' },
     enterprise: { value: '₦15M+ licensing', tone: 'bad' },
-    apexaml: 'From ₦800k/month',
+    apexaml: 'From ₦350,000/month — less than one junior compliance officer\'s salary.',
   },
   {
     feature: 'goAML XML Export',
