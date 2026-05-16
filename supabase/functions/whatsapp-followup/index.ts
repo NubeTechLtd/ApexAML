@@ -17,6 +17,7 @@ const corsHeaders = {
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+const ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
 const CRON_SECRET = Deno.env.get("CRON_SECRET");
 const TERMII_API_KEY = Deno.env.get("TERMII_API_KEY");
 const TERMII_SENDER_ID = Deno.env.get("TERMII_SENDER_ID") ?? "ApexAML";
