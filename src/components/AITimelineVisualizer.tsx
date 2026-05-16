@@ -115,6 +115,25 @@ export function AITimelineVisualizer() {
     setCompleted(STEPS.map(() => false));
   };
 
+  useEffect(() => {
+    if (!containerRef.current || typeof IntersectionObserver === 'undefined') return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !hasAutoRunRef.current) {
+            hasAutoRunRef.current = true;
+            handleRun();
+            observer.disconnect();
+          }
+        });
+      },
+      { threshold: 0.4 },
+    );
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const current = STEPS[activeStep];
   const isCurrentDone = completed[activeStep];
 
