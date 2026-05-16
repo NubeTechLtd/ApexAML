@@ -17,7 +17,7 @@ interface Props {
 
 const INSTITUTIONS = ['DMB', 'Fintech', 'PSP', 'MMO', 'MFB', 'IMTO'];
 
-export function BookDemoSheet({ open, onOpenChange }: Props) {
+export function BookDemoSheet({ open, onOpenChange, prefilledMessage }: Props) {
   const [fullName, setFullName] = useState('');
   const [institutionName, setInstitutionName] = useState('');
   const [institutionType, setInstitutionType] = useState('');
