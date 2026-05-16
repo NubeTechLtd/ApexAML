@@ -854,7 +854,7 @@ function LandingPageInner() {
       </section>
 
       {/* ── Pricing ────────────────────────────────────────────── */}
-      <PricingSection onBookDemo={() => setDemoSheetOpen(true)} />
+      <PricingSection onBookDemo={(message) => { setDemoSheetMessage(message); setDemoSheetOpen(true); }} />
 
       {/* ── FAQ ────────────────────────────────────────────────── */}
       <FAQSection />
