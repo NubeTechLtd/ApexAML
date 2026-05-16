@@ -17,6 +17,7 @@ const corsHeaders = {
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+const ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
 const CRON_SECRET = Deno.env.get("CRON_SECRET");
 const TERMII_API_KEY = Deno.env.get("TERMII_API_KEY");
 const TERMII_SENDER_ID = Deno.env.get("TERMII_SENDER_ID") ?? "ApexAML";
@@ -260,6 +261,24 @@ async function handleMarkDemo(p: z.infer<typeof MarkSchema>) {
   });
 }
 
+async function isAdmin(req: Request): Promise<boolean> {
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader?.startsWith("Bearer ")) return false;
+  const userClient = createClient(SUPABASE_URL, ANON_KEY, {
+    global: { headers: { Authorization: authHeader } },
+    auth: { persistSession: false },
+  });
+  const { data: u } = await userClient.auth.getUser();
+  if (!u?.user) return false;
+  const { data: role } = await admin
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", u.user.id)
+    .eq("role", "admin")
+    .maybeSingle();
+  return !!role;
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -291,6 +310,13 @@ Deno.serve(async (req) => {
         });
       }
       return await handleTick();
+    }
+    // mark_demo_booked: admin-only
+    if (!(await isAdmin(req))) {
+      return new Response(JSON.stringify({ error: "Forbidden" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
     return await handleMarkDemo(parsed.data);
   } catch (e) {
