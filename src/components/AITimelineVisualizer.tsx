@@ -67,6 +67,8 @@ export function AITimelineVisualizer() {
   );
   const [running, setRunning] = useState(false);
   const intervalRef = useRef<number | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const hasAutoRunRef = useRef(false);
 
   const clearTimer = () => {
     if (intervalRef.current !== null) {
@@ -113,11 +115,30 @@ export function AITimelineVisualizer() {
     setCompleted(STEPS.map(() => false));
   };
 
+  useEffect(() => {
+    if (!containerRef.current || typeof IntersectionObserver === 'undefined') return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !hasAutoRunRef.current) {
+            hasAutoRunRef.current = true;
+            handleRun();
+            observer.disconnect();
+          }
+        });
+      },
+      { threshold: 0.4 },
+    );
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const current = STEPS[activeStep];
   const isCurrentDone = completed[activeStep];
 
   return (
-    <div className="mx-auto max-w-6xl">
+    <div ref={containerRef} className="mx-auto max-w-6xl">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3 mb-10">
         <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-white/50 font-semibold">
