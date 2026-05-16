@@ -63,6 +63,12 @@ export function BookDemoSheet({ open, onOpenChange, prefilledMessage }: Props) {
           </SheetDescription>
         </SheetHeader>
 
+        {prefilledMessage && (
+          <div className="mt-4 rounded-lg border border-primary/30 bg-primary/10 p-3 text-sm text-white/80">
+            {prefilledMessage}
+          </div>
+        )}
+
         {done ? (
           <div className="mt-10 flex flex-col items-center justify-center text-center space-y-4 py-10">
             <div className="h-14 w-14 rounded-full bg-risk-low/15 border border-risk-low/30 flex items-center justify-center">
