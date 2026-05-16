@@ -12,11 +12,12 @@ import { NDPRConsent } from './NDPRConsent';
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  prefilledMessage?: string;
 }
 
 const INSTITUTIONS = ['DMB', 'Fintech', 'PSP', 'MMO', 'MFB', 'IMTO'];
 
-export function BookDemoSheet({ open, onOpenChange }: Props) {
+export function BookDemoSheet({ open, onOpenChange, prefilledMessage }: Props) {
   const [fullName, setFullName] = useState('');
   const [institutionName, setInstitutionName] = useState('');
   const [institutionType, setInstitutionType] = useState('');
@@ -61,6 +62,12 @@ export function BookDemoSheet({ open, onOpenChange }: Props) {
             30-minute walkthrough tailored to your institution. We'll reach out within 24 hours.
           </SheetDescription>
         </SheetHeader>
+
+        {prefilledMessage && (
+          <div className="mt-4 rounded-lg border border-primary/30 bg-primary/10 p-3 text-sm text-white/80">
+            {prefilledMessage}
+          </div>
+        )}
 
         {done ? (
           <div className="mt-10 flex flex-col items-center justify-center text-center space-y-4 py-10">

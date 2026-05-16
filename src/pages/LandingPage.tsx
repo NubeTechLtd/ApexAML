@@ -328,6 +328,7 @@ export default function LandingPage() {
 function LandingPageInner() {
   const countdown = useCountdown(new Date('2026-06-10T00:00:00'));
   const [demoSheetOpen, setDemoSheetOpen] = useState(false);
+  const [demoSheetMessage, setDemoSheetMessage] = useState<string | undefined>(undefined);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navRef = useRef<HTMLElement | null>(null);
   const { profile } = useAudience();
@@ -517,7 +518,7 @@ function LandingPageInner() {
       </nav>
 
       <QuickDemoBar open={quickBarOpen} onClose={() => setQuickBarOpen(false)} />
-      <BookDemoSheet open={demoSheetOpen} onOpenChange={setDemoSheetOpen} />
+      <BookDemoSheet open={demoSheetOpen} onOpenChange={(o) => { setDemoSheetOpen(o); if (!o) setDemoSheetMessage(undefined); }} prefilledMessage={demoSheetMessage} />
 
       {/* ── Hero ───────────────────────────────────────────────── */}
       <section className="relative pt-32 pb-20 md:pt-44 md:pb-32 px-6">
@@ -853,7 +854,7 @@ function LandingPageInner() {
       </section>
 
       {/* ── Pricing ────────────────────────────────────────────── */}
-      <PricingSection onBookDemo={() => setDemoSheetOpen(true)} />
+      <PricingSection onBookDemo={(message) => { setDemoSheetMessage(message); setDemoSheetOpen(true); }} />
 
       {/* ── FAQ ────────────────────────────────────────────────── */}
       <FAQSection />
