@@ -223,7 +223,7 @@ export function PricingSection({ onBookDemo }: Props) {
               type="button"
               onClick={() => setCycle('monthly')}
               className={`px-5 h-9 rounded-full text-sm font-medium transition-colors ${
-                cycle === 'monthly' ? 'bg-white text-background' : 'text-white/60 hover:text-white'
+                cycle === 'monthly' ? 'bg-white text-slate-950' : 'text-white/60 hover:text-white'
               }`}
             >
               Monthly
