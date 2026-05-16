@@ -517,7 +517,7 @@ function LandingPageInner() {
       </nav>
 
       <QuickDemoBar open={quickBarOpen} onClose={() => setQuickBarOpen(false)} />
-      <BookDemoSheet open={demoSheetOpen} onOpenChange={setDemoSheetOpen} />
+      <BookDemoSheet open={demoSheetOpen} onOpenChange={(o) => { setDemoSheetOpen(o); if (!o) setDemoSheetMessage(undefined); }} prefilledMessage={demoSheetMessage} />
 
       {/* ── Hero ───────────────────────────────────────────────── */}
       <section className="relative pt-32 pb-20 md:pt-44 md:pb-32 px-6">
