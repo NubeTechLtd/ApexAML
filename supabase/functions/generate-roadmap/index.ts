@@ -33,8 +33,26 @@ const BodySchema = z.object({
   email: z.string().email().max(255),
   phone: z.string().max(40).optional().nullable(),
   deadline: z.string().min(1).max(80),
-  leadId: z.string().uuid().optional().nullable(),
+  leadId: z.string().uuid(),
 });
+
+const FRESH_LEAD_WINDOW_MS = 5 * 60 * 1000;
+
+async function verifyFreshLead(leadId: string, email: string): Promise<boolean> {
+  const { data, error } = await adminDb
+    .from("roadmap_leads")
+    .select("id, email, created_at, roadmap_text")
+    .eq("id", leadId)
+    .maybeSingle();
+  if (error || !data) return false;
+  if ((data.email ?? "").toLowerCase() !== email.toLowerCase()) return false;
+  const created = new Date(data.created_at as string).getTime();
+  if (!Number.isFinite(created)) return false;
+  if (Date.now() - created > FRESH_LEAD_WINDOW_MS) return false;
+  // Prevent reuse: if a roadmap was already generated for this lead, reject.
+  if (data.roadmap_text && String(data.roadmap_text).length > 0) return false;
+  return true;
+}
 
 type Body = z.infer<typeof BodySchema>;
 
