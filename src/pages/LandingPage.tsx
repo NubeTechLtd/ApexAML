@@ -125,13 +125,13 @@ function AIMockUI() {
       <div className="h-px bg-white/10" />
       <div className="space-y-3">
         {lines.map((l, i) => (
-          <div key={i} className="flex items-center gap-2 text-muted-foreground">
+          <div key={i} className="flex items-center gap-2">
             {l.done ? (
               <CheckCircle2 className="h-3.5 w-3.5 text-risk-low shrink-0" />
             ) : (
               <Loader2 className="h-3.5 w-3.5 animate-spin text-primary shrink-0" />
             )}
-            <span className={l.done ? 'text-foreground/80' : 'text-muted-foreground'}>{l.label}</span>
+            <span className={l.done ? 'text-white' : 'text-white/75'}>{l.label}</span>
           </div>
         ))}
       </div>
