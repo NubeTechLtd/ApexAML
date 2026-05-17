@@ -133,6 +133,36 @@ const TIERS: Tier[] = [
     ctaLabel: 'Get IMTO pricing',
     ctaMessage: "I'm interested in IMTO Pack pricing",
   },
+  {
+    name: 'Enterprise',
+    audience: 'Tier-1 & 2 Banks · DFIs · Conglomerates',
+    monthlyPrice: null,
+    accent: 'primary',
+    badge: 'Custom',
+    priceDisplay: () => ({
+      primary: 'Custom',
+      sub: 'pricing',
+      note: 'Based on transaction volume, entity count, and integration complexity',
+    }),
+    features: ['Everything in Growth + IMTO Pack'],
+    highlightFeatures: [
+      'Unlimited BVN/NIN & beneficiary verification checks',
+      'Dedicated isolated infrastructure (single-tenant AWS)',
+      'Custom AI/ML model training on your institution\'s historical data',
+      'On-premise or private cloud deployment option',
+      'White-label compliance portal with your branding',
+      'API-first architecture — full REST + webhook coverage',
+      'Quarterly CBN readiness audit by ApexAML consultants',
+      'Named account manager + 24/7 compliance hotline',
+      'NDPR 2023 & GDPR dual compliance certification support',
+      'Custom SLA: 99.99% uptime, 15-minute incident response',
+    ],
+    limits: ['Minimum contract: 24 months'],
+    onboardingFee: 'Custom — scoping workshop included',
+    offer: 'Pilot program: 90-day proof-of-concept at 50% of projected annual rate',
+    ctaLabel: 'Talk to Sales',
+    ctaMessage: "I'm interested in Enterprise pricing for my institution",
+  },
 ];
 
 const SERVICES = [
