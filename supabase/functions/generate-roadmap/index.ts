@@ -2,6 +2,20 @@
 // No JWT required — public lead-gen tool. Validates input with Zod and falls back
 // to a hardcoded roadmap if the AI call fails.
 import { z } from "https://esm.sh/zod@3.23.8";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+const adminDb = createClient(SUPABASE_URL, SERVICE_ROLE, { auth: { persistSession: false } });
+
+async function persistRoadmap(leadId: string | null | undefined, text: string) {
+  if (!leadId || typeof leadId !== "string") return;
+  const { error } = await adminDb
+    .from("roadmap_leads")
+    .update({ roadmap_text: text })
+    .eq("id", leadId);
+  if (error) console.warn("generate-roadmap: failed to persist roadmap_text", error);
+}
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
