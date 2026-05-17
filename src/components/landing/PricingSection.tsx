@@ -2,118 +2,136 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Check, ArrowRight, Sparkles, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useCBNRate } from '@/hooks/useCBNRate';
 
 type BillingCycle = 'monthly' | 'annual';
 
 interface Tier {
   name: string;
   audience: string;
-  monthlyPrice: number | null; // null = custom / per-tx
-  priceDisplay?: (cycle: BillingCycle) => { primary: string; sub?: string; note: string };
+  monthlyPrice: number | null;
+  usdApprox?: number; // monthly USD approx
+  priceDisplay?: (cycle: BillingCycle) => { primary: string; sub?: string; note?: string; annualNote?: string; usd?: string };
   popular?: boolean;
   accent?: 'primary' | 'teal';
   badge?: string;
   features: string[];
   highlightFeatures?: string[];
   limits?: string[];
+  onboardingFee?: string;
+  trial?: string;
+  offer?: string;
   ctaLabel: string;
   ctaMessage?: string;
+  calcBox?: string;
 }
 
-const formatNaira = (n: number) => {
-  if (n >= 1_000_000) return `₦${(n / 1_000_000).toFixed(n % 1_000_000 === 0 ? 0 : 1)}M`;
-  if (n >= 1_000) return `₦${(n / 1_000).toLocaleString('en-US')}k`;
-  return `₦${n.toLocaleString('en-US')}`;
-};
+const formatNGN = (n: number) =>
+  new Intl.NumberFormat('en-NG', { maximumFractionDigits: 0 }).format(n);
 
 const TIERS: Tier[] = [
   {
     name: 'Essential',
-    audience: 'MFBs · Payment Initiators',
-    monthlyPrice: 350_000,
+    audience: 'MFBs · Payment Initiators · Early-stage fintechs',
+    monthlyPrice: 550_000,
+    usdApprox: 348,
     features: [
-      'BVN/NIN verification',
-      'Sanctions & PEP screening',
-      'Basic transaction monitoring (10 rules)',
-      'STR/CTR data generation in goAML format',
+      'BVN/NIN identity verification — 100 checks/month included',
+      'Sanctions screening (OFAC, UN, EU, NFIU domestic lists)',
+      'Basic transaction monitoring — 10 pre-built rules',
+      'STR/CTR data generation in NFIU goAML format',
       'Immutable audit trail',
-      'CBN roadmap template PDF download',
-      'Email support',
+      'CBN roadmap template PDF (branded, submission-ready)',
+      'Email support · 48-hour response',
     ],
     limits: [
       'Max 5,000 monitored customers',
-      'Max 50,000 transactions/month',
-      'No AI STR co-pilot',
-      'No case management workspace',
+      'Additional BVN checks: ₦650 each',
+      'Initial database import: ₦500/record (one-time)',
+      'No AI STR co-pilot · No case management',
     ],
-    ctaLabel: 'Start with Essential',
+    onboardingFee: '₦100,000 (one-time, mandatory)',
+    trial: '14-day free trial — 50 BVN checks included',
+    ctaLabel: 'Start Essential',
   },
   {
     name: 'Starter',
-    audience: 'MFBs & small fintechs',
-    monthlyPrice: 800_000,
+    audience: 'PSPs · Growing fintechs · Mobile Money Operators',
+    monthlyPrice: 1_100_000,
+    usdApprox: 696,
     features: [
       'Everything in Essential',
-      'Identity & KYC (BVN/NIN) workspace',
-      'Sanctions & PEP screening',
-      'Basic transaction monitoring',
-      'STR XML export (goAML)',
-      'CBN roadmap template',
+      'BVN/NIN verification — 250 checks/month included',
+      'PEP registry screening (domestic + international)',
+      'Transaction monitoring — 20 rules',
+      'Full case management workspace',
+      'STR/CTR filing in goAML XML format (one-click export)',
+      'Priority email + WhatsApp support · 24-hour response',
     ],
-    ctaLabel: 'Book Demo',
+    limits: [
+      'Additional BVN checks: ₦600 each',
+      'Database import: ₦450/record',
+    ],
+    onboardingFee: '₦200,000 (one-time)',
+    trial: '14-day free trial',
+    ctaLabel: 'Start Starter',
   },
   {
     name: 'Growth',
-    audience: 'PSPs & Tier-3 banks',
-    monthlyPrice: 2_200_000,
+    audience: 'Tier-3 Banks · Larger PSPs · MMOs',
+    monthlyPrice: 2_800_000,
+    usdApprox: 1772,
     popular: true,
     accent: 'primary',
     features: ['Everything in Starter'],
     highlightFeatures: [
-      'AI STR Co-Pilot',
-      'Adverse media scanning',
-      'Regulatory change alerts',
-      'No-code rule sandbox',
+      'BVN/NIN verification — 600 checks/month included',
+      'AI STR Co-Pilot — from 3 hours to 11 minutes per investigation',
+      'Adverse media NLP scanner (Punch, Vanguard, Premium Times)',
+      'No-code rule sandbox — test rules before deployment',
+      'Regulatory change alerts — CBN circular monitoring',
+      'Annual model validation report (CBN AI/ML governance)',
+      'Dedicated Slack channel · 4-hour response',
     ],
-    ctaLabel: 'Book Demo',
+    limits: [
+      'Additional BVN checks: ₦550 each',
+      'Database import: ₦400/record',
+    ],
+    onboardingFee: '₦350,000 (one-time)',
+    offer: 'First month free for CBN roadmap submissions before 10 June 2026',
+    ctaLabel: 'Start Growth',
   },
   {
     name: 'IMTO Pack',
     audience: 'International money transfer operators',
     monthlyPrice: null,
     accent: 'teal',
-    badge: 'For WorldRemit · LemFi · Sendwave',
-    priceDisplay: () => ({
-      primary: '₦7',
+    badge: 'For WorldRemit · LemFi · Sendwave · Ria',
+    priceDisplay: (cycle) => ({
+      primary: '₦9',
       sub: 'per transaction screened',
-      note: 'minimum ₦2,500,000/month · e.g. 500,000 tx = ₦3,500,000',
+      note: 'Minimum billing: ₦3,500,000/month',
+      annualNote: cycle === 'annual' ? '₦7.65/transaction — 15% annual discount' : undefined,
+      usd: '≈ $0.006 per transaction at CBN rate',
     }),
+    calcBox: 'At 500,000 tx/month = ₦4,500,000 · At minimum = ₦3,500,000',
     features: ['Everything in Growth'],
     highlightFeatures: [
-      '$200 Cash-Limit Smurfing Detector',
-      'Inbound-only & Naira-only validation',
-      '24-hour Cross-Border STR auto-countdown',
-      'Phantom Payroll network detector',
+      '$200 USD Cash-Limit Smurfing Detector (CBN IMTO Guidelines §4.2)',
+      'Inbound-only and Naira-only settlement validation',
+      '24-hour Cross-Border STR auto-countdown (overseas webhook ready)',
+      'B2P Phantom Payroll network detector',
       'Settlement Account Commingling alerts (May 2026 CBN Circular)',
       'Partner Bank Officer dashboard (2 partner banks included)',
-      'Monthly IMTO CBN compliance report',
+      '1,000 beneficiary verification checks/month included',
+      'Monthly IMTO compliance report for CBN',
+      'Dedicated compliance hotline · 2-hour response',
     ],
+    limits: ['Additional beneficiary checks: ₦600 each'],
+    onboardingFee: '₦600,000 (one-time)',
+    offer: 'First month free for CBN roadmap submissions before 10 June 2026',
     ctaLabel: 'Get IMTO pricing',
     ctaMessage: "I'm interested in IMTO Pack pricing",
-  },
-  {
-    name: 'Enterprise',
-    audience: 'Tier-1/2 banks & MMOs',
-    monthlyPrice: null,
-    priceDisplay: () => ({ primary: 'Custom', note: 'pricing' }),
-    features: ['Everything in Growth'],
-    highlightFeatures: [
-      'Graph network analysis',
-      'Dedicated customer success manager',
-      'White-label deployment',
-      'NFIU API direct submit',
-    ],
-    ctaLabel: 'Book Demo',
   },
 ];
 
@@ -121,20 +139,20 @@ const SERVICES = [
   {
     name: 'CBN Roadmap Submission',
     price: '₦200,000 one-time',
-    desc: 'Co-authored, CBN-formatted, ready to submit by June 10. Free with any annual plan.',
+    desc: 'CBN-formatted, submission-ready by June 10. Free with any annual plan.',
     cta: 'Book service',
   },
   {
-    name: 'Implementation & Onboarding',
-    price: 'From ₦150,000 one-time',
-    desc: 'API integration and staff walkthrough in 5 business days.',
+    name: 'Onboarding & Integration',
+    price: 'From ₦100,000 one-time',
+    desc: 'API setup, rule config, and team walkthrough in 5 business days.',
     cta: 'Enquire',
   },
   {
-    name: 'Compliance Team Training',
+    name: 'Compliance Training',
     price: '₦120,000 per session',
-    desc: '2-hour live session on CBN circular requirements and ApexAML workflow.',
-    cta: 'Book training',
+    desc: '2-hour live session on CBN circular requirements and ApexAML workflows.',
+    cta: 'Book session',
   },
 ];
 
@@ -144,6 +162,7 @@ interface Props {
 
 export function PricingSection({ onBookDemo }: Props) {
   const [cycle, setCycle] = useState<BillingCycle>('monthly');
+  const { rate } = useCBNRate();
 
   const renderPrice = (tier: Tier) => {
     if (tier.priceDisplay) {
@@ -156,7 +175,9 @@ export function PricingSection({ onBookDemo }: Props) {
             </span>
             {p.sub && <span className="text-xs text-white/50 font-medium">{p.sub}</span>}
           </div>
-          <p className="text-[11px] text-white/45 mt-1.5">{p.note}</p>
+          {p.note && <p className="text-[11px] text-white/55 mt-1.5">{p.note}</p>}
+          {p.annualNote && <p className="text-[11px] text-risk-low mt-1 font-medium">{p.annualNote}</p>}
+          {p.usd && <p className="text-[10px] text-white/35 mt-1">{p.usd}</p>}
         </>
       );
     }
@@ -170,18 +191,22 @@ export function PricingSection({ onBookDemo }: Props) {
       <>
         <div className="flex items-baseline gap-1">
           <span className="text-3xl md:text-4xl font-extrabold text-white tracking-tight tabular-nums">
-            {formatNaira(shown)}
+            ₦{formatNGN(shown)}
           </span>
-          <span className="text-xs text-white/40 font-medium">/month, from</span>
+          <span className="text-xs text-white/40 font-medium">/month</span>
         </div>
-        {isAnnual && (
+        {isAnnual ? (
           <p className="text-[11px] text-risk-low mt-1.5 font-medium">
-            {formatNaira(annualTotal)} billed annually · 15% off
+            ₦{formatNGN(annualTotal)} billed annually · 15% off
+          </p>
+        ) : (
+          <p className="text-[11px] text-white/35 mt-1.5">
+            or ₦{formatNGN(annualMonthly)}/mo billed annually (save 15%)
           </p>
         )}
-        {!isAnnual && (
-          <p className="text-[11px] text-white/30 mt-1.5">
-            or {formatNaira(annualMonthly)}/mo billed annually
+        {tier.usdApprox && (
+          <p className="text-[10px] text-white/35 mt-1">
+            ≈ ${tier.usdApprox.toLocaleString()}/month at ₦{rate}/$1
           </p>
         )}
       </>
@@ -246,7 +271,7 @@ export function PricingSection({ onBookDemo }: Props) {
         </div>
 
         {/* Tier grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-5">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
           {TIERS.map((tier, i) => {
             const isPopular = !!tier.popular;
             const isTeal = tier.accent === 'teal';
@@ -288,9 +313,16 @@ export function PricingSection({ onBookDemo }: Props) {
                   </p>
                 </div>
 
-                <div className="mt-5 pb-5 border-b border-white/[0.06] min-h-[88px]">
+                <div className="mt-5 pb-5 border-b border-white/[0.06] min-h-[110px]">
                   {renderPrice(tier)}
                 </div>
+
+                {tier.calcBox && (
+                  <div className="mt-4 rounded-lg border border-teal-400/20 bg-teal-400/[0.04] px-3 py-2">
+                    <p className="text-[10px] uppercase tracking-wider text-teal-300/80 font-semibold mb-1">Example</p>
+                    <p className="text-[11px] text-white/70 leading-relaxed">{tier.calcBox}</p>
+                  </div>
+                )}
 
                 <ul className="mt-5 space-y-2.5 flex-1">
                   {tier.features.map((f) => (
@@ -320,6 +352,23 @@ export function PricingSection({ onBookDemo }: Props) {
                       </li>
                     ))}
                   </ul>
+                )}
+
+                {(tier.onboardingFee || tier.trial || tier.offer) && (
+                  <div className="mt-4 pt-4 border-t border-white/[0.06] space-y-1.5">
+                    {tier.onboardingFee && (
+                      <p className="text-[11px] text-white/55">
+                        <span className="text-white/40 uppercase tracking-wider text-[9px] font-semibold">Onboarding:</span>{' '}
+                        {tier.onboardingFee}
+                      </p>
+                    )}
+                    {tier.trial && (
+                      <p className="text-[11px] text-primary font-medium">{tier.trial}</p>
+                    )}
+                    {tier.offer && (
+                      <p className="text-[11px] text-risk-high font-medium leading-snug">{tier.offer}</p>
+                    )}
+                  </div>
                 )}
 
                 <Button
@@ -376,10 +425,23 @@ export function PricingSection({ onBookDemo }: Props) {
         </div>
 
         {/* Footnote */}
-        <p className="text-center text-[11px] text-white/40 max-w-3xl mx-auto leading-relaxed pt-2">
-          All prices in Nigerian Naira (NGN). Annual billing charged upfront. Monthly billing available
-          without discount. Cancel with 30 days notice. Prices exclude VAT. NDPA 2023 compliant.
-        </p>
+        <div className="text-center text-[11px] text-white/45 max-w-3xl mx-auto leading-relaxed pt-2 space-y-2">
+          <p>
+            All prices in Nigerian Naira (NGN), exclusive of 7.5% VAT. ApexAML is VAT-registered with FIRS.
+          </p>
+          <p>
+            Annual billing: 100% upfront. Monthly billing: due within 7 days of invoice. 5% surcharge applies after 15 days.
+          </p>
+          <p>
+            Prices reviewed quarterly based on CBN official rate (currently ₦{rate}/$1). If NGN depreciates more than 15% in any quarter, pricing adjusts proportionally with 30 days notice.
+          </p>
+          <p>
+            Annual prices increase by a maximum of 15% at each renewal date with 60 days advance notice.
+          </p>
+          <p>
+            All onboarding fees charged at contract signing and non-refundable after onboarding commences.
+          </p>
+        </div>
       </div>
     </section>
   );
