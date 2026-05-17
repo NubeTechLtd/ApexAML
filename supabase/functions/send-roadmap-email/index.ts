@@ -18,20 +18,28 @@ const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const adminDb = createClient(SUPABASE_URL, SERVICE_ROLE, { auth: { persistSession: false } });
 
 // Anti-abuse: verify (leadId, recipient email) corresponds to a roadmap_leads row
-// inserted within the last 30 minutes. Prevents this endpoint from being used as
-// an open relay for ApexAML's verified sender.
+// inserted within the last 30 minutes, and fetch the server-stored roadmap text.
+// The roadmap content is NEVER taken from the request body — it is read from the
+// DB row written by `generate-roadmap`. This prevents the endpoint from being used
+// as an open relay for arbitrary attacker content via ApexAML's verified sender.
 const LEAD_FRESHNESS_MS = 30 * 60 * 1000;
-async function verifyFreshLead(leadId: string | undefined | null, email: string): Promise<boolean> {
-  if (!leadId || typeof leadId !== "string") return false;
+async function loadFreshLeadRoadmap(
+  leadId: string | undefined | null,
+  email: string,
+): Promise<string | null> {
+  if (!leadId || typeof leadId !== "string") return null;
   const { data } = await adminDb
     .from("roadmap_leads")
-    .select("id, email, created_at")
+    .select("id, email, created_at, roadmap_text")
     .eq("id", leadId)
     .maybeSingle();
-  if (!data) return false;
-  if ((data.email ?? "").trim().toLowerCase() !== email.trim().toLowerCase()) return false;
+  if (!data) return null;
+  if ((data.email ?? "").trim().toLowerCase() !== email.trim().toLowerCase()) return null;
   const created = new Date(data.created_at).getTime();
-  return Number.isFinite(created) && Date.now() - created <= LEAD_FRESHNESS_MS;
+  if (!Number.isFinite(created) || Date.now() - created > LEAD_FRESHNESS_MS) return null;
+  const text = typeof data.roadmap_text === "string" ? data.roadmap_text.trim() : "";
+  if (text.length < 200) return null;
+  return text;
 }
 
 interface RoadmapEmailPayload {
@@ -274,14 +282,11 @@ Deno.serve(async (req: Request) => {
     if (
       !body ||
       !isEmail(body.to) ||
-      typeof body.roadmapText !== "string" ||
-      body.roadmapText.trim().length < 50 ||
       typeof body.refNumber !== "string"
     ) {
       console.error("send-roadmap-email: invalid payload", {
         hasBody: !!body,
         toOk: isEmail(body?.to),
-        roadmapLen: typeof body?.roadmapText === "string" ? body!.roadmapText.length : 0,
       });
       return new Response(JSON.stringify({ ok: false, reason: "invalid_payload" }), {
         status: 200,
@@ -289,10 +294,14 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    // Anti-abuse: only send when we can match this request to a fresh lead row.
-    const leadOk = await verifyFreshLead(body.leadId, body.to);
-    if (!leadOk) {
-      console.warn("send-roadmap-email: lead validation failed", { leadId: body.leadId });
+    // Anti-abuse: load roadmap text from the server-stored DB row tied to a fresh
+    // lead. The client-supplied `roadmapText` field is IGNORED to prevent open-relay
+    // abuse where an attacker could send arbitrary content from our verified sender.
+    const serverRoadmapText = await loadFreshLeadRoadmap(body.leadId, body.to);
+    if (!serverRoadmapText) {
+      console.warn("send-roadmap-email: lead validation or roadmap fetch failed", {
+        leadId: body.leadId,
+      });
       return new Response(JSON.stringify({ ok: false, reason: "unauthorized" }), {
         status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -304,8 +313,11 @@ Deno.serve(async (req: Request) => {
       name: body.name || "Compliance Officer",
       institution: body.institution || "your institution",
       type: body.type || "",
-      roadmapText: body.roadmapText,
+      roadmapText: serverRoadmapText,
       refNumber: body.refNumber,
+      contactTitle: body.contactTitle,
+      phoneNumber: body.phoneNumber,
+      amlSetup: body.amlSetup,
     };
 
     const subject = `Your CBN AML Roadmap — ${payload.institution} — Ref ${payload.refNumber}`;

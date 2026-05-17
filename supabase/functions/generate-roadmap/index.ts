@@ -2,6 +2,20 @@
 // No JWT required — public lead-gen tool. Validates input with Zod and falls back
 // to a hardcoded roadmap if the AI call fails.
 import { z } from "https://esm.sh/zod@3.23.8";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+const adminDb = createClient(SUPABASE_URL, SERVICE_ROLE, { auth: { persistSession: false } });
+
+async function persistRoadmap(leadId: string | null | undefined, text: string) {
+  if (!leadId || typeof leadId !== "string") return;
+  const { error } = await adminDb
+    .from("roadmap_leads")
+    .update({ roadmap_text: text })
+    .eq("id", leadId);
+  if (error) console.warn("generate-roadmap: failed to persist roadmap_text", error);
+}
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -19,6 +33,7 @@ const BodySchema = z.object({
   email: z.string().email().max(255),
   phone: z.string().max(40).optional().nullable(),
   deadline: z.string().min(1).max(80),
+  leadId: z.string().uuid().optional().nullable(),
 });
 
 type Body = z.infer<typeof BodySchema>;
@@ -196,6 +211,7 @@ Deno.serve(async (req) => {
 
   if (!LOVABLE_API_KEY) {
     console.warn("LOVABLE_API_KEY missing — returning fallback roadmap");
+    await persistRoadmap(body.leadId, fallback);
     return new Response(JSON.stringify({ roadmap: fallback, source: "fallback" }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -226,6 +242,7 @@ Deno.serve(async (req) => {
     if (!aiResp.ok) {
       const errText = await aiResp.text();
       console.error("AI gateway error", aiResp.status, errText);
+      await persistRoadmap(body.leadId, fallback);
       return new Response(JSON.stringify({ roadmap: fallback, source: "fallback" }), {
         status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -235,18 +252,22 @@ Deno.serve(async (req) => {
     const data = await aiResp.json();
     const content: string | undefined = data?.choices?.[0]?.message?.content;
     if (!content || content.trim().length < 200) {
+      await persistRoadmap(body.leadId, fallback);
       return new Response(JSON.stringify({ roadmap: fallback, source: "fallback" }), {
         status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    return new Response(JSON.stringify({ roadmap: content.trim(), source: "ai" }), {
+    const finalText = content.trim();
+    await persistRoadmap(body.leadId, finalText);
+    return new Response(JSON.stringify({ roadmap: finalText, source: "ai" }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
     console.error("generate-roadmap unexpected error", e);
+    await persistRoadmap(body.leadId, fallback);
     return new Response(JSON.stringify({ roadmap: fallback, source: "fallback" }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

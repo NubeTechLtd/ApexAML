@@ -1,0 +1,1 @@
+ALTER TABLE public.roadmap_leads ADD COLUMN IF NOT EXISTS roadmap_text TEXT;
