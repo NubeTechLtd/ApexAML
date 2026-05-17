@@ -33,6 +33,7 @@ const BodySchema = z.object({
   email: z.string().email().max(255),
   phone: z.string().max(40).optional().nullable(),
   deadline: z.string().min(1).max(80),
+  leadId: z.string().uuid().optional().nullable(),
 });
 
 type Body = z.infer<typeof BodySchema>;
