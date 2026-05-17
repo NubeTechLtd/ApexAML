@@ -158,8 +158,8 @@ function AIMockUI() {
         >
           <CheckCircle2 className="h-4 w-4 text-risk-low shrink-0 mt-0.5" />
           <div className="space-y-0.5">
-            <p className="text-[11px] text-foreground/90">Filing to NFIU goAML portal… <span className="text-risk-low font-semibold">Submitted.</span></p>
-            <p className="text-[10px] text-muted-foreground">Reference: <span className="text-foreground/80 font-semibold">STR-2026-0041</span> ✓</p>
+            <p className="text-[11px] text-white"><span className="text-white/75">Filing to NFIU goAML portal…</span> <span className="text-risk-low font-semibold">Submitted.</span></p>
+            <p className="text-[10px] text-white/70">Reference: <span className="text-white font-semibold">STR-2026-0041</span> ✓</p>
           </div>
         </motion.div>
       )}
