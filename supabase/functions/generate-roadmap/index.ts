@@ -211,6 +211,7 @@ Deno.serve(async (req) => {
 
   if (!LOVABLE_API_KEY) {
     console.warn("LOVABLE_API_KEY missing — returning fallback roadmap");
+    await persistRoadmap(body.leadId, fallback);
     return new Response(JSON.stringify({ roadmap: fallback, source: "fallback" }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -241,6 +242,7 @@ Deno.serve(async (req) => {
     if (!aiResp.ok) {
       const errText = await aiResp.text();
       console.error("AI gateway error", aiResp.status, errText);
+      await persistRoadmap(body.leadId, fallback);
       return new Response(JSON.stringify({ roadmap: fallback, source: "fallback" }), {
         status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -250,18 +252,22 @@ Deno.serve(async (req) => {
     const data = await aiResp.json();
     const content: string | undefined = data?.choices?.[0]?.message?.content;
     if (!content || content.trim().length < 200) {
+      await persistRoadmap(body.leadId, fallback);
       return new Response(JSON.stringify({ roadmap: fallback, source: "fallback" }), {
         status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    return new Response(JSON.stringify({ roadmap: content.trim(), source: "ai" }), {
+    const finalText = content.trim();
+    await persistRoadmap(body.leadId, finalText);
+    return new Response(JSON.stringify({ roadmap: finalText, source: "ai" }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
     console.error("generate-roadmap unexpected error", e);
+    await persistRoadmap(body.leadId, fallback);
     return new Response(JSON.stringify({ roadmap: fallback, source: "fallback" }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
