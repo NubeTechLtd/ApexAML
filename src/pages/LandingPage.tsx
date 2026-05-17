@@ -125,13 +125,13 @@ function AIMockUI() {
       <div className="h-px bg-white/10" />
       <div className="space-y-3">
         {lines.map((l, i) => (
-          <div key={i} className="flex items-center gap-2 text-muted-foreground">
+          <div key={i} className="flex items-center gap-2">
             {l.done ? (
               <CheckCircle2 className="h-3.5 w-3.5 text-risk-low shrink-0" />
             ) : (
               <Loader2 className="h-3.5 w-3.5 animate-spin text-primary shrink-0" />
             )}
-            <span className={l.done ? 'text-foreground/80' : 'text-muted-foreground'}>{l.label}</span>
+            <span className={l.done ? 'text-white' : 'text-white/75'}>{l.label}</span>
           </div>
         ))}
       </div>
@@ -142,8 +142,8 @@ function AIMockUI() {
           className="rounded-lg bg-white/[0.04] border border-white/10 p-3 space-y-2"
         >
           <p className="text-[10px] uppercase tracking-wider text-primary font-semibold">Generated STR Excerpt</p>
-          <p className="text-muted-foreground leading-relaxed text-[11px]">
-            "Subject <span className="text-foreground">Adewale O.</span> conducted <span className="text-risk-high">47 POS transactions</span> across
+          <p className="text-white/85 leading-relaxed text-[11px]">
+            "Subject <span className="text-white font-semibold">Adewale O.</span> conducted <span className="text-risk-high">47 POS transactions</span> across
             12 terminals in Lekki within <span className="text-risk-critical">72 hours</span>, totalling ₦14.8M. Pattern consistent with
             <span className="text-risk-high"> structuring typology T-NG-204</span>. Recommend escalation to NFIU…"
           </p>
@@ -158,8 +158,8 @@ function AIMockUI() {
         >
           <CheckCircle2 className="h-4 w-4 text-risk-low shrink-0 mt-0.5" />
           <div className="space-y-0.5">
-            <p className="text-[11px] text-foreground/90">Filing to NFIU goAML portal… <span className="text-risk-low font-semibold">Submitted.</span></p>
-            <p className="text-[10px] text-muted-foreground">Reference: <span className="text-foreground/80 font-semibold">STR-2026-0041</span> ✓</p>
+            <p className="text-[11px] text-white"><span className="text-white/75">Filing to NFIU goAML portal…</span> <span className="text-risk-low font-semibold">Submitted.</span></p>
+            <p className="text-[10px] text-white/70">Reference: <span className="text-white font-semibold">STR-2026-0041</span> ✓</p>
           </div>
         </motion.div>
       )}
