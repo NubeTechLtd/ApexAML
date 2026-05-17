@@ -275,6 +275,7 @@ export type Database = {
           institution_name: string
           institution_type: string
           phone: string | null
+          roadmap_text: string | null
           source: string
           title: string
           volume: string
@@ -288,6 +289,7 @@ export type Database = {
           institution_name: string
           institution_type: string
           phone?: string | null
+          roadmap_text?: string | null
           source?: string
           title: string
           volume: string
@@ -301,6 +303,7 @@ export type Database = {
           institution_name?: string
           institution_type?: string
           phone?: string | null
+          roadmap_text?: string | null
           source?: string
           title?: string
           volume?: string
