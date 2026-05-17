@@ -18,20 +18,28 @@ const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const adminDb = createClient(SUPABASE_URL, SERVICE_ROLE, { auth: { persistSession: false } });
 
 // Anti-abuse: verify (leadId, recipient email) corresponds to a roadmap_leads row
-// inserted within the last 30 minutes. Prevents this endpoint from being used as
-// an open relay for ApexAML's verified sender.
+// inserted within the last 30 minutes, and fetch the server-stored roadmap text.
+// The roadmap content is NEVER taken from the request body — it is read from the
+// DB row written by `generate-roadmap`. This prevents the endpoint from being used
+// as an open relay for arbitrary attacker content via ApexAML's verified sender.
 const LEAD_FRESHNESS_MS = 30 * 60 * 1000;
-async function verifyFreshLead(leadId: string | undefined | null, email: string): Promise<boolean> {
-  if (!leadId || typeof leadId !== "string") return false;
+async function loadFreshLeadRoadmap(
+  leadId: string | undefined | null,
+  email: string,
+): Promise<string | null> {
+  if (!leadId || typeof leadId !== "string") return null;
   const { data } = await adminDb
     .from("roadmap_leads")
-    .select("id, email, created_at")
+    .select("id, email, created_at, roadmap_text")
     .eq("id", leadId)
     .maybeSingle();
-  if (!data) return false;
-  if ((data.email ?? "").trim().toLowerCase() !== email.trim().toLowerCase()) return false;
+  if (!data) return null;
+  if ((data.email ?? "").trim().toLowerCase() !== email.trim().toLowerCase()) return null;
   const created = new Date(data.created_at).getTime();
-  return Number.isFinite(created) && Date.now() - created <= LEAD_FRESHNESS_MS;
+  if (!Number.isFinite(created) || Date.now() - created > LEAD_FRESHNESS_MS) return null;
+  const text = typeof data.roadmap_text === "string" ? data.roadmap_text.trim() : "";
+  if (text.length < 200) return null;
+  return text;
 }
 
 interface RoadmapEmailPayload {
