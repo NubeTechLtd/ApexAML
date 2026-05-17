@@ -302,6 +302,7 @@ Managing Director:                                    Signature: _______________
           email: email.trim(),
           phone: phone.trim() || null,
           deadline,
+          leadId,
         },
       });
       if (fnError) throw fnError;
