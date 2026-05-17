@@ -282,14 +282,11 @@ Deno.serve(async (req: Request) => {
     if (
       !body ||
       !isEmail(body.to) ||
-      typeof body.roadmapText !== "string" ||
-      body.roadmapText.trim().length < 50 ||
       typeof body.refNumber !== "string"
     ) {
       console.error("send-roadmap-email: invalid payload", {
         hasBody: !!body,
         toOk: isEmail(body?.to),
-        roadmapLen: typeof body?.roadmapText === "string" ? body!.roadmapText.length : 0,
       });
       return new Response(JSON.stringify({ ok: false, reason: "invalid_payload" }), {
         status: 200,
@@ -297,10 +294,14 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    // Anti-abuse: only send when we can match this request to a fresh lead row.
-    const leadOk = await verifyFreshLead(body.leadId, body.to);
-    if (!leadOk) {
-      console.warn("send-roadmap-email: lead validation failed", { leadId: body.leadId });
+    // Anti-abuse: load roadmap text from the server-stored DB row tied to a fresh
+    // lead. The client-supplied `roadmapText` field is IGNORED to prevent open-relay
+    // abuse where an attacker could send arbitrary content from our verified sender.
+    const serverRoadmapText = await loadFreshLeadRoadmap(body.leadId, body.to);
+    if (!serverRoadmapText) {
+      console.warn("send-roadmap-email: lead validation or roadmap fetch failed", {
+        leadId: body.leadId,
+      });
       return new Response(JSON.stringify({ ok: false, reason: "unauthorized" }), {
         status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -312,8 +313,11 @@ Deno.serve(async (req: Request) => {
       name: body.name || "Compliance Officer",
       institution: body.institution || "your institution",
       type: body.type || "",
-      roadmapText: body.roadmapText,
+      roadmapText: serverRoadmapText,
       refNumber: body.refNumber,
+      contactTitle: body.contactTitle,
+      phoneNumber: body.phoneNumber,
+      amlSetup: body.amlSetup,
     };
 
     const subject = `Your CBN AML Roadmap — ${payload.institution} — Ref ${payload.refNumber}`;
