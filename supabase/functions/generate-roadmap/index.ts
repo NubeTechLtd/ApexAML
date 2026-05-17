@@ -222,6 +222,14 @@ Deno.serve(async (req) => {
     });
   }
 
+  const freshLead = await verifyFreshLead(body.leadId, body.email);
+  if (!freshLead) {
+    return new Response(
+      JSON.stringify({ error: "Invalid or expired lead. Please resubmit the form." }),
+      { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    );
+  }
+
   const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 
   // Always-on fallback so the UI never sees an error.
