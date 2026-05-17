@@ -142,8 +142,8 @@ function AIMockUI() {
           className="rounded-lg bg-white/[0.04] border border-white/10 p-3 space-y-2"
         >
           <p className="text-[10px] uppercase tracking-wider text-primary font-semibold">Generated STR Excerpt</p>
-          <p className="text-muted-foreground leading-relaxed text-[11px]">
-            "Subject <span className="text-foreground">Adewale O.</span> conducted <span className="text-risk-high">47 POS transactions</span> across
+          <p className="text-white/85 leading-relaxed text-[11px]">
+            "Subject <span className="text-white font-semibold">Adewale O.</span> conducted <span className="text-risk-high">47 POS transactions</span> across
             12 terminals in Lekki within <span className="text-risk-critical">72 hours</span>, totalling ₦14.8M. Pattern consistent with
             <span className="text-risk-high"> structuring typology T-NG-204</span>. Recommend escalation to NFIU…"
           </p>
