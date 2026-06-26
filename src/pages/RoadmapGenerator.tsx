@@ -36,6 +36,7 @@ import { PrintableRoadmap } from '@/components/PrintableRoadmap';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { Seo } from '@/components/Seo';
+import { openRoadmapAsPdf } from '@/lib/generateRoadmapPdf';
 
 type Step = 'hook' | 'form' | 'loading' | 'roadmap';
 
