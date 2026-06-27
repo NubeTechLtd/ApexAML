@@ -36,6 +36,7 @@ import { WhatsAppFloatingButton } from "@/components/landing/WhatsAppFloatingBut
 import { WhatsAppIcon } from "@/components/landing/WhatsAppIcon";
 import { WHATSAPP_URL } from "@/lib/whatsapp";
 import { ROICalculator } from "@/components/landing/ROICalculator";
+import { InnovationStory } from "@/components/InnovationStory";
 import { AudienceProvider, useAudience } from "@/components/landing/AudienceContext";
 import { AudienceSelector } from "@/components/landing/AudienceSelector";
 import { Seo } from "@/components/Seo";
