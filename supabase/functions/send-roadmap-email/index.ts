@@ -11,7 +11,7 @@ const corsHeaders = {
 const RESEND_GATEWAY_URL = "https://connector-gateway.lovable.dev/resend";
 
 // Admin alert recipient — swap this out as needed
-const ADMIN_ALERT_EMAIL = "adetokunboogun@yahoo.com";
+const ADMIN_ALERT_EMAIL = "adetokunboogun@gmail.com";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
