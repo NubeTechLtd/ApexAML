@@ -1,8 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
-import { PrintableRoadmap } from "@/components/PrintableRoadmap";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import {
   Shield,
@@ -10,7 +7,7 @@ import {
   SlidersHorizontal,
   Lock,
   ArrowRight,
-  Download,
+  Calendar,
   CheckCircle2,
   Loader2,
   Menu,
@@ -18,7 +15,6 @@ import {
   RotateCcw,
   ExternalLink,
   FileText,
-  Clock,
   Globe,
   Briefcase,
   ShieldCheck,
@@ -26,7 +22,6 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import logo from "@/assets/logo.svg";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
 import { BookDemoSheet } from "@/components/landing/BookDemoSheet";
 import { QuickDemoBar } from "@/components/landing/QuickDemoBar";
 import { LeadCaptureForm } from "@/components/landing/LeadCaptureForm";
@@ -35,13 +30,11 @@ import { HowItWorksSection } from "@/components/landing/HowItWorksSection";
 import { ComparisonSection } from "@/components/landing/ComparisonSection";
 import { AITimelineVisualizer } from "@/components/AITimelineVisualizer";
 import { RoadmapLeadMagnet } from "@/components/landing/RoadmapLeadMagnet";
-import { StickyComplianceBar } from "@/components/landing/StickyComplianceBar";
 import { FAQSection } from "@/components/landing/FAQSection";
 import { PricingSection } from "@/components/landing/PricingSection";
 import { WhatsAppFloatingButton } from "@/components/landing/WhatsAppFloatingButton";
 import { WhatsAppIcon } from "@/components/landing/WhatsAppIcon";
 import { WHATSAPP_URL } from "@/lib/whatsapp";
-import { ExitIntentModal } from "@/components/landing/ExitIntentModal";
 import { ROICalculator } from "@/components/landing/ROICalculator";
 import { AudienceProvider, useAudience } from "@/components/landing/AudienceContext";
 import { AudienceSelector } from "@/components/landing/AudienceSelector";
