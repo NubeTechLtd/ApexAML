@@ -19,33 +19,83 @@ export type Database = {
           contact_name: string
           created_at: string
           email: string | null
+          focus_areas: string | null
           id: string
           institution_name: string
+          institution_type: string | null
           message: string | null
           preferred_date: string | null
+          role: string | null
+          slot_datetime: string | null
           source: string
+          whatsapp: string | null
         }
         Insert: {
           contact_name: string
           created_at?: string
           email?: string | null
+          focus_areas?: string | null
           id?: string
           institution_name: string
+          institution_type?: string | null
           message?: string | null
           preferred_date?: string | null
+          role?: string | null
+          slot_datetime?: string | null
           source?: string
+          whatsapp?: string | null
         }
         Update: {
           contact_name?: string
           created_at?: string
           email?: string | null
+          focus_areas?: string | null
           id?: string
           institution_name?: string
+          institution_type?: string | null
           message?: string | null
           preferred_date?: string | null
+          role?: string | null
+          slot_datetime?: string | null
           source?: string
+          whatsapp?: string | null
         }
         Relationships: []
+      }
+      demo_slots: {
+        Row: {
+          booked_by_request_id: string | null
+          created_at: string
+          id: string
+          slot_datetime: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          booked_by_request_id?: string | null
+          created_at?: string
+          id?: string
+          slot_datetime: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          booked_by_request_id?: string | null
+          created_at?: string
+          id?: string
+          slot_datetime?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "demo_slots_booked_by_request_id_fkey"
+            columns: ["booked_by_request_id"]
+            isOneToOne: false
+            referencedRelation: "demo_requests"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       email_events: {
         Row: {
