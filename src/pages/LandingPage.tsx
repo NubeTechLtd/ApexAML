@@ -352,7 +352,6 @@ export default function LandingPage() {
 }
 
 function LandingPageInner() {
-  const countdown = useCountdown(new Date("2026-06-10T00:00:00"));
   const [demoSheetOpen, setDemoSheetOpen] = useState(false);
   const [demoSheetMessage, setDemoSheetMessage] = useState<string | undefined>(undefined);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -391,10 +390,6 @@ function LandingPageInner() {
 
   const [quickBarOpen, setQuickBarOpen] = useState(false);
   const [pulseActive, setPulseActive] = useState(true);
-  const [stickyBarVisible, setStickyBarVisible] = useState(false);
-  const [downloadingPdf, setDownloadingPdf] = useState(false);
-  const printableRef = useRef<HTMLDivElement>(null);
-  const { toast } = useToast();
 
   useEffect(() => {
     const t = setTimeout(() => setPulseActive(false), 10000);
