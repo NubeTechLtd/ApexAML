@@ -42,19 +42,6 @@ import { Seo } from "@/components/Seo";
 
 // ── Helpers ──────────────────────────────────────────────────────────────
 
-function useCountdown(target: Date) {
-  const [now, setNow] = useState(Date.now());
-  useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(id);
-  }, []);
-  const diff = Math.max(0, target.getTime() - now);
-  const days = Math.floor(diff / 86400000);
-  const hours = Math.floor((diff % 86400000) / 3600000);
-  const mins = Math.floor((diff % 3600000) / 60000);
-  const secs = Math.floor((diff % 60000) / 1000);
-  return { days, hours, mins, secs };
-}
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
