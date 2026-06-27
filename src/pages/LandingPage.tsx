@@ -132,7 +132,7 @@ function AIMockUI() {
     >
       <div className="flex items-center gap-2 text-primary">
         <Sparkles className="h-4 w-4" />
-        <span className="font-semibold tracking-wide uppercase text-[10px]">ApexAML AI Co-Pilot</span>
+        <span className="font-semibold tracking-wide uppercase text-[10px]">AI Co-Pilot in action</span>
         <span className="ml-auto rounded-full bg-risk-low/20 text-risk-low px-2 py-0.5 text-[10px]">Live</span>
         {step >= 4 && (
           <button
@@ -199,8 +199,6 @@ function AIMockUI() {
 // ── Roadmap Generator band (highest-converting offer on landing) ─────────
 
 function RoadmapGeneratorBand() {
-  const { days } = useCountdown(new Date("2026-06-10T00:00:00"));
-
   const handleClick = () => {
     // Fire-and-forget analytics. Failures must never block the navigation.
     supabase
@@ -232,11 +230,10 @@ function RoadmapGeneratorBand() {
               <FileText className="h-8 w-8 text-primary" strokeWidth={1.75} />
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight leading-tight">
-              Free: generate your CBN AML roadmap in 60 seconds
+              Generate your CBN AML implementation roadmap
             </h2>
             <p className="text-base md:text-lg text-white/60 leading-relaxed max-w-2xl">
-              Pre-formatted for Circular BSD/DIR/PUB/LAB/019/002. Tailored to your institution type and deadline. Used
-              by 50+ compliance teams. Emailed instantly.
+              Pre-formatted for CBN Circular BSD/DIR/PUB/LAB/019/002. Tailored to your institution type and compliance timeline.
             </p>
             <div className="flex flex-wrap gap-2 pt-1">
               {trustChips.map((chip) => (
@@ -273,12 +270,6 @@ function RoadmapGeneratorBand() {
                 </Link>
               </Button>
 
-              <div className="flex items-center justify-center gap-2 text-sm text-white/70 bg-primary/5 border border-primary/15 rounded-lg py-3 px-4">
-                <Clock className="h-4 w-4 text-primary" />
-                <span className="tabular-nums font-semibold text-white">{days}</span>
-                <span className="text-white/60">days until the CBN deadline</span>
-              </div>
-
               <p className="text-xs text-center text-white/40 leading-relaxed">
                 or scroll down to enter your email for a demo call.
               </p>
@@ -294,7 +285,7 @@ function RoadmapGeneratorBand() {
 
 const FAQ_FOR_SCHEMA: Array<{ q: string; a: string }> = [
   {
-    q: "Does ApexAML satisfy the June 2026 CBN circular requirements?",
+    q: "Does ApexAML satisfy the CBN circular requirements?",
     a: "Yes. ApexAML covers all 10 capability areas mandated by Circular BSD/DIR/PUB/LAB/019/002, including tiered CDD with BVN/NIN, EDD, PEP and sanctions screening, beneficial-owner identification, transaction monitoring with Nigerian typologies, NFIU goAML STR/CTR submission, immutable audit trail, AML/CFT training and 5-year examiner-ready record retention.",
   },
   {
@@ -307,7 +298,7 @@ const FAQ_FOR_SCHEMA: Array<{ q: string; a: string }> = [
   },
   {
     q: "What does it cost — is it affordable for a tier-3 MFB?",
-    a: "Pricing starts from ₦550,000/month — less than the loaded cost of a single compliance analyst (₦3–8M/year salary plus benefits). Institutions submitting their CBN roadmap before 10 June 2026 get the first month free.",
+    a: "Pricing starts from ₦550,000/month — less than the loaded cost of a single compliance analyst (₦3–8M/year salary plus benefits). Every new client receives onboarding support and a compliance gap assessment at no extra charge.",
   },
   {
     q: "Can ApexAML submit STRs directly to the NFIU goAML portal?",
@@ -404,63 +395,7 @@ function LandingPageInner() {
     if (el) el.scrollIntoView({ behavior: "smooth" });
   };
 
-  const handleDownloadRoadmap = async () => {
-    if (downloadingPdf) return;
-    const node = printableRef.current;
-    if (!node) {
-      toast({ title: "Could not generate PDF", description: "Please try again.", variant: "destructive" });
-      return;
-    }
 
-    setDownloadingPdf(true);
-    const loadingToast = toast({
-      title: "Generating PDF…",
-      description: "Rendering your CBN roadmap template. This takes a few seconds.",
-    });
-
-    try {
-      const canvas = await html2canvas(node, {
-        scale: 2,
-        backgroundColor: "#ffffff",
-        useCORS: true,
-        logging: false,
-        windowWidth: node.scrollWidth,
-        windowHeight: node.scrollHeight,
-      });
-
-      const imgData = canvas.toDataURL("image/jpeg", 0.95);
-      const pdf = new jsPDF({ unit: "pt", format: "a4", orientation: "portrait" });
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-      const imgWidth = pageWidth;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-      let heightLeft = imgHeight;
-      let position = 0;
-      pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-      while (heightLeft > 0) {
-        position = heightLeft - imgHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-      }
-
-      pdf.save("CBN_AML_Roadmap_Template.pdf");
-      loadingToast.dismiss();
-      toast({ title: "PDF downloaded", description: "Your CBN roadmap template is ready." });
-    } catch (err) {
-      console.error("PDF generation failed", err);
-      loadingToast.dismiss();
-      toast({
-        title: "PDF generation failed",
-        description: "Please try again or contact support.",
-        variant: "destructive",
-      });
-    } finally {
-      setDownloadingPdf(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-[hsl(220,25%,6%)] text-foreground overflow-x-hidden">
@@ -564,20 +499,15 @@ function LandingPageInner() {
 
           <AnimatedSection delay={0.1}>
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-[1.1] text-white">
-              The{" "}
-              <span className="bg-gradient-to-r from-primary via-[hsl(200,80%,60%)] to-primary bg-clip-text text-transparent drop-shadow-[0_0_30px_hsl(var(--primary)/0.5)]">
-                June 2026 CBN Deadline
-              </span>{" "}
-              is Approaching.
+              Nigeria&apos;s financial system is modernising.
               <br />
-              Is Your AML Ready?
+              <span className="text-[#D4A843]">ApexAML is the platform that makes it possible.</span>
             </h1>
           </AnimatedSection>
 
           <AnimatedSection delay={0.2}>
-            <p className="mx-auto max-w-2xl text-base md:text-lg text-white/50 leading-relaxed">
-              The first unified Financial Crime Platform built explicitly for Nigeria. Automate KYC, resolve sanctions,
-              and draft NFIU STRs with our AI Co-Pilot.
+            <p className="mx-auto max-w-2xl text-base text-white/50 leading-relaxed">
+              The first AML compliance platform built for CBN Circular BSD/DIR/PUB/LAB/019/002 — with an AI STR co-pilot, a pre-configured IMTO regulatory pack, and NFIU goAML export built in from day one.
             </p>
           </AnimatedSection>
 
@@ -589,17 +519,17 @@ function LandingPageInner() {
                   onClick={() => setDemoSheetOpen(true)}
                   className="relative bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl text-sm font-semibold px-8 group min-h-[44px] py-4 md:py-2 w-full sm:w-auto"
                 >
-                  Book a 20-min Demo
+                  <Calendar className="h-4 w-4 mr-2" />
+                  Book a product demo
                   <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
                 </Button>
                 <Button
                   size="lg"
                   variant="outline"
-                  onClick={handleDownloadRoadmap}
+                  onClick={() => scrollToSection("how-it-works")}
                   className="rounded-xl bg-transparent border-white/15 text-white/80 hover:bg-white/5 hover:text-white text-sm px-8 min-h-[44px] py-4 md:py-2 w-full sm:w-auto"
                 >
-                  <Download className="h-4 w-4 mr-2" />
-                  Download CBN Roadmap Template (Free)
+                  See how it works
                 </Button>
               </div>
               <a
@@ -611,37 +541,31 @@ function LandingPageInner() {
                 <WhatsAppIcon size={14} />
                 or chat on WhatsApp
               </a>
-              <p className="text-xs text-primary/70 font-medium">
-                First month free for CBN roadmap submissions before June 10, 2026.
-              </p>
-            </div>
-          </AnimatedSection>
-
-          {/* Countdown */}
-          <AnimatedSection delay={0.4}>
-            <div className="pt-6">
-              <p className="text-[10px] uppercase tracking-[0.2em] text-white/30 mb-4 font-medium">
-                Time Until CBN Compliance Deadline
-              </p>
-              <div className="inline-flex gap-3 sm:gap-5">
-                {[
-                  { value: countdown.days, label: "Days" },
-                  { value: countdown.hours, label: "Hours" },
-                  { value: countdown.mins, label: "Mins" },
-                  { value: countdown.secs, label: "Secs" },
-                ].map(({ value, label }) => (
-                  <div key={label} className="flex flex-col items-center">
-                    <div className="w-16 sm:w-20 h-16 sm:h-20 rounded-xl bg-white/[0.04] border border-white/10 backdrop-blur flex items-center justify-center">
-                      <span className="text-2xl sm:text-3xl font-bold tabular-nums text-white">
-                        {String(value).padStart(2, "0")}
-                      </span>
-                    </div>
-                    <span className="text-[10px] uppercase tracking-wider text-white/30 mt-2">{label}</span>
-                  </div>
-                ))}
+              <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-xs text-white/40">
+                <span className="inline-flex items-center gap-1.5">
+                  <CheckCircle2 className="h-3 w-3 text-risk-low" />
+                  CBN Circular BSD/DIR/PUB/LAB/019/002 aligned
+                </span>
+                <span className="hidden sm:inline text-white/20">·</span>
+                <span className="inline-flex items-center gap-1.5">
+                  <CheckCircle2 className="h-3 w-3 text-risk-low" />
+                  NFIU goAML certified format
+                </span>
+                <span className="hidden sm:inline text-white/20">·</span>
+                <span className="inline-flex items-center gap-1.5">
+                  <CheckCircle2 className="h-3 w-3 text-risk-low" />
+                  FATF post-grey-list ready
+                </span>
+                <span className="hidden sm:inline text-white/20">·</span>
+                <span className="inline-flex items-center gap-1.5">
+                  <CheckCircle2 className="h-3 w-3 text-risk-low" />
+                  AWS Cape Town data residency
+                </span>
               </div>
             </div>
           </AnimatedSection>
+
+
 
           {/* Social Proof Strip */}
           <AnimatedSection delay={0.5}>
@@ -844,9 +768,9 @@ function LandingPageInner() {
                 source: "Based on 47-transaction case study with Nigerian Tier-3 fintech",
               },
               {
-                value: "June 10, 2026",
-                label: "CBN roadmap submission deadline",
-                source: "ApexAML clients submit their roadmap in under 2 hours using our template",
+                value: "48 hours",
+                label: "Typical integration time for API-first fintechs",
+                source: "Legacy core banking integrations (Finacle, T24) average 2 weeks via SFTP or middleware adapters",
               },
               {
                 value: "goAML-ready XML",
@@ -882,7 +806,7 @@ function LandingPageInner() {
               <br /> Scale with confidence.
             </h2>
             <p className="text-white/40 max-w-lg mx-auto">
-              Join the institutions preparing for the June 2026 deadline. Get private access to ApexAML today.
+              Join Nigerian financial institutions modernising their compliance infrastructure with ApexAML.
             </p>
             <LeadCaptureForm />
             <div className="mt-4 flex items-center justify-center gap-2 text-[11px] text-white/30">
@@ -939,40 +863,7 @@ function LandingPageInner() {
           <p className="text-white/25">© {new Date().getFullYear()} ApexAML Technologies.</p>
         </div>
       </footer>
-      <StickyComplianceBar
-        daysRemaining={countdown.days}
-        onBookDemo={() => setDemoSheetOpen(true)}
-        onVisibilityChange={setStickyBarVisible}
-      />
-      <WhatsAppFloatingButton shifted={stickyBarVisible} />
-      <ExitIntentModal daysRemaining={countdown.days} />
-
-      {/* Hidden printable roadmap — rendered off-screen so html2canvas can rasterise it. */}
-      <div
-        aria-hidden="true"
-        style={{
-          position: "fixed",
-          left: "-10000px",
-          top: 0,
-          width: "800px",
-          pointerEvents: "none",
-          opacity: 0,
-        }}
-      >
-        <PrintableRoadmap
-          ref={printableRef}
-          institutionName="[Your Institution Name]"
-          institutionType="[Your Institution Type]"
-          contactName="[Compliance Officer Name]"
-          contactTitle="[Title]"
-          email="[Your Email]"
-          amlSetup="No formal system"
-          volume="[Monthly Volume]"
-          referenceNumber="TEMPLATE-2026-XXXX"
-          todayFormatted={new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}
-          fullDeadline="March 2028"
-        />
-      </div>
+      <WhatsAppFloatingButton />
     </div>
   );
 }
