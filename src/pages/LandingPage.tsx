@@ -822,6 +822,15 @@ function LandingPageInner() {
         </div>
       </section>
 
+      {/* ── Compliance Roadmap Timeline ──────────────────────── */}
+      <ComplianceRoadmapSection
+        onBookDemo={(message) => {
+          setDemoSheetMessage(message);
+          setDemoSheetOpen(true);
+        }}
+        onSeePath={() => scrollToSection("free-roadmap")}
+      />
+
       {/* ── Pricing ────────────────────────────────────────────── */}
       <PricingSection
         onBookDemo={(message) => {
