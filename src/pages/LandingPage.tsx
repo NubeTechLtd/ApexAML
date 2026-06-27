@@ -695,6 +695,9 @@ function LandingPageInner() {
         </div>
       </section>
 
+      {/* ── Innovation Story ───────────────────────────────────── */}
+      <InnovationStory onBookDemo={() => setDemoSheetOpen(true)} />
+
       {/* ── Compliance ROI & Risk Calculator ──────────────────── */}
       <ROICalculator />
 
