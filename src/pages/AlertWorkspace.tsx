@@ -381,6 +381,7 @@ export default function AlertWorkspace() {
   const handleMarkUnderReview = useCallback(() => {
     if (!selected) return;
     setAlertStatus(selected.id, 'Under Review');
+    setUnderReviewAtMap((prev) => prev[selected.id] ? prev : { ...prev, [selected.id]: new Date().toISOString() });
     toast({ title: 'Status updated', description: `${selected.caseId} marked as Under Review.` });
   }, [selected, setAlertStatus, toast]);
 
