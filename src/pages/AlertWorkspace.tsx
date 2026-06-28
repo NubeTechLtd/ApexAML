@@ -32,6 +32,7 @@ import { IMTOInvestigation } from '@/components/IMTOInvestigation';
 import { CrossBorderSLACard } from '@/components/CrossBorderSLACard';
 import { PhantomPayrollNetwork } from '@/components/PhantomPayrollNetwork';
 import { CommingleAlertCard } from '@/components/CommingleAlertCard';
+import { CaseLifecycleBar } from '@/components/CaseLifecycleBar';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, AlertTriangle, Sparkles, Bot, Send, FileDown,
