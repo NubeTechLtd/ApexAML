@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { mockLegacyAlerts as mockAlerts } from '@/data/mockLegacyAlerts';
 import { DailyBriefing } from '@/components/DailyBriefing';
+import { LiveActivityFeed } from '@/components/LiveActivityFeed';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, AreaChart, Area
