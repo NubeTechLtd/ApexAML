@@ -211,54 +211,8 @@ export default function Dashboard() {
                 </CardContent>
               </Card>
 
-              {/* Risk Distribution */}
-              <Card className="border-border bg-card shadow-sm">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-semibold text-foreground">Alert Risk Distribution</CardTitle>
-                  <p className="text-[10px] text-muted-foreground">Click a segment to filter alerts</p>
-                </CardHeader>
-                <CardContent className="pt-0 flex flex-col items-center">
-                  <ResponsiveContainer width="100%" height={160}>
-                    <PieChart>
-                      <Pie
-                        data={alertsByRisk}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={45}
-                        outerRadius={70}
-                        dataKey="count"
-                        stroke="none"
-                      >
-                        {alertsByRisk.map((entry, i) => (
-                          <Cell
-                            key={i}
-                            fill={entry.color}
-                            className="cursor-pointer hover:opacity-80 transition-opacity"
-                            onClick={() => navigate(`/?risk=${entry.level}`)}
-                          />
-                        ))}
-                      </Pie>
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: chart.tooltipBg,
-                          border: `1px solid ${chart.tooltipBorder}`,
-                          borderRadius: '8px',
-                          fontSize: '12px',
-                        }}
-                        formatter={(value: number, name: string, props: any) => [value, props.payload.level]}
-                      />
-                    </PieChart>
-                  </ResponsiveContainer>
-                  <div className="flex flex-wrap gap-3 mt-1">
-                    {alertsByRisk.map((r) => (
-                      <div key={r.level} className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                        <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: r.color }} />
-                        {r.level} ({r.count})
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+              {/* Live Activity Feed */}
+              <LiveActivityFeed />
             </div>
 
             {/* Bottom Row */}
