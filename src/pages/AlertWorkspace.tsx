@@ -367,6 +367,7 @@ export default function AlertWorkspace() {
     const filename = `STR_${selected.caseId}_${today}.xml`;
     const xml = generateGoAMLXml(selected, strDraft);
     downloadXmlFile(xml, filename);
+    setExportedIds((prev) => ({ ...prev, [selected.id]: true }));
     toast({
       title: 'STR exported',
       description: `${filename} ready for NFIU goAML portal upload.`,
