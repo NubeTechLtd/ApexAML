@@ -606,6 +606,18 @@ export default function AlertWorkspace() {
                     </Card>
                   </motion.div>
 
+                  {/* Case Lifecycle Bar */}
+                  <CaseLifecycleBar
+                    caseId={selected.caseId}
+                    alertReceivedLabel={selected.timeElapsed}
+                    underReviewAt={underReviewAtMap[selected.id] ? new Date(underReviewAtMap[selected.id]) : null}
+                    hasEvidence={strDraft.length > 0 || chatMessages.length > 0 || currentStatus !== 'Open'}
+                    strDrafted={strGenerated || strDraft.length > 0}
+                    strExported={!!exportedIds[selected.id]}
+                    caseClosed={isResolved}
+                    requiresStr={selected.riskLevel === 'Critical' || selected.riskLevel === 'High'}
+                  />
+
                   {/* Customer Profile (Collapsible) */}
                   <Accordion type="multiple" defaultValue={['customer-profile', 'red-flags']}>
                     <AccordionItem value="customer-profile" className="border rounded-lg overflow-hidden">
