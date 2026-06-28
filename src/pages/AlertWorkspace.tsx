@@ -288,6 +288,8 @@ export default function AlertWorkspace() {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [chatInput, setChatInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [underReviewAtMap, setUnderReviewAtMap] = useState<Record<string, string>>({});
+  const [exportedIds, setExportedIds] = useState<Record<string, boolean>>({});
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   const filtered = useMemo(() => {
