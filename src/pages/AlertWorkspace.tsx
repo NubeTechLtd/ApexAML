@@ -32,6 +32,7 @@ import { IMTOInvestigation } from '@/components/IMTOInvestigation';
 import { CrossBorderSLACard } from '@/components/CrossBorderSLACard';
 import { PhantomPayrollNetwork } from '@/components/PhantomPayrollNetwork';
 import { CommingleAlertCard } from '@/components/CommingleAlertCard';
+import { CaseLifecycleBar } from '@/components/CaseLifecycleBar';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, AlertTriangle, Sparkles, Bot, Send, FileDown,
@@ -287,6 +288,8 @@ export default function AlertWorkspace() {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [chatInput, setChatInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [underReviewAtMap, setUnderReviewAtMap] = useState<Record<string, string>>({});
+  const [exportedIds, setExportedIds] = useState<Record<string, boolean>>({});
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   const filtered = useMemo(() => {
@@ -364,6 +367,7 @@ export default function AlertWorkspace() {
     const filename = `STR_${selected.caseId}_${today}.xml`;
     const xml = generateGoAMLXml(selected, strDraft);
     downloadXmlFile(xml, filename);
+    setExportedIds((prev) => ({ ...prev, [selected.id]: true }));
     toast({
       title: 'STR exported',
       description: `${filename} ready for NFIU goAML portal upload.`,
@@ -377,6 +381,7 @@ export default function AlertWorkspace() {
   const handleMarkUnderReview = useCallback(() => {
     if (!selected) return;
     setAlertStatus(selected.id, 'Under Review');
+    setUnderReviewAtMap((prev) => prev[selected.id] ? prev : { ...prev, [selected.id]: new Date().toISOString() });
     toast({ title: 'Status updated', description: `${selected.caseId} marked as Under Review.` });
   }, [selected, setAlertStatus, toast]);
 
@@ -600,6 +605,18 @@ export default function AlertWorkspace() {
                       </CardContent>
                     </Card>
                   </motion.div>
+
+                  {/* Case Lifecycle Bar */}
+                  <CaseLifecycleBar
+                    caseId={selected.caseId}
+                    alertReceivedLabel={selected.timeElapsed}
+                    underReviewAt={underReviewAtMap[selected.id] ? new Date(underReviewAtMap[selected.id]) : null}
+                    hasEvidence={strDraft.length > 0 || chatMessages.length > 0 || currentStatus !== 'Open'}
+                    strDrafted={strGenerated || strDraft.length > 0}
+                    strExported={!!exportedIds[selected.id]}
+                    caseClosed={isResolved}
+                    requiresStr={selected.riskLevel === 'Critical' || selected.riskLevel === 'High'}
+                  />
 
                   {/* Customer Profile (Collapsible) */}
                   <Accordion type="multiple" defaultValue={['customer-profile', 'red-flags']}>
