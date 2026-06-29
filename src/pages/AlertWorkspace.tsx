@@ -500,8 +500,10 @@ export default function AlertWorkspace() {
                     </motion.div>
                   )}
 
-                  {/* Case Header */}
-                  <motion.div key={selected.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+                <WhatThisMeans alert={selected} />
+
+                {/* Case Header */}
+                <motion.div key={selected.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
                     <Card className={`border-l-4 ${isResolved ? 'border-l-muted-foreground' : 'border-l-destructive'}`}>
                       <CardContent className="py-4 px-5 space-y-4">
                         <div className="flex items-start justify-between">
