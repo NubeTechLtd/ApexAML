@@ -235,6 +235,7 @@ function MiniAlertCard({ alert, isSelected, onClick, status, assignedAnalyst }: 
 
 export default function AlertWorkspace() {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState('');
   const [selectedId, setSelectedId] = useState<string>(mockAlerts[0].id);
