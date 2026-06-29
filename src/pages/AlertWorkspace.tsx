@@ -518,6 +518,14 @@ export default function AlertWorkspace() {
                               <Badge variant="outline" className={`text-[10px] ${riskColors[selected.riskLevel]}`}>
                                 {selected.riskLevel} · Score {cp.riskScore}/100
                               </Badge>
+                              <Button
+                                size="sm"
+                                variant="link"
+                                className="h-auto p-0 text-[11px] text-primary"
+                                onClick={() => navigate(`/case/${selected.caseId}`)}
+                              >
+                                View full case file →
+                              </Button>
                             </div>
                           </div>
                           <div className="flex flex-col items-end gap-2 shrink-0">

@@ -23,6 +23,7 @@ import PartnerBankDashboard from "./pages/PartnerBankDashboard.tsx";
 import RoadmapGenerator from "./pages/RoadmapGenerator.tsx";
 import Login from "./pages/Login.tsx";
 import AdminRoadmaps from "./pages/AdminRoadmaps.tsx";
+import CaseJourney from "./pages/CaseJourney.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
@@ -55,6 +56,7 @@ const App = () => (
             <Route path="/roadmap" element={<RoadmapGenerator />} />
             <Route path="/login" element={<Login />} />
             <Route path="/admin/roadmaps" element={<ProtectedRoute><AdminRoadmaps /></ProtectedRoute>} />
+            <Route path="/case/:caseId" element={<CaseJourney />} />
             <Route path="/privacy" element={<Privacy />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
