@@ -24,9 +24,12 @@ import { Customer360IdentityCard } from '@/components/customer360/IdentityCard';
 import { Customer360RiskRadar } from '@/components/customer360/RiskRadar';
 import { Customer360Entities } from '@/components/customer360/EntitiesCard';
 import { Customer360Tabs } from '@/components/customer360/DeepDiveTabs';
+import { RiskNarrative } from '@/components/customer360/RiskNarrative';
+import { RequiredActions } from '@/components/customer360/RequiredActions';
 import { AuditBell } from '@/components/AuditBell';
 import { ConfirmEscalationDialog } from '@/components/ConfirmEscalationDialog';
 import { FreezeAccountDialog } from '@/components/FreezeAccountDialog';
+
 
 const riskColors: Record<string, string> = {
   High: 'bg-destructive/10 text-destructive border-destructive/20',
@@ -141,10 +144,21 @@ export default function Customer360() {
           </div>
 
           <div className="p-6 space-y-6">
+            {/* Risk narrative + required actions */}
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+            >
+              <RiskNarrative customer={customer} />
+              <RequiredActions customer={customer} openAlertCount={customerAlerts.length} />
+            </motion.div>
+
             {/* 3-column grid */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
                 <Customer360IdentityCard customer={customer} />
+
               </motion.div>
               <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
                 <Customer360RiskRadar radarScores={customer.radarScores} riskLevel={customer.riskLevel} />
