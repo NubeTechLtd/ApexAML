@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ActiveFilterChip } from '@/components/ActiveFilterChip';
 import { NotificationBell } from '@/components/NotificationBell';
 import { SidebarProvider } from '@/components/ui/sidebar';
@@ -235,6 +235,7 @@ function MiniAlertCard({ alert, isSelected, onClick, status, assignedAnalyst }: 
 
 export default function AlertWorkspace() {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState('');
   const [selectedId, setSelectedId] = useState<string>(mockAlerts[0].id);
@@ -518,6 +519,14 @@ export default function AlertWorkspace() {
                               <Badge variant="outline" className={`text-[10px] ${riskColors[selected.riskLevel]}`}>
                                 {selected.riskLevel} · Score {cp.riskScore}/100
                               </Badge>
+                              <Button
+                                size="sm"
+                                variant="link"
+                                className="h-auto p-0 text-[11px] text-primary"
+                                onClick={() => navigate(`/case/${selected.caseId}`)}
+                              >
+                                View full case file →
+                              </Button>
                             </div>
                           </div>
                           <div className="flex flex-col items-end gap-2 shrink-0">

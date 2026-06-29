@@ -1,4 +1,4 @@
-import { LayoutDashboard, Inbox, Users, Settings2, FileText, Shield, Fingerprint, ShieldAlert, Search, Banknote, Building2, BarChart2, LogOut } from 'lucide-react';
+import { LayoutDashboard, Inbox, Users, Settings2, FileText, Shield, Fingerprint, ShieldAlert, Search, Banknote, Building2, BarChart2, LogOut, FolderOpen } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { useAuth } from '@/hooks/useAuth';
 import logo from '@/assets/logo.svg';
@@ -20,6 +20,7 @@ import {
 const mainNav = [
   { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
   { title: 'Alert Inbox', url: '/', icon: Inbox },
+  { title: 'Case Files', url: '/case/ALT-2026-0891', icon: FolderOpen },
   { title: 'Alert Workspace', url: '/workspace', icon: Search },
   { title: 'Sanctions Screening', url: '/sanctions', icon: ShieldAlert },
   { title: 'Identity & KYC', url: '/identity', icon: Fingerprint },
