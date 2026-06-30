@@ -258,9 +258,9 @@ export default function Customers() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-                <Users className="h-6 w-6" /> Customers
+                <Users className="h-6 w-6" /> Customer Risk Profiles
               </h1>
-              <p className="text-sm text-muted-foreground mt-1">Manage customer profiles, risk levels, and KYC tiers</p>
+              <p className="text-sm text-muted-foreground mt-1">Monitor customer risk levels and manage KYC compliance</p>
             </div>
             <div className="flex items-center gap-2">
               <AuditBell />

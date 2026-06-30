@@ -60,7 +60,10 @@ const SystemAudit = () => {
             <div className="flex items-center gap-2">
               <SidebarTrigger />
               <Lock className="h-4 w-4 text-muted-foreground" />
-              <h1 className="text-sm font-semibold text-foreground">System Audit & RBAC</h1>
+              <div>
+                <h1 className="text-sm font-semibold text-foreground leading-tight">Audit Trail & Access Control</h1>
+                <p className="text-[10px] text-muted-foreground">Immutable record of all compliance actions — for CBN examination</p>
+              </div>
               <Badge variant="outline" className="text-[10px] border-border text-muted-foreground ml-1">
                 Read-Only
               </Badge>

@@ -80,7 +80,7 @@ export function CreateRuleModal({ open, onOpenChange }: CreateRuleModalProps) {
               <Zap className="h-4 w-4 text-primary" />
             </div>
             <div>
-              <SheetTitle className="text-base">Create New Rule</SheetTitle>
+              <SheetTitle className="text-base">Create custom detection rule</SheetTitle>
               <SheetDescription className="text-xs">
                 Define conditions to automatically detect suspicious activity.
               </SheetDescription>

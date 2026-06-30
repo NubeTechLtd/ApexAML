@@ -76,7 +76,7 @@ function TagAsIMTODialog({ account, onTag }: TagDialogProps) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button size="sm" variant="outline" className="h-7 text-xs gap-1.5">
-          <Tag className="h-3 w-3" /> Tag as IMTO Settlement
+          <Tag className="h-3 w-3" /> Register as IMTO designated settlement account
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-lg">

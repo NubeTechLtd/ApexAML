@@ -80,7 +80,7 @@ export function ComplianceTimeline() {
         <CardTitle className="text-base">Implementation Milestone Tracker</CardTitle>
         <Button size="sm" onClick={handleExportPDF} className="gap-1.5 print:hidden">
           <Printer className="h-3.5 w-3.5" />
-          Export PDF
+          Download CBN compliance report
         </Button>
       </CardHeader>
       <CardContent className="space-y-4">

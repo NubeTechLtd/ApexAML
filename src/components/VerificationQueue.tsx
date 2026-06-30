@@ -14,10 +14,10 @@ interface VerificationQueueProps {
 
 const tabs: { label: string; value: KYCStatus | 'All' }[] = [
   { label: 'All', value: 'All' },
-  { label: 'Pending', value: 'Pending' },
+  { label: 'Awaiting Verification', value: 'Pending' },
   { label: 'In Review', value: 'In Review' },
   { label: 'Escalated', value: 'Escalated' },
-  { label: 'Verified', value: 'Verified' },
+  { label: 'Identity Verified', value: 'Verified' },
 ];
 
 const statusBadge: Record<KYCStatus, string> = {
