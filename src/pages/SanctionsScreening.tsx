@@ -244,7 +244,7 @@ export default function SanctionsScreening() {
               <ShieldAlert className="h-5 w-5 text-primary" />
               <div>
                 <h1 className="text-lg font-bold text-foreground">Sanctions & PEP Screening</h1>
-                <p className="text-[11px] text-muted-foreground -mt-0.5">Pending Match Resolution</p>
+                <p className="text-[11px] text-muted-foreground -mt-0.5">Screen customers and transactions against OFAC, UN, EU, and NFIU lists</p>
               </div>
               <Badge variant="outline" className="text-[10px] ml-2">
                 {pendingMatches.length} pending

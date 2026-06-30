@@ -830,7 +830,7 @@ export default function AlertWorkspace() {
                             </p>
                           </div>
                           <Button size="lg" className="gap-2 mt-2" onClick={handleGenerateSTR}>
-                            <Sparkles className="h-4 w-4" /> Generate STR Narrative
+                            <Sparkles className="h-4 w-4" /> Generate AI investigation report
                           </Button>
                         </CardContent>
                       </Card>
@@ -883,7 +883,7 @@ export default function AlertWorkspace() {
                               )}
                               <Badge variant="outline" className="text-[9px]">Editable</Badge>
                               <Button size="sm" className="h-7 gap-1.5 text-xs" onClick={handleExport}>
-                                <FileDown className="h-3 w-3" /> Export goAML XML
+                                <FileDown className="h-3 w-3" /> Export to NFIU goAML portal
                                 <Badge variant="outline" className="text-[8px] px-1 py-0 ml-0.5 bg-primary-foreground/10 border-primary-foreground/20">⇧D</Badge>
                               </Button>
                             </div>
