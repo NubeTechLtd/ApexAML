@@ -67,6 +67,7 @@ import {
   LogOut,
   Mail,
   Search,
+  Share2,
   ShieldCheck,
   TrendingUp,
   UserPlus,
@@ -401,6 +402,22 @@ export default function AdminRoadmaps() {
                 <span className="text-[12px] text-muted-foreground hidden sm:inline">
                   {adminEmail}
                 </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={async () => {
+                    const url = 'https://apexaml.com/app?demo=true';
+                    try {
+                      await navigator.clipboard.writeText(url);
+                      toast.success('Demo link copied to clipboard', { description: url });
+                    } catch {
+                      toast.error('Could not copy. Please copy manually: ' + url);
+                    }
+                  }}
+                >
+                  <Share2 className="h-4 w-4 mr-2" />
+                  Share demo link
+                </Button>
                 <Sheet open={adminSheetOpen} onOpenChange={setAdminSheetOpen}>
                   <SheetTrigger asChild>
                     <Button variant="outline" size="sm">
