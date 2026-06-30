@@ -644,3 +644,62 @@ export const mockAlerts: Alert[] = [
     };
   })(),
 ];
+
+// ---------------------------------------------------------------------------
+// Guided demo mode: Adebayo Ogunlesi POS Round-Trip case.
+// When the URL contains ?demo=true, this alert is prepended so that the
+// first Critical alert in every list matches the scripted walk-through.
+// ---------------------------------------------------------------------------
+import { isDemoMode as __isDemoMode } from '@/hooks/useDemoMode';
+
+const adebayoDemoAlert: Alert = {
+  id: 'ALT-2026-DEMO-001',
+  caseId: 'CAS-2026-DEMO-001-NG',
+  status: 'Open',
+  riskLevel: 'Critical',
+  ruleTriggered: 'POS Round-Trip Structuring (CBN Circular BSD/DIR/PUB/LAB/016/006)',
+  timestamp: '2026-04-12T23:58:00Z',
+  timeElapsed: '8h ago',
+  description:
+    'Customer executed 47 POS withdrawals across 12 agent terminals in 72 hours — ₦14.8M total, every transaction sized just below the ₦500,000 reporting threshold.',
+  customerProfile: {
+    fullName: 'Adebayo Ogunlesi',
+    bvn: '22198765432',
+    nin: '81223344556',
+    nuban: '0234567891',
+    kycTier: 'Tier 3 (No Limits)',
+    occupation: 'Phone Accessories Trader',
+    registeredAddress: '14 Balogun Street, Lagos Island, Lagos',
+    riskScore: 94,
+  },
+  transactions: Array.from({ length: 12 }).map((_, i) => ({
+    id: `tx-demo-${i + 1}`,
+    date: new Date(Date.UTC(2026, 3, 10 + Math.floor(i / 5), 9 + (i % 8), 12)).toISOString(),
+    type: 'Debit' as const,
+    amountNGN: 480000 + (i % 4) * 5000,
+    counterparty: [
+      'Moniepoint Agent / Oshodi',
+      'Opay Agent / Yaba',
+      'Palmpay Agent / Surulere',
+      'Baxi Agent / Ikeja',
+      'Kuda Agent / Lekki',
+      'PocketApp Agent / Apapa',
+    ][i % 6],
+    balanceAfter: 14_800_000 - (i + 1) * 490000,
+    channel: 'POS' as const,
+    agentLocation: ['Oshodi', 'Yaba', 'Surulere', 'Ikeja', 'Lekki', 'Apapa'][i % 6],
+  })),
+  behavioralRedFlags: [
+    'Threshold avoidance: 100% of withdrawals sized between ₦475,000–₦499,000 — deliberately under the ₦500,000 NFIU reporting trigger.',
+    'Agent dispersion: 12 distinct POS terminals across 6 Lagos LGAs in 72 hours — classic agent-shopping pattern.',
+    'No commercial substance: Customer occupation declared as "Phone Accessories Trader" but cash velocity exceeds Tier 3 SME benchmarks by 11x.',
+    'Round-trip indicator: 9 of 12 withdrawals re-deposited to the same BVN within 4 hours via a different agent.',
+  ],
+  aiDraftedNarrative:
+    'The subject, Adebayo Ogunlesi (BVN 22198765432), executed 47 Point-of-Sale withdrawal transactions totalling ₦14.8M across 12 distinct agent terminals in Lagos State between 2026-04-10 and 2026-04-12. Each individual withdrawal was deliberately structured between ₦475,000 and ₦499,000 — a clear pattern of evasion designed to fall below the ₦500,000 single-transaction reporting threshold mandated under CBN Circular BSD/DIR/PUB/LAB/016/006. The dispersion of withdrawals across 6 Lagos Local Government Areas (Oshodi, Yaba, Surulere, Ikeja, Lekki, Apapa) and 12 unrelated agent terminals (Moniepoint, Opay, Palmpay, Baxi, Kuda, PocketApp) is consistent with the "POS Round-Trip" typology, in which agent-banking infrastructure is exploited to layer illicit proceeds through circular cash-in / cash-out cycles. 9 of the 12 cycles were closed within 4 hours by re-deposit to the same BVN via an unrelated terminal. The subject\'s declared occupation ("Phone Accessories Trader", Tier 3) cannot account for cash velocity of this magnitude. Account has been placed under restriction pending NFIU submission.',
+};
+
+if (__isDemoMode) {
+  mockAlerts.unshift(adebayoDemoAlert);
+}
+
