@@ -108,11 +108,14 @@ const RulesEngine = () => {
           <header className="h-14 flex items-center justify-between border-b px-4 bg-card">
             <div className="flex items-center gap-2">
               <SidebarTrigger />
-              <h1 className="text-sm font-semibold text-foreground">Rules Engine</h1>
+              <div>
+                <h1 className="text-sm font-semibold text-foreground leading-tight">Detection Rules & Typologies</h1>
+                <p className="text-[10px] text-muted-foreground">Configure automated detection rules for CBN typologies</p>
+              </div>
             </div>
             <div className="flex items-center gap-2">
               <Button size="sm" className="h-9 gap-1.5" onClick={() => setSheetOpen(true)}>
-                <Plus className="h-3.5 w-3.5" /> New Rule
+                <Plus className="h-3.5 w-3.5" /> Create custom detection rule
               </Button>
               <ThemeToggle />
               <NotificationBell />
@@ -204,7 +207,7 @@ const RulesEngine = () => {
                                 )}
                                 <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3">{t.desc}</p>
                                 <Button variant="outline" size="sm" className="w-full h-7 text-xs gap-1" onClick={() => addTemplate(t.name)}>
-                                  <Plus className="h-3 w-3" /> Add to Rulebook
+                                  <Plus className="h-3 w-3" /> Activate this detection rule
                                 </Button>
                               </CardContent>
                             </Card>

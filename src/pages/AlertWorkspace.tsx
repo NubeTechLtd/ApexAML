@@ -126,10 +126,10 @@ const DISMISSAL_REASONS = [
 /* ── Status Stepper ──────────────────────────────────── */
 
 const STEPS: { key: CaseStatus; label: string }[] = [
-  { key: 'Open', label: 'Open' },
+  { key: 'Open', label: 'Under Investigation' },
   { key: 'Under Review', label: 'Under Review' },
   { key: 'Escalated', label: 'Escalated to NFIU' },
-  { key: 'Closed', label: 'Closed (FP)' },
+  { key: 'Closed', label: 'Investigation Complete' },
 ];
 
 function StatusStepper({ status }: { status: CaseStatus }) {
@@ -420,7 +420,10 @@ export default function AlertWorkspace() {
           <div className="flex items-center justify-between border-b px-6 py-3 bg-card shrink-0">
             <div className="flex items-center gap-2">
               <Shield className="h-5 w-5 text-primary" />
-              <h1 className="text-lg font-bold text-foreground">Alert Workspace</h1>
+              <div>
+                <h1 className="text-lg font-bold text-foreground leading-tight">Alert Workspace</h1>
+                <p className="text-[11px] text-muted-foreground">Investigate flagged transactions and file STRs with NFIU</p>
+              </div>
             </div>
             <div className="flex items-center gap-2">
               <AuditBell />
@@ -530,9 +533,9 @@ export default function AlertWorkspace() {
                             </div>
                           </div>
                           <div className="flex flex-col items-end gap-2 shrink-0">
-                            <Button size="sm" variant="destructive" className="gap-1.5" onClick={handleEscalate} disabled={isResolved}>
+                            <Button size="sm" variant="destructive" className="gap-1.5" onClick={handleEscalate} disabled={isResolved} title="Escalate to NFIU — report directly to Financial Intelligence Unit">
                               <ShieldAlert className="h-3.5 w-3.5" />
-                              Escalate to NFIU
+                              Escalate to NFIU — Financial Intelligence Unit
                               <Badge variant="outline" className="text-[8px] px-1 py-0 ml-1 bg-destructive-foreground/10 text-destructive-foreground border-destructive-foreground/20">⇧E</Badge>
                             </Button>
                             <div className="flex gap-2">

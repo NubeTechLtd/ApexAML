@@ -30,7 +30,7 @@ const RegulatoryReports = () => {
             <div className="flex items-center gap-2">
               <Button size="sm" onClick={handleExportPDF} className="gap-1.5">
                 <Download className="h-3.5 w-3.5" />
-                Export PDF
+                Download CBN compliance report
               </Button>
               <ThemeToggle />
               <NotificationBell />
