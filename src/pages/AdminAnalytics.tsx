@@ -166,10 +166,10 @@ export default function AdminAnalytics() {
                 <div className="h-64">
                   <ResponsiveContainer>
                     <LineChart data={dailyVisitors} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke={chart.grid} />
-                      <XAxis dataKey="date" stroke={chart.axis} fontSize={11} />
-                      <YAxis stroke={chart.axis} fontSize={11} allowDecimals={false} />
-                      <Tooltip contentStyle={{ background: chart.tooltipBg, border: `1px solid ${chart.grid}`, borderRadius: 6 }} />
+                      <CartesianGrid strokeDasharray="3 3" stroke={chart.gridColor} />
+                      <XAxis dataKey="date" stroke={chart.tickColor} fontSize={11} />
+                      <YAxis stroke={chart.tickColor} fontSize={11} allowDecimals={false} />
+                      <Tooltip contentStyle={{ background: chart.tooltipBg, border: `1px solid ${chart.gridColor}`, borderRadius: 6 }} />
                       <Line type="monotone" dataKey="visitors" stroke="hsl(var(--primary))" strokeWidth={2} dot={false} />
                     </LineChart>
                   </ResponsiveContainer>
@@ -190,10 +190,10 @@ export default function AdminAnalytics() {
                   <div className="h-64">
                     <ResponsiveContainer>
                       <BarChart data={topPages} layout="vertical" margin={{ top: 4, right: 16, left: 16, bottom: 0 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke={chart.grid} horizontal={false} />
-                        <XAxis type="number" stroke={chart.axis} fontSize={11} />
-                        <YAxis type="category" dataKey="path" stroke={chart.axis} fontSize={11} width={140} />
-                        <Tooltip contentStyle={{ background: chart.tooltipBg, border: `1px solid ${chart.grid}`, borderRadius: 6 }} />
+                        <CartesianGrid strokeDasharray="3 3" stroke={chart.gridColor} horizontal={false} />
+                        <XAxis type="number" stroke={chart.tickColor} fontSize={11} />
+                        <YAxis type="category" dataKey="path" stroke={chart.tickColor} fontSize={11} width={140} />
+                        <Tooltip contentStyle={{ background: chart.tooltipBg, border: `1px solid ${chart.gridColor}`, borderRadius: 6 }} />
                         <Bar dataKey="views" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
