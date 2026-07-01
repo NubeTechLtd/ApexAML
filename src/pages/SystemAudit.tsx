@@ -21,17 +21,20 @@ interface AuditEntry {
   status: 'success' | 'denied';
 }
 
+const HOUR = 60 * 60 * 1000;
+const hoursAgo = (h: number) => new Date(Date.now() - h * HOUR).toISOString();
+
 const auditLog: AuditEntry[] = [
-  { id: 'a-001', timestamp: '2026-04-09T10:32:14Z', userId: 'USR-0041', userName: 'Adeola Kemi', action: 'Exported STR', resource: 'Alert #ALT-2024-0891', ipAddress: '102.89.44.12', status: 'success' },
-  { id: 'a-002', timestamp: '2026-04-09T10:28:01Z', userId: 'USR-0023', userName: 'Ibrahim Sani', action: 'Viewed Profile', resource: 'Customer: Emeka Nwosu', ipAddress: '105.112.78.203', status: 'success' },
-  { id: 'a-003', timestamp: '2026-04-09T10:15:45Z', userId: 'USR-0041', userName: 'Adeola Kemi', action: 'Dismissed Alert', resource: 'Alert #ALT-2024-0887', ipAddress: '102.89.44.12', status: 'success' },
-  { id: 'a-004', timestamp: '2026-04-09T09:58:22Z', userId: 'USR-0007', userName: 'Ngozi Ibe', action: 'Modified Rule', resource: 'Rule: High-Velocity Crypto P2P', ipAddress: '41.58.192.67', status: 'success' },
-  { id: 'a-005', timestamp: '2026-04-09T09:42:10Z', userId: 'USR-0055', userName: 'Yusuf Maina', action: 'Attempted Role Change', resource: 'User: USR-0041', ipAddress: '197.210.53.114', status: 'denied' },
-  { id: 'a-006', timestamp: '2026-04-09T09:30:00Z', userId: 'USR-0023', userName: 'Ibrahim Sani', action: 'Approved KYC', resource: 'Customer: Chidinma Okafor', ipAddress: '105.112.78.203', status: 'success' },
-  { id: 'a-007', timestamp: '2026-04-09T09:12:33Z', userId: 'USR-0007', userName: 'Ngozi Ibe', action: 'Generated CTR Batch', resource: '5 transactions', ipAddress: '41.58.192.67', status: 'success' },
-  { id: 'a-008', timestamp: '2026-04-09T08:55:19Z', userId: 'USR-0055', userName: 'Yusuf Maina', action: 'Viewed Audit Log', resource: 'System Audit Page', ipAddress: '197.210.53.114', status: 'success' },
-  { id: 'a-009', timestamp: '2026-04-09T08:40:07Z', userId: 'USR-0041', userName: 'Adeola Kemi', action: 'Escalated to STR', resource: 'Alert #ALT-2024-0882', ipAddress: '102.89.44.12', status: 'success' },
-  { id: 'a-010', timestamp: '2026-04-09T08:22:51Z', userId: 'USR-0012', userName: 'Chukwudi Obi', action: 'Login', resource: 'Dashboard', ipAddress: '154.118.22.89', status: 'success' },
+  { id: 'a-001', timestamp: hoursAgo(2), userId: 'USR-0041', userName: 'Adeola Kemi', action: 'Exported STR', resource: 'Alert #ALT-2026-0891', ipAddress: '102.89.44.12', status: 'success' },
+  { id: 'a-002', timestamp: hoursAgo(6), userId: 'USR-0023', userName: 'Ibrahim Sani', action: 'Viewed Profile', resource: 'Customer: Emeka Nwosu', ipAddress: '105.112.78.203', status: 'success' },
+  { id: 'a-003', timestamp: hoursAgo(14), userId: 'USR-0041', userName: 'Adeola Kemi', action: 'Dismissed Alert', resource: 'Alert #ALT-2026-0887', ipAddress: '102.89.44.12', status: 'success' },
+  { id: 'a-004', timestamp: hoursAgo(29), userId: 'USR-0007', userName: 'Ngozi Ibe', action: 'Modified Rule', resource: 'Rule: High-Velocity Crypto P2P', ipAddress: '41.58.192.67', status: 'success' },
+  { id: 'a-005', timestamp: hoursAgo(42), userId: 'USR-0055', userName: 'Yusuf Maina', action: 'Attempted Role Change', resource: 'User: USR-0041', ipAddress: '197.210.53.114', status: 'denied' },
+  { id: 'a-006', timestamp: hoursAgo(58), userId: 'USR-0023', userName: 'Ibrahim Sani', action: 'Approved KYC', resource: 'Customer: Chidinma Okafor', ipAddress: '105.112.78.203', status: 'success' },
+  { id: 'a-007', timestamp: hoursAgo(77), userId: 'USR-0007', userName: 'Ngozi Ibe', action: 'Generated CTR Batch', resource: '5 transactions', ipAddress: '41.58.192.67', status: 'success' },
+  { id: 'a-008', timestamp: hoursAgo(96), userId: 'USR-0055', userName: 'Yusuf Maina', action: 'Viewed Audit Log', resource: 'System Audit Page', ipAddress: '197.210.53.114', status: 'success' },
+  { id: 'a-009', timestamp: hoursAgo(128), userId: 'USR-0041', userName: 'Adeola Kemi', action: 'Escalated to STR', resource: 'Alert #ALT-2026-0882', ipAddress: '102.89.44.12', status: 'success' },
+  { id: 'a-010', timestamp: hoursAgo(161), userId: 'USR-0012', userName: 'Chukwudi Obi', action: 'Login', resource: 'Dashboard', ipAddress: '154.118.22.89', status: 'success' },
 ];
 
 const roleData = [

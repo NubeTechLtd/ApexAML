@@ -10,7 +10,7 @@ const SECTIONS = [
   },
   {
     h: '2. Data we collect from this website',
-    p: 'When you submit a lead-capture form on this website (Book Demo, Roadmap Template, or Private Access waitlist), we collect: full name, work email, institution name, institution type, phone number, current AML setup, compliance timeline, and your consent state. We do not place advertising cookies and we do not sell your data.',
+    p: 'When you submit a lead-capture form on this website (Book Demo, Roadmap Template, or our contact and demo booking forms), we collect: full name, work email, institution name, institution type, phone number, current AML setup, compliance timeline, and your consent state. We do not place advertising cookies and we do not sell your data.',
   },
   {
     h: '3. Lawful basis & purpose',

@@ -18,6 +18,8 @@ import {
   Globe,
   Briefcase,
   ShieldCheck,
+  Twitter,
+  Linkedin,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import logo from "@/assets/logo.svg";
@@ -495,7 +497,7 @@ function LandingPageInner() {
         <div className="relative mx-auto max-w-4xl text-center space-y-8">
           <AnimatedSection>
             <p className="inline-block rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-medium text-primary tracking-wide uppercase">
-              Built for Nigerian Financial Institutions
+              Designed for compliance teams across Nigerian fintechs, PSPs, MFBs, and IMTOs
             </p>
           </AnimatedSection>
 
@@ -575,7 +577,7 @@ function LandingPageInner() {
               <div className="flex items-center justify-center gap-4">
                 <div className="h-px flex-1 max-w-[80px] bg-white/10" />
                 <p className="text-[10px] uppercase tracking-[0.2em] text-white/40 font-medium text-center">
-                  Trusted by compliance teams at leading Nigerian financial institutions
+                  Built for compliance teams at Nigerian financial institutions
                 </p>
                 <div className="h-px flex-1 max-w-[80px] bg-white/10" />
               </div>
@@ -872,6 +874,24 @@ function LandingPageInner() {
             </a>
             <a href="mailto:privacy@apexaml.com" className="hover:text-white/70 transition-colors">
               Contact DPO
+            </a>
+            <a
+              href="https://twitter.com/ApexAML"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="ApexAML on Twitter"
+              className="inline-flex items-center hover:text-white/70 transition-colors"
+            >
+              <Twitter className="h-4 w-4" />
+            </a>
+            <a
+              href="https://linkedin.com/company/apexaml"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="ApexAML on LinkedIn"
+              className="inline-flex items-center hover:text-white/70 transition-colors"
+            >
+              <Linkedin className="h-4 w-4" />
             </a>
           </div>
           <p className="text-white/25">© {new Date().getFullYear()} ApexAML Technologies.</p>

@@ -131,7 +131,10 @@ export default function Customer360() {
                     <DropdownMenuItem onClick={() => setEscalateOpen(true)}>
                       <ShieldAlert className="h-4 w-4 mr-2" /> Escalate to NFIU — Financial Intelligence Unit
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => toast.success('NFIU profile downloaded')}>
+                    <DropdownMenuItem onClick={() => {
+                      toast.info('Generating NFIU profile PDF…');
+                      setTimeout(() => toast.success('NFIU profile ready — check your downloads'), 1500);
+                    }}>
                       <Download className="h-4 w-4 mr-2" /> Download NFIU Profile
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -186,12 +189,13 @@ export default function Customer360() {
           onOpenChange={setFreezeOpen}
           customerName={customer.name}
           caseId={`ACCT-${id}`}
-          bvn={customer.bvn || '22012345678'}
+          bvn={customer.bvn || 'Not on record'}
           kycTier={customer.kycTier}
           accountStatus={accountStatus}
           onConfirmed={() => {
             setAccountStatus('Frozen');
-            toast.warning('Account frozen — Ref: FRZ-2026-0089');
+            const ref = `FRZ-${new Date().getFullYear()}-${Math.floor(Math.random() * 9000 + 1000)}`;
+            toast.warning(`Account frozen — Ref: ${ref}`);
           }}
         />
         <ConfirmEscalationDialog

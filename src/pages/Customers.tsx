@@ -21,6 +21,7 @@ import { BulkFreezeDialog } from '@/components/customers/BulkFreezeDialog';
 import { BulkConfirmDialog } from '@/components/customers/BulkConfirmDialog';
 import { BulkAuditLog, BulkAuditEntry } from '@/components/customers/BulkAuditLog';
 import { useAuditLog } from '@/hooks/useAuditLog';
+import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -28,24 +29,24 @@ type SortKey = 'name' | 'riskLevel' | 'alerts';
 type SortDir = 'asc' | 'desc';
 
 const customers = [
-  { id: 1, name: 'Adebayo Ogunlesi', bvn: '22345678901', riskLevel: 'High', kycTier: 'Tier 3', alerts: 5 },
-  { id: 2, name: 'Chioma Adekunle', bvn: '22345678902', riskLevel: 'Medium', kycTier: 'Tier 2', alerts: 2 },
-  { id: 3, name: 'Emeka Obi', bvn: '22345678903', riskLevel: 'Low', kycTier: 'Tier 3', alerts: 0 },
-  { id: 4, name: 'Fatima Bello', bvn: '22345678904', riskLevel: 'High', kycTier: 'Tier 1', alerts: 8 },
-  { id: 5, name: 'Ibrahim Musa', bvn: '22345678905', riskLevel: 'Low', kycTier: 'Tier 3', alerts: 1 },
-  { id: 6, name: 'Ngozi Okafor', bvn: '22345678906', riskLevel: 'Medium', kycTier: 'Tier 2', alerts: 3 },
-  { id: 7, name: 'Olumide Adeyemi', bvn: '22345678907', riskLevel: 'Low', kycTier: 'Tier 3', alerts: 0 },
-  { id: 8, name: 'Aisha Yusuf', bvn: '22345678908', riskLevel: 'High', kycTier: 'Tier 2', alerts: 6 },
-  { id: 9, name: 'Chinedu Nwosu', bvn: '22345678909', riskLevel: 'Medium', kycTier: 'Tier 1', alerts: 1 },
-  { id: 10, name: 'Halima Abdullahi', bvn: '22345678910', riskLevel: 'Low', kycTier: 'Tier 3', alerts: 0 },
-  { id: 11, name: 'Tunde Bakare', bvn: '22345678911', riskLevel: 'High', kycTier: 'Tier 2', alerts: 4 },
-  { id: 12, name: 'Blessing Eze', bvn: '22345678912', riskLevel: 'Medium', kycTier: 'Tier 3', alerts: 2 },
-  { id: 13, name: 'Yemi Alade', bvn: '22345678913', riskLevel: 'Low', kycTier: 'Tier 2', alerts: 0 },
-  { id: 14, name: 'Obinna Okechukwu', bvn: '22345678914', riskLevel: 'High', kycTier: 'Tier 1', alerts: 7 },
-  { id: 15, name: 'Zainab Mohammed', bvn: '22345678915', riskLevel: 'Medium', kycTier: 'Tier 3', alerts: 1 },
-  { id: 16, name: 'Kunle Afolabi', bvn: '22345678916', riskLevel: 'Low', kycTier: 'Tier 2', alerts: 0 },
-  { id: 17, name: 'Amina Suleiman', bvn: '22345678917', riskLevel: 'High', kycTier: 'Tier 3', alerts: 9 },
-  { id: 18, name: 'Ifeanyi Agu', bvn: '22345678918', riskLevel: 'Medium', kycTier: 'Tier 1', alerts: 3 },
+  { id: 1, name: 'Adebayo Ogunlesi', bvn: '22481039271', riskLevel: 'High', kycTier: 'Tier 3', alerts: 9 },
+  { id: 2, name: 'Chioma Adekunle', bvn: '22673018492', riskLevel: 'Medium', kycTier: 'Tier 2', alerts: 2 },
+  { id: 3, name: 'Emeka Obi', bvn: '22891204736', riskLevel: 'Low', kycTier: 'Tier 3', alerts: 0 },
+  { id: 4, name: 'Fatima Bello', bvn: '22104728395', riskLevel: 'High', kycTier: 'Tier 1', alerts: 8 },
+  { id: 5, name: 'Ibrahim Musa', bvn: '22537190846', riskLevel: 'Low', kycTier: 'Tier 3', alerts: 1 },
+  { id: 6, name: 'Ngozi Okafor', bvn: '22962481037', riskLevel: 'Medium', kycTier: 'Tier 2', alerts: 3 },
+  { id: 7, name: 'Olumide Adeyemi', bvn: '22348165029', riskLevel: 'Low', kycTier: 'Tier 3', alerts: 0 },
+  { id: 8, name: 'Aisha Yusuf', bvn: '22715390284', riskLevel: 'High', kycTier: 'Tier 2', alerts: 6 },
+  { id: 9, name: 'Chinedu Nwosu', bvn: '22086423571', riskLevel: 'Medium', kycTier: 'Tier 1', alerts: 1 },
+  { id: 10, name: 'Halima Abdullahi', bvn: '22459823710', riskLevel: 'Low', kycTier: 'Tier 3', alerts: 0 },
+  { id: 11, name: 'Tunde Bakare', bvn: '22892037461', riskLevel: 'High', kycTier: 'Tier 2', alerts: 4 },
+  { id: 12, name: 'Blessing Eze', bvn: '22138409652', riskLevel: 'Medium', kycTier: 'Tier 3', alerts: 2 },
+  { id: 13, name: 'Yemi Alade', bvn: '22671254893', riskLevel: 'Low', kycTier: 'Tier 2', alerts: 0 },
+  { id: 14, name: 'Obinna Okechukwu', bvn: '22047581923', riskLevel: 'High', kycTier: 'Tier 1', alerts: 7 },
+  { id: 15, name: 'Zainab Mohammed', bvn: '22582910473', riskLevel: 'Medium', kycTier: 'Tier 3', alerts: 1 },
+  { id: 16, name: 'Kunle Afolabi', bvn: '22916348275', riskLevel: 'Low', kycTier: 'Tier 2', alerts: 0 },
+  { id: 17, name: 'Amina Suleiman', bvn: '22304871596', riskLevel: 'High', kycTier: 'Tier 3', alerts: 3 },
+  { id: 18, name: 'Ifeanyi Agu', bvn: '22758193624', riskLevel: 'Medium', kycTier: 'Tier 1', alerts: 3 },
 ];
 
 const riskColors: Record<string, string> = {
@@ -84,6 +85,8 @@ function SortIcon({ column, sortKey, sortDir }: { column: SortKey; sortKey: Sort
 }
 
 export default function Customers() {
+  const { user } = useAuth();
+  const analystId = user?.email ?? 'System';
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [search, setSearch] = useState('');
@@ -208,7 +211,7 @@ export default function Customers() {
 
     const auditEntry: BulkAuditEntry = {
       id: crypto.randomUUID(), timestamp: new Date().toISOString(),
-      type: action, analyst: 'mock-analyst-001', customers: names, justification,
+      type: action, analyst: analystId, customers: names, justification,
     };
 
     if (action === 'escalate') {
@@ -218,14 +221,14 @@ export default function Customers() {
       });
       undoRef.current = setTimeout(() => {
         setBulkAuditEntries(prev => [...prev, auditEntry]);
-        append({ action: 'ACCOUNT_FREEZE', analyst: 'mock-analyst-001', caseId: `BULK-${ids.join('-')}`, justification: justification || '' });
+        append({ action: 'ACCOUNT_FREEZE', analyst: analystId, caseId: `BULK-${ids.join('-')}`, justification: justification || '' });
       }, 5000);
     } else {
       setBulkAuditEntries(prev => [...prev, auditEntry]);
       (action === 'flag' ? toast.warning : toast.success)(`${action === 'flag' ? 'Flagged' : 'Cleared'} ${names.length} customer(s)`, { description: names.join(', ') });
     }
     setCheckedIds(new Set());
-  }, [checkedIds, statuses, append]);
+  }, [checkedIds, statuses, append, analystId]);
 
   const handleSearchChange = (val: string) => {
     setSearch(val);
