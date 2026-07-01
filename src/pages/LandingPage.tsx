@@ -189,7 +189,7 @@ function AIMockUI() {
               <span className="text-risk-low font-semibold">Submitted.</span>
             </p>
             <p className="text-[10px] text-white/70">
-              Reference: <span className="text-white font-semibold">STR-2026-0041</span> ✓
+              Reference: <span className="text-white font-semibold">STR-2026-00041</span> ✓
             </p>
           </div>
         </motion.div>

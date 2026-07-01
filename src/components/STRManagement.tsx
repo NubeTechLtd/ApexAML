@@ -121,7 +121,7 @@ function NewSTRSheet({ open, onOpenChange }: { open: boolean; onOpenChange: (v: 
   }, [step, narrative, generating, startGeneration]);
 
   const handleSubmit = () => {
-    toast.success('STR filed — Ref: STR-2026-0042');
+    toast.success('STR filed — Ref: STR-2026-00042');
     onOpenChange(false);
   };
 
@@ -187,7 +187,7 @@ function NewSTRSheet({ open, onOpenChange }: { open: boolean; onOpenChange: (v: 
               />
               <div className="rounded-lg border bg-card p-3 space-y-1.5 text-xs">
                 <div className="flex justify-between"><span className="text-muted-foreground">Linked Alert</span><span className="font-medium text-foreground">{linkedAlert}</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Reference</span><span className="font-mono text-foreground">STR-2026-0042</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Reference</span><span className="font-mono text-foreground">STR-2026-00042</span></div>
                 <div className="flex justify-between"><span className="text-muted-foreground">Filing Date</span><span className="text-foreground">{formatDate(new Date().toISOString())}</span></div>
               </div>
             </div>

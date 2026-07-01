@@ -186,11 +186,11 @@ const adebayoCase: CaseFile = {
       icon: Send,
       iconColor: 'text-emerald-500',
       title: 'NFIU submission confirmed',
-      description: 'Reference: STR-2026-0041',
+      description: 'Reference: STR-2026-00041',
       actor: 'Chioma Adeyemi',
       detail: 'NFIU portal returned a successful submission receipt and immutable audit hash.',
       data: {
-        'NFIU Ref': 'STR-2026-0041',
+        'NFIU Ref': 'STR-2026-00041',
         'Audit Hash': '0x8f3c…a921',
         'Filed Within': '1h 50m of suspicion forming',
       },

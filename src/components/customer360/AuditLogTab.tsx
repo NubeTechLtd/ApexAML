@@ -21,7 +21,7 @@ function generateAuditLog(customer: Customer360Data, notes: ComplianceNote[]): A
     { id: 'AUD-003', timestamp: '2026-04-05 16:48', action: 'EDD investigation triggered', analyst: 'Fatima Yusuf', justification: 'Unusual transaction velocity detected — 12 transfers in 4 hours exceeding normal baseline.', category: 'EDD' },
     { id: 'AUD-004', timestamp: '2026-03-28 11:22', action: 'Account temporarily frozen', analyst: 'Chukwu Emeka', justification: 'Pending sanctions screening clearance — partial name match on OFAC SDN list.', category: 'Account' },
     { id: 'AUD-005', timestamp: '2026-03-28 15:10', action: 'Account unfrozen — sanctions match cleared', analyst: 'Chukwu Emeka', justification: 'False positive confirmed — DOB and nationality mismatch with listed entity.', category: 'Account' },
-    { id: 'AUD-006', timestamp: '2026-03-20 10:05', action: 'Alert SAR-2026-0031 resolved as True Positive', analyst: 'Ngozi Okafor', justification: 'Structuring pattern confirmed — STR filed with NFIU ref: STR-2026-0038.', category: 'Alert' },
+    { id: 'AUD-006', timestamp: '2026-03-20 10:05', action: 'Alert SAR-2026-0031 resolved as True Positive', analyst: 'Ngozi Okafor', justification: 'Structuring pattern confirmed — STR filed with NFIU ref: STR-2026-00038.', category: 'Alert' },
     { id: 'AUD-007', timestamp: '2026-03-15 13:45', action: 'BVN re-verification completed', analyst: 'System', justification: 'Periodic BVN reverification — match confirmed with NIBSS records.', category: 'KYC' },
     { id: 'AUD-008', timestamp: '2026-03-01 08:30', action: 'Risk score recalculated: ' + customer.riskScore + '/100', analyst: 'System', justification: 'Monthly automated risk model refresh — crypto exposure factor increased.', category: 'Risk' },
   ];
