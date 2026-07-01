@@ -1,4 +1,4 @@
-import { LayoutDashboard, Inbox, Users, Settings2, FileText, Fingerprint, ShieldAlert, Banknote, Building2, BarChart2, LogOut, FolderOpen, Search } from 'lucide-react';
+import { LayoutDashboard, Inbox, Users, Settings2, FileText, Fingerprint, ShieldAlert, Banknote, Building2, BarChart2, LogOut, FolderOpen, Search, Activity } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { useAuth } from '@/hooks/useAuth';
 import logo from '@/assets/logo.svg';
@@ -43,6 +43,7 @@ const system = [
 
 const admin = [
   { title: 'Partner Bank View', url: '/partner-bank', icon: Building2 },
+  { title: 'Visitor Analytics', url: '/admin/analytics', icon: Activity },
   { title: 'Roadmap Analytics', url: '/admin/roadmaps', icon: BarChart2 },
 ];
 
