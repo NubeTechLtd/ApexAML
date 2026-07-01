@@ -187,10 +187,10 @@ export const mockAlerts: Alert[] = [
       riskScore: 88,
     },
     transactions: [
-      { id: 'tx-01', date: '2026-04-08T09:15:00Z', type: 'Credit', amountNGN: 45000, counterparty: 'POS/Moniepoint/Ikeja', balanceAfter: 45500, channel: 'POS' },
-      { id: 'tx-02', date: '2026-04-08T11:45:00Z', type: 'Credit', amountNGN: 48000, counterparty: 'POS/Opay/Oshodi', balanceAfter: 93500, channel: 'POS' },
-      { id: 'tx-03', date: '2026-04-08T14:20:00Z', type: 'Credit', amountNGN: 49000, counterparty: 'POS/Palmpay/Mainland', balanceAfter: 142500, channel: 'POS' },
-      { id: 'tx-04', date: '2026-04-08T14:35:00Z', type: 'Debit', amountNGN: 140000, counterparty: 'BaraqTech BDC (Suspected P2P)', balanceAfter: 2500, channel: 'Mobile Transfer' },
+      { id: 'tx-01', date: '2026-04-08T09:15:00Z', type: 'Credit', amountNGN: 45000, counterparty: 'POS/Moniepoint/Ikeja GRA, Lagos', balanceAfter: 45500, channel: 'POS' },
+      { id: 'tx-02', date: '2026-04-08T11:45:00Z', type: 'Credit', amountNGN: 48000, counterparty: 'POS/Opay/Oshodi, Lagos', balanceAfter: 93500, channel: 'POS' },
+      { id: 'tx-03', date: '2026-04-08T14:20:00Z', type: 'Credit', amountNGN: 49000, counterparty: 'POS/Palmpay/Yaba, Lagos', balanceAfter: 142500, channel: 'POS' },
+      { id: 'tx-04', date: '2026-04-08T14:35:00Z', type: 'Debit', amountNGN: 140000, counterparty: 'BaraqTech BDC (Berger, Lagos) — Suspected P2P', balanceAfter: 2500, channel: 'Mobile Transfer' },
     ],
     behavioralRedFlags: [
       'IP Address mismatch: Login from 197.210.X.X (Abuja) but POS transactions localized in Lagos.',
@@ -254,10 +254,10 @@ export const mockAlerts: Alert[] = [
       riskScore: 72,
     },
     transactions: [
-      { id: 'tx-08', date: '2026-04-08T10:00:00Z', type: 'Credit', amountNGN: 2800000, counterparty: 'NEFT/GTB/Abuja', balanceAfter: 2801200, channel: 'Online Banking' },
-      { id: 'tx-09', date: '2026-04-08T10:15:00Z', type: 'Debit', amountNGN: 950000, counterparty: 'Individual/Kano', balanceAfter: 1851200, channel: 'Mobile Transfer' },
-      { id: 'tx-10', date: '2026-04-08T10:22:00Z', type: 'Debit', amountNGN: 900000, counterparty: 'Individual/Kaduna', balanceAfter: 951200, channel: 'Mobile Transfer' },
-      { id: 'tx-11', date: '2026-04-08T10:30:00Z', type: 'Debit', amountNGN: 900000, counterparty: 'Individual/Lagos', balanceAfter: 51200, channel: 'USSD' },
+      { id: 'tx-08', date: '2026-04-08T10:00:00Z', type: 'Credit', amountNGN: 2800000, counterparty: 'NEFT/GTB/Abuja FCT', balanceAfter: 2801200, channel: 'Online Banking' },
+      { id: 'tx-09', date: '2026-04-08T10:15:00Z', type: 'Debit', amountNGN: 950000, counterparty: 'Individual/Kano Municipal', balanceAfter: 1851200, channel: 'Mobile Transfer' },
+      { id: 'tx-10', date: '2026-04-08T10:22:00Z', type: 'Debit', amountNGN: 900000, counterparty: 'Individual/Port Harcourt', balanceAfter: 951200, channel: 'Mobile Transfer' },
+      { id: 'tx-11', date: '2026-04-08T10:30:00Z', type: 'Debit', amountNGN: 900000, counterparty: 'Individual/Apapa, Lagos', balanceAfter: 51200, channel: 'USSD' },
     ],
     behavioralRedFlags: [
       'Account dormancy: No transactions for 18 months prior to this activity.',
@@ -289,8 +289,8 @@ export const mockAlerts: Alert[] = [
     },
     transactions: [
       { id: 'tx-12', date: '2026-04-07T09:00:00Z', type: 'Debit', amountNGN: 15000000, counterparty: 'SWIFT/Dubai Trading FZE/UAE', balanceAfter: 3200000, channel: 'Online Banking' },
-      { id: 'tx-13', date: '2026-04-05T14:00:00Z', type: 'Credit', amountNGN: 8000000, counterparty: 'NEFT/Various/Lagos', balanceAfter: 18200000, channel: 'Cash Deposit' },
-      { id: 'tx-14', date: '2026-04-04T11:00:00Z', type: 'Credit', amountNGN: 10000000, counterparty: 'NEFT/Various/Onitsha', balanceAfter: 10200000, channel: 'ATM Withdrawal' },
+      { id: 'tx-13', date: '2026-04-05T14:00:00Z', type: 'Credit', amountNGN: 8000000, counterparty: 'NEFT/Various/Victoria Island, Lagos', balanceAfter: 18200000, channel: 'Cash Deposit' },
+      { id: 'tx-14', date: '2026-04-04T11:00:00Z', type: 'Credit', amountNGN: 10000000, counterparty: 'NEFT/Various/Enugu', balanceAfter: 10200000, channel: 'ATM Withdrawal' },
     ],
     behavioralRedFlags: [
       'FATF grey-list: UAE is currently on the FATF list of jurisdictions under increased monitoring.',
@@ -314,7 +314,7 @@ export const mockAlerts: Alert[] = [
     imto: {
       senderCountry: 'UK',
       beneficiaryName: 'Kelechi Onyekachi Okoro',
-      beneficiaryPhone: '+234 803 412 8899',
+      beneficiaryPhone: '+234 803 4128 899',
       beneficiaryNIN: '81923445667',
       cashPickupCount: 6,
       totalCashNGN: 1706400, // ~$1,080 USD at ₦1,580
@@ -347,7 +347,7 @@ export const mockAlerts: Alert[] = [
       'Sender rotation: Multiple UK-based senders with overlapping surname "Okoro" — possible family-network layering or single controller using alias senders.',
     ],
     aiDraftedNarrative:
-      'The beneficiary, Kelechi Onyekachi Okoro (NIN 81923445667, +234 803 412 8899), received six (6) IMTO cash payouts within a rolling 24-hour window ending 2026-04-09 11:40 WAT. Payouts were collected across four distinct IMTO operators (Western Union, MoneyGram, Ria Money Transfer, WorldRemit) at agent locations in Lagos (Ikeja, Surulere), Abuja (Wuse), and Port Harcourt (GRA). Individual pickups were structured at ₦284,400 (≈ $180 USD) each — deliberately positioned below the $200 USD per-transaction threshold prescribed under CBN IMTO Guidelines (2021). Cumulative cash disbursed: ₦1,706,400 (≈ $1,080 USD), representing a 540% breach of the single-identity cash cap. Senders trace to multiple UK-based individuals sharing the surname "Okoro", indicating potential family-network layering or coordinated alias use. The physical-geography velocity of pickups (Lagos → Abuja → Port Harcourt → Lagos in 19 hours) is implausible for a single individual, strongly suggesting either (a) identity-document abuse by a mule network, or (b) third-party collection under proxy. Recommend: immediate block on subsequent IMTO cash pickups for this beneficiary identity across all ApexAML-connected operators, NFIU escalation, and coordinated review with originating UK corridor.',
+      'The beneficiary, Kelechi Onyekachi Okoro (NIN 81923445667, +234 803 4128 899), received six (6) IMTO cash payouts within a rolling 24-hour window ending 2026-04-09 11:40 WAT. Payouts were collected across four distinct IMTO operators (Western Union, MoneyGram, Ria Money Transfer, WorldRemit) at agent locations in Lagos (Ikeja, Surulere), Abuja (Wuse), and Port Harcourt (GRA). Individual pickups were structured at ₦284,400 (≈ $180 USD) each — deliberately positioned below the $200 USD per-transaction threshold prescribed under CBN IMTO Guidelines (2021). Cumulative cash disbursed: ₦1,706,400 (≈ $1,080 USD), representing a 540% breach of the single-identity cash cap. Senders trace to multiple UK-based individuals sharing the surname "Okoro", indicating potential family-network layering or coordinated alias use. The physical-geography velocity of pickups (Lagos → Abuja → Port Harcourt → Lagos in 19 hours) is implausible for a single individual, strongly suggesting either (a) identity-document abuse by a mule network, or (b) third-party collection under proxy. Recommend: immediate block on subsequent IMTO cash pickups for this beneficiary identity across all ApexAML-connected operators, NFIU escalation, and coordinated review with originating UK corridor.',
   },
   /* ── IMTO_OUTBOUND_VIOLATION ─────────────────────────────────────── */
   {
@@ -365,7 +365,7 @@ export const mockAlerts: Alert[] = [
     imto: {
       senderCountry: 'UK',
       beneficiaryName: 'Afolabi Odutola',
-      beneficiaryPhone: '+234 802 115 4461',
+      beneficiaryPhone: '+234 802 1154 461',
       beneficiaryNIN: '81055329918',
       cashPickupCount: 0,
       totalCashNGN: 0,
@@ -411,7 +411,7 @@ export const mockAlerts: Alert[] = [
     imto: {
       senderCountry: 'US',
       beneficiaryName: 'Oluwaseun Balogun',
-      beneficiaryPhone: '+234 807 998 2210',
+      beneficiaryPhone: '+234 808 9982 210',
       beneficiaryNIN: '81446720019',
       cashPickupCount: 1,
       totalCashNGN: 3160000,
