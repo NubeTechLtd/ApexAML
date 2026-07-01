@@ -17,6 +17,7 @@ import { BulkDismissDialog } from '@/components/sanctions/BulkDismissDialog';
 import { BulkEscalateDialog } from '@/components/sanctions/BulkEscalateDialog';
 import { AdverseMediaSection } from '@/components/sanctions/AdverseMediaSection';
 import { useAuditLog } from '@/hooks/useAuditLog';
+import { useAuth } from '@/hooks/useAuth';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ShieldAlert, ShieldCheck, ShieldX, User, Globe, Calendar,
@@ -128,6 +129,8 @@ function MatchCard({ match, isSelected, isChecked, onClick, onCheck }: {
 export default function SanctionsScreening() {
   const { toast } = useToast();
   const { append } = useAuditLog();
+  const { user } = useAuth();
+  const analystId = user?.email ?? 'System';
   const [matches, setMatches] = useState(mockSanctionsMatches);
   const [selectedId, setSelectedId] = useState(mockSanctionsMatches[0].id);
   const [analystNotes, setAnalystNotes] = useState('');
