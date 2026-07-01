@@ -27,7 +27,7 @@ export function InboundSmurfingVisualizer() {
     setFiling(false);
     setFiled(true);
     toast.success('Cross-border syndicate filed. CBN license protected.', {
-      description: 'goAML XML transmitted · NFIU ack STR-2026-0419 · 5 sub-transactions linked',
+      description: 'goAML XML transmitted · NFIU ack STR-2026-00419 · 5 sub-transactions linked',
     });
   };
 
@@ -189,7 +189,7 @@ export function InboundSmurfingVisualizer() {
           ) : filed ? (
             <>
               <ShieldCheck className="h-4 w-4" />
-              Filed · STR-2026-0419
+              Filed · STR-2026-00419
             </>
           ) : (
             <>

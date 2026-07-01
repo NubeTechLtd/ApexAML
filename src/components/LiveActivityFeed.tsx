@@ -28,7 +28,7 @@ const INITIAL_ENTRIES: FeedEntry[] = [
   { id: 'i6', time: '07:30', severity: 'green', message: 'Sanctions screen clear — 14 new onboardings' },
   { id: 'i7', time: '07:15', severity: 'amber', message: 'Rule triggered — Dormant Activation — Amina Suleiman — account inactive 14 months' },
   { id: 'i8', time: '06:50', severity: 'red', message: 'Critical — BDC Smurfing pattern — Tunde Bakare — 8 BDC transactions' },
-  { id: 'i9', time: '06:30', severity: 'green', message: 'Case closed — STR filed with NFIU — Ref: STR-2026-0041' },
+  { id: 'i9', time: '06:30', severity: 'green', message: 'Case closed — STR filed with NFIU — Ref: STR-2026-00041' },
   { id: 'i10', time: '23:58', severity: 'red', message: 'Overnight alert — POS Round-Trip — Adebayo Ogunlesi — IMTO link detected' },
   { id: 'i11', time: '23:22', severity: 'blue', message: 'goAML XML batch transmitted — 7 STRs accepted by NFIU portal' },
   { id: 'i12', time: '22:47', severity: 'amber', message: 'EDD escalation — Ngozi Okonkwo — source-of-funds review opened' },

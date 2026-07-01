@@ -71,7 +71,7 @@ export const customer360Data: Record<number, Customer360Data> = {
     id: 1, name: 'Adebayo Ogunlesi', bvn: '22345678901', nin: '11234567890',
     dob: '15-Mar-1978', riskLevel: 'High', riskScore: 92, kycTier: 'Tier 3',
     bvnVerified: true, livenessCheck: 'Pass', accountStatus: 'Active', alerts: 5,
-    email: 'adebayo.ogunlesi@email.com', phone: '+234 801 111 2233',
+    email: 'adebayo.ogunlesi@email.com', phone: '+234 803 1112 233',
     address: '5 Bourdillon Road, Ikoyi, Lagos',
     entityType: 'Foreign Business',
     foreignKYB: {
@@ -96,7 +96,7 @@ export const customer360Data: Record<number, Customer360Data> = {
       { id: 'ce2', label: 'Chioma Adekunle', type: 'Frequent Transfer Target', detail: '₦9.5M transferred in last 30 days' },
       { id: 'ce3', label: '192.168.44.x', type: 'Common IP Address', detail: 'Matches CUS-65520 (Fatima Abdullahi)' },
       { id: 'ce4', label: '14 Admiralty Way, Lekki', type: 'Shared Address', detail: 'Registered to 3 accounts' },
-      { id: 'ce-bdc-1', label: 'Crown BDC Ltd (Lagos Island)', type: 'Bureau de Change (BDC)', detail: '₦6.25M debit — 1h 37m after IMTO remittance credit (round-trip pattern)' },
+      { id: 'ce-bdc-1', label: 'Crown BDC Ltd (Lagos Island)', type: 'Bureau de Change (BDC)', detail: 'CAC: RC-1843029 · ₦6.25M debit — 1h 37m after IMTO remittance credit (round-trip pattern)' },
     ],
     eddDocuments: [
       { name: 'Source_of_Wealth_Declaration.pdf', type: 'EDD', uploadedAt: '2026-03-20' },
@@ -109,7 +109,7 @@ export const customer360Data: Record<number, Customer360Data> = {
     id: 2, name: 'Chioma Adekunle', bvn: '22345678902', nin: '11234567891',
     dob: '22-Aug-1990', riskLevel: 'Medium', riskScore: 54, kycTier: 'Tier 2',
     bvnVerified: true, livenessCheck: 'Pass', accountStatus: 'Active', alerts: 2,
-    email: 'chioma.adekunle@email.com', phone: '+234 802 222 3344',
+    email: 'chioma.adekunle@email.com', phone: '+234 806 2223 344',
     address: '22 Allen Avenue, Ikeja, Lagos',
     radarScores: [
       { axis: 'PEP Exposure', value: 62 }, { axis: 'Cross-Border Vol.', value: 25 },
@@ -117,7 +117,7 @@ export const customer360Data: Record<number, Customer360Data> = {
       { axis: 'Peer Deviation', value: 42 }, { axis: 'Channel Conc.', value: 55 },
     ],
     connectedEntities: [
-      { id: 'ce5', label: 'Adekunle Ventures', type: 'Frequent Transfer Target', detail: 'Regular monthly transfers' },
+      { id: 'ce5', label: 'Adekunle Ventures', type: 'Frequent Transfer Target', detail: 'CAC: BN-2298104 · Regular monthly transfers' },
     ],
     eddDocuments: [],
   },
@@ -125,7 +125,7 @@ export const customer360Data: Record<number, Customer360Data> = {
     id: 3, name: 'Emeka Obi', bvn: '22345678903', nin: '11234567892',
     dob: '05-Jan-1995', riskLevel: 'Low', riskScore: 12, kycTier: 'Tier 3',
     bvnVerified: true, livenessCheck: 'Pass', accountStatus: 'Active', alerts: 0,
-    email: 'emeka.obi@email.com', phone: '+234 803 333 4455',
+    email: 'emeka.obi@email.com', phone: '+234 813 3334 455',
     address: '9 Market Road, Onitsha',
     radarScores: [
       { axis: 'PEP Exposure', value: 5 }, { axis: 'Cross-Border Vol.', value: 12 },
@@ -139,7 +139,7 @@ export const customer360Data: Record<number, Customer360Data> = {
     id: 4, name: 'Fatima Bello', bvn: '22345678904', nin: '11234567893',
     dob: '19-Nov-1982', riskLevel: 'High', riskScore: 88, kycTier: 'Tier 1',
     bvnVerified: true, livenessCheck: 'Pending', accountStatus: 'Restricted', alerts: 8,
-    email: 'fatima.bello@email.com', phone: '+234 804 444 5566',
+    email: 'fatima.bello@email.com', phone: '+234 809 4445 566',
     address: '3 Sultan Road, Kaduna',
     entityType: 'IMTO Agent',
     radarScores: [
@@ -151,7 +151,7 @@ export const customer360Data: Record<number, Customer360Data> = {
       { id: 'ce6', label: 'Device #B7K2', type: 'Shared Device ID', detail: 'Also used by CUS-31998 (Ibrahim Musa)' },
       { id: 'ce7', label: 'Mohammed Al-Rashid', type: 'Frequent Transfer Target', detail: 'OFAC partial match' },
       { id: 'ce8', label: '3 Sultan Road, Kaduna', type: 'Shared Address', detail: 'Matches CUS-54301 (Emeka Nwosu)' },
-      { id: 'ce9', label: 'Bello Family Trust', type: 'Frequent Transfer Target', detail: '₦18M across 6 transactions' },
+      { id: 'ce9', label: 'Bello Family Trust', type: 'Frequent Transfer Target', detail: 'CAC: RC-1547820 · ₦18M across 6 transactions' },
     ],
     eddDocuments: [
       { name: 'PEP_Screening_Report.pdf', type: 'EDD', uploadedAt: '2026-04-01' },
@@ -161,7 +161,7 @@ export const customer360Data: Record<number, Customer360Data> = {
     id: 5, name: 'Ibrahim Musa', bvn: '22345678905', nin: '11234567894',
     dob: '12-May-1985', riskLevel: 'Low', riskScore: 28, kycTier: 'Tier 3',
     bvnVerified: true, livenessCheck: 'Pass', accountStatus: 'Active', alerts: 1,
-    email: 'ibrahim.musa@email.com', phone: '+234 805 555 6677',
+    email: 'ibrahim.musa@email.com', phone: '+234 805 5556 677',
     address: '15 Independence Avenue, Abuja',
     radarScores: [
       { axis: 'PEP Exposure', value: 35 }, { axis: 'Cross-Border Vol.', value: 28 },
@@ -177,7 +177,7 @@ export const customer360Data: Record<number, Customer360Data> = {
     id: 6, name: 'Ngozi Okafor', bvn: '22345678906', nin: '11234567895',
     dob: '30-Jun-1988', riskLevel: 'Medium', riskScore: 61, kycTier: 'Tier 2',
     bvnVerified: true, livenessCheck: 'Pass', accountStatus: 'Active', alerts: 3,
-    email: 'ngozi.okafor@email.com', phone: '+234 806 666 7788',
+    email: 'ngozi.okafor@email.com', phone: '+234 811 6667 788',
     address: '7 Awolowo Road, Ikoyi, Lagos',
     entityType: 'Nigerian Business',
     cacNumber: 'RC-1843027',
@@ -187,7 +187,7 @@ export const customer360Data: Record<number, Customer360Data> = {
       { axis: 'Peer Deviation', value: 60 }, { axis: 'Channel Conc.', value: 72 },
     ],
     connectedEntities: [
-      { id: 'ce11', label: 'Okafor Enterprises', type: 'Frequent Transfer Target', detail: '₦12M single wire transfer' },
+      { id: 'ce11', label: 'Okafor Enterprises', type: 'Frequent Transfer Target', detail: 'CAC: BN-3084712 · ₦12M single wire transfer' },
     ],
     eddDocuments: [
       { name: 'Bank_Statement_Q1_2026.pdf', type: 'Financial', uploadedAt: '2026-04-05' },
