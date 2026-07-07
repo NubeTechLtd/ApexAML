@@ -360,6 +360,60 @@ export type Database = {
         }
         Relationships: []
       }
+      transaction_queue: {
+        Row: {
+          account_number: string
+          amount: number
+          channel: string
+          counterparty_account: string | null
+          counterparty_bank_code: string | null
+          created_at: string
+          currency: string
+          direction: string
+          id: string
+          narration: string | null
+          raw_payload: Json | null
+          status: string
+          transaction_datetime: string
+          transaction_id: string
+          updated_at: string
+        }
+        Insert: {
+          account_number: string
+          amount: number
+          channel: string
+          counterparty_account?: string | null
+          counterparty_bank_code?: string | null
+          created_at?: string
+          currency: string
+          direction: string
+          id?: string
+          narration?: string | null
+          raw_payload?: Json | null
+          status?: string
+          transaction_datetime: string
+          transaction_id: string
+          updated_at?: string
+        }
+        Update: {
+          account_number?: string
+          amount?: number
+          channel?: string
+          counterparty_account?: string | null
+          counterparty_bank_code?: string | null
+          created_at?: string
+          currency?: string
+          direction?: string
+          id?: string
+          narration?: string | null
+          raw_payload?: Json | null
+          status?: string
+          transaction_datetime?: string
+          transaction_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
