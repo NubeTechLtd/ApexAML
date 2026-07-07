@@ -213,6 +213,59 @@ export type Database = {
         }
         Relationships: []
       }
+      kyc_verification_vectors: {
+        Row: {
+          api_endpoint: string | null
+          cost_per_check_usd: number | null
+          created_at: string
+          id: string
+          is_mandatory_tier_1: boolean
+          is_mandatory_tier_2: boolean
+          jurisdiction_code: string
+          provider_name: string | null
+          tier_2_upgrade_required: boolean
+          updated_at: string
+          vector_name: string
+          vector_type: string
+        }
+        Insert: {
+          api_endpoint?: string | null
+          cost_per_check_usd?: number | null
+          created_at?: string
+          id?: string
+          is_mandatory_tier_1?: boolean
+          is_mandatory_tier_2?: boolean
+          jurisdiction_code: string
+          provider_name?: string | null
+          tier_2_upgrade_required?: boolean
+          updated_at?: string
+          vector_name: string
+          vector_type: string
+        }
+        Update: {
+          api_endpoint?: string | null
+          cost_per_check_usd?: number | null
+          created_at?: string
+          id?: string
+          is_mandatory_tier_1?: boolean
+          is_mandatory_tier_2?: boolean
+          jurisdiction_code?: string
+          provider_name?: string | null
+          tier_2_upgrade_required?: boolean
+          updated_at?: string
+          vector_name?: string
+          vector_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kyc_verification_vectors_jurisdiction_code_fkey"
+            columns: ["jurisdiction_code"]
+            isOneToOne: false
+            referencedRelation: "regulatory_jurisdictions"
+            referencedColumns: ["jurisdiction_code"]
+          },
+        ]
+      }
       landing_page_clicks: {
         Row: {
           created_at: string
@@ -314,6 +367,142 @@ export type Database = {
           user_agent?: string | null
         }
         Relationships: []
+      }
+      regulatory_jurisdictions: {
+        Row: {
+          base_currency: string
+          created_at: string
+          fiu_name: string
+          id: string
+          is_active: boolean
+          jurisdiction_code: string
+          jurisdiction_name: string
+          regulator_name: string
+          updated_at: string
+        }
+        Insert: {
+          base_currency: string
+          created_at?: string
+          fiu_name: string
+          id?: string
+          is_active?: boolean
+          jurisdiction_code: string
+          jurisdiction_name: string
+          regulator_name: string
+          updated_at?: string
+        }
+        Update: {
+          base_currency?: string
+          created_at?: string
+          fiu_name?: string
+          id?: string
+          is_active?: boolean
+          jurisdiction_code?: string
+          jurisdiction_name?: string
+          regulator_name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      regulatory_report_formats: {
+        Row: {
+          created_at: string
+          format_standard: string
+          id: string
+          jurisdiction_code: string
+          max_file_size_mb: number | null
+          report_type: string
+          requires_digital_signature: boolean
+          schema_version: string | null
+          submission_endpoint: string | null
+          test_endpoint: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          format_standard: string
+          id?: string
+          jurisdiction_code: string
+          max_file_size_mb?: number | null
+          report_type: string
+          requires_digital_signature?: boolean
+          schema_version?: string | null
+          submission_endpoint?: string | null
+          test_endpoint?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          format_standard?: string
+          id?: string
+          jurisdiction_code?: string
+          max_file_size_mb?: number | null
+          report_type?: string
+          requires_digital_signature?: boolean
+          schema_version?: string | null
+          submission_endpoint?: string | null
+          test_endpoint?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "regulatory_report_formats_jurisdiction_code_fkey"
+            columns: ["jurisdiction_code"]
+            isOneToOne: false
+            referencedRelation: "regulatory_jurisdictions"
+            referencedColumns: ["jurisdiction_code"]
+          },
+        ]
+      }
+      regulatory_thresholds: {
+        Row: {
+          amount_local_currency: number
+          amount_usd_equivalent: number | null
+          cbn_circular_reference: string | null
+          created_at: string
+          id: string
+          jurisdiction_code: string
+          notes: string | null
+          reporting_window_hours: number | null
+          review_date: string | null
+          threshold_type: string
+          updated_at: string
+        }
+        Insert: {
+          amount_local_currency: number
+          amount_usd_equivalent?: number | null
+          cbn_circular_reference?: string | null
+          created_at?: string
+          id?: string
+          jurisdiction_code: string
+          notes?: string | null
+          reporting_window_hours?: number | null
+          review_date?: string | null
+          threshold_type: string
+          updated_at?: string
+        }
+        Update: {
+          amount_local_currency?: number
+          amount_usd_equivalent?: number | null
+          cbn_circular_reference?: string | null
+          created_at?: string
+          id?: string
+          jurisdiction_code?: string
+          notes?: string | null
+          reporting_window_hours?: number | null
+          review_date?: string | null
+          threshold_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "regulatory_thresholds_jurisdiction_code_fkey"
+            columns: ["jurisdiction_code"]
+            isOneToOne: false
+            referencedRelation: "regulatory_jurisdictions"
+            referencedColumns: ["jurisdiction_code"]
+          },
+        ]
       }
       roadmap_leads: {
         Row: {
