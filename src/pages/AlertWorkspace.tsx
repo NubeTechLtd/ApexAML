@@ -41,6 +41,7 @@ import {
   CreditCard, ArrowUpRight, ArrowDownLeft, Flag, ShieldAlert,
   ShieldCheck, Eye, Users, RefreshCw,
 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 /* ── Mock Analysts ────────────────────────────────────── */
 
