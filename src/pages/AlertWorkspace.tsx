@@ -41,6 +41,7 @@ import {
   CreditCard, ArrowUpRight, ArrowDownLeft, Flag, ShieldAlert,
   ShieldCheck, Eye, Users, RefreshCw,
 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 /* ── Mock Analysts ────────────────────────────────────── */
 
@@ -337,6 +338,49 @@ export default function AlertWorkspace() {
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatMessages]);
+
+  // Realtime: new AI-classified alerts
+  useEffect(() => {
+    const channel = supabase
+      .channel('alert-feed')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'alerts' },
+        (payload) => {
+          const row = payload.new as {
+            id?: string;
+            agent_classification?: unknown;
+            severity?: string;
+            typology_name?: string;
+            customer_name?: string;
+          };
+          if (!row?.agent_classification) return;
+
+          const severity = row.severity ?? 'Unknown';
+          const typology = row.typology_name ?? 'Suspicious activity';
+          const customer = row.customer_name ?? 'Unknown customer';
+          const alertId = row.id;
+
+          toast({
+            title: 'New alert classified by AI',
+            description: `${severity}: ${typology} on ${customer}. View now →`,
+            onClick: alertId
+              ? () => {
+                  setSelectedId(alertId);
+                  navigate(`/alerts?id=${alertId}`);
+                }
+              : undefined,
+            className: 'cursor-pointer animate-in slide-in-from-right',
+          } as Parameters<typeof toast>[0]);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [navigate, toast]);
+
 
   const handleGenerateSTR = () => {
     if (!selected) return;
