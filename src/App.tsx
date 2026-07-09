@@ -26,6 +26,7 @@ import AdminRoadmaps from "./pages/AdminRoadmaps.tsx";
 import AdminAnalytics from "./pages/AdminAnalytics.tsx";
 import CaseJourney from "./pages/CaseJourney.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import Unsubscribe from "./pages/Unsubscribe.tsx";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { DemoGuide } from "./components/DemoGuide";
 
@@ -61,6 +62,7 @@ const App = () => (
             <Route path="/admin/analytics" element={<ProtectedRoute><AdminAnalytics /></ProtectedRoute>} />
             <Route path="/case/:caseId" element={<CaseJourney />} />
             <Route path="/privacy" element={<Privacy />} />
+            <Route path="/unsubscribe" element={<Unsubscribe />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
