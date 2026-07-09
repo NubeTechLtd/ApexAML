@@ -193,38 +193,44 @@ Deno.serve(async (req: Request) => {
 
     const slot = fmtSlot(payload.slotDatetime);
 
-    // Fire emails (don't fail the request if email infra is missing)
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
-    if (LOVABLE_API_KEY && RESEND_API_KEY) {
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "X-Connection-Api-Key": RESEND_API_KEY,
+    // Enqueue both emails via the shared transactional email pipeline.
+    // Failures here don't fail the booking — the queue retries and DLQs.
+    try {
+      const invokeSend = (templateName: string, recipientEmail: string, templateData: Record<string, unknown>) =>
+        admin.functions.invoke("send-transactional-email", {
+          body: {
+            templateName,
+            recipientEmail,
+            idempotencyKey: `${templateName}-${insertReq.id}`,
+            templateData,
+          },
+        });
+
+      const firstName = payload.fullName.split(" ")[0];
+      const shared = {
+        institutionName: payload.institutionName,
+        institutionType: payload.institutionType,
+        focusAreas: payload.focusAreas || "",
+        slotLabel: slot.label,
       };
 
-      const attendeeBody = JSON.stringify({
-        from: "ApexAML <hello@apexaml.com>",
-        to: [payload.email],
-        reply_to: "hello@apexaml.com",
-        subject: `Demo confirmed — ${slot.label}`,
-        html: attendeeHtml(payload, slot.label),
-      });
-      fetch(`${RESEND_GATEWAY_URL}/emails`, { method: "POST", headers, body: attendeeBody })
-        .then((r) => { if (!r.ok) console.error("attendee email failed", r.status); })
-        .catch((e) => console.error("attendee email error", e));
-
-      const internalBody = JSON.stringify({
-        from: "ApexAML System <hello@apexaml.com>",
-        to: [INTERNAL_ALERT_EMAIL],
-        subject: `📅 New demo: ${payload.institutionName} — ${slot.label}`,
-        html: internalHtml(payload, slot.label, insertReq.id),
-      });
-      fetch(`${RESEND_GATEWAY_URL}/emails`, { method: "POST", headers, body: internalBody })
-        .then((r) => { if (!r.ok) console.error("internal email failed", r.status); })
-        .catch((e) => console.error("internal email error", e));
-    } else {
-      console.warn("send-demo-confirmation: email infra missing, skipping sends");
+      await Promise.all([
+        invokeSend("demo-booking-confirmation", payload.email, {
+          ...shared,
+          firstName,
+          zoomLink: ZOOM_LINK,
+        }).catch((e) => console.error("attendee email enqueue failed", e)),
+        invokeSend("demo-booking-internal-alert", INTERNAL_ALERT_EMAIL, {
+          ...shared,
+          fullName: payload.fullName,
+          role: payload.role,
+          email: payload.email,
+          whatsapp: payload.whatsapp || "",
+          requestId: insertReq.id,
+        }).catch((e) => console.error("internal email enqueue failed", e)),
+      ]);
+    } catch (e) {
+      console.error("send-demo-confirmation: email dispatch failed", e);
     }
 
     return new Response(
