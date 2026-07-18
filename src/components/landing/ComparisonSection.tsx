@@ -19,8 +19,14 @@ const ROWS: Row[] = [
   {
     feature: 'Monthly Cost',
     manual: { value: '₦3–8M salary/analyst', tone: 'mid' },
-    enterprise: { value: '₦15M+ licensing', tone: 'bad' },
-    apexaml: 'From ₦550,000/month — less than one compliance analyst\'s monthly salary (₦467,500 on annual billing)',
+    enterprise: { value: 'From ₦1,100,000/month + ₦79,000,000+ implementation — enterprise only', tone: 'bad' },
+    apexaml: 'From ₦550,000/month + ₦100,000 onboarding — 14-day free trial',
+  },
+  {
+    feature: 'Nigerian Competitor Pricing',
+    manual: { value: 'Autogon: From ₦2,500,000/month + ₦31,600,000 setup fee', tone: 'bad' },
+    enterprise: { value: 'ComplyAdvantage: From ₦157,984/month — sanctions screening only, no case management or goAML export', tone: 'mid' },
+    apexaml: 'Full case management + goAML export from ₦550,000/month',
   },
   {
     feature: 'goAML XML Export',
