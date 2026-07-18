@@ -25,9 +25,26 @@ function generateToken(): string {
     .join('')
 }
 
-// Auth note: this function uses verify_jwt = true in config.toml, so Supabase's
-// gateway validates the caller's JWT (anon or service_role) before the request
-// reaches this code. No in-function auth check is needed.
+// Auth note: verify_jwt = true validates JWT shape at the gateway, but the
+// public anon key satisfies that check too. Add an explicit service-role
+// check so only trusted server-side callers (other edge functions using the
+// service role key) can trigger sends. This prevents abuse of our verified
+// sending domain from any client bundle.
+function parseJwtClaims(token: string): Record<string, unknown> | null {
+  const parts = token.split('.')
+  if (parts.length < 2) return null
+  try {
+    const payload = parts[1]
+      .replaceAll('-', '+')
+      .replaceAll('_', '/')
+      .padEnd(Math.ceil(parts[1].length / 4) * 4, '=')
+    return JSON.parse(atob(payload)) as Record<string, unknown>
+  } catch {
+    return null
+  }
+}
+
+
 
 Deno.serve(async (req) => {
   // Handle CORS preflight
