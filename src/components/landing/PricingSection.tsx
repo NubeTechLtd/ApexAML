@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Check, ArrowRight, Sparkles, AlertTriangle } from 'lucide-react';
+import { Check, ArrowRight, Sparkles, AlertTriangle, Settings, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCBNRate } from '@/hooks/useCBNRate';
 
@@ -186,6 +186,69 @@ const SERVICES = [
     price: '₦120,000 per session',
     desc: '2-hour live session on CBN circular requirements and ApexAML workflows.',
     cta: 'Book session',
+  },
+];
+
+interface Programme {
+  name: string;
+  price: string;
+  timeline: string;
+  idealFor: string;
+  deliverables: string[];
+}
+
+const PROGRAMMES: Programme[] = [
+  {
+    name: 'Essential Programme',
+    price: '₦1,500,000',
+    timeline: '10 business days',
+    idealFor: 'MFBs and small fintechs',
+    deliverables: [
+      'Historical customer BVN database import — up to 5,000 records',
+      'CBN roadmap alignment — platform configured to match your submitted June 2026 roadmap commitments',
+      '1-hour compliance team training session',
+      'Signed CBN completion certificate on ApexAML letterhead',
+    ],
+  },
+  {
+    name: 'Starter Programme',
+    price: '₦3,000,000',
+    timeline: '15 business days',
+    idealFor: 'PSPs and growing fintechs',
+    deliverables: [
+      'Everything in Essential Programme',
+      'Core banking API integration — our team works alongside your IT team until live',
+      '3 to 5 custom detection rules built for your specific transaction channels',
+      'PEP registry configuration',
+      '30-day hypercare — named contact monitors your alert queue post go-live',
+    ],
+  },
+  {
+    name: 'Growth Programme',
+    price: '₦6,000,000',
+    timeline: '20 business days',
+    idealFor: 'Tier-3 banks and larger PSPs',
+    deliverables: [
+      'Everything in Starter Programme',
+      '90-day historical transaction analysis — surfaces missed suspicious patterns from your previous system',
+      'Full RBAC configuration mapped to your team structure',
+      'AI STR co-pilot calibration to your institution\'s writing style',
+      'Formal go-live report — 5 pages, submitted to CBN as implementation evidence',
+    ],
+  },
+  {
+    name: 'IMTO Programme',
+    price: '₦12,000,000',
+    timeline: '25 business days',
+    idealFor: 'IMTOs — WorldRemit, LemFi, Sendwave, Ria',
+    deliverables: [
+      'Everything in Growth Programme',
+      'Full IMTO Regulatory Pack configuration — all 6 CBN-specific rules calibrated to your transaction volumes',
+      'Settlement account registry — populated with your full correspondent bank list',
+      'Partner bank dashboard setup for up to 2 partner banks',
+      'One full day onsite in Lagos or Abuja with your compliance, treasury, and IT teams',
+      '10-page IMTO compliance report mapping every IMTO CBN obligation to the configured ApexAML feature',
+    ],
   },
 ];
 
@@ -421,6 +484,81 @@ export function PricingSection({ onBookDemo }: Props) {
               </motion.div>
             );
           })}
+        </div>
+
+        {/* Professional Implementation Programme */}
+        <div className="pt-8">
+          <div className="border-t border-white/10 pt-10 space-y-6">
+            <div className="max-w-3xl mx-auto text-center space-y-3">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[10px] uppercase tracking-[0.18em] text-white/60 font-semibold">
+                <Settings className="h-3 w-3" />
+                Implementation
+              </span>
+              <h3 className="text-[18px] font-semibold text-white tracking-tight">
+                Professional Implementation Programme
+              </h3>
+              <p className="text-[13px] text-white/55 leading-relaxed">
+                A structured delivery engagement with defined phases, deliverables, and sign-off criteria. Produces the CBN completion certificate and go-live documentation your supervisory file requires. Optional but actively recommended for all clients.
+              </p>
+            </div>
+
+            <div className="max-w-3xl mx-auto flex items-start gap-3 rounded-lg border-l-2 border-l-primary border border-primary/20 bg-primary/[0.06] px-4 py-3">
+              <Info className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+              <p className="text-[12.5px] text-white/75 leading-relaxed">
+                The onboarding fee gets the platform live in 5 days. The Implementation Programme configures it specifically to your institution, integrates it with your existing systems, and documents it for your CBN examination file.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-5 pt-2">
+              {PROGRAMMES.map((p) => (
+                <div
+                  key={p.name}
+                  className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-6 flex flex-col gap-4"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <h4 className="text-base font-semibold text-white tracking-tight">{p.name}</h4>
+                      <p className="text-[11px] uppercase tracking-wider text-white/40 font-medium mt-1">
+                        Ideal for: {p.idealFor}
+                      </p>
+                    </div>
+                    <span className="shrink-0 inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-primary whitespace-nowrap">
+                      {p.timeline}
+                    </span>
+                  </div>
+
+                  <div className="flex items-baseline gap-1.5 pb-4 border-b border-white/[0.06]">
+                    <span className="text-2xl font-extrabold text-white tabular-nums tracking-tight">{p.price}</span>
+                    <span className="text-xs text-white/45 font-medium">(one-time)</span>
+                  </div>
+
+                  <ul className="space-y-2.5 flex-1">
+                    {p.deliverables.map((d) => (
+                      <li key={d} className="flex items-start gap-2 text-[13px] text-white/70 leading-relaxed">
+                        <Check className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
+                        <span>{d}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+
+            <p className="text-center text-[12px] text-white/40 max-w-3xl mx-auto leading-relaxed pt-2">
+              For comparison: Autogon AI charges ₦31,600,000 for setup alone. Our IMTO Programme at ₦12,000,000 delivers faster implementation, more documentation, and a named onsite session.
+            </p>
+
+            <div className="flex justify-center pt-2">
+              <Button
+                onClick={() => onBookDemo('Professional Implementation Programme enquiry')}
+                size="lg"
+                className="rounded-lg h-11 px-6 font-semibold text-sm bg-white/[0.06] hover:bg-white/[0.1] text-white border border-white/10 group"
+              >
+                Enquire about implementation
+                <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
+              </Button>
+            </div>
+          </div>
         </div>
 
         {/* Professional Services */}
