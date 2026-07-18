@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Check, ArrowRight, Sparkles, AlertTriangle, Settings, Info, Crown } from 'lucide-react';
+import { Check, ArrowRight, Sparkles, AlertTriangle, Settings, Info, Crown, Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCBNRate } from '@/hooks/useCBNRate';
 
@@ -625,6 +625,94 @@ export function PricingSection({ onBookDemo }: Props) {
             </div>
           </div>
         </div>
+
+        {/* Standalone Services */}
+        <div className="pt-4 space-y-6">
+          <div className="text-center space-y-3">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[10px] uppercase tracking-[0.15em] text-white/60 font-semibold">
+              <Briefcase className="h-3 w-3" /> Services
+            </span>
+            <h3 className="text-2xl md:text-3xl font-semibold text-white tracking-tight">
+              Standalone compliance services
+            </h3>
+            <p className="text-[13px] text-white/55 max-w-2xl mx-auto leading-relaxed">
+              Available to all Nigerian regulated institutions — no ApexAML subscription required. Invoice provided for institutional procurement.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              {
+                name: 'CBN Roadmap Co-Authoring',
+                price: '₦200,000 (one-time)',
+                desc: 'CBN-formatted AML implementation roadmap co-authored with your compliance team. Submission-ready for the CBN Compliance Department. Included free with any annual plan.',
+                cta: 'Book service',
+                msg: 'CBN Roadmap Co-Authoring enquiry',
+              },
+              {
+                name: 'Examination Readiness Assessment',
+                price: 'From ₦800,000',
+                desc: 'A structured 2 to 5 day assessment simulating a CBN examination. We test your detection capabilities, review your STR filing records, and produce a formal readiness report with pass or fail rating per CBN standard.',
+                cta: 'Enquire',
+                msg: 'Examination Readiness Assessment enquiry',
+              },
+              {
+                name: 'AI Model Validation (Independent)',
+                price: 'From ₦1,500,000 per annual validation',
+                desc: 'Independent validation of your AML AI and ML models as required by CBN Standard 5.5. Covers accuracy, bias testing, performance drift, and fairness audit. Produces the annual validation report your CBN examination file requires.',
+                cta: 'Enquire',
+                msg: 'AI Model Validation enquiry',
+              },
+              {
+                name: 'Compliance Staff Training',
+                price: '₦120,000 per session',
+                desc: '2-hour live training for your compliance team covering CBN typologies, STR filing workflow, and NFIU reporting obligations. Delivered virtually or in Lagos. Up to 20 participants.',
+                cta: 'Book training',
+                msg: 'Compliance Staff Training booking',
+              },
+              {
+                name: 'Board AML Reporting (add-on)',
+                price: '₦150,000 per month',
+                desc: 'Quarterly auto-generated board AML report pulled from your platform data. Alert trends, STR filing compliance, KYC distribution, and CBN deadline status. Delivered as a branded PDF 48 hours before your board meeting.',
+                cta: 'Add to subscription',
+                msg: 'Board AML Reporting add-on enquiry',
+              },
+              {
+                name: 'NFIU goAML Filing Support',
+                price: '₦20,000 per STR filing',
+                desc: 'We generate the goAML XML file and manage the NFIU portal upload on your behalf. Filing confirmation receipt provided. For institutions that detect suspicious activity but lack the technical capacity to produce the correct XML format.',
+                cta: 'Enquire',
+                msg: 'NFIU goAML Filing Support enquiry',
+              },
+              {
+                name: 'MLRO as a Service',
+                price: 'From ₦350,000 per month',
+                desc: 'A named, qualified Money Laundering Reporting Officer serves as your designated compliance officer for CBN purposes. Signs off all STR filings, attends board meetings quarterly, and manages your CBN regulatory relationship. For MFBs that need the regulatory requirement fulfilled without a full-time hire.',
+                cta: 'Enquire',
+                msg: 'MLRO as a Service enquiry',
+              },
+            ].map((s) => (
+              <div
+                key={s.name}
+                className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-5 flex flex-col gap-3 hover:border-white/[0.14] transition-colors"
+              >
+                <div>
+                  <p className="text-sm font-semibold text-white leading-snug">{s.name}</p>
+                  <p className="text-xs text-primary mt-1 font-semibold tabular-nums">{s.price}</p>
+                </div>
+                <p className="text-xs text-white/55 leading-relaxed flex-1">{s.desc}</p>
+                <button
+                  type="button"
+                  onClick={() => onBookDemo(s.msg)}
+                  className="self-start inline-flex items-center gap-1 text-xs font-semibold text-primary hover:text-primary/80 transition-colors"
+                >
+                  {s.cta} <ArrowRight className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
 
         {/* Professional Services */}
         <div className="pt-8 space-y-5">
