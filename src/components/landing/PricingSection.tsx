@@ -189,6 +189,69 @@ const SERVICES = [
   },
 ];
 
+interface Programme {
+  name: string;
+  price: string;
+  timeline: string;
+  idealFor: string;
+  deliverables: string[];
+}
+
+const PROGRAMMES: Programme[] = [
+  {
+    name: 'Essential Programme',
+    price: '₦1,500,000',
+    timeline: '10 business days',
+    idealFor: 'MFBs and small fintechs',
+    deliverables: [
+      'Historical customer BVN database import — up to 5,000 records',
+      'CBN roadmap alignment — platform configured to match your submitted June 2026 roadmap commitments',
+      '1-hour compliance team training session',
+      'Signed CBN completion certificate on ApexAML letterhead',
+    ],
+  },
+  {
+    name: 'Starter Programme',
+    price: '₦3,000,000',
+    timeline: '15 business days',
+    idealFor: 'PSPs and growing fintechs',
+    deliverables: [
+      'Everything in Essential Programme',
+      'Core banking API integration — our team works alongside your IT team until live',
+      '3 to 5 custom detection rules built for your specific transaction channels',
+      'PEP registry configuration',
+      '30-day hypercare — named contact monitors your alert queue post go-live',
+    ],
+  },
+  {
+    name: 'Growth Programme',
+    price: '₦6,000,000',
+    timeline: '20 business days',
+    idealFor: 'Tier-3 banks and larger PSPs',
+    deliverables: [
+      'Everything in Starter Programme',
+      '90-day historical transaction analysis — surfaces missed suspicious patterns from your previous system',
+      'Full RBAC configuration mapped to your team structure',
+      'AI STR co-pilot calibration to your institution\'s writing style',
+      'Formal go-live report — 5 pages, submitted to CBN as implementation evidence',
+    ],
+  },
+  {
+    name: 'IMTO Programme',
+    price: '₦12,000,000',
+    timeline: '25 business days',
+    idealFor: 'IMTOs — WorldRemit, LemFi, Sendwave, Ria',
+    deliverables: [
+      'Everything in Growth Programme',
+      'Full IMTO Regulatory Pack configuration — all 6 CBN-specific rules calibrated to your transaction volumes',
+      'Settlement account registry — populated with your full correspondent bank list',
+      'Partner bank dashboard setup for up to 2 partner banks',
+      'One full day onsite in Lagos or Abuja with your compliance, treasury, and IT teams',
+      '10-page IMTO compliance report mapping every IMTO CBN obligation to the configured ApexAML feature',
+    ],
+  },
+];
+
 interface Props {
   onBookDemo: (prefilledMessage?: string) => void;
 }
