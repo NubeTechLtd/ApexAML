@@ -66,6 +66,23 @@ Deno.serve(async (req) => {
     )
   }
 
+  // Enforce service-role caller (defense in depth against anon-key abuse)
+  const authHeader = req.headers.get('Authorization')
+  if (!authHeader?.startsWith('Bearer ')) {
+    return new Response(
+      JSON.stringify({ error: 'Unauthorized' }),
+      { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+  }
+  const claims = parseJwtClaims(authHeader.slice('Bearer '.length).trim())
+  if (claims?.role !== 'service_role') {
+    return new Response(
+      JSON.stringify({ error: 'Forbidden' }),
+      { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+  }
+
+
   // Parse request body
   let templateName: string
   let recipientEmail: string
