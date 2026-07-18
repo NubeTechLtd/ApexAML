@@ -468,7 +468,14 @@ export function PricingSection({ onBookDemo }: Props) {
                 )}
 
                 <div className="space-y-1.5">
-                  <h3 className="text-lg font-bold text-white tracking-tight">{tier.name}</h3>
+                  <div className="flex items-center justify-between gap-2">
+                    <h3 className="text-lg font-bold text-white tracking-tight">{tier.name}</h3>
+                    {cycle === 'annual' && tier.monthlyPrice != null && (
+                      <span className="inline-flex items-center rounded-full bg-risk-low/15 border border-risk-low/40 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-risk-low">
+                        Save 15%
+                      </span>
+                    )}
+                  </div>
                   <p className="text-[11px] uppercase tracking-wider text-white/40 font-medium">
                     {tier.audience}
                   </p>
