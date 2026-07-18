@@ -794,7 +794,21 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      demo_slot_availability: {
+        Row: {
+          slot_datetime: string | null
+          status: string | null
+        }
+        Insert: {
+          slot_datetime?: string | null
+          status?: string | null
+        }
+        Update: {
+          slot_datetime?: string | null
+          status?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       delete_email: {
