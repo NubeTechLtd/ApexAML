@@ -755,22 +755,31 @@ export function PricingSection({ onBookDemo }: Props) {
           </div>
         </div>
 
+        {/* Comparison summary */}
+        <p className="text-center text-[13px] text-white/60 max-w-3xl mx-auto leading-relaxed pt-4">
+          ApexAML Growth Programme year-one total: ₦33,950,000 · Nearest competitor year-one total: ₦61,600,000 · You save{' '}
+          <span className="text-primary font-semibold">₦27,650,000</span> in year one.
+        </p>
+
         {/* Footnote */}
-        <div className="text-center text-[11px] text-white/45 max-w-3xl mx-auto leading-relaxed pt-2 space-y-2">
+        <div
+          className="max-w-3xl mx-auto text-white/50 space-y-3 pt-2"
+          style={{ fontSize: '11px', lineHeight: 1.8 }}
+        >
           <p>
-            All prices in Nigerian Naira (NGN), exclusive of 7.5% VAT. ApexAML is VAT-registered with FIRS.
+            All prices in Nigerian Naira (NGN), exclusive of 7.5% VAT. ApexAML is VAT-registered with FIRS. VAT invoice provided with every payment.
           </p>
           <p>
-            Annual billing: 100% upfront. Monthly billing: due within 7 days of invoice. 5% surcharge applies after 15 days.
+            Annual billing: 100% upfront. Monthly billing: invoice issued on the 1st of each month, payment due within 7 days. A 5% surcharge applies after 15 days. Service suspended after 30 days of non-payment.
           </p>
           <p>
-            Prices reviewed quarterly based on CBN official rate (currently ₦{rate}/$1). If NGN depreciates more than 15% in any quarter, pricing adjusts proportionally with 30 days notice.
+            FX review clause: Prices are based on the CBN official rate of ₦1,580 per USD at the time of this publication. If the NGN/USD rate moves more than 15% in any calendar quarter as published by the CBN, ApexAML reserves the right to adjust pricing proportionally with 30 days written notice.
           </p>
           <p>
-            Annual prices increase by a maximum of 15% at each renewal date with 60 days advance notice.
+            Annual escalation: Subscription prices increase by a maximum of 15% at each annual renewal date. Clients receive 60 days advance notice of any price change.
           </p>
           <p>
-            All onboarding fees charged at contract signing and non-refundable after onboarding commences.
+            Onboarding fees are charged at contract signing and are non-refundable once onboarding commences. Professional Implementation Programme fees are charged 50% at signing and 50% at go-live sign-off. All implementation fees exclude any third-party integration costs such as core banking vendor API access fees.
           </p>
         </div>
       </div>
