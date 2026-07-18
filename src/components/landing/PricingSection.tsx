@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Check, ArrowRight, Sparkles, AlertTriangle, Settings, Info } from 'lucide-react';
+import { Check, ArrowRight, Sparkles, AlertTriangle, Settings, Info, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCBNRate } from '@/hooks/useCBNRate';
 
@@ -321,6 +321,71 @@ export function PricingSection({ onBookDemo }: Props) {
           </h2>
           <p className="text-white/45 text-sm">
             Less than the cost of a single compliance analyst — without the hiring, training, or attrition risk.
+          </p>
+        </div>
+
+        {/* Founding Client Programme banner */}
+        <div className="space-y-2">
+          <div
+            className="relative rounded-xl border border-white/10 bg-white/[0.03] border-l-2 p-5 md:p-6 flex flex-col md:flex-row gap-6"
+            style={{ borderLeftColor: '#D4A843', borderLeftWidth: '2px' }}
+          >
+            {/* Left */}
+            <div className="md:w-3/5 space-y-2.5">
+              <div className="flex items-center gap-2.5">
+                <Crown className="h-5 w-5" style={{ color: '#D4A843' }} />
+                <h3 className="text-white font-semibold" style={{ fontSize: '16px' }}>
+                  Founding Client Programme — First 5 implementation clients only
+                </h3>
+              </div>
+              <p className="text-white/60" style={{ fontSize: '13px', lineHeight: 1.7 }}>
+                The first 5 institutions to sign any Professional Implementation Programme receive a
+                permanent 35% discount on the implementation fee — applied at contract signing and
+                carried forward to any future engagements. Also included: direct WhatsApp access to
+                the ApexAML founders, your institution's compliance rules pre-configured before
+                go-live, and your logo on the ApexAML client reference page.
+              </p>
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={() =>
+                    onBookDemo(
+                      'I am interested in the Founding Client Programme. Please reserve a slot for [institution name].'
+                    )
+                  }
+                  className="inline-flex items-center gap-1.5 text-sm font-medium transition-colors hover:opacity-80"
+                  style={{ color: '#D4A843' }}
+                >
+                  Apply for founding client status <ArrowRight className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* Right */}
+            <div className="md:w-2/5 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] uppercase tracking-wider text-white/60 font-semibold">
+                  Founding client slots
+                </span>
+                <span className="text-[11px] text-white/50">0 / 5</span>
+              </div>
+              <div className="h-2 w-full rounded-full bg-white/[0.06] overflow-hidden">
+                <div
+                  className="h-full rounded-full transition-all"
+                  style={{ width: '0%', backgroundColor: '#D4A843' }}
+                />
+              </div>
+              <p className="text-[11px] text-white/50">0 of 5 slots claimed — 5 remaining</p>
+              <div className="pt-2 border-t border-white/5 space-y-1 text-[11px] text-white/60">
+                <div className="flex justify-between"><span>Essential</span><span><span style={{ color: '#D4A843' }} className="font-semibold">₦975,000</span> <span className="text-white/35 line-through ml-1">₦1,500,000</span></span></div>
+                <div className="flex justify-between"><span>Starter</span><span><span style={{ color: '#D4A843' }} className="font-semibold">₦1,950,000</span> <span className="text-white/35 line-through ml-1">₦3,000,000</span></span></div>
+                <div className="flex justify-between"><span>Growth</span><span><span style={{ color: '#D4A843' }} className="font-semibold">₦3,900,000</span> <span className="text-white/35 line-through ml-1">₦6,000,000</span></span></div>
+                <div className="flex justify-between"><span>IMTO</span><span><span style={{ color: '#D4A843' }} className="font-semibold">₦7,800,000</span> <span className="text-white/35 line-through ml-1">₦12,000,000</span></span></div>
+              </div>
+            </div>
+          </div>
+          <p className="text-[11px] text-white/40 text-center md:text-left px-1">
+            Founding client discount is permanent — it applies to all future engagements with ApexAML, not just the first implementation.
           </p>
         </div>
 
