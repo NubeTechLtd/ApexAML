@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Check, ArrowRight, Sparkles, AlertTriangle, Settings, Info, Crown } from 'lucide-react';
+import { Check, ArrowRight, Sparkles, AlertTriangle, Settings, Info, Crown, Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCBNRate } from '@/hooks/useCBNRate';
 
