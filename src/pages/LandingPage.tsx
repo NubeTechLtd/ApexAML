@@ -269,6 +269,7 @@ function RoadmapGeneratorBand() {
             <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight leading-tight">
               Generate your CBN AML implementation roadmap
             </h2>
+            <RoadmapCountLine variant="band" />
             <p className="text-base md:text-lg text-white/60 leading-relaxed max-w-2xl">
               Pre-formatted for CBN Circular BSD/DIR/PUB/LAB/019/002. Tailored to your institution type and compliance timeline.
             </p>
