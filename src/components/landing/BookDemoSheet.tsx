@@ -96,7 +96,7 @@ export function BookDemoSheet({ open, onOpenChange, prefilledMessage }: Props) {
     const start = weekGrid[0].slots[0].toISOString();
     const end = weekGrid[weekGrid.length - 1].slots[3].toISOString();
     supabase
-      .from('demo_slots')
+      .from('demo_slot_availability')
       .select('slot_datetime, status')
       .gte('slot_datetime', start)
       .lte('slot_datetime', end)
