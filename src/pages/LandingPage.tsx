@@ -44,6 +44,38 @@ import { ComplianceRoadmapSection } from "@/components/ComplianceRoadmapSection"
 import { AudienceProvider, useAudience } from "@/components/landing/AudienceContext";
 import { AudienceSelector } from "@/components/landing/AudienceSelector";
 import { Seo } from "@/components/Seo";
+import { useRoadmapCount } from "@/hooks/useRoadmapCount";
+
+// Live-data social-proof line rendered under the hero CTA and inside the
+// RoadmapGeneratorBand. Renders nothing while loading or on failure so we
+// never expose "0" or an error state on the public landing page.
+function RoadmapCountLine({ variant }: { variant: "hero" | "band" }) {
+  const count = useRoadmapCount();
+  if (count === null || count <= 0) return null;
+
+  if (variant === "hero") {
+    return (
+      <p className="flex items-center justify-center gap-2 text-[13px] text-white/50">
+        <span className="relative inline-flex h-2 w-2">
+          <span className="absolute inline-flex h-full w-full rounded-full bg-risk-low opacity-60 animate-ping" />
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-risk-low" />
+        </span>
+        <span>
+          Join{" "}
+          <span className="text-primary font-semibold">{count.toLocaleString()}</span>{" "}
+          compliance officers who have already generated their CBN AML roadmap →
+        </span>
+      </p>
+    );
+  }
+
+  return (
+    <p className="text-sm text-white/55">
+      <span className="text-primary font-semibold">{count.toLocaleString()}</span>{" "}
+      institution-specific roadmaps generated — covering all 10 CBN capability areas
+    </p>
+  );
+}
 
 // ── Helpers ──────────────────────────────────────────────────────────────
 
