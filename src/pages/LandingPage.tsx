@@ -38,6 +38,7 @@ import { WhatsAppFloatingButton } from "@/components/landing/WhatsAppFloatingBut
 import { WhatsAppIcon } from "@/components/landing/WhatsAppIcon";
 import { WHATSAPP_URL } from "@/lib/whatsapp";
 import { ROICalculator } from "@/components/landing/ROICalculator";
+import { ROICalculator as STRCostCalculator } from "@/components/ROICalculator";
 import { InnovationStory } from "@/components/InnovationStory";
 import { ComplianceRoadmapSection } from "@/components/ComplianceRoadmapSection";
 import { AudienceProvider, useAudience } from "@/components/landing/AudienceContext";
@@ -701,8 +702,12 @@ function LandingPageInner() {
       {/* ── Innovation Story ───────────────────────────────────── */}
       <InnovationStory onBookDemo={() => setDemoSheetOpen(true)} />
 
+      {/* ── STR Cost Calculator ────────────────────────────────── */}
+      <STRCostCalculator />
+
       {/* ── Compliance ROI & Risk Calculator ──────────────────── */}
       <ROICalculator />
+
 
       {/* ── Free Roadmap Generator (highest-converting offer) ─── */}
       <RoadmapGeneratorBand />
