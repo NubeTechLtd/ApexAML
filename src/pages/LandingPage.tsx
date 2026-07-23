@@ -570,6 +570,7 @@ function LandingPageInner() {
                   See how it works
                 </Button>
               </div>
+              <RoadmapCountLine variant="hero" />
               <a
                 href={WHATSAPP_URL}
                 target="_blank"
