@@ -34,6 +34,7 @@ import { AITimelineVisualizer } from "@/components/AITimelineVisualizer";
 import { RoadmapLeadMagnet } from "@/components/landing/RoadmapLeadMagnet";
 import { FAQSection } from "@/components/landing/FAQSection";
 import { PricingSection } from "@/components/landing/PricingSection";
+import { CompetitorComparison } from "@/components/CompetitorComparison";
 import { WhatsAppFloatingButton } from "@/components/landing/WhatsAppFloatingButton";
 import { WhatsAppIcon } from "@/components/landing/WhatsAppIcon";
 import { WHATSAPP_URL } from "@/lib/whatsapp";
