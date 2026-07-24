@@ -881,6 +881,9 @@ function LandingPageInner() {
         }}
       />
 
+      {/* ── Competitor Comparison ──────────────────────────────── */}
+      <CompetitorComparison />
+
       {/* ── FAQ ────────────────────────────────────────────────── */}
       <FAQSection />
 
