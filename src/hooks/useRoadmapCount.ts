@@ -17,12 +17,12 @@ export function useRoadmapCount(): number | null {
     let cancelled = false;
 
     (async () => {
-      const { count, error } = await supabase
-        .from("roadmap_leads")
-        .select("id", { count: "exact", head: true });
+      const { data, error } = await supabase.rpc("get_roadmap_lead_count");
       if (cancelled) return;
-      if (error || count === null) return; // stay null on failure
-      setTarget(count);
+      if (error || data === null || data === undefined) return; // stay null on failure
+      const n = typeof data === "number" ? data : Number(data);
+      if (!Number.isFinite(n)) return;
+      setTarget(n);
     })();
 
     const channel = supabase
