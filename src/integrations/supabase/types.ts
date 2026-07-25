@@ -591,6 +591,24 @@ export type Database = {
           },
         ]
       }
+      roadmap_lead_counter: {
+        Row: {
+          count: number
+          id: boolean
+          updated_at: string
+        }
+        Insert: {
+          count?: number
+          id?: boolean
+          updated_at?: string
+        }
+        Update: {
+          count?: number
+          id?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
       roadmap_leads: {
         Row: {
           aml_setup: string
@@ -806,12 +824,6 @@ export type Database = {
         Update: {
           slot_datetime?: string | null
           status?: string | null
-        }
-        Relationships: []
-      }
-      roadmap_lead_stats: {
-        Row: {
-          count: number | null
         }
         Relationships: []
       }
