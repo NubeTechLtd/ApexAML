@@ -8,6 +8,7 @@ import {
   Lock,
   ArrowRight,
   Calendar,
+  Play,
   CheckCircle2,
   Loader2,
   Menu,
