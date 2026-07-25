@@ -809,6 +809,12 @@ export type Database = {
         }
         Relationships: []
       }
+      roadmap_lead_stats: {
+        Row: {
+          count: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       delete_email: {
@@ -820,7 +826,6 @@ export type Database = {
         Args: { payload: Json; queue_name: string }
         Returns: number
       }
-      get_roadmap_lead_count: { Args: never; Returns: number }
       move_to_dlq: {
         Args: {
           dlq_name: string
