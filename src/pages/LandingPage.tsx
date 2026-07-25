@@ -614,10 +614,11 @@ function LandingPageInner() {
                 <Button
                   size="lg"
                   variant="outline"
-                  onClick={() => scrollToSection("how-it-works")}
+                  onClick={() => setTourOpen(true)}
                   className="rounded-xl bg-transparent border-white/15 text-white/80 hover:bg-white/5 hover:text-white text-sm px-8 min-h-[44px] py-4 md:py-2 w-full sm:w-auto"
                 >
-                  See how it works
+                  <Play className="h-4 w-4 mr-2" />
+                  Take a 2-minute product tour →
                 </Button>
               </div>
               <RoadmapCountLine variant="hero" />
