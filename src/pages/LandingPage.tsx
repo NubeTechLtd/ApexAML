@@ -553,6 +553,11 @@ function LandingPageInner() {
         }}
         prefilledMessage={demoSheetMessage}
       />
+      <ProductTourModal
+        open={tourOpen}
+        onClose={() => setTourOpen(false)}
+        onBookDemo={() => setDemoSheetOpen(true)}
+      />
 
       {/* ── Hero ───────────────────────────────────────────────── */}
       <section className="relative pt-32 pb-20 md:pt-44 md:pb-32 px-6">
