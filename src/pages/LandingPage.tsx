@@ -8,6 +8,7 @@ import {
   Lock,
   ArrowRight,
   Calendar,
+  Play,
   CheckCircle2,
   Loader2,
   Menu,
@@ -28,6 +29,7 @@ import { supabase } from "@/integrations/supabase/client";
 import logo from "@/assets/logo.svg";
 import { Button } from "@/components/ui/button";
 import { BookDemoSheet } from "@/components/landing/BookDemoSheet";
+import { ProductTourModal } from "@/components/ProductTourModal";
 import { QuickDemoBar } from "@/components/landing/QuickDemoBar";
 import { LeadCaptureForm } from "@/components/landing/LeadCaptureForm";
 import { SocialProofSection } from "@/components/landing/SocialProofSection";
@@ -388,6 +390,7 @@ function LandingPageInner() {
   const [demoSheetOpen, setDemoSheetOpen] = useState(false);
   const [demoSheetMessage, setDemoSheetMessage] = useState<string | undefined>(undefined);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [tourOpen, setTourOpen] = useState(false);
   const navRef = useRef<HTMLElement | null>(null);
   const { profile } = useAudience();
   const features = (profile?.features ?? defaultFeatures).map((f, i) => ({
@@ -550,6 +553,11 @@ function LandingPageInner() {
         }}
         prefilledMessage={demoSheetMessage}
       />
+      <ProductTourModal
+        open={tourOpen}
+        onClose={() => setTourOpen(false)}
+        onBookDemo={() => setDemoSheetOpen(true)}
+      />
 
       {/* ── Hero ───────────────────────────────────────────────── */}
       <section className="relative pt-32 pb-20 md:pt-44 md:pb-32 px-6">
@@ -611,10 +619,11 @@ function LandingPageInner() {
                 <Button
                   size="lg"
                   variant="outline"
-                  onClick={() => scrollToSection("how-it-works")}
+                  onClick={() => setTourOpen(true)}
                   className="rounded-xl bg-transparent border-white/15 text-white/80 hover:bg-white/5 hover:text-white text-sm px-8 min-h-[44px] py-4 md:py-2 w-full sm:w-auto"
                 >
-                  See how it works
+                  <Play className="h-4 w-4 mr-2" />
+                  Take a 2-minute product tour →
                 </Button>
               </div>
               <RoadmapCountLine variant="hero" />
