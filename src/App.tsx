@@ -29,6 +29,7 @@ import NotFound from "./pages/NotFound.tsx";
 import Unsubscribe from "./pages/Unsubscribe.tsx";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { DemoGuide } from "./components/DemoGuide";
+import { WhatsAppChat } from "./components/WhatsAppChat";
 
 const queryClient = new QueryClient();
 
