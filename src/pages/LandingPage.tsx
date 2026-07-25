@@ -390,6 +390,7 @@ function LandingPageInner() {
   const [demoSheetOpen, setDemoSheetOpen] = useState(false);
   const [demoSheetMessage, setDemoSheetMessage] = useState<string | undefined>(undefined);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [tourOpen, setTourOpen] = useState(false);
   const navRef = useRef<HTMLElement | null>(null);
   const { profile } = useAudience();
   const features = (profile?.features ?? defaultFeatures).map((f, i) => ({
