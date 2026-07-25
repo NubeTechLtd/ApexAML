@@ -20,6 +20,9 @@ import {
   ShieldCheck,
   Twitter,
   Linkedin,
+  Clock,
+  Zap,
+  TrendingDown,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import logo from "@/assets/logo.svg";
@@ -513,7 +516,32 @@ function LandingPageInner() {
         </AnimatePresence>
       </nav>
 
+      {/* ── Press Coverage Bar ─────────────────────────────────── */}
+      {/* TODO: Update opacity to 100% and add href when */}
+      {/* article is published. Current: credibility placeholder. */}
+      <div
+        className="w-full bg-secondary/40 border-b border-white/5 overflow-hidden"
+        style={{ height: 44 }}
+      >
+        <div className="mx-auto max-w-7xl h-full px-6 flex items-center gap-6">
+          <span className="shrink-0 text-white/50" style={{ fontSize: 11 }}>
+            Covering Nigeria&apos;s compliance transformation:
+          </span>
+          <div className="flex-1 overflow-hidden">
+            <div className="flex items-center gap-4 whitespace-nowrap opacity-50 text-white/70" style={{ fontSize: 13 }}>
+              {["TechCabal", "Techpoint.Africa", "Nairametrics", "BusinessDay Nigeria", "FinTechNG"].map((name, i, arr) => (
+                <span key={name} className="flex items-center gap-4">
+                  <span>{name}</span>
+                  {i < arr.length - 1 && <span className="h-3 w-px bg-white/20" />}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
       <QuickDemoBar open={quickBarOpen} onClose={() => setQuickBarOpen(false)} />
+
       <BookDemoSheet
         open={demoSheetOpen}
         onOpenChange={(o) => {
@@ -550,8 +578,26 @@ function LandingPageInner() {
             </p>
           </AnimatedSection>
 
+          <AnimatedSection delay={0.25}>
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-red-600 text-white px-3 py-1" style={{ fontSize: 12, fontWeight: 600 }}>
+                <Clock className="h-3.5 w-3.5" />
+                3 hrs → 11 min — STR drafting time
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-green-600 text-white px-3 py-1" style={{ fontSize: 12, fontWeight: 600 }}>
+                <Zap className="h-3.5 w-3.5" />
+                5 days — time to go live
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-400 text-slate-900 px-3 py-1" style={{ fontSize: 12, fontWeight: 600 }}>
+                <TrendingDown className="h-3.5 w-3.5" />
+                45% cheaper in year one than the nearest competitor
+              </span>
+            </div>
+          </AnimatedSection>
+
           <AnimatedSection delay={0.3}>
             <div id="hero-cta" className="scroll-mt-32 space-y-5">
+
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Button
                   size="lg"
