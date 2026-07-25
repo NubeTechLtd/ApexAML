@@ -516,7 +516,32 @@ function LandingPageInner() {
         </AnimatePresence>
       </nav>
 
+      {/* ── Press Coverage Bar ─────────────────────────────────── */}
+      {/* TODO: Update opacity to 100% and add href when */}
+      {/* article is published. Current: credibility placeholder. */}
+      <div
+        className="w-full bg-secondary/40 border-b border-white/5 overflow-hidden"
+        style={{ height: 44 }}
+      >
+        <div className="mx-auto max-w-7xl h-full px-6 flex items-center gap-6">
+          <span className="shrink-0 text-white/50" style={{ fontSize: 11 }}>
+            Covering Nigeria&apos;s compliance transformation:
+          </span>
+          <div className="flex-1 overflow-hidden">
+            <div className="flex items-center gap-4 whitespace-nowrap opacity-50 text-white/70" style={{ fontSize: 13 }}>
+              {["TechCabal", "Techpoint.Africa", "Nairametrics", "BusinessDay Nigeria", "FinTechNG"].map((name, i, arr) => (
+                <span key={name} className="flex items-center gap-4">
+                  <span>{name}</span>
+                  {i < arr.length - 1 && <span className="h-3 w-px bg-white/20" />}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
       <QuickDemoBar open={quickBarOpen} onClose={() => setQuickBarOpen(false)} />
+
       <BookDemoSheet
         open={demoSheetOpen}
         onOpenChange={(o) => {
