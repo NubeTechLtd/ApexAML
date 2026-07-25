@@ -578,8 +578,26 @@ function LandingPageInner() {
             </p>
           </AnimatedSection>
 
+          <AnimatedSection delay={0.25}>
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-red-600 text-white px-3 py-1" style={{ fontSize: 12, fontWeight: 600 }}>
+                <Clock className="h-3.5 w-3.5" />
+                3 hrs → 11 min — STR drafting time
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-green-600 text-white px-3 py-1" style={{ fontSize: 12, fontWeight: 600 }}>
+                <Zap className="h-3.5 w-3.5" />
+                5 days — time to go live
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-400 text-slate-900 px-3 py-1" style={{ fontSize: 12, fontWeight: 600 }}>
+                <TrendingDown className="h-3.5 w-3.5" />
+                45% cheaper in year one than the nearest competitor
+              </span>
+            </div>
+          </AnimatedSection>
+
           <AnimatedSection delay={0.3}>
             <div id="hero-cta" className="scroll-mt-32 space-y-5">
+
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Button
                   size="lg"
