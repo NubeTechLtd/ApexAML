@@ -25,8 +25,8 @@ export function useRoadmapCount(): number | null {
       setTarget(n);
     })();
 
-    const channel = supabase
-      .channel("roadmap-leads-count")
+    const channel = supabase.channel(`roadmap-leads-count-${Math.random().toString(36).slice(2)}`);
+    channel
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "roadmap_leads" },
