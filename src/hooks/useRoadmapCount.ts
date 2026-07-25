@@ -55,10 +55,14 @@ export function useRoadmapCount(): number | null {
     let cancelled = false;
 
     (async () => {
-      const { data, error } = await supabase.rpc("get_roadmap_lead_count");
+      const { data, error } = await supabase
+        .from("roadmap_lead_counter")
+        .select("count")
+        .eq("id", true)
+        .maybeSingle();
       if (cancelled) return;
-      if (error || data === null || data === undefined) return; // stay null on failure
-      const n = typeof data === "number" ? data : Number(data);
+      if (error || !data) return; // stay null on failure
+      const n = typeof data.count === "number" ? data.count : Number(data.count);
       if (!Number.isFinite(n)) return;
       setTarget(n);
     })();
