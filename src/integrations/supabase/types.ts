@@ -591,6 +591,24 @@ export type Database = {
           },
         ]
       }
+      roadmap_lead_counter: {
+        Row: {
+          count: number
+          id: boolean
+          updated_at: string
+        }
+        Insert: {
+          count?: number
+          id?: boolean
+          updated_at?: string
+        }
+        Update: {
+          count?: number
+          id?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
       roadmap_leads: {
         Row: {
           aml_setup: string
@@ -820,7 +838,6 @@ export type Database = {
         Args: { payload: Json; queue_name: string }
         Returns: number
       }
-      get_roadmap_lead_count: { Args: never; Returns: number }
       move_to_dlq: {
         Args: {
           dlq_name: string
