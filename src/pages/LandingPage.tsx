@@ -29,6 +29,7 @@ import { supabase } from "@/integrations/supabase/client";
 import logo from "@/assets/logo.svg";
 import { Button } from "@/components/ui/button";
 import { BookDemoSheet } from "@/components/landing/BookDemoSheet";
+import { ProductTourModal } from "@/components/ProductTourModal";
 import { QuickDemoBar } from "@/components/landing/QuickDemoBar";
 import { LeadCaptureForm } from "@/components/landing/LeadCaptureForm";
 import { SocialProofSection } from "@/components/landing/SocialProofSection";
