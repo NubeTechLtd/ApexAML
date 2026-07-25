@@ -20,6 +20,9 @@ import {
   ShieldCheck,
   Twitter,
   Linkedin,
+  Clock,
+  Zap,
+  TrendingDown,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import logo from "@/assets/logo.svg";
