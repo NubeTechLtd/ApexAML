@@ -14,6 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
+      ctr_queue: {
+        Row: {
+          created_at: string
+          ctr_reference: string | null
+          customer_id: string
+          customer_name: string | null
+          filed_at: string | null
+          goaml_xml: string | null
+          id: string
+          report_date: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          total_cash_ngn: number
+          transaction_count: number
+          transaction_ids: Json
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          ctr_reference?: string | null
+          customer_id: string
+          customer_name?: string | null
+          filed_at?: string | null
+          goaml_xml?: string | null
+          id?: string
+          report_date: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          total_cash_ngn: number
+          transaction_count?: number
+          transaction_ids?: Json
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          ctr_reference?: string | null
+          customer_id?: string
+          customer_name?: string | null
+          filed_at?: string | null
+          goaml_xml?: string | null
+          id?: string
+          report_date?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          total_cash_ngn?: number
+          transaction_count?: number
+          transaction_ids?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
       demo_requests: {
         Row: {
           contact_name: string
