@@ -3,7 +3,7 @@ import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { ComplianceTimeline } from '@/components/ComplianceTimeline';
 import { ComplianceMetrics } from '@/components/ComplianceMetrics';
-import { CTRTable } from '@/components/CTRTable';
+import { CTRManagement } from '@/components/CTRManagement';
 import { STRManagement } from '@/components/STRManagement';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Download } from 'lucide-react';
