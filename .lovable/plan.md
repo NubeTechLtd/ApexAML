@@ -1,27 +1,63 @@
-## Goal
-Switch demo booking confirmation emails off Resend and onto Lovable's built-in email infrastructure. Sender domain: `notify.apexaml.com`. Visible `From`: `hello@apexaml.com` (display-from-root).
+# CTR Automation System
 
-## Steps
+Build automated Currency Transaction Report generation with backend cron job, review workflow, and CBN-compliant filing UI.
 
-1. **Configure sender domain** — open the email setup dialog so you can add `notify.apexaml.com` and paste the NS records at your DNS provider. Setup continues while DNS propagates.
+## Part 1 — Backend
 
-2. **Provision email infrastructure** — create the pgmq queues, send log, suppression list, unsubscribe tokens, queue processor, and cron job.
+### Database migration
+Create `public.ctr_queue`:
+- `id` uuid PK
+- `customer_id` text (account number)
+- `customer_name` text
+- `report_date` date
+- `total_cash_ngn` numeric
+- `transaction_count` int
+- `transaction_ids` jsonb (array)
+- `status` text: `pending_review` | `approved` | `filed` | `rejected` (default `pending_review`)
+- `reviewed_by` uuid nullable
+- `reviewed_at` timestamptz nullable
+- `ctr_reference` text nullable (unique, `CTR-YYYY-NNNNN`)
+- `filed_at` timestamptz nullable
+- `goaml_xml` text nullable
+- `created_at`, `updated_at` timestamptz
 
-3. **Scaffold app emails** — generate the shared `send-transactional-email` Edge Function, unsubscribe handler, suppression webhook, and template registry. Set `FROM_DOMAIN` to `apexaml.com` so recipients see `hello@apexaml.com`.
+GRANTs: `SELECT, UPDATE` to `authenticated`; `ALL` to `service_role`. RLS enabled. Policies: authenticated users can select all; only `admin` role can update (via `has_role`). Service role bypasses.
 
-4. **Create two branded templates** in `supabase/functions/_shared/transactional-email-templates/`, styled to ApexAML slate/navy (white body per email rules):
-   - `demo-booking-confirmation` — attendee-facing (booking details, meeting time, what to expect).
-   - `demo-booking-internal-alert` — internal team notification with lead details.
+Add sequence `ctr_reference_seq` for reference numbering.
 
-5. **Rewire the demo booking function** — update `supabase/functions/send-demo-confirmation/index.ts` to stop calling Resend and instead invoke `send-transactional-email` twice (attendee + internal), each with an `idempotencyKey` derived from the booking id. DB insert order and trigger points unchanged.
+### Edge function `generate-ctr-batch`
+- `verify_jwt = true`, but validates `X-Cron-Secret` header against `CRON_SECRET`.
+- Queries `transaction_queue` where `transaction_datetime` is within current WAT day (UTC+1) and `channel IN ('CASH','CASH_DEPOSIT','CASH_WITHDRAWAL')` and `status != 'excluded'`.
+- Groups by `account_number`, sums `amount`, keeps `transaction_id` list.
+- If total > 5,000,000 NGN, upsert into `ctr_queue` (unique on `customer_id + report_date`).
+- Returns summary JSON.
 
-6. **Unsubscribe page** — add a small branded route at the path the scaffold returns, so footer unsubscribe links resolve inside the app.
+### pg_cron schedule
+Insert-tool SQL scheduling `generate-ctr-batch` at `50 22 * * *` UTC (23:50 WAT) via `net.http_post` with `X-Cron-Secret`.
 
-7. **Deploy & verify** — deploy the updated/new Edge Functions. Once DNS verifies, book a test demo and confirm both emails arrive and appear in the email send log.
+## Part 2 — UI
 
-## Technical notes
-- Sender FQDN: `notify.apexaml.com` (NS-delegated to Lovable).
-- Visible From: `hello@apexaml.com` via display-from-root.
-- Resend code and `RESEND_API_KEY` become unused (left in place, no secret changes).
-- No changes to `demo_bookings` schema or RLS.
-- Bookings still record if a send fails; the queue retries and DLQs automatically.
+### `RegulatoryReports.tsx` CTR tab
+Replace `<CTRTable />` with new `<CTRManagement />` component featuring:
+- 4 KPI cards (pending today, filed this month, total value this month, 72h compliance rate)
+- Amber banner when any pending row exceeds 48h since `created_at`
+- Sub-tabs: `Pending Review` / `Filed CTRs`
+- Live data via `supabase.from('ctr_queue')`
+
+### New files
+- `src/components/CTRManagement.tsx` — main container, KPIs, banner, sub-tabs
+- `src/components/CTRPendingTable.tsx` — pending rows + Review sheet + Approve action
+- `src/components/CTRFiledTable.tsx` — filed rows + download XML
+- `src/components/CTRReviewSheet.tsx` — right-hand sheet with per-transaction breakdown
+- `src/lib/generateCTRXml.ts` — CBN/NFIU-format CTR XML builder + reference number generator
+
+### Approve & Generate flow
+Client-side: fetch transactions, build XML via `generateCTRXml`, generate reference `CTR-YYYY-NNNNN` (based on max existing this year + 1), update row: `status='filed'`, `ctr_reference`, `filed_at=now()`, `goaml_xml`, `reviewed_by=auth.uid()`, `reviewed_at=now()`. Toast + refetch.
+
+### Download XML
+Reuses `downloadXmlFile` from `src/lib/generateGoAMLXml.ts`.
+
+## Notes
+- Customer name resolved from `transaction_queue.raw_payload` when available; fallback "Account {account_number}".
+- Notification mock: existing `useNotifications` context is generated statically. Skip runtime notification wiring — cron function logs summary instead; UI banner + KPI drive officer attention. (Adding real notifications would require reworking the notifications provider, out of scope.)
+- Existing `mockCTRs` static demo table is removed; replaced by live Supabase data.
