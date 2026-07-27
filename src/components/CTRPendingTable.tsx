@@ -5,7 +5,6 @@ import { AlertTriangle, FileOutput, Eye } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { generateCtrXml, nextCtrReference } from '@/lib/generateCTRXml';
-import { downloadXmlFile } from '@/lib/generateGoAMLXml';
 import { CTRReviewSheet } from './CTRReviewSheet';
 import type { CTRRow } from './CTRManagement';
 
