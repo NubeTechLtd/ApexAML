@@ -995,7 +995,7 @@ function LandingPageInner() {
           <p className="text-white/25">© {new Date().getFullYear()} ApexAML Technologies.</p>
         </div>
       </footer>
-      <WhatsAppFloatingButton />
+      
     </div>
   );
 }
