@@ -155,7 +155,5 @@ export function CTRPendingTable({ rows, allRows, onRefresh }: Props) {
       />
     </>
   );
-
-  // Note: keeping the imported downloadXmlFile referenced-elsewhere is fine.
-  void downloadXmlFile;
 }
+
