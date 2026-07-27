@@ -63,7 +63,7 @@ const RegulatoryReports = () => {
               </TabsContent>
 
               <TabsContent value="ctr">
-                <CTRTable />
+                <CTRManagement />
               </TabsContent>
 
               <TabsContent value="str">
