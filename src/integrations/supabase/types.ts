@@ -708,6 +708,93 @@ export type Database = {
         }
         Relationships: []
       }
+      sanctions_entities: {
+        Row: {
+          aliases: Json | null
+          created_at: string
+          date_of_birth: string | null
+          entity_name: string
+          entity_type: string | null
+          id: string
+          is_active: boolean
+          last_updated: string
+          list_date: string | null
+          nationality: string | null
+          raw_data: Json | null
+          reason: string | null
+          source: string
+          source_ref: string | null
+          updated_at: string
+        }
+        Insert: {
+          aliases?: Json | null
+          created_at?: string
+          date_of_birth?: string | null
+          entity_name: string
+          entity_type?: string | null
+          id?: string
+          is_active?: boolean
+          last_updated?: string
+          list_date?: string | null
+          nationality?: string | null
+          raw_data?: Json | null
+          reason?: string | null
+          source: string
+          source_ref?: string | null
+          updated_at?: string
+        }
+        Update: {
+          aliases?: Json | null
+          created_at?: string
+          date_of_birth?: string | null
+          entity_name?: string
+          entity_type?: string | null
+          id?: string
+          is_active?: boolean
+          last_updated?: string
+          list_date?: string | null
+          nationality?: string | null
+          raw_data?: Json | null
+          reason?: string | null
+          source?: string
+          source_ref?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      sanctions_meta: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          id: string
+          last_refreshed_at: string | null
+          list_name: string
+          record_count: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          last_refreshed_at?: string | null
+          list_name: string
+          record_count?: number
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          last_refreshed_at?: string | null
+          list_name?: string
+          record_count?: number
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       suppressed_emails: {
         Row: {
           created_at: string
@@ -909,6 +996,22 @@ export type Database = {
           read_ct: number
         }[]
       }
+      screen_entity: {
+        Args: { search_name: string; threshold?: number }
+        Returns: {
+          aliases: Json
+          entity_name: string
+          entity_type: string
+          id: string
+          list_date: string
+          nationality: string
+          reason: string
+          score: number
+          source: string
+        }[]
+      }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
     }
     Enums: {
       app_role: "admin" | "user"
