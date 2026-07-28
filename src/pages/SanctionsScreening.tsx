@@ -13,6 +13,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Slider } from '@/components/ui/slider';
 import { useToast } from '@/hooks/use-toast';
 import { mockSanctionsMatches, type SanctionsMatch } from '@/data/mockSanctions';
+import { SanctionsRefreshStatus } from '@/components/sanctions/SanctionsRefreshStatus';
+import { LiveScreenPanel } from '@/components/sanctions/LiveScreenPanel';
 import { BulkDismissDialog } from '@/components/sanctions/BulkDismissDialog';
 import { BulkEscalateDialog } from '@/components/sanctions/BulkEscalateDialog';
 import { AdverseMediaSection } from '@/components/sanctions/AdverseMediaSection';
@@ -258,6 +260,12 @@ export default function SanctionsScreening() {
               <ThemeToggle />
             </div>
           </div>
+
+          {/* Watchlist refresh status */}
+          <SanctionsRefreshStatus />
+
+          {/* Live name screening (screen_entity RPC) */}
+          <LiveScreenPanel />
 
           {/* SLA Warning Banner */}
           <div className="px-6 py-2.5 bg-[hsl(var(--risk-medium))]/10 border-b border-[hsl(var(--risk-medium))]/20 flex items-center gap-2 shrink-0">
