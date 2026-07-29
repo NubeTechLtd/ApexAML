@@ -9,6 +9,8 @@ import type { ComplianceNote } from './AddNoteSheet';
 import { TransactionsTab } from './TransactionsTab';
 import { NetworkGraph } from './NetworkGraph';
 import { AuditLogTab } from './AuditLogTab';
+import { Customer360DocumentsTab } from './DocumentsTab';
+
 
 const riskColors: Record<string, string> = {
   High: 'bg-[hsl(var(--risk-critical)/0.1)] text-[hsl(var(--risk-critical))] border-[hsl(var(--risk-critical)/0.2)]',
