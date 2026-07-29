@@ -9,15 +9,17 @@ export function DocumentCompleteness({ customerId, kycTier }: { customerId: stri
 
   useEffect(() => {
     let active = true;
+    const req = requiredDocsForTier(tier);
     listCustomerDocuments(customerId)
       .then(docs => {
         if (!active) return;
         const currentTypes = new Set(docs.filter(d => d.is_current).map(d => d.document_type));
-        setHave(required.filter(t => currentTypes.has(t)).length);
+        setHave(req.filter(t => currentTypes.has(t)).length);
       })
       .catch(() => active && setHave(null));
     return () => { active = false; };
-  }, [customerId, required]);
+  }, [customerId, tier]);
+
 
   if (have === null) return null;
 
