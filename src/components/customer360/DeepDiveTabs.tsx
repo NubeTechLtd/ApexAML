@@ -9,6 +9,8 @@ import type { ComplianceNote } from './AddNoteSheet';
 import { TransactionsTab } from './TransactionsTab';
 import { NetworkGraph } from './NetworkGraph';
 import { AuditLogTab } from './AuditLogTab';
+import { Customer360DocumentsTab } from './DocumentsTab';
+
 
 const riskColors: Record<string, string> = {
   High: 'bg-[hsl(var(--risk-critical)/0.1)] text-[hsl(var(--risk-critical))] border-[hsl(var(--risk-critical)/0.2)]',
@@ -109,29 +111,9 @@ export function Customer360Tabs({ customer, customerAlerts, notes = [], activeTa
       </TabsContent>
 
       <TabsContent value="documents">
-        <Card>
-          <CardContent className="pt-4">
-            {customer.eddDocuments.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {customer.eddDocuments.map((doc, i) => (
-                  <div key={i} className="rounded-lg border border-border p-4 space-y-2 hover:bg-muted/30 transition-colors">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-muted/50 text-2xl">
-                      {docIcons[doc.type] || '📄'}
-                    </div>
-                    <p className="text-sm font-medium text-foreground truncate">{doc.name}</p>
-                    <p className="text-xs text-muted-foreground">{doc.type} • {doc.uploadedAt}</p>
-                    <Button variant="ghost" size="sm" className="w-full gap-1.5 text-xs">
-                      <Download className="h-3 w-3" /> Download
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm text-muted-foreground py-8 text-center">No EDD documents uploaded</p>
-            )}
-          </CardContent>
-        </Card>
+        <Customer360DocumentsTab customerId={String(customer.id)} kycTier={customer.kycTier} />
       </TabsContent>
+
 
       <TabsContent value="audit">
         <AuditLogTab customer={customer} notes={notes} filterNotesOnly={filterNotesOnly} />

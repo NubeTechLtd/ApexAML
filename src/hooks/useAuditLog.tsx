@@ -2,11 +2,17 @@ import { createContext, useContext, useState, useCallback, ReactNode } from 'rea
 
 export interface AuditEntry {
   timestamp: string;
-  action: 'NFIU_ESCALATION' | 'ACCOUNT_FREEZE';
+  action:
+    | 'NFIU_ESCALATION'
+    | 'ACCOUNT_FREEZE'
+    | 'DOCUMENT_UPLOAD'
+    | 'DOCUMENT_VERIFY'
+    | 'DOCUMENT_DOWNLOAD';
   analyst: string;
   caseId: string;
   justification: string;
 }
+
 
 interface AuditLogContextValue {
   entries: AuditEntry[];

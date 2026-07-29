@@ -16,6 +16,8 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import type { KYCCustomer } from '@/data/mockKYC';
 import { TierManagement } from '@/components/kyc/TierManagement';
+import { KycDocumentsSection } from '@/components/kyc/KycDocumentsSection';
+
 
 interface AuditEntry {
   id: string;
@@ -279,43 +281,13 @@ export function EDDWorkspace({ customer, onTierUpgrade }: EDDWorkspaceProps) {
               </CardContent>
             </Card>
 
-            {/* Document Vault */}
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-xs font-medium text-muted-foreground">Document Vault</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div
-                  className="rounded-lg border-2 border-dashed border-border hover:border-primary/40 transition-colors flex flex-col items-center justify-center p-6 cursor-pointer group"
-                  onClick={() => { toast('File picker would open here.'); addAudit('UPLOAD_ATTEMPT', 'Document upload initiated'); }}
-                >
-                  <Upload className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors mb-1.5" />
-                  <p className="text-xs font-medium text-foreground">Drop files or click to upload</p>
-                  <p className="text-[10px] text-muted-foreground mt-0.5">Proof of Address, ID Scans</p>
-                </div>
-                <div className="space-y-1.5">
-                  <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">
-                    Uploaded ({customer.documents.length})
-                  </p>
-                  {customer.documents.length === 0 ? (
-                    <p className="text-xs text-muted-foreground py-3 text-center">No documents uploaded.</p>
-                  ) : (
-                    customer.documents.map((doc, i) => (
-                      <div key={i} className="flex items-center justify-between rounded-lg border p-2.5">
-                        <div className="flex items-center gap-2 min-w-0">
-                          <FileText className="h-4 w-4 text-muted-foreground shrink-0" />
-                          <div className="min-w-0">
-                            <p className="text-xs font-medium text-foreground truncate">{doc.name}</p>
-                            <p className="text-[10px] text-muted-foreground">{doc.type}</p>
-                          </div>
-                        </div>
-                        <span className="text-[10px] text-muted-foreground shrink-0 ml-2">{doc.uploadedAt}</span>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+            {/* Document Vault — live Supabase-backed KYC documents */}
+            <KycDocumentsSection
+              customerId={customer.id}
+              kycTier={customer.kycTier}
+              onUploaded={(type) => addAudit('DOCUMENT_UPLOAD', `${type} uploaded for ${customer.name}`)}
+            />
+
           </div>
 
           <Separator />
