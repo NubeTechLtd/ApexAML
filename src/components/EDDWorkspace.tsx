@@ -16,6 +16,8 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import type { KYCCustomer } from '@/data/mockKYC';
 import { TierManagement } from '@/components/kyc/TierManagement';
+import { KycDocumentsSection } from '@/components/kyc/KycDocumentsSection';
+
 
 interface AuditEntry {
   id: string;
