@@ -111,6 +111,10 @@ export default function Customer360() {
                     <p className="text-xs text-muted-foreground mt-0.5">
                       {customer.kycTier} Account • {customer.bvnVerified ? 'BVN Verified' : 'BVN Unverified'} • {accountStatus === 'Frozen' ? (<span className="inline-flex items-center gap-1 text-destructive font-semibold"><Snowflake className="h-3 w-3" />Frozen</span>) : accountStatus}
                     </p>
+                    <div className="mt-1">
+                      <DocumentCompleteness customerId={String(customer.id)} kycTier={customer.kycTier} />
+                    </div>
+
                   </div>
                 </div>
               </div>
