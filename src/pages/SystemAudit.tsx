@@ -45,14 +45,39 @@ const roleData = [
   { role: 'Read-Only', users: ['Yusuf Maina'], icon: Eye, color: 'bg-muted text-muted-foreground' },
 ];
 
+const ACTION_LABELS: Record<string, string> = {
+  NFIU_ESCALATION: 'Escalated to NFIU',
+  ACCOUNT_FREEZE: 'Froze Account',
+  DOCUMENT_UPLOAD: 'Uploaded KYC Document',
+  DOCUMENT_VERIFY: 'Verified KYC Document',
+  DOCUMENT_DOWNLOAD: 'Downloaded KYC Document',
+};
+
 const SystemAudit = () => {
   const [search, setSearch] = useState('');
+  const { entries } = useAuditLog();
 
-  const filtered = auditLog.filter((e) =>
+  const liveEntries: AuditEntry[] = entries.map((e, i) => ({
+    id: `live-${i}`,
+    timestamp: e.timestamp,
+    userId: 'SESSION',
+    userName: e.analyst,
+    action: ACTION_LABELS[e.action] ?? e.action,
+    resource: `${e.caseId} — ${e.justification}`,
+    ipAddress: 'this session',
+    status: 'success' as const,
+  }));
+
+  const combined = [...liveEntries, ...auditLog].sort(
+    (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+  );
+
+  const filtered = combined.filter((e) =>
     e.userName.toLowerCase().includes(search.toLowerCase()) ||
     e.action.toLowerCase().includes(search.toLowerCase()) ||
     e.userId.toLowerCase().includes(search.toLowerCase())
   );
+
 
   return (
     <SidebarProvider>
