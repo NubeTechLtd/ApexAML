@@ -29,6 +29,8 @@ import { RequiredActions } from '@/components/customer360/RequiredActions';
 import { AuditBell } from '@/components/AuditBell';
 import { ConfirmEscalationDialog } from '@/components/ConfirmEscalationDialog';
 import { FreezeAccountDialog } from '@/components/FreezeAccountDialog';
+import { DocumentCompleteness } from '@/components/customer360/DocumentCompleteness';
+
 
 
 const riskColors: Record<string, string> = {
