@@ -354,6 +354,63 @@ export type Database = {
         }
         Relationships: []
       }
+      kyc_documents: {
+        Row: {
+          created_at: string
+          customer_id: string
+          document_name: string
+          document_type: string
+          expiry_date: string | null
+          file_size_bytes: number | null
+          id: string
+          is_current: boolean
+          kyc_tier_at_upload: string | null
+          storage_path: string
+          updated_at: string
+          uploaded_at: string
+          uploaded_by: string
+          verified: boolean
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          customer_id: string
+          document_name: string
+          document_type: string
+          expiry_date?: string | null
+          file_size_bytes?: number | null
+          id?: string
+          is_current?: boolean
+          kyc_tier_at_upload?: string | null
+          storage_path: string
+          updated_at?: string
+          uploaded_at?: string
+          uploaded_by: string
+          verified?: boolean
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string
+          document_name?: string
+          document_type?: string
+          expiry_date?: string | null
+          file_size_bytes?: number | null
+          id?: string
+          is_current?: boolean
+          kyc_tier_at_upload?: string | null
+          storage_path?: string
+          updated_at?: string
+          uploaded_at?: string
+          uploaded_by?: string
+          verified?: boolean
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: []
+      }
       kyc_verification_vectors: {
         Row: {
           api_endpoint: string | null
