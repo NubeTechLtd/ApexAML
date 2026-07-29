@@ -9,6 +9,8 @@ import { Search, Lock, Shield, Eye, UserCog, Users, Building2 } from 'lucide-rea
 import { NotificationBell } from '@/components/NotificationBell';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { cn } from '@/lib/utils';
+import { useAuditLog } from '@/hooks/useAuditLog';
+
 
 interface AuditEntry {
   id: string;
