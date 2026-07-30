@@ -110,6 +110,22 @@ export function AppSidebar() {
             <p className="text-xs font-medium text-sidebar-primary">Today, 08:32 WAT</p>
           </div>
         )}
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild>
+              <NavLink
+                to="/settings"
+                end
+                className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
+                activeClassName="bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+              >
+                <Settings2 className="mr-2 h-4 w-4" />
+                {!collapsed && <span>Account Settings</span>}
+              </NavLink>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+
         {session && (
           <Button
             variant="ghost"
