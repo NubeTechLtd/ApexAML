@@ -166,7 +166,7 @@ export default function Settings() {
                   </p>
                 </div>
                 {factor && (
-                  <Badge className="bg-success/15 text-success border-success/30 shrink-0">
+                  <Badge className="bg-risk-low/15 text-risk-low border-risk-low/30 shrink-0">
                     <ShieldCheck className="mr-1 h-3.5 w-3.5" />
                     Active
                   </Badge>
@@ -187,7 +187,7 @@ export default function Settings() {
                 </div>
               ) : factor ? (
                 <div className="space-y-4">
-                  <p className="text-sm text-success font-medium">
+                  <p className="text-sm text-risk-low font-medium">
                     Two-factor authentication is active
                   </p>
                   {backupCodes && (
@@ -294,7 +294,7 @@ function BackupCodes({
   onCopy: () => void;
 }) {
   return (
-    <div className="rounded-lg border border-warning/40 bg-warning/5 p-4">
+    <div className="rounded-lg border border-risk-medium/40 bg-risk-medium/5 p-4">
       <p className="text-sm font-medium">Save your backup codes</p>
       <p className="mt-1 text-xs text-muted-foreground">
         Each code can be used once if you lose access to your authenticator app. Store them somewhere
