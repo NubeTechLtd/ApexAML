@@ -22,6 +22,8 @@ import Accounts from "./pages/Accounts.tsx";
 import PartnerBankDashboard from "./pages/PartnerBankDashboard.tsx";
 import RoadmapGenerator from "./pages/RoadmapGenerator.tsx";
 import Login from "./pages/Login.tsx";
+import Settings from "./pages/Settings.tsx";
+
 import AdminRoadmaps from "./pages/AdminRoadmaps.tsx";
 import AdminAnalytics from "./pages/AdminAnalytics.tsx";
 import CaseJourney from "./pages/CaseJourney.tsx";
@@ -59,6 +61,8 @@ const App = () => (
             <Route path="/partner-bank" element={<PartnerBankDashboard />} />
             <Route path="/roadmap" element={<RoadmapGenerator />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/settings" element={<ProtectedRoute requireAdmin={false}><Settings /></ProtectedRoute>} />
+
             <Route path="/admin/roadmaps" element={<ProtectedRoute><AdminRoadmaps /></ProtectedRoute>} />
             <Route path="/admin/analytics" element={<ProtectedRoute><AdminAnalytics /></ProtectedRoute>} />
             <Route path="/case/:caseId" element={<CaseJourney />} />

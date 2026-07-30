@@ -9,47 +9,66 @@ interface ProtectedRouteProps {
   requireAdmin?: boolean;
 }
 
+type GateState = 'checking' | 'allowed' | 'denied' | 'mfa-required' | 'mfa-setup-required';
+
 export function ProtectedRoute({ children, requireAdmin = true }: ProtectedRouteProps) {
   const { session, loading } = useAuth();
-  const [adminState, setAdminState] = useState<'checking' | 'allowed' | 'denied'>(
-    requireAdmin ? 'checking' : 'allowed',
-  );
+  const [gate, setGate] = useState<GateState>(requireAdmin ? 'checking' : 'allowed');
 
   useEffect(() => {
     if (!requireAdmin) {
-      setAdminState('allowed');
+      setGate('allowed');
       return;
     }
     if (loading) return;
     if (!session?.user) {
-      // Will be redirected below; reset state for clean re-entry.
-      setAdminState('checking');
+      setGate('checking');
       return;
     }
 
     let cancelled = false;
-    setAdminState('checking');
-    supabase
-      .from('user_roles')
-      .select('role')
-      .eq('user_id', session.user.id)
-      .eq('role', 'admin')
-      .maybeSingle()
-      .then(({ data, error }) => {
-        if (cancelled) return;
-        if (error || !data) {
-          setAdminState('denied');
-        } else {
-          setAdminState('allowed');
-        }
-      });
+    setGate('checking');
+
+    (async () => {
+      const { data, error } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', session.user.id)
+        .eq('role', 'admin')
+        .maybeSingle();
+
+      if (cancelled) return;
+      if (error || !data) {
+        setGate('denied');
+        return;
+      }
+
+      // Admin confirmed — enforce AAL2 (MFA) for admin sessions.
+      const [{ data: aal }, { data: factors }] = await Promise.all([
+        supabase.auth.mfa.getAuthenticatorAssuranceLevel(),
+        supabase.auth.mfa.listFactors(),
+      ]);
+      if (cancelled) return;
+
+      const hasVerifiedTotp = (factors?.totp ?? []).some((f) => f.status === 'verified');
+
+      if (hasVerifiedTotp && aal?.currentLevel !== 'aal2') {
+        setGate('mfa-required');
+        return;
+      }
+      if (!hasVerifiedTotp) {
+        setGate('mfa-setup-required');
+        return;
+      }
+      setGate('allowed');
+    })();
 
     return () => {
       cancelled = true;
     };
   }, [session, loading, requireAdmin]);
 
-  if (loading || (requireAdmin && session && adminState === 'checking')) {
+  if (loading || (requireAdmin && session && gate === 'checking')) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
@@ -61,10 +80,18 @@ export function ProtectedRoute({ children, requireAdmin = true }: ProtectedRoute
     return <Navigate to="/login" replace />;
   }
 
-  if (requireAdmin && adminState === 'denied') {
+  if (requireAdmin && gate === 'denied') {
     // Sign the non-admin out so they don't get stuck in a redirect loop.
     supabase.auth.signOut();
     return <Navigate to="/login?error=unauthorized" replace />;
+  }
+
+  if (requireAdmin && gate === 'mfa-required') {
+    return <Navigate to="/login?mfa=required" replace />;
+  }
+
+  if (requireAdmin && gate === 'mfa-setup-required') {
+    return <Navigate to="/settings?setup=mfa" replace />;
   }
 
   return <>{children}</>;
