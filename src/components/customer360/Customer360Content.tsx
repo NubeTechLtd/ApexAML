@@ -90,9 +90,12 @@ export function Customer360Content({ customerId, onClose }: Props) {
                     <StickyNote className="h-3 w-3" /> {notes.length}
                   </button>
                 )}
-                <Badge variant="outline" className={`text-sm px-3 py-1 ${riskColors[customer.riskLevel]}`}>
-                  Risk: {customer.riskLevel.toUpperCase()} ({customer.riskScore}/100)
-                </Badge>
+                <DynamicRiskScoreBadge
+                  score={liveScore}
+                  latest={latestScoreEvent}
+                  fallbackLevel={customer.riskLevel}
+                />
+
               </div>
               <p className="text-xs text-muted-foreground mt-0.5">
                 {customer.kycTier} Account • {customer.bvnVerified ? 'BVN Verified' : 'BVN Unverified'} • {accountStatus === 'Frozen' ? (<span className="inline-flex items-center gap-1 text-destructive font-semibold"><Snowflake className="h-3 w-3" />Frozen</span>) : accountStatus}
