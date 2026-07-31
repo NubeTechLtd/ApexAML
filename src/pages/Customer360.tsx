@@ -30,6 +30,9 @@ import { AuditBell } from '@/components/AuditBell';
 import { ConfirmEscalationDialog } from '@/components/ConfirmEscalationDialog';
 import { FreezeAccountDialog } from '@/components/FreezeAccountDialog';
 import { DocumentCompleteness } from '@/components/customer360/DocumentCompleteness';
+import { DynamicRiskScoreBadge } from '@/components/customer360/DynamicRiskScoreBadge';
+import { useRiskScoreHistory } from '@/hooks/useRiskScoreHistory';
+
 
 
 
