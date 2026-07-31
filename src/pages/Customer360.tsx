@@ -30,6 +30,9 @@ import { AuditBell } from '@/components/AuditBell';
 import { ConfirmEscalationDialog } from '@/components/ConfirmEscalationDialog';
 import { FreezeAccountDialog } from '@/components/FreezeAccountDialog';
 import { DocumentCompleteness } from '@/components/customer360/DocumentCompleteness';
+import { DynamicRiskScoreBadge } from '@/components/customer360/DynamicRiskScoreBadge';
+import { useRiskScoreHistory } from '@/hooks/useRiskScoreHistory';
+
 
 
 
@@ -50,6 +53,17 @@ export default function Customer360() {
   const [notes, setNotes] = useState<ComplianceNote[]>([]);
   const [activeTab, setActiveTab] = useState('transactions');
   const [filterNotesOnly, setFilterNotesOnly] = useState(false);
+
+  const { currentScore: liveScore, latest: latestScoreEvent } = useRiskScoreHistory(
+    String(customer?.id ?? id ?? ''),
+    {
+      fallbackScore: customer?.riskScore ?? 0,
+      kycTier: customer?.kycTier,
+      customerName: customer?.name,
+    },
+  );
+
+
 
   const handleNoteBadgeClick = () => {
     setActiveTab('audit');
@@ -106,9 +120,12 @@ export default function Customer360() {
                           <StickyNote className="h-3 w-3" /> {notes.length}
                         </button>
                       )}
-                      <Badge variant="outline" className={`text-sm px-3 py-1 ${riskColors[customer.riskLevel]}`}>
-                        Risk: {customer.riskLevel.toUpperCase()} ({customer.riskScore}/100)
-                      </Badge>
+                      <DynamicRiskScoreBadge
+                        score={liveScore}
+                        latest={latestScoreEvent}
+                        fallbackLevel={customer.riskLevel}
+                      />
+
                     </div>
                     <p className="text-xs text-muted-foreground mt-0.5">
                       {customer.kycTier} Account • {customer.bvnVerified ? 'BVN Verified' : 'BVN Unverified'} • {accountStatus === 'Frozen' ? (<span className="inline-flex items-center gap-1 text-destructive font-semibold"><Snowflake className="h-3 w-3" />Frozen</span>) : accountStatus}

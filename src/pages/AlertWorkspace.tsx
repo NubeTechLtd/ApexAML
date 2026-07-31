@@ -27,6 +27,8 @@ import { mockAlerts, type Alert, type TxChannel } from '@/data/mockAlerts';
 import { useToast } from '@/hooks/use-toast';
 import { useAuditLog } from '@/hooks/useAuditLog';
 import { useCBNRate } from '@/hooks/useCBNRate';
+import { requestRiskRecalculation } from '@/lib/riskScore';
+
 import { generateGoAMLXml, downloadXmlFile } from '@/lib/generateGoAMLXml';
 import { IMTOInvestigation } from '@/components/IMTOInvestigation';
 import { CrossBorderSLACard } from '@/components/CrossBorderSLACard';
@@ -395,9 +397,18 @@ export default function AlertWorkspace() {
   const handleCloseFP = useCallback(() => {
     if (!selected || !fpReason) return;
     setAlertStatus(selected.id, 'Closed');
+    requestRiskRecalculation({
+      customerId: selected.customerProfile.bvn,
+      triggerType: 'ALERT_DISMISSED',
+      triggerReference: selected.caseId,
+      kycTier: selected.customerProfile.kycTier,
+      customerName: selected.customerProfile.fullName,
+    });
+
     toast({ title: 'Alert closed', description: `${selected.caseId} closed as False Positive — ${fpReason}.` });
     setFpDialogOpen(false);
     setFpReason('');
+
   }, [selected, fpReason, setAlertStatus, toast]);
 
   // Keyboard shortcuts
@@ -984,8 +995,16 @@ export default function AlertWorkspace() {
         action="NFIU_ESCALATION"
         onConfirmed={() => {
           setAlertStatus(selected.id, 'Escalated');
+          requestRiskRecalculation({
+            customerId: selected.customerProfile.bvn,
+            triggerType: 'STR_FILED',
+            triggerReference: selected.caseId,
+            kycTier: selected.customerProfile.kycTier,
+            customerName: selected.customerProfile.fullName,
+          });
           toast({ title: 'Escalated to NFIU', description: `Case ${selected.caseId} escalated.` });
         }}
+
       />
 
       {/* Close as False Positive dialog */}

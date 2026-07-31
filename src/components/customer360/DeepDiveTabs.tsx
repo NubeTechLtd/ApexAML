@@ -2,7 +2,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { CreditCard, Network, AlertTriangle, FileText, Download, ClipboardList, ShieldCheck } from 'lucide-react';
+import { CreditCard, Network, AlertTriangle, FileText, Download, ClipboardList, ShieldCheck, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { Customer360Data } from '@/data/mockCustomer360';
 import type { ComplianceNote } from './AddNoteSheet';
@@ -10,6 +10,8 @@ import { TransactionsTab } from './TransactionsTab';
 import { NetworkGraph } from './NetworkGraph';
 import { AuditLogTab } from './AuditLogTab';
 import { Customer360DocumentsTab } from './DocumentsTab';
+import { RiskHistoryTab } from './RiskHistoryTab';
+
 
 
 const riskColors: Record<string, string> = {
@@ -54,10 +56,14 @@ export function Customer360Tabs({ customer, customerAlerts, notes = [], activeTa
         <TabsTrigger value="documents" className="gap-1.5 text-xs">
           <FileText className="h-3.5 w-3.5" /> Documents
         </TabsTrigger>
+        <TabsTrigger value="risk-history" className="gap-1.5 text-xs">
+          <TrendingUp className="h-3.5 w-3.5" /> Risk History
+        </TabsTrigger>
         <TabsTrigger value="audit" className="gap-1.5 text-xs">
           <ClipboardList className="h-3.5 w-3.5" /> Audit Log
         </TabsTrigger>
       </TabsList>
+
 
       <TabsContent value="transactions">
         <TransactionsTab customer={customer} />
@@ -115,7 +121,17 @@ export function Customer360Tabs({ customer, customerAlerts, notes = [], activeTa
       </TabsContent>
 
 
+      <TabsContent value="risk-history">
+        <RiskHistoryTab
+          customerId={String(customer.id)}
+          fallbackScore={customer.riskScore}
+          kycTier={customer.kycTier}
+          customerName={customer.name}
+        />
+      </TabsContent>
+
       <TabsContent value="audit">
+
         <AuditLogTab customer={customer} notes={notes} filterNotesOnly={filterNotesOnly} />
       </TabsContent>
     </Tabs>

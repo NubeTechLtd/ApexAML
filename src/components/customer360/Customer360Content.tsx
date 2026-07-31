@@ -15,6 +15,9 @@ import { Customer360Tabs } from './DeepDiveTabs';
 import { ConfirmEscalationDialog } from '@/components/ConfirmEscalationDialog';
 import { FreezeAccountDialog } from '@/components/FreezeAccountDialog';
 import { AddNoteSheet, type ComplianceNote } from './AddNoteSheet';
+import { DynamicRiskScoreBadge } from './DynamicRiskScoreBadge';
+import { useRiskScoreHistory } from '@/hooks/useRiskScoreHistory';
+
 
 const riskColors: Record<string, string> = {
   High: 'bg-destructive/10 text-destructive border-destructive/20',
@@ -37,6 +40,15 @@ export function Customer360Content({ customerId, onClose }: Props) {
   const [notes, setNotes] = useState<ComplianceNote[]>([]);
   const [activeTab, setActiveTab] = useState('transactions');
   const [filterNotesOnly, setFilterNotesOnly] = useState(false);
+  const { currentScore: liveScore, latest: latestScoreEvent } = useRiskScoreHistory(
+    String(customer?.id ?? customerId),
+    {
+      fallbackScore: customer?.riskScore ?? 0,
+      kycTier: customer?.kycTier,
+      customerName: customer?.name,
+    },
+  );
+
 
   const handleNoteBadgeClick = () => {
     setActiveTab('audit');
@@ -78,9 +90,12 @@ export function Customer360Content({ customerId, onClose }: Props) {
                     <StickyNote className="h-3 w-3" /> {notes.length}
                   </button>
                 )}
-                <Badge variant="outline" className={`text-sm px-3 py-1 ${riskColors[customer.riskLevel]}`}>
-                  Risk: {customer.riskLevel.toUpperCase()} ({customer.riskScore}/100)
-                </Badge>
+                <DynamicRiskScoreBadge
+                  score={liveScore}
+                  latest={latestScoreEvent}
+                  fallbackLevel={customer.riskLevel}
+                />
+
               </div>
               <p className="text-xs text-muted-foreground mt-0.5">
                 {customer.kycTier} Account • {customer.bvnVerified ? 'BVN Verified' : 'BVN Unverified'} • {accountStatus === 'Frozen' ? (<span className="inline-flex items-center gap-1 text-destructive font-semibold"><Snowflake className="h-3 w-3" />Frozen</span>) : accountStatus}
