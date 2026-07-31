@@ -121,7 +121,17 @@ export function Customer360Tabs({ customer, customerAlerts, notes = [], activeTa
       </TabsContent>
 
 
+      <TabsContent value="risk-history">
+        <RiskHistoryTab
+          customerId={String(customer.id)}
+          fallbackScore={customer.riskScore}
+          kycTier={customer.kycTier}
+          customerName={customer.name}
+        />
+      </TabsContent>
+
       <TabsContent value="audit">
+
         <AuditLogTab customer={customer} notes={notes} filterNotesOnly={filterNotesOnly} />
       </TabsContent>
     </Tabs>
