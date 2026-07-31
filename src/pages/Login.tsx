@@ -21,8 +21,6 @@ export default function Login() {
   const [step, setStep] = useState<Step>('password');
   const [factorId, setFactorId] = useState<string | null>(null);
   const [code, setCode] = useState('');
-  const [useBackupCode, setUseBackupCode] = useState(false);
-  const [backupCode, setBackupCode] = useState('');
   const [shake, setShake] = useState(false);
   const [error, setError] = useState<string | null>(
     searchParams.get('error') === 'unauthorized'
@@ -88,7 +86,6 @@ export default function Login() {
     setLoading(false);
     if (verifyError) {
       setCode('');
-      setBackupCode('');
       triggerShake();
       setError('Incorrect code — please try again');
       return;
@@ -166,9 +163,7 @@ export default function Login() {
               <ShieldCheck className="h-7 w-7 text-primary mb-2" />
               <h1 className="text-xl font-semibold tracking-tight">Two-factor authentication</h1>
               <p className="mt-1 text-sm text-muted-foreground">
-                {useBackupCode
-                  ? 'Enter one of your saved backup codes'
-                  : 'Enter the 6-digit code from your authenticator app'}
+                Enter the 6-digit code from your authenticator app
               </p>
             </div>
 
@@ -181,50 +176,35 @@ export default function Login() {
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                verifyCode(useBackupCode ? backupCode.trim() : code);
+                verifyCode(code);
               }}
               className="space-y-5"
             >
-              {useBackupCode ? (
-                <Input
-                  autoFocus
-                  value={backupCode}
-                  onChange={(e) => setBackupCode(e.target.value)}
-                  placeholder="XXXX-XXXX"
-                  className={`text-center font-mono text-lg tracking-widest ${shake ? 'animate-shake border-destructive' : ''}`}
-                />
-              ) : (
-                <OtpInput
-                  autoFocus
-                  value={code}
-                  onChange={setCode}
-                  onComplete={verifyCode}
-                  disabled={loading}
-                  shake={shake}
-                />
-              )}
+              <OtpInput
+                autoFocus
+                value={code}
+                onChange={setCode}
+                onComplete={verifyCode}
+                disabled={loading}
+                shake={shake}
+              />
 
               <Button
                 type="submit"
                 className="w-full"
-                disabled={loading || (useBackupCode ? backupCode.trim().length < 6 : code.length < 6)}
+                disabled={loading || code.length < 6}
               >
                 {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Verify →'}
               </Button>
             </form>
 
-            <button
-              type="button"
-              onClick={() => {
-                setUseBackupCode((v) => !v);
-                setError(null);
-                setCode('');
-                setBackupCode('');
-              }}
-              className="mt-4 w-full text-xs text-center text-muted-foreground underline hover:text-foreground"
-            >
-              {useBackupCode ? 'Use your authenticator app instead' : 'Use a backup code instead'}
-            </button>
+            <p className="mt-4 text-xs text-center text-muted-foreground">
+              Lost access to your authenticator app? Email{' '}
+              <a href="mailto:hello@apexaml.com" className="underline hover:text-foreground">
+                hello@apexaml.com
+              </a>{' '}
+              from your registered address to have two-factor authentication reset.
+            </p>
           </>
         )}
       </Card>
