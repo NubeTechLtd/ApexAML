@@ -993,8 +993,16 @@ export default function AlertWorkspace() {
         action="NFIU_ESCALATION"
         onConfirmed={() => {
           setAlertStatus(selected.id, 'Escalated');
+          requestRiskRecalculation({
+            customerId: selected.customerProfile.bvn,
+            triggerType: 'STR_FILED',
+            triggerReference: selected.caseId,
+            kycTier: selected.customerProfile.kycTier,
+            customerName: selected.customerProfile.fullName,
+          });
           toast({ title: 'Escalated to NFIU', description: `Case ${selected.caseId} escalated.` });
         }}
+
       />
 
       {/* Close as False Positive dialog */}
