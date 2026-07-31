@@ -395,9 +395,16 @@ export default function AlertWorkspace() {
   const handleCloseFP = useCallback(() => {
     if (!selected || !fpReason) return;
     setAlertStatus(selected.id, 'Closed');
+    requestRiskRecalculation({
+      customerId: selected.customer360Id,
+      triggerType: 'ALERT_DISMISSED',
+      triggerReference: selected.caseId,
+      customerName: selected.customerName,
+    });
     toast({ title: 'Alert closed', description: `${selected.caseId} closed as False Positive — ${fpReason}.` });
     setFpDialogOpen(false);
     setFpReason('');
+
   }, [selected, fpReason, setAlertStatus, toast]);
 
   // Keyboard shortcuts
