@@ -56,10 +56,14 @@ export function Customer360Tabs({ customer, customerAlerts, notes = [], activeTa
         <TabsTrigger value="documents" className="gap-1.5 text-xs">
           <FileText className="h-3.5 w-3.5" /> Documents
         </TabsTrigger>
+        <TabsTrigger value="risk-history" className="gap-1.5 text-xs">
+          <TrendingUp className="h-3.5 w-3.5" /> Risk History
+        </TabsTrigger>
         <TabsTrigger value="audit" className="gap-1.5 text-xs">
           <ClipboardList className="h-3.5 w-3.5" /> Audit Log
         </TabsTrigger>
       </TabsList>
+
 
       <TabsContent value="transactions">
         <TransactionsTab customer={customer} />
