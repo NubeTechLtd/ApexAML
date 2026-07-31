@@ -54,6 +54,17 @@ export default function Customer360() {
   const [activeTab, setActiveTab] = useState('transactions');
   const [filterNotesOnly, setFilterNotesOnly] = useState(false);
 
+  const { currentScore: liveScore, latest: latestScoreEvent } = useRiskScoreHistory(
+    String(customer?.id ?? id ?? ''),
+    {
+      fallbackScore: customer?.riskScore ?? 0,
+      kycTier: customer?.kycTier,
+      customerName: customer?.name,
+    },
+  );
+
+
+
   const handleNoteBadgeClick = () => {
     setActiveTab('audit');
     setFilterNotesOnly(true);
