@@ -11,22 +11,12 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
-import { Loader2, ShieldCheck, ShieldAlert, Copy, Check } from 'lucide-react';
+import { Loader2, ShieldCheck, ShieldAlert, LifeBuoy } from 'lucide-react';
 import { Seo } from '@/components/Seo';
 import { OtpInput } from '@/components/auth/OtpInput';
 import { toast } from '@/hooks/use-toast';
 
 type Factor = { id: string; status: string; friendly_name?: string | null };
-
-/** Deterministic-looking recovery codes generated client-side for the user to store. */
-function generateBackupCodes(): string[] {
-  const bytes = new Uint32Array(10);
-  crypto.getRandomValues(bytes);
-  return Array.from(bytes, (n) => {
-    const hex = n.toString(36).toUpperCase().padStart(8, '0').slice(0, 8);
-    return `${hex.slice(0, 4)}-${hex.slice(4, 8)}`;
-  });
-}
 
 export default function Settings() {
   const [searchParams] = useSearchParams();
@@ -39,8 +29,6 @@ export default function Settings() {
   const [code, setCode] = useState('');
   const [verifying, setVerifying] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [backupCodes, setBackupCodes] = useState<string[] | null>(null);
-  const [copied, setCopied] = useState(false);
   const [removePassword, setRemovePassword] = useState('');
   const [removing, setRemoving] = useState(false);
 
@@ -83,7 +71,6 @@ export default function Settings() {
       setError('Incorrect code — please try again');
       return;
     }
-    setBackupCodes(generateBackupCodes());
     setEnrollment(null);
     await loadFactors();
     toast({ title: 'Two-factor authentication enabled' });
@@ -116,16 +103,8 @@ export default function Settings() {
       setError(unenrollError.message);
       return;
     }
-    setBackupCodes(null);
     await loadFactors();
     toast({ title: 'Two-factor authentication removed' });
-  };
-
-  const copyCodes = () => {
-    if (!backupCodes) return;
-    navigator.clipboard.writeText(backupCodes.join('\n'));
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 2000);
   };
 
   return (
@@ -190,9 +169,7 @@ export default function Settings() {
                   <p className="text-sm text-risk-low font-medium">
                     Two-factor authentication is active
                   </p>
-                  {backupCodes && (
-                    <BackupCodes codes={backupCodes} copied={copied} onCopy={copyCodes} />
-                  )}
+                  <RecoveryNotice />
                   <div className="rounded-lg border p-4 space-y-3">
                     <p className="text-sm font-medium">Remove 2FA</p>
                     <p className="text-xs text-muted-foreground">
@@ -268,9 +245,6 @@ export default function Settings() {
                   <p className="text-sm text-muted-foreground">
                     Your account does not have two-factor authentication enabled.
                   </p>
-                  {backupCodes && (
-                    <BackupCodes codes={backupCodes} copied={copied} onCopy={copyCodes} />
-                  )}
                   <Button onClick={startEnrollment} disabled={enrolling}>
                     {enrolling ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Enable 2FA →'}
                   </Button>
@@ -284,33 +258,21 @@ export default function Settings() {
   );
 }
 
-function BackupCodes({
-  codes,
-  copied,
-  onCopy,
-}: {
-  codes: string[];
-  copied: boolean;
-  onCopy: () => void;
-}) {
+function RecoveryNotice() {
   return (
     <div className="rounded-lg border border-risk-medium/40 bg-risk-medium/5 p-4">
-      <p className="text-sm font-medium">Save your backup codes</p>
-      <p className="mt-1 text-xs text-muted-foreground">
-        Each code can be used once if you lose access to your authenticator app. Store them somewhere
-        safe — they will not be shown again.
+      <p className="flex items-center gap-2 text-sm font-medium">
+        <LifeBuoy className="h-4 w-4" /> If you lose your authenticator app
       </p>
-      <div className="mt-3 grid grid-cols-2 gap-2 font-mono text-sm">
-        {codes.map((c) => (
-          <span key={c} className="rounded bg-muted px-2 py-1 text-center">
-            {c}
-          </span>
-        ))}
-      </div>
-      <Button variant="outline" size="sm" className="mt-3" onClick={onCopy}>
-        {copied ? <Check className="mr-1 h-3.5 w-3.5" /> : <Copy className="mr-1 h-3.5 w-3.5" />}
-        {copied ? 'Copied' : 'Copy codes'}
-      </Button>
+      <p className="mt-1 text-xs text-muted-foreground">
+        ApexAML does not issue self-service backup codes. Keep your authenticator app backed up. If
+        you lose access to it, email{' '}
+        <a href="mailto:hello@apexaml.com" className="underline hover:text-foreground">
+          hello@apexaml.com
+        </a>{' '}
+        from your registered address and an administrator will verify your identity and reset
+        two-factor authentication for your account.
+      </p>
     </div>
   );
 }
