@@ -68,6 +68,39 @@ export type Database = {
         }
         Relationships: []
       }
+      customer_risk_scores: {
+        Row: {
+          created_at: string
+          customer_id: string
+          id: string
+          kyc_tier: string | null
+          last_calculated_at: string
+          risk_level: string
+          risk_score: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          customer_id: string
+          id?: string
+          kyc_tier?: string | null
+          last_calculated_at?: string
+          risk_level?: string
+          risk_score?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string
+          id?: string
+          kyc_tier?: string | null
+          last_calculated_at?: string
+          risk_level?: string
+          risk_score?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       demo_requests: {
         Row: {
           contact_name: string
@@ -702,6 +735,45 @@ export type Database = {
           },
         ]
       }
+      risk_score_history: {
+        Row: {
+          calculated_by: string
+          created_at: string
+          customer_id: string
+          factors: Json | null
+          id: string
+          new_score: number
+          previous_score: number | null
+          score_change: number | null
+          trigger_reference: string | null
+          trigger_type: string
+        }
+        Insert: {
+          calculated_by?: string
+          created_at?: string
+          customer_id: string
+          factors?: Json | null
+          id?: string
+          new_score: number
+          previous_score?: number | null
+          score_change?: number | null
+          trigger_reference?: string | null
+          trigger_type: string
+        }
+        Update: {
+          calculated_by?: string
+          created_at?: string
+          customer_id?: string
+          factors?: Json | null
+          id?: string
+          new_score?: number
+          previous_score?: number | null
+          score_change?: number | null
+          trigger_reference?: string | null
+          trigger_type?: string
+        }
+        Relationships: []
+      }
       roadmap_lead_counter: {
         Row: {
           count: number
@@ -1052,6 +1124,14 @@ export type Database = {
           msg_id: number
           read_ct: number
         }[]
+      }
+      request_risk_recalculation: {
+        Args: {
+          _customer_id: string
+          _trigger_reference?: string
+          _trigger_type: string
+        }
+        Returns: undefined
       }
       screen_entity: {
         Args: { search_name: string; threshold?: number }
