@@ -396,11 +396,13 @@ export default function AlertWorkspace() {
     if (!selected || !fpReason) return;
     setAlertStatus(selected.id, 'Closed');
     requestRiskRecalculation({
-      customerId: selected.customer360Id,
+      customerId: selected.customerProfile.bvn,
       triggerType: 'ALERT_DISMISSED',
       triggerReference: selected.caseId,
-      customerName: selected.customerName,
+      kycTier: selected.customerProfile.kycTier,
+      customerName: selected.customerProfile.fullName,
     });
+
     toast({ title: 'Alert closed', description: `${selected.caseId} closed as False Positive — ${fpReason}.` });
     setFpDialogOpen(false);
     setFpReason('');
