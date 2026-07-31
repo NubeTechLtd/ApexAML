@@ -15,6 +15,9 @@ import { Customer360Tabs } from './DeepDiveTabs';
 import { ConfirmEscalationDialog } from '@/components/ConfirmEscalationDialog';
 import { FreezeAccountDialog } from '@/components/FreezeAccountDialog';
 import { AddNoteSheet, type ComplianceNote } from './AddNoteSheet';
+import { DynamicRiskScoreBadge } from './DynamicRiskScoreBadge';
+import { useRiskScoreHistory } from '@/hooks/useRiskScoreHistory';
+
 
 const riskColors: Record<string, string> = {
   High: 'bg-destructive/10 text-destructive border-destructive/20',
