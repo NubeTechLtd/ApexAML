@@ -40,6 +40,15 @@ export function Customer360Content({ customerId, onClose }: Props) {
   const [notes, setNotes] = useState<ComplianceNote[]>([]);
   const [activeTab, setActiveTab] = useState('transactions');
   const [filterNotesOnly, setFilterNotesOnly] = useState(false);
+  const { currentScore: liveScore, latest: latestScoreEvent } = useRiskScoreHistory(
+    String(customer?.id ?? customerId),
+    {
+      fallbackScore: customer?.riskScore ?? 0,
+      kycTier: customer?.kycTier,
+      customerName: customer?.name,
+    },
+  );
+
 
   const handleNoteBadgeClick = () => {
     setActiveTab('audit');
