@@ -27,6 +27,8 @@ import { mockAlerts, type Alert, type TxChannel } from '@/data/mockAlerts';
 import { useToast } from '@/hooks/use-toast';
 import { useAuditLog } from '@/hooks/useAuditLog';
 import { useCBNRate } from '@/hooks/useCBNRate';
+import { requestRiskRecalculation } from '@/lib/riskScore';
+
 import { generateGoAMLXml, downloadXmlFile } from '@/lib/generateGoAMLXml';
 import { IMTOInvestigation } from '@/components/IMTOInvestigation';
 import { CrossBorderSLACard } from '@/components/CrossBorderSLACard';
