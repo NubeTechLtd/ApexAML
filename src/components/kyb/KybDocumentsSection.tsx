@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -25,7 +25,7 @@ export function KybDocumentsSection({ entityId, businessType, required, onCountC
     if (!currentByType.has(d.document_type)) currentByType.set(d.document_type, d);
   });
   const onFile = required.filter(t => currentByType.has(t)).length;
-  onCountChange?.(onFile);
+  useEffect(() => { onCountChange?.(onFile); }, [onFile, onCountChange]);
 
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
