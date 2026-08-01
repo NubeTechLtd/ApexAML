@@ -11,6 +11,7 @@ import { NetworkGraph } from './NetworkGraph';
 import { AuditLogTab } from './AuditLogTab';
 import { Customer360DocumentsTab } from './DocumentsTab';
 import { RiskHistoryTab } from './RiskHistoryTab';
+import { riskScoreKey } from '@/lib/riskScore';
 
 
 
@@ -123,7 +124,7 @@ export function Customer360Tabs({ customer, customerAlerts, notes = [], activeTa
 
       <TabsContent value="risk-history">
         <RiskHistoryTab
-          customerId={String(customer.id)}
+          customerId={riskScoreKey(customer.bvn) ?? String(customer.id)}
           fallbackScore={customer.riskScore}
           kycTier={customer.kycTier}
           customerName={customer.name}

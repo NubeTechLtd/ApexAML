@@ -27,7 +27,7 @@ import { mockAlerts, type Alert, type TxChannel } from '@/data/mockAlerts';
 import { useToast } from '@/hooks/use-toast';
 import { useAuditLog } from '@/hooks/useAuditLog';
 import { useCBNRate } from '@/hooks/useCBNRate';
-import { requestRiskRecalculation } from '@/lib/riskScore';
+import { requestRiskRecalculation, riskScoreKey } from '@/lib/riskScore';
 
 import { generateGoAMLXml, downloadXmlFile } from '@/lib/generateGoAMLXml';
 import { IMTOInvestigation } from '@/components/IMTOInvestigation';
@@ -398,7 +398,7 @@ export default function AlertWorkspace() {
     if (!selected || !fpReason) return;
     setAlertStatus(selected.id, 'Closed');
     requestRiskRecalculation({
-      customerId: selected.customerProfile.bvn,
+      customerId: riskScoreKey(selected.customerProfile.bvn) ?? undefined,
       triggerType: 'ALERT_DISMISSED',
       triggerReference: selected.caseId,
       kycTier: selected.customerProfile.kycTier,
@@ -996,7 +996,7 @@ export default function AlertWorkspace() {
         onConfirmed={() => {
           setAlertStatus(selected.id, 'Escalated');
           requestRiskRecalculation({
-            customerId: selected.customerProfile.bvn,
+            customerId: riskScoreKey(selected.customerProfile.bvn) ?? undefined,
             triggerType: 'STR_FILED',
             triggerReference: selected.caseId,
             kycTier: selected.customerProfile.kycTier,

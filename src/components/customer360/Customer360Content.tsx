@@ -17,6 +17,7 @@ import { FreezeAccountDialog } from '@/components/FreezeAccountDialog';
 import { AddNoteSheet, type ComplianceNote } from './AddNoteSheet';
 import { DynamicRiskScoreBadge } from './DynamicRiskScoreBadge';
 import { useRiskScoreHistory } from '@/hooks/useRiskScoreHistory';
+import { riskScoreKey } from '@/lib/riskScore';
 
 
 const riskColors: Record<string, string> = {
@@ -41,7 +42,7 @@ export function Customer360Content({ customerId, onClose }: Props) {
   const [activeTab, setActiveTab] = useState('transactions');
   const [filterNotesOnly, setFilterNotesOnly] = useState(false);
   const { currentScore: liveScore, latest: latestScoreEvent } = useRiskScoreHistory(
-    String(customer?.id ?? customerId),
+    riskScoreKey(customer?.bvn) ?? String(customer?.id ?? customerId),
     {
       fallbackScore: customer?.riskScore ?? 0,
       kycTier: customer?.kycTier,

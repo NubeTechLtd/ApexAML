@@ -32,6 +32,7 @@ import { FreezeAccountDialog } from '@/components/FreezeAccountDialog';
 import { DocumentCompleteness } from '@/components/customer360/DocumentCompleteness';
 import { DynamicRiskScoreBadge } from '@/components/customer360/DynamicRiskScoreBadge';
 import { useRiskScoreHistory } from '@/hooks/useRiskScoreHistory';
+import { riskScoreKey } from '@/lib/riskScore';
 
 
 
@@ -55,7 +56,7 @@ export default function Customer360() {
   const [filterNotesOnly, setFilterNotesOnly] = useState(false);
 
   const { currentScore: liveScore, latest: latestScoreEvent } = useRiskScoreHistory(
-    String(customer?.id ?? id ?? ''),
+    riskScoreKey(customer?.bvn) ?? String(customer?.id ?? id ?? ''),
     {
       fallbackScore: customer?.riskScore ?? 0,
       kycTier: customer?.kycTier,
