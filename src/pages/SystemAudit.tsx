@@ -53,6 +53,14 @@ const ACTION_LABELS: Record<string, string> = {
   DOCUMENT_UPLOAD: 'Uploaded KYC Document',
   DOCUMENT_VERIFY: 'Verified KYC Document',
   DOCUMENT_DOWNLOAD: 'Downloaded KYC Document',
+  KYB_CAC_VERIFY: 'Requested CAC Verification',
+  KYB_UBO_ADDED: 'Recorded Beneficial Owner',
+  KYB_BVN_VERIFY: 'Verified Director BVN',
+  KYB_PEP_SCREEN: 'Screened Director for PEP',
+  KYB_MAKER_APPROVE: 'Recommended KYB Approval (Maker)',
+  KYB_MAKER_REJECT: 'Recommended KYB Rejection (Maker)',
+  KYB_APPROVED: 'Approved Corporate KYB (Checker)',
+  KYB_REJECTED: 'Rejected Corporate KYB (Checker)',
 };
 
 const SystemAudit = () => {

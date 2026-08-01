@@ -7,7 +7,15 @@ export interface AuditEntry {
     | 'ACCOUNT_FREEZE'
     | 'DOCUMENT_UPLOAD'
     | 'DOCUMENT_VERIFY'
-    | 'DOCUMENT_DOWNLOAD';
+    | 'DOCUMENT_DOWNLOAD'
+    | 'KYB_CAC_VERIFY'
+    | 'KYB_UBO_ADDED'
+    | 'KYB_BVN_VERIFY'
+    | 'KYB_PEP_SCREEN'
+    | 'KYB_MAKER_APPROVE'
+    | 'KYB_MAKER_REJECT'
+    | 'KYB_APPROVED'
+    | 'KYB_REJECTED';
   analyst: string;
   caseId: string;
   justification: string;
