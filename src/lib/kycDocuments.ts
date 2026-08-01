@@ -16,6 +16,12 @@ export type KycDocumentType =
   | 'CAC_CERT'
   | 'TIN_CERT'
   | 'SOURCE_OF_FUNDS'
+  | 'MEMART'
+  | 'ANNUAL_RETURN'
+  | 'AUDITED_ACCOUNTS'
+  | 'PROPRIETOR_ID'
+  | 'BOARD_RESOLUTION'
+  | 'TRUST_DEED'
   | 'OTHER';
 
 export const DOCUMENT_LABELS: Record<KycDocumentType, string> = {
@@ -24,11 +30,18 @@ export const DOCUMENT_LABELS: Record<KycDocumentType, string> = {
   UTILITY_BILL: 'Utility bill (not older than 3 months)',
   EMPLOYMENT_LETTER: 'Employment letter',
   PASSPORT: 'Government ID (passport / driver’s licence)',
-  CAC_CERT: 'CAC certificate',
+  CAC_CERT: 'CAC certificate of incorporation',
   TIN_CERT: 'TIN certificate',
   SOURCE_OF_FUNDS: 'Source of funds declaration',
+  MEMART: 'MEMART (memorandum & articles of association)',
+  ANNUAL_RETURN: 'Latest CAC annual return',
+  AUDITED_ACCOUNTS: 'Recent audited accounts',
+  PROPRIETOR_ID: 'Government ID of the proprietor',
+  BOARD_RESOLUTION: 'Board resolution to open the account',
+  TRUST_DEED: 'Trust deed / constitution',
   OTHER: 'Other supporting document',
 };
+
 
 export interface KycDocument {
   id: string;

@@ -11,6 +11,7 @@ import Dashboard from "./pages/Dashboard.tsx";
 import RulesEngine from "./pages/RulesEngine.tsx";
 import RegulatoryReports from "./pages/RegulatoryReports.tsx";
 import IdentityKYC from "./pages/IdentityKYC.tsx";
+import CorporateKYB from "./pages/CorporateKYB.tsx";
 import SystemAudit from "./pages/SystemAudit.tsx";
 import Customers from "./pages/Customers.tsx";
 import Customer360 from "./pages/Customer360.tsx";
@@ -51,6 +52,7 @@ const App = () => (
             <Route path="/reports/cbn" element={<RegulatoryReports />} />
             <Route path="/reports/nfiu" element={<RegulatoryReports />} />
             <Route path="/identity" element={<IdentityKYC />} />
+            <Route path="/kyb/corporate" element={<CorporateKYB />} />
             <Route path="/customers" element={<Customers />} />
             <Route path="/customers/:id" element={<Customer360 />} />
             <Route path="/dashboard" element={<Dashboard />} />

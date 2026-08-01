@@ -27,6 +27,7 @@ const todaysWork = [
 const customerManagement = [
   { title: 'Customer Risk Profiles', url: '/customers', icon: Users },
   { title: 'KYC Verification Queue', url: '/identity', icon: Fingerprint },
+  { title: 'Corporate KYB', url: '/kyb/corporate', icon: Building2 },
   { title: 'Sanctions & PEP Screening', url: '/sanctions', icon: ShieldAlert },
 ];
 
