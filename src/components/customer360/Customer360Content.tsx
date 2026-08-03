@@ -198,6 +198,7 @@ export function Customer360Content({ customerId, onClose }: Props) {
       <AddNoteSheet
         open={noteSheetOpen}
         onOpenChange={setNoteSheetOpen}
+        initialContent={notePrefill}
         onSave={(note) => {
           setNotes(prev => [...prev, note]);
           toast.success('Compliance note saved');
