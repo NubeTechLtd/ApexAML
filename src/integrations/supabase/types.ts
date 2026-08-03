@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      adverse_media_results: {
+        Row: {
+          bvn: string | null
+          created_at: string
+          customer_id: string
+          customer_name: string
+          id: string
+          institution_name: string | null
+          next_review_date: string
+          overall_risk_level: string
+          results: Json
+          screened_by: string
+          search_date: string
+          updated_at: string
+        }
+        Insert: {
+          bvn?: string | null
+          created_at?: string
+          customer_id: string
+          customer_name: string
+          id?: string
+          institution_name?: string | null
+          next_review_date?: string
+          overall_risk_level?: string
+          results?: Json
+          screened_by?: string
+          search_date?: string
+          updated_at?: string
+        }
+        Update: {
+          bvn?: string | null
+          created_at?: string
+          customer_id?: string
+          customer_name?: string
+          id?: string
+          institution_name?: string | null
+          next_review_date?: string
+          overall_risk_level?: string
+          results?: Json
+          screened_by?: string
+          search_date?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       ctr_queue: {
         Row: {
           created_at: string
