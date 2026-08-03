@@ -125,6 +125,15 @@ export function Customer360Tabs({ customer, customerAlerts, notes = [], activeTa
         <Customer360DocumentsTab customerId={String(customer.id)} kycTier={customer.kycTier} />
       </TabsContent>
 
+      <TabsContent value="adverse-media">
+        <AdverseMediaPanel
+          customerId={riskScoreKey(customer.bvn) ?? String(customer.id)}
+          customerName={customer.name}
+          bvn={customer.bvn}
+          onAddToCaseNotes={onAddToCaseNotes}
+        />
+      </TabsContent>
+
 
       <TabsContent value="risk-history">
         <RiskHistoryTab
