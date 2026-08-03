@@ -165,9 +165,14 @@ export function Customer360Content({ customerId, onClose }: Props) {
             activeTab={activeTab}
             onTabChange={handleTabChange}
             filterNotesOnly={filterNotesOnly}
+            onAddToCaseNotes={(content) => {
+              setNotePrefill(content);
+              setNoteSheetOpen(true);
+            }}
           />
         </motion.div>
       </div>
+
 
       <FreezeAccountDialog
         open={freezeOpen}
