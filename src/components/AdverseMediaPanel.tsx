@@ -88,7 +88,10 @@ export function useAdverseMediaScreening(customerId: string) {
     if (error) console.warn('adverse media load failed', error.message);
     setScreening(
       data
-        ? ({ ...data, results: Array.isArray(data.results) ? data.results : [] } as AdverseMediaScreening)
+        ? ({
+            ...data,
+            results: Array.isArray(data.results) ? data.results : [],
+          } as unknown as AdverseMediaScreening)
         : null,
     );
     setLoading(false);
