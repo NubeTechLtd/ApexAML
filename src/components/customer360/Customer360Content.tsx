@@ -38,6 +38,7 @@ export function Customer360Content({ customerId, onClose }: Props) {
   const [escalateOpen, setEscalateOpen] = useState(false);
   const [accountStatus, setAccountStatus] = useState(customer?.accountStatus ?? 'Active');
   const [noteSheetOpen, setNoteSheetOpen] = useState(false);
+  const [notePrefill, setNotePrefill] = useState('');
   const [notes, setNotes] = useState<ComplianceNote[]>([]);
   const [activeTab, setActiveTab] = useState('transactions');
   const [filterNotesOnly, setFilterNotesOnly] = useState(false);
