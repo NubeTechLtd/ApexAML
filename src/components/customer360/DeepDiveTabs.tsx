@@ -39,9 +39,10 @@ interface Props {
   activeTab?: string;
   onTabChange?: (tab: string) => void;
   filterNotesOnly?: boolean;
+  onAddToCaseNotes?: (content: string) => void;
 }
 
-export function Customer360Tabs({ customer, customerAlerts, notes = [], activeTab, onTabChange, filterNotesOnly = false }: Props) {
+export function Customer360Tabs({ customer, customerAlerts, notes = [], activeTab, onTabChange, filterNotesOnly = false, onAddToCaseNotes }: Props) {
   return (
     <Tabs value={activeTab} defaultValue="transactions" onValueChange={onTabChange} className="w-full">
       <TabsList>
@@ -56,6 +57,9 @@ export function Customer360Tabs({ customer, customerAlerts, notes = [], activeTa
         </TabsTrigger>
         <TabsTrigger value="documents" className="gap-1.5 text-xs">
           <FileText className="h-3.5 w-3.5" /> Documents
+        </TabsTrigger>
+        <TabsTrigger value="adverse-media" className="gap-1.5 text-xs">
+          <Newspaper className="h-3.5 w-3.5" /> Adverse Media
         </TabsTrigger>
         <TabsTrigger value="risk-history" className="gap-1.5 text-xs">
           <TrendingUp className="h-3.5 w-3.5" /> Risk History
