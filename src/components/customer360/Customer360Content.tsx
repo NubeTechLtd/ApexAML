@@ -38,6 +38,7 @@ export function Customer360Content({ customerId, onClose }: Props) {
   const [escalateOpen, setEscalateOpen] = useState(false);
   const [accountStatus, setAccountStatus] = useState(customer?.accountStatus ?? 'Active');
   const [noteSheetOpen, setNoteSheetOpen] = useState(false);
+  const [notePrefill, setNotePrefill] = useState('');
   const [notes, setNotes] = useState<ComplianceNote[]>([]);
   const [activeTab, setActiveTab] = useState('transactions');
   const [filterNotesOnly, setFilterNotesOnly] = useState(false);
@@ -112,7 +113,7 @@ export function Customer360Content({ customerId, onClose }: Props) {
             >
               <ExternalLink className="h-3.5 w-3.5" /> Open Full Page
             </Button>
-            <Button variant="outline" size="sm" className="gap-1.5" onClick={() => setNoteSheetOpen(true)}>
+            <Button variant="outline" size="sm" className="gap-1.5" onClick={() => { setNotePrefill(''); setNoteSheetOpen(true); }}>
               <StickyNote className="h-3.5 w-3.5" /> Add Note
             </Button>
             <DropdownMenu>
@@ -164,9 +165,14 @@ export function Customer360Content({ customerId, onClose }: Props) {
             activeTab={activeTab}
             onTabChange={handleTabChange}
             filterNotesOnly={filterNotesOnly}
+            onAddToCaseNotes={(content) => {
+              setNotePrefill(content);
+              setNoteSheetOpen(true);
+            }}
           />
         </motion.div>
       </div>
+
 
       <FreezeAccountDialog
         open={freezeOpen}
@@ -192,6 +198,7 @@ export function Customer360Content({ customerId, onClose }: Props) {
       <AddNoteSheet
         open={noteSheetOpen}
         onOpenChange={setNoteSheetOpen}
+        initialContent={notePrefill}
         onSave={(note) => {
           setNotes(prev => [...prev, note]);
           toast.success('Compliance note saved');

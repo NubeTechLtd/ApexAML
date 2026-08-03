@@ -2,15 +2,37 @@ import { useState, useMemo } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Search, CheckCircle2, XCircle, Clock, Loader2 } from 'lucide-react';
+import { Search, CheckCircle2, XCircle, Clock, Loader2, Newspaper } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { KYCCustomer, KYCStatus } from '@/data/mockKYC';
+
+export type AdverseMediaStatus = 'High' | 'Medium' | 'Low' | 'None';
 
 interface VerificationQueueProps {
   customers: KYCCustomer[];
   selectedId: string | null;
   onSelect: (customer: KYCCustomer) => void;
+  /** Latest adverse media outcome keyed by BVN — drives the newspaper flag. */
+  adverseMedia?: Record<string, AdverseMediaStatus>;
 }
+
+const adverseMediaIcon = (status: AdverseMediaStatus | undefined) => {
+  const label =
+    status === 'High' ? 'High risk adverse media found'
+    : status === 'Medium' ? 'Medium risk adverse media found'
+    : status === undefined ? 'Adverse media not yet screened'
+    : 'Adverse media screened — no material findings';
+  const color =
+    status === 'High' ? 'text-destructive'
+    : status === 'Medium' ? 'text-[hsl(var(--risk-medium))]'
+    : status === undefined ? 'text-muted-foreground/50'
+    : 'text-[hsl(var(--risk-low))]';
+  return (
+    <span title={label} className="inline-flex shrink-0">
+      <Newspaper className={cn('h-3 w-3', color)} aria-label={label} />
+    </span>
+  );
+};
 
 const tabs: { label: string; value: KYCStatus | 'All' }[] = [
   { label: 'All', value: 'All' },
@@ -39,7 +61,7 @@ const matchIcon = (status: 'match' | 'mismatch' | 'pending') => {
   return <Loader2 className="h-3 w-3 text-muted-foreground animate-spin" />;
 };
 
-export function VerificationQueue({ customers, selectedId, onSelect }: VerificationQueueProps) {
+export function VerificationQueue({ customers, selectedId, onSelect, adverseMedia = {} }: VerificationQueueProps) {
   const [search, setSearch] = useState('');
   const [tab, setTab] = useState<KYCStatus | 'All'>('All');
 
@@ -106,7 +128,10 @@ export function VerificationQueue({ customers, selectedId, onSelect }: Verificat
               )}
             >
               <div className="flex items-center justify-between mb-1">
-                <span className="text-sm font-medium text-foreground truncate">{c.name}</span>
+                <span className="flex items-center gap-1.5 min-w-0">
+                  <span className="text-sm font-medium text-foreground truncate">{c.name}</span>
+                  {adverseMediaIcon(adverseMedia[c.bvn])}
+                </span>
                 <Badge variant="outline" className={cn('text-[9px] px-1.5 py-0 border-0 font-semibold', statusBadge[c.status])}>
                   {c.status}
                 </Badge>

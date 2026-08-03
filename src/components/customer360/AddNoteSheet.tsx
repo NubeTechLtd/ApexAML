@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -26,11 +26,17 @@ interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSave: (note: ComplianceNote) => void;
+  /** Prefilled note body, e.g. an adverse media article reference. */
+  initialContent?: string;
 }
 
-export function AddNoteSheet({ open, onOpenChange, onSave }: Props) {
+export function AddNoteSheet({ open, onOpenChange, onSave, initialContent }: Props) {
   const [content, setContent] = useState('');
   const [visibility, setVisibility] = useState<NoteVisibility>('Internal only');
+
+  useEffect(() => {
+    if (open) setContent(initialContent ?? '');
+  }, [open, initialContent]);
 
   const valid = content.trim().length >= 10;
 

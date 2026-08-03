@@ -2,7 +2,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { CreditCard, Network, AlertTriangle, FileText, Download, ClipboardList, ShieldCheck, TrendingUp } from 'lucide-react';
+import { CreditCard, Network, AlertTriangle, FileText, Download, ClipboardList, ShieldCheck, TrendingUp, Newspaper } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { Customer360Data } from '@/data/mockCustomer360';
 import type { ComplianceNote } from './AddNoteSheet';
@@ -12,6 +12,7 @@ import { AuditLogTab } from './AuditLogTab';
 import { Customer360DocumentsTab } from './DocumentsTab';
 import { RiskHistoryTab } from './RiskHistoryTab';
 import { riskScoreKey } from '@/lib/riskScore';
+import { AdverseMediaPanel } from '@/components/AdverseMediaPanel';
 
 
 
@@ -39,9 +40,10 @@ interface Props {
   activeTab?: string;
   onTabChange?: (tab: string) => void;
   filterNotesOnly?: boolean;
+  onAddToCaseNotes?: (content: string) => void;
 }
 
-export function Customer360Tabs({ customer, customerAlerts, notes = [], activeTab, onTabChange, filterNotesOnly = false }: Props) {
+export function Customer360Tabs({ customer, customerAlerts, notes = [], activeTab, onTabChange, filterNotesOnly = false, onAddToCaseNotes }: Props) {
   return (
     <Tabs value={activeTab} defaultValue="transactions" onValueChange={onTabChange} className="w-full">
       <TabsList>
@@ -56,6 +58,9 @@ export function Customer360Tabs({ customer, customerAlerts, notes = [], activeTa
         </TabsTrigger>
         <TabsTrigger value="documents" className="gap-1.5 text-xs">
           <FileText className="h-3.5 w-3.5" /> Documents
+        </TabsTrigger>
+        <TabsTrigger value="adverse-media" className="gap-1.5 text-xs">
+          <Newspaper className="h-3.5 w-3.5" /> Adverse Media
         </TabsTrigger>
         <TabsTrigger value="risk-history" className="gap-1.5 text-xs">
           <TrendingUp className="h-3.5 w-3.5" /> Risk History
@@ -119,6 +124,15 @@ export function Customer360Tabs({ customer, customerAlerts, notes = [], activeTa
 
       <TabsContent value="documents">
         <Customer360DocumentsTab customerId={String(customer.id)} kycTier={customer.kycTier} />
+      </TabsContent>
+
+      <TabsContent value="adverse-media">
+        <AdverseMediaPanel
+          customerId={riskScoreKey(customer.bvn) ?? String(customer.id)}
+          customerName={customer.name}
+          bvn={customer.bvn}
+          onAddToCaseNotes={onAddToCaseNotes}
+        />
       </TabsContent>
 
 
