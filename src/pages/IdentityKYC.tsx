@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { VerificationQueue } from '@/components/VerificationQueue';
@@ -8,11 +8,35 @@ import { NotificationBell } from '@/components/NotificationBell';
 import { AuditBell } from '@/components/AuditBell';
 import { Fingerprint } from 'lucide-react';
 import { mockKYCCustomers, type KYCCustomer } from '@/data/mockKYC';
+import { supabase } from '@/integrations/supabase/client';
+import type { AdverseMediaStatus } from '@/components/VerificationQueue';
 
 const IdentityKYC = () => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [customers, setCustomers] = useState(mockKYCCustomers);
   const selected = customers.find(c => c.id === selectedId) ?? null;
+  const [adverseMedia, setAdverseMedia] = useState<Record<string, AdverseMediaStatus>>({});
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const bvns = mockKYCCustomers.map(c => c.bvn);
+      const { data, error } = await supabase
+        .from('adverse_media_results')
+        .select('customer_id, overall_risk_level, search_date')
+        .in('customer_id', bvns)
+        .order('search_date', { ascending: false });
+      if (cancelled || error || !data) return;
+      const map: Record<string, AdverseMediaStatus> = {};
+      for (const row of data) {
+        if (!(row.customer_id in map)) {
+          map[row.customer_id] = (row.overall_risk_level as AdverseMediaStatus) ?? 'None';
+        }
+      }
+      setAdverseMedia(map);
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   const handleSelect = (c: KYCCustomer) => setSelectedId(c.id);
 
@@ -48,6 +72,7 @@ const IdentityKYC = () => {
                 customers={customers}
                 selectedId={selectedId}
                 onSelect={handleSelect}
+                adverseMedia={adverseMedia}
               />
             </div>
             <div className="flex-1 flex flex-col min-h-0">
