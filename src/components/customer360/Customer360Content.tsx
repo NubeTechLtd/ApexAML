@@ -113,7 +113,7 @@ export function Customer360Content({ customerId, onClose }: Props) {
             >
               <ExternalLink className="h-3.5 w-3.5" /> Open Full Page
             </Button>
-            <Button variant="outline" size="sm" className="gap-1.5" onClick={() => setNoteSheetOpen(true)}>
+            <Button variant="outline" size="sm" className="gap-1.5" onClick={() => { setNotePrefill(''); setNoteSheetOpen(true); }}>
               <StickyNote className="h-3.5 w-3.5" /> Add Note
             </Button>
             <DropdownMenu>
