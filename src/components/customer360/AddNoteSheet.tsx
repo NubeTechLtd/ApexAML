@@ -26,11 +26,17 @@ interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSave: (note: ComplianceNote) => void;
+  /** Prefilled note body, e.g. an adverse media article reference. */
+  initialContent?: string;
 }
 
-export function AddNoteSheet({ open, onOpenChange, onSave }: Props) {
+export function AddNoteSheet({ open, onOpenChange, onSave, initialContent }: Props) {
   const [content, setContent] = useState('');
   const [visibility, setVisibility] = useState<NoteVisibility>('Internal only');
+
+  useEffect(() => {
+    if (open) setContent(initialContent ?? '');
+  }, [open, initialContent]);
 
   const valid = content.trim().length >= 10;
 
