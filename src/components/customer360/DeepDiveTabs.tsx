@@ -12,6 +12,7 @@ import { AuditLogTab } from './AuditLogTab';
 import { Customer360DocumentsTab } from './DocumentsTab';
 import { RiskHistoryTab } from './RiskHistoryTab';
 import { riskScoreKey } from '@/lib/riskScore';
+import { AdverseMediaPanel } from '@/components/AdverseMediaPanel';
 
 
 
