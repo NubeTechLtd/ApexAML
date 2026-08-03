@@ -27,7 +27,11 @@ const adverseMediaIcon = (status: AdverseMediaStatus | undefined) => {
     : status === 'Medium' ? 'text-[hsl(var(--risk-medium))]'
     : status === undefined ? 'text-muted-foreground/50'
     : 'text-[hsl(var(--risk-low))]';
-  return <Newspaper className={cn('h-3 w-3', color)} aria-label={label} title={label} />;
+  return (
+    <span title={label} className="inline-flex shrink-0">
+      <Newspaper className={cn('h-3 w-3', color)} aria-label={label} />
+    </span>
+  );
 };
 
 const tabs: { label: string; value: KYCStatus | 'All' }[] = [
