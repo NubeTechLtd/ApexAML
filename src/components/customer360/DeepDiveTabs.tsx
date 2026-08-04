@@ -13,6 +13,7 @@ import { Customer360DocumentsTab } from './DocumentsTab';
 import { RiskHistoryTab } from './RiskHistoryTab';
 import { riskScoreKey } from '@/lib/riskScore';
 import { AdverseMediaPanel } from '@/components/AdverseMediaPanel';
+import { EntityNetworkGraph } from './EntityNetworkGraph';
 
 
 
@@ -56,6 +57,10 @@ export function Customer360Tabs({ customer, customerAlerts, notes = [], activeTa
         <TabsTrigger value="network" className="gap-1.5 text-xs">
           <Network className="h-3.5 w-3.5" /> Network
         </TabsTrigger>
+        <TabsTrigger value="entity-network" className="gap-1.5 text-xs">
+          <Network className="h-3.5 w-3.5" /> Entity Network
+        </TabsTrigger>
+
         <TabsTrigger value="documents" className="gap-1.5 text-xs">
           <FileText className="h-3.5 w-3.5" /> Documents
         </TabsTrigger>
@@ -121,6 +126,11 @@ export function Customer360Tabs({ customer, customerAlerts, notes = [], activeTa
       <TabsContent value="network">
         <NetworkGraph customer={customer} />
       </TabsContent>
+
+      <TabsContent value="entity-network">
+        <EntityNetworkGraph customer={customer} />
+      </TabsContent>
+
 
       <TabsContent value="documents">
         <Customer360DocumentsTab customerId={String(customer.id)} kycTier={customer.kycTier} />
