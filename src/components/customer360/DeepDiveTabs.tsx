@@ -127,6 +127,11 @@ export function Customer360Tabs({ customer, customerAlerts, notes = [], activeTa
         <NetworkGraph customer={customer} />
       </TabsContent>
 
+      <TabsContent value="entity-network">
+        <EntityNetworkGraph customer={customer} />
+      </TabsContent>
+
+
       <TabsContent value="documents">
         <Customer360DocumentsTab customerId={String(customer.id)} kycTier={customer.kycTier} />
       </TabsContent>
