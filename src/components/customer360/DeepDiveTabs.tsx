@@ -57,6 +57,10 @@ export function Customer360Tabs({ customer, customerAlerts, notes = [], activeTa
         <TabsTrigger value="network" className="gap-1.5 text-xs">
           <Network className="h-3.5 w-3.5" /> Network
         </TabsTrigger>
+        <TabsTrigger value="entity-network" className="gap-1.5 text-xs">
+          <Network className="h-3.5 w-3.5" /> Entity Network
+        </TabsTrigger>
+
         <TabsTrigger value="documents" className="gap-1.5 text-xs">
           <FileText className="h-3.5 w-3.5" /> Documents
         </TabsTrigger>
