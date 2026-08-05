@@ -195,6 +195,15 @@ export default function Customer360() {
               </motion.div>
             </div>
 
+            {/* Peer group benchmarking */}
+            <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18 }}>
+              <PeerGroupAnalysis
+                customerId={customer.id}
+                customerName={customer.name}
+                kycTier={customer.kycTier}
+              />
+            </motion.div>
+
             {/* Bottom tabbed section */}
             <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
               <Customer360Tabs
