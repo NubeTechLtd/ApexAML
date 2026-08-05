@@ -18,6 +18,7 @@ import { AddNoteSheet, type ComplianceNote } from './AddNoteSheet';
 import { DynamicRiskScoreBadge } from './DynamicRiskScoreBadge';
 import { useRiskScoreHistory } from '@/hooks/useRiskScoreHistory';
 import { riskScoreKey } from '@/lib/riskScore';
+import { PeerGroupAnalysis } from './PeerGroupAnalysis';
 
 
 const riskColors: Record<string, string> = {
