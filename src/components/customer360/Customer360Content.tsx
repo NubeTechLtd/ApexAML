@@ -18,6 +18,7 @@ import { AddNoteSheet, type ComplianceNote } from './AddNoteSheet';
 import { DynamicRiskScoreBadge } from './DynamicRiskScoreBadge';
 import { useRiskScoreHistory } from '@/hooks/useRiskScoreHistory';
 import { riskScoreKey } from '@/lib/riskScore';
+import { PeerGroupAnalysis } from './PeerGroupAnalysis';
 
 
 const riskColors: Record<string, string> = {
@@ -156,6 +157,14 @@ export function Customer360Content({ customerId, onClose }: Props) {
             <Customer360Entities entities={customer.connectedEntities} customerName={customer.name} />
           </motion.div>
         </div>
+
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18 }}>
+          <PeerGroupAnalysis
+            customerId={customer.id}
+            customerName={customer.name}
+            kycTier={customer.kycTier}
+          />
+        </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
           <Customer360Tabs
