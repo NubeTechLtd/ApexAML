@@ -33,6 +33,7 @@ import { DocumentCompleteness } from '@/components/customer360/DocumentCompleten
 import { DynamicRiskScoreBadge } from '@/components/customer360/DynamicRiskScoreBadge';
 import { useRiskScoreHistory } from '@/hooks/useRiskScoreHistory';
 import { riskScoreKey } from '@/lib/riskScore';
+import { PeerGroupAnalysis } from '@/components/customer360/PeerGroupAnalysis';
 
 
 
