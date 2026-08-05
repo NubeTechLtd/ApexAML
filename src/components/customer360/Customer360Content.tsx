@@ -157,6 +157,14 @@ export function Customer360Content({ customerId, onClose }: Props) {
           </motion.div>
         </div>
 
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18 }}>
+          <PeerGroupAnalysis
+            customerId={customer.id}
+            customerName={customer.name}
+            kycTier={customer.kycTier}
+          />
+        </motion.div>
+
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
           <Customer360Tabs
             customer={customer}
