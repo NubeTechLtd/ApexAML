@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { BookDemoSheet } from '@/components/landing/BookDemoSheet';
 import { ChevronLeft, ChevronRight, Play, X, Minimize2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -63,6 +65,8 @@ const DEMO_STEPS: DemoStep[] = [
 export function DemoGuide() {
   const [step, setStep] = useDemoStep();
   const [minimized, setMinimized] = useState(false);
+  const [demoSheetOpen, setDemoSheetOpen] = useState(false);
+  const navigate = useNavigate();
 
   if (!isDemoMode) return null;
 
