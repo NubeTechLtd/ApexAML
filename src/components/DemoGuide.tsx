@@ -134,7 +134,28 @@ export function DemoGuide() {
         <div className="rounded-lg border border-primary/30 bg-primary/10 px-3 py-2 text-[12px] font-medium text-primary">
           {current.action}
         </div>
+        {step === TOTAL_DEMO_STEPS - 1 && (
+          <div className="space-y-2 pt-1">
+            <Button
+              size="sm"
+              className="w-full text-[12px]"
+              onClick={() => setDemoSheetOpen(true)}
+            >
+              Book a live demo →
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              className="w-full text-[12px]"
+              onClick={() => navigate('/roadmap')}
+            >
+              Generate your free CBN roadmap →
+            </Button>
+          </div>
+        )}
       </div>
+      <BookDemoSheet open={demoSheetOpen} onOpenChange={setDemoSheetOpen} />
+
 
       {/* Footer */}
       <div className="flex items-center justify-between border-t border-border/60 bg-muted/30 px-3 py-2.5">
