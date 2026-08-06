@@ -37,3 +37,13 @@ export function exitDemoMode() {
   url.searchParams.delete('demo');
   window.location.href = url.toString();
 }
+
+/**
+ * Object-style API for the guided demo.
+ * `isDemoMode` is derived from `?demo=true`; the step is shared globally.
+ */
+export function useDemoMode() {
+  const [currentStep, setCurrentStep] = useDemoStep();
+  const [isGuideOpen, setIsGuideOpen] = useState(isDemoMode);
+  return { isDemoMode, currentStep, setCurrentStep, isGuideOpen, setIsGuideOpen };
+}

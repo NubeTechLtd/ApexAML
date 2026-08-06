@@ -162,3 +162,48 @@ export const mockLegacyAlerts: AlertData[] = [
     ],
   },
 ];
+
+// ---------------------------------------------------------------------------
+// Guided demo mode (?demo=true): the Adebayo Ogunlesi POS Round-Trip case is
+// pinned to the top of the alert inbox so the scripted walk-through lines up.
+// ---------------------------------------------------------------------------
+import { isDemoMode as __isDemoMode } from '@/hooks/useDemoMode';
+
+const adebayoLegacyDemoAlert: AlertData = {
+  id: 'ALT-2026-DEMO-001',
+  riskScore: 94,
+  customerName: 'Adebayo Ogunlesi',
+  customerId: 'CUS-88291',
+  customer360Id: 1,
+  bvn: '22198765432',
+  alertType: 'Round-Tripping',
+  timestamp: '2026-04-12T23:58:00Z',
+  status: 'Open',
+  kycTier: 'Tier 3',
+  riskLevel: 'Critical',
+  accountNumber: '0234567891',
+  totalFlagged: 14800000,
+  summary:
+    '47 POS withdrawals across 12 agent terminals in 72 hours — ₦14.8M total, every transaction sized just below the ₦500,000 reporting threshold.',
+  transactionTimeline: Array.from({ length: 6 }).map((_, i) => ({
+    id: `tx-demo-legacy-${i + 1}`,
+    date: new Date(Date.UTC(2026, 3, 10 + Math.floor(i / 3), 9 + i, 12)).toISOString(),
+    type: 'Debit',
+    amount: 480000 + (i % 4) * 5000,
+    currency: 'NGN',
+    counterparty: [
+      'Moniepoint Agent / Oshodi',
+      'Opay Agent / Yaba',
+      'Palmpay Agent / Surulere',
+      'Baxi Agent / Ikeja',
+      'Kuda Agent / Lekki',
+      'PocketApp Agent / Apapa',
+    ][i % 6],
+    channel: 'POS',
+    flagReason: 'Below ₦500,000 threshold',
+  })),
+};
+
+if (__isDemoMode) {
+  mockLegacyAlerts.unshift(adebayoLegacyDemoAlert);
+}
