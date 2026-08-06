@@ -409,14 +409,16 @@ export default function AdminRoadmaps() {
                     const url = 'https://apexaml.com/app?demo=true';
                     try {
                       await navigator.clipboard.writeText(url);
-                      toast.success('Demo link copied to clipboard', { description: url });
+                      toast.success('Demo link copied — share with prospects before your Zoom call', {
+                        description: url,
+                      });
                     } catch {
                       toast.error('Could not copy. Please copy manually: ' + url);
                     }
                   }}
                 >
                   <Share2 className="h-4 w-4 mr-2" />
-                  Share demo link
+                  Copy demo link
                 </Button>
                 <Sheet open={adminSheetOpen} onOpenChange={setAdminSheetOpen}>
                   <SheetTrigger asChild>
