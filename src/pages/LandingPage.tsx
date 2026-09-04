@@ -826,7 +826,7 @@ function LandingPageInner() {
                 Icon: Globe,
                 title: "UK Corporate Governance",
                 eyebrow: "Backed by Nubetech Ltd (UK)",
-                text: "ApexAML is developed by Nubetech Ltd, a specialized UK technology consultancy. We bring stringent British data governance and stability to the Nigerian compliance ecosystem.",
+                text: "ApexAML is developed by Nubetech Ltd, a specialized UK technology consultancy (Companies House registration number 11844857). We bring stringent British data governance and stability to the Nigerian compliance ecosystem.",
               },
               {
                 Icon: Briefcase,
