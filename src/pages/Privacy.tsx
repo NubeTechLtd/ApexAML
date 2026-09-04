@@ -6,7 +6,7 @@ import { Seo } from "@/components/Seo";
 const SECTIONS = [
   {
     h: "1. Who we are",
-    p: 'NubeTech Ltd (Trading as "ApexAML", "we") is a Nigerian-incorporated software vendor providing AML compliance technology to regulated financial institutions. We act as a Data Processor on behalf of our institutional clients, who remain the Data Controller for their customers\' personal data.',
+    p: 'NubeTech Ltd (Trading as "ApexAML", "we") is a UK-incorporated software vendor providing AML compliance technology to regulated financial institutions. We act as a Data Processor on behalf of our institutional clients, who remain the Data Controller for their customers\' personal data.',
   },
   {
     h: "2. Data we collect from this website",
