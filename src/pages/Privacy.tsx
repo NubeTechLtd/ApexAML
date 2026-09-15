@@ -30,7 +30,7 @@ const SECTIONS = [
   },
   {
     h: "7. Contact",
-    p: "Data Protection Officer — privacy@apexaml.com. NubeTech Ltd (trading as ApexAML), Companies House registration number 11844857, Lagos, Nigeria.",
+    p: "Data Protection Officer — privacy@apexaml.com. NubeTech Ltd (trading as ApexAML), a company incorporated in the United Kingdom, Companies House registration number 11844857.",
   },
 ];
 
