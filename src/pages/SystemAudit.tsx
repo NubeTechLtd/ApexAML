@@ -160,7 +160,7 @@ const SystemAudit = () => {
                         <TableHead className="text-[10px] uppercase tracking-wider font-semibold">User</TableHead>
                         <TableHead className="text-[10px] uppercase tracking-wider font-semibold">Action Taken</TableHead>
                         <TableHead className="text-[10px] uppercase tracking-wider font-semibold">Resource</TableHead>
-                        <TableHead className="text-[10px] uppercase tracking-wider font-semibold">IP Address</TableHead>
+                        
                         <TableHead className="text-[10px] uppercase tracking-wider font-semibold text-center">Status</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -174,7 +174,7 @@ const SystemAudit = () => {
                           <TableCell className="text-xs font-medium text-foreground">{e.userName}</TableCell>
                           <TableCell className="text-xs text-foreground">{e.action}</TableCell>
                           <TableCell className="text-xs text-muted-foreground max-w-[200px] truncate">{e.resource}</TableCell>
-                          <TableCell className="text-xs font-mono text-muted-foreground">{e.ipAddress}</TableCell>
+                          
                           <TableCell className="text-center">
                             <Badge variant="outline" className={cn('text-[10px] border-0 font-semibold',
                               e.status === 'success'
