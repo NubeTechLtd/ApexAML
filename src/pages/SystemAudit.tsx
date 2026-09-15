@@ -12,32 +12,15 @@ import { cn } from '@/lib/utils';
 import { useAuditLog } from '@/hooks/useAuditLog';
 
 
-interface AuditEntry {
+interface AuditRow {
   id: string;
   timestamp: string;
   userId: string;
   userName: string;
   action: string;
   resource: string;
-  ipAddress: string;
   status: 'success' | 'denied';
 }
-
-const HOUR = 60 * 60 * 1000;
-const hoursAgo = (h: number) => new Date(Date.now() - h * HOUR).toISOString();
-
-const auditLog: AuditEntry[] = [
-  { id: 'a-001', timestamp: hoursAgo(2), userId: 'USR-0041', userName: 'Adeola Kemi', action: 'Exported STR', resource: 'Alert #ALT-2026-0891', ipAddress: '102.89.44.12', status: 'success' },
-  { id: 'a-002', timestamp: hoursAgo(6), userId: 'USR-0023', userName: 'Ibrahim Sani', action: 'Viewed Profile', resource: 'Customer: Emeka Nwosu', ipAddress: '105.112.78.203', status: 'success' },
-  { id: 'a-003', timestamp: hoursAgo(14), userId: 'USR-0041', userName: 'Adeola Kemi', action: 'Dismissed Alert', resource: 'Alert #ALT-2026-0887', ipAddress: '102.89.44.12', status: 'success' },
-  { id: 'a-004', timestamp: hoursAgo(29), userId: 'USR-0007', userName: 'Ngozi Ibe', action: 'Modified Rule', resource: 'Rule: High-Velocity Crypto P2P', ipAddress: '41.58.192.67', status: 'success' },
-  { id: 'a-005', timestamp: hoursAgo(42), userId: 'USR-0055', userName: 'Yusuf Maina', action: 'Attempted Role Change', resource: 'User: USR-0041', ipAddress: '197.210.53.114', status: 'denied' },
-  { id: 'a-006', timestamp: hoursAgo(58), userId: 'USR-0023', userName: 'Ibrahim Sani', action: 'Approved KYC', resource: 'Customer: Chidinma Okafor', ipAddress: '105.112.78.203', status: 'success' },
-  { id: 'a-007', timestamp: hoursAgo(77), userId: 'USR-0007', userName: 'Ngozi Ibe', action: 'Generated CTR Batch', resource: '5 transactions', ipAddress: '41.58.192.67', status: 'success' },
-  { id: 'a-008', timestamp: hoursAgo(96), userId: 'USR-0055', userName: 'Yusuf Maina', action: 'Viewed Audit Log', resource: 'System Audit Page', ipAddress: '197.210.53.114', status: 'success' },
-  { id: 'a-009', timestamp: hoursAgo(128), userId: 'USR-0041', userName: 'Adeola Kemi', action: 'Escalated to STR', resource: 'Alert #ALT-2026-0882', ipAddress: '102.89.44.12', status: 'success' },
-  { id: 'a-010', timestamp: hoursAgo(161), userId: 'USR-0012', userName: 'Chukwudi Obi', action: 'Login', resource: 'Dashboard', ipAddress: '154.118.22.89', status: 'success' },
-];
 
 const roleData = [
   { role: 'Admin', users: ['Ngozi Ibe', 'Chukwudi Obi'], icon: UserCog, color: 'bg-[hsl(var(--risk-critical)/0.12)] text-[hsl(var(--risk-critical))]' },
@@ -65,24 +48,21 @@ const ACTION_LABELS: Record<string, string> = {
 
 const SystemAudit = () => {
   const [search, setSearch] = useState('');
-  const { entries } = useAuditLog();
+  const { entries, loading } = useAuditLog();
 
-  const liveEntries: AuditEntry[] = entries.map((e, i) => ({
-    id: `live-${i}`,
-    timestamp: e.timestamp,
-    userId: 'SESSION',
-    userName: e.analyst,
-    action: ACTION_LABELS[e.action] ?? e.action,
-    resource: `${e.caseId} — ${e.justification}`,
-    ipAddress: 'this session',
-    status: 'success' as const,
-  }));
+  const rows: AuditRow[] = entries
+    .map((e, i) => ({
+      id: e.id ?? `pending-${i}`,
+      timestamp: e.timestamp,
+      userId: e.userId ? e.userId.slice(0, 8).toUpperCase() : '—',
+      userName: e.analyst,
+      action: ACTION_LABELS[e.action] ?? e.action,
+      resource: e.justification ? `${e.caseId} — ${e.justification}` : e.caseId,
+      status: (e.status ?? 'success') as 'success' | 'denied',
+    }))
+    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
-  const combined = [...liveEntries, ...auditLog].sort(
-    (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
-  );
-
-  const filtered = combined.filter((e) =>
+  const filtered = rows.filter((e) =>
     e.userName.toLowerCase().includes(search.toLowerCase()) ||
     e.action.toLowerCase().includes(search.toLowerCase()) ||
     e.userId.toLowerCase().includes(search.toLowerCase())
@@ -180,7 +160,7 @@ const SystemAudit = () => {
                         <TableHead className="text-[10px] uppercase tracking-wider font-semibold">User</TableHead>
                         <TableHead className="text-[10px] uppercase tracking-wider font-semibold">Action Taken</TableHead>
                         <TableHead className="text-[10px] uppercase tracking-wider font-semibold">Resource</TableHead>
-                        <TableHead className="text-[10px] uppercase tracking-wider font-semibold">IP Address</TableHead>
+                        
                         <TableHead className="text-[10px] uppercase tracking-wider font-semibold text-center">Status</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -194,7 +174,7 @@ const SystemAudit = () => {
                           <TableCell className="text-xs font-medium text-foreground">{e.userName}</TableCell>
                           <TableCell className="text-xs text-foreground">{e.action}</TableCell>
                           <TableCell className="text-xs text-muted-foreground max-w-[200px] truncate">{e.resource}</TableCell>
-                          <TableCell className="text-xs font-mono text-muted-foreground">{e.ipAddress}</TableCell>
+                          
                           <TableCell className="text-center">
                             <Badge variant="outline" className={cn('text-[10px] border-0 font-semibold',
                               e.status === 'success'
@@ -206,6 +186,13 @@ const SystemAudit = () => {
                           </TableCell>
                         </TableRow>
                       ))}
+                      {filtered.length === 0 && (
+                        <TableRow className="hover:bg-transparent">
+                          <TableCell colSpan={6} className="text-xs text-muted-foreground text-center py-8">
+                            {loading ? 'Loading audit entries…' : 'No audit entries recorded yet.'}
+                          </TableCell>
+                        </TableRow>
+                      )}
                     </TableBody>
                   </Table>
                 </div>

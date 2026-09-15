@@ -59,6 +59,45 @@ export type Database = {
         }
         Relationships: []
       }
+      audit_log: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          justification: string | null
+          metadata: Json
+          occurred_at: string
+          resource: string
+          status: string
+          user_id: string | null
+          user_name: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          justification?: string | null
+          metadata?: Json
+          occurred_at?: string
+          resource?: string
+          status?: string
+          user_id?: string | null
+          user_name?: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          justification?: string | null
+          metadata?: Json
+          occurred_at?: string
+          resource?: string
+          status?: string
+          user_id?: string | null
+          user_name?: string
+        }
+        Relationships: []
+      }
       ctr_queue: {
         Row: {
           created_at: string
