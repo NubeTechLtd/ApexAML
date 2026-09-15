@@ -186,6 +186,13 @@ const SystemAudit = () => {
                           </TableCell>
                         </TableRow>
                       ))}
+                      {filtered.length === 0 && (
+                        <TableRow className="hover:bg-transparent">
+                          <TableCell colSpan={6} className="text-xs text-muted-foreground text-center py-8">
+                            {loading ? 'Loading audit entries…' : 'No audit entries recorded yet.'}
+                          </TableCell>
+                        </TableRow>
+                      )}
                     </TableBody>
                   </Table>
                 </div>
