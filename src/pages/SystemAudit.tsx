@@ -48,24 +48,21 @@ const ACTION_LABELS: Record<string, string> = {
 
 const SystemAudit = () => {
   const [search, setSearch] = useState('');
-  const { entries } = useAuditLog();
+  const { entries, loading } = useAuditLog();
 
-  const liveEntries: AuditEntry[] = entries.map((e, i) => ({
-    id: `live-${i}`,
-    timestamp: e.timestamp,
-    userId: 'SESSION',
-    userName: e.analyst,
-    action: ACTION_LABELS[e.action] ?? e.action,
-    resource: `${e.caseId} — ${e.justification}`,
-    ipAddress: 'this session',
-    status: 'success' as const,
-  }));
+  const rows: AuditRow[] = entries
+    .map((e, i) => ({
+      id: e.id ?? `pending-${i}`,
+      timestamp: e.timestamp,
+      userId: e.userId ? e.userId.slice(0, 8).toUpperCase() : '—',
+      userName: e.analyst,
+      action: ACTION_LABELS[e.action] ?? e.action,
+      resource: e.justification ? `${e.caseId} — ${e.justification}` : e.caseId,
+      status: (e.status ?? 'success') as 'success' | 'denied',
+    }))
+    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
-  const combined = [...liveEntries, ...auditLog].sort(
-    (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
-  );
-
-  const filtered = combined.filter((e) =>
+  const filtered = rows.filter((e) =>
     e.userName.toLowerCase().includes(search.toLowerCase()) ||
     e.action.toLowerCase().includes(search.toLowerCase()) ||
     e.userId.toLowerCase().includes(search.toLowerCase())
