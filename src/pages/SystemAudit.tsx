@@ -12,32 +12,15 @@ import { cn } from '@/lib/utils';
 import { useAuditLog } from '@/hooks/useAuditLog';
 
 
-interface AuditEntry {
+interface AuditRow {
   id: string;
   timestamp: string;
   userId: string;
   userName: string;
   action: string;
   resource: string;
-  ipAddress: string;
   status: 'success' | 'denied';
 }
-
-const HOUR = 60 * 60 * 1000;
-const hoursAgo = (h: number) => new Date(Date.now() - h * HOUR).toISOString();
-
-const auditLog: AuditEntry[] = [
-  { id: 'a-001', timestamp: hoursAgo(2), userId: 'USR-0041', userName: 'Adeola Kemi', action: 'Exported STR', resource: 'Alert #ALT-2026-0891', ipAddress: '102.89.44.12', status: 'success' },
-  { id: 'a-002', timestamp: hoursAgo(6), userId: 'USR-0023', userName: 'Ibrahim Sani', action: 'Viewed Profile', resource: 'Customer: Emeka Nwosu', ipAddress: '105.112.78.203', status: 'success' },
-  { id: 'a-003', timestamp: hoursAgo(14), userId: 'USR-0041', userName: 'Adeola Kemi', action: 'Dismissed Alert', resource: 'Alert #ALT-2026-0887', ipAddress: '102.89.44.12', status: 'success' },
-  { id: 'a-004', timestamp: hoursAgo(29), userId: 'USR-0007', userName: 'Ngozi Ibe', action: 'Modified Rule', resource: 'Rule: High-Velocity Crypto P2P', ipAddress: '41.58.192.67', status: 'success' },
-  { id: 'a-005', timestamp: hoursAgo(42), userId: 'USR-0055', userName: 'Yusuf Maina', action: 'Attempted Role Change', resource: 'User: USR-0041', ipAddress: '197.210.53.114', status: 'denied' },
-  { id: 'a-006', timestamp: hoursAgo(58), userId: 'USR-0023', userName: 'Ibrahim Sani', action: 'Approved KYC', resource: 'Customer: Chidinma Okafor', ipAddress: '105.112.78.203', status: 'success' },
-  { id: 'a-007', timestamp: hoursAgo(77), userId: 'USR-0007', userName: 'Ngozi Ibe', action: 'Generated CTR Batch', resource: '5 transactions', ipAddress: '41.58.192.67', status: 'success' },
-  { id: 'a-008', timestamp: hoursAgo(96), userId: 'USR-0055', userName: 'Yusuf Maina', action: 'Viewed Audit Log', resource: 'System Audit Page', ipAddress: '197.210.53.114', status: 'success' },
-  { id: 'a-009', timestamp: hoursAgo(128), userId: 'USR-0041', userName: 'Adeola Kemi', action: 'Escalated to STR', resource: 'Alert #ALT-2026-0882', ipAddress: '102.89.44.12', status: 'success' },
-  { id: 'a-010', timestamp: hoursAgo(161), userId: 'USR-0012', userName: 'Chukwudi Obi', action: 'Login', resource: 'Dashboard', ipAddress: '154.118.22.89', status: 'success' },
-];
 
 const roleData = [
   { role: 'Admin', users: ['Ngozi Ibe', 'Chukwudi Obi'], icon: UserCog, color: 'bg-[hsl(var(--risk-critical)/0.12)] text-[hsl(var(--risk-critical))]' },
