@@ -59,11 +59,82 @@ export type Database = {
         }
         Relationships: []
       }
+      alerts: {
+        Row: {
+          alert_type: string
+          assigned_analyst_id: string | null
+          behavioral_red_flags: string[] | null
+          case_id: string
+          closed_at: string | null
+          customer_id: string
+          description: string | null
+          dismissal_reason: string | null
+          id: string
+          institution_id: string
+          opened_at: string
+          risk_level: string
+          rule_triggered: string
+          status: string
+        }
+        Insert: {
+          alert_type: string
+          assigned_analyst_id?: string | null
+          behavioral_red_flags?: string[] | null
+          case_id: string
+          closed_at?: string | null
+          customer_id: string
+          description?: string | null
+          dismissal_reason?: string | null
+          id?: string
+          institution_id: string
+          opened_at?: string
+          risk_level: string
+          rule_triggered: string
+          status?: string
+        }
+        Update: {
+          alert_type?: string
+          assigned_analyst_id?: string | null
+          behavioral_red_flags?: string[] | null
+          case_id?: string
+          closed_at?: string | null
+          customer_id?: string
+          description?: string | null
+          dismissal_reason?: string | null
+          id?: string
+          institution_id?: string
+          opened_at?: string
+          risk_level?: string
+          rule_triggered?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alerts_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "alerts_institution_id_fkey"
+            columns: ["institution_id"]
+            isOneToOne: false
+            referencedRelation: "institutions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_log: {
         Row: {
           action: string
+          actor_id: string | null
+          actor_name: string | null
+          case_id: string | null
           created_at: string
           id: string
+          institution_id: string | null
+          ip_address: string | null
           justification: string | null
           metadata: Json
           occurred_at: string
@@ -74,8 +145,13 @@ export type Database = {
         }
         Insert: {
           action: string
+          actor_id?: string | null
+          actor_name?: string | null
+          case_id?: string | null
           created_at?: string
           id?: string
+          institution_id?: string | null
+          ip_address?: string | null
           justification?: string | null
           metadata?: Json
           occurred_at?: string
@@ -86,8 +162,13 @@ export type Database = {
         }
         Update: {
           action?: string
+          actor_id?: string | null
+          actor_name?: string | null
+          case_id?: string | null
           created_at?: string
           id?: string
+          institution_id?: string | null
+          ip_address?: string | null
           justification?: string | null
           metadata?: Json
           occurred_at?: string
@@ -96,7 +177,15 @@ export type Database = {
           user_id?: string | null
           user_name?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "audit_log_institution_id_fkey"
+            columns: ["institution_id"]
+            isOneToOne: false
+            referencedRelation: "institutions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       ctr_queue: {
         Row: {
@@ -184,6 +273,62 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      customers: {
+        Row: {
+          account_status: string
+          bvn: string | null
+          bvn_verified: boolean
+          created_at: string
+          entity_type: string | null
+          full_name: string
+          id: string
+          institution_id: string
+          kyc_tier: string
+          nin: string | null
+          nuban: string | null
+          risk_level: string
+          risk_score: number
+        }
+        Insert: {
+          account_status?: string
+          bvn?: string | null
+          bvn_verified?: boolean
+          created_at?: string
+          entity_type?: string | null
+          full_name: string
+          id?: string
+          institution_id: string
+          kyc_tier?: string
+          nin?: string | null
+          nuban?: string | null
+          risk_level?: string
+          risk_score?: number
+        }
+        Update: {
+          account_status?: string
+          bvn?: string | null
+          bvn_verified?: boolean
+          created_at?: string
+          entity_type?: string | null
+          full_name?: string
+          id?: string
+          institution_id?: string
+          kyc_tier?: string
+          nin?: string | null
+          nuban?: string | null
+          risk_level?: string
+          risk_score?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customers_institution_id_fkey"
+            columns: ["institution_id"]
+            isOneToOne: false
+            referencedRelation: "institutions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       demo_requests: {
         Row: {
@@ -468,6 +613,30 @@ export type Database = {
           id?: string
           token?: string
           used_at?: string | null
+        }
+        Relationships: []
+      }
+      institutions: {
+        Row: {
+          cbn_licence_number: string | null
+          created_at: string
+          id: string
+          institution_type: string
+          name: string
+        }
+        Insert: {
+          cbn_licence_number?: string | null
+          created_at?: string
+          id?: string
+          institution_type: string
+          name: string
+        }
+        Update: {
+          cbn_licence_number?: string | null
+          created_at?: string
+          id?: string
+          institution_type?: string
+          name?: string
         }
         Relationships: []
       }
@@ -1008,6 +1177,89 @@ export type Database = {
         }
         Relationships: []
       }
+      str_drafts: {
+        Row: {
+          alert_id: string
+          created_at: string
+          created_by: string | null
+          generated_by: string
+          id: string
+          narrative: string
+          version: number
+        }
+        Insert: {
+          alert_id: string
+          created_at?: string
+          created_by?: string | null
+          generated_by?: string
+          id?: string
+          narrative: string
+          version?: number
+        }
+        Update: {
+          alert_id?: string
+          created_at?: string
+          created_by?: string | null
+          generated_by?: string
+          id?: string
+          narrative?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "str_drafts_alert_id_fkey"
+            columns: ["alert_id"]
+            isOneToOne: false
+            referencedRelation: "alerts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      str_exports: {
+        Row: {
+          alert_id: string
+          exported_at: string
+          exported_by: string | null
+          filename: string
+          goaml_xml: string
+          id: string
+          str_draft_id: string
+        }
+        Insert: {
+          alert_id: string
+          exported_at?: string
+          exported_by?: string | null
+          filename: string
+          goaml_xml: string
+          id?: string
+          str_draft_id: string
+        }
+        Update: {
+          alert_id?: string
+          exported_at?: string
+          exported_by?: string | null
+          filename?: string
+          goaml_xml?: string
+          id?: string
+          str_draft_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "str_exports_alert_id_fkey"
+            columns: ["alert_id"]
+            isOneToOne: false
+            referencedRelation: "alerts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "str_exports_str_draft_id_fkey"
+            columns: ["str_draft_id"]
+            isOneToOne: false
+            referencedRelation: "str_drafts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       suppressed_emails: {
         Row: {
           created_at: string
@@ -1085,6 +1337,92 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      transactions: {
+        Row: {
+          agent_location: string | null
+          amount_ngn: number
+          balance_after: number | null
+          channel: string
+          counterparty: string | null
+          created_at: string
+          customer_id: string
+          id: string
+          institution_id: string
+          occurred_at: string
+          tx_type: string
+        }
+        Insert: {
+          agent_location?: string | null
+          amount_ngn: number
+          balance_after?: number | null
+          channel: string
+          counterparty?: string | null
+          created_at?: string
+          customer_id: string
+          id?: string
+          institution_id: string
+          occurred_at: string
+          tx_type: string
+        }
+        Update: {
+          agent_location?: string | null
+          amount_ngn?: number
+          balance_after?: number | null
+          channel?: string
+          counterparty?: string | null
+          created_at?: string
+          customer_id?: string
+          id?: string
+          institution_id?: string
+          occurred_at?: string
+          tx_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transactions_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transactions_institution_id_fkey"
+            columns: ["institution_id"]
+            isOneToOne: false
+            referencedRelation: "institutions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_institutions: {
+        Row: {
+          created_at: string
+          institution_id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          institution_id: string
+          role?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          institution_id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_institutions_institution_id_fkey"
+            columns: ["institution_id"]
+            isOneToOne: false
+            referencedRelation: "institutions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
