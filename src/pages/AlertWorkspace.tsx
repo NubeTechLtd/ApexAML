@@ -419,7 +419,52 @@ export default function AlertWorkspace() {
     return () => window.removeEventListener('keydown', handler);
   }, [handleEscalate, handleExport]);
 
-  if (!selected) return null;
+  if (!selected) {
+    return (
+      <SidebarProvider>
+        <div className="flex min-h-screen w-full bg-background">
+          <AppSidebar />
+          <div className="flex-1 flex flex-col min-h-0">
+            <div className="flex items-center justify-between border-b px-6 py-3 bg-card shrink-0">
+              <div className="flex items-center gap-2">
+                <Shield className="h-5 w-5 text-primary" />
+                <div>
+                  <h1 className="text-lg font-bold text-foreground leading-tight">Alert Workspace</h1>
+                  <p className="text-[11px] text-muted-foreground">Investigate flagged transactions and file STRs with NFIU</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <AuditBell />
+                <NotificationBell />
+                <ThemeToggle />
+              </div>
+            </div>
+            <div className="flex-1 flex items-center justify-center p-8">
+              {alertsLoading ? (
+                <div className="w-full max-w-md space-y-3">
+                  <Skeleton className="h-4 w-40" />
+                  <Skeleton className="h-20 w-full" />
+                  <Skeleton className="h-20 w-full" />
+                </div>
+              ) : (
+                <div className="text-center max-w-md space-y-2">
+                  <Shield className="h-8 w-8 text-muted-foreground mx-auto" />
+                  <h2 className="text-base font-semibold text-foreground">
+                    {alertsError ? 'Could not load alerts' : 'No alerts to investigate'}
+                  </h2>
+                  <p className="text-sm text-muted-foreground">
+                    {alertsError
+                      ? alertsError
+                      : 'No alerts have been raised for your institution yet, or none match the current filters.'}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </SidebarProvider>
+    );
+  }
 
   const cp = selected.customerProfile;
   const currentStatus = getStatus(selected.id, selected.status);
