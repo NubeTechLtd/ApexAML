@@ -22,6 +22,13 @@
       "when": 1789506313738,
       "tag": "0002_create_institutions_customers_alerts_str",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1789596264227,
+      "tag": "0003_grant_data_api_access_institution_tables",
+      "breakpoints": true
     }
   ]
 }
