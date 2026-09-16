@@ -23,7 +23,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Label } from '@/components/ui/label';
-import { mockAlerts, type Alert, type TxChannel } from '@/data/mockAlerts';
+import { type Alert, type TxChannel } from '@/data/mockAlerts';
+import { useInstitutionAlerts } from '@/hooks/useInstitutionAlerts';
 import { useToast } from '@/hooks/use-toast';
 import { useAuditLog } from '@/hooks/useAuditLog';
 import { useCBNRate } from '@/hooks/useCBNRate';
@@ -54,12 +55,8 @@ const ANALYSTS = [
   { id: 'a4', name: 'Emeka Obi', initials: 'EO', color: 'bg-amber-500/15 text-amber-700 dark:text-amber-400' },
 ];
 
-// Default assignments for some alerts
-const DEFAULT_ASSIGNMENTS: Record<string, string> = {
-  [mockAlerts[0]?.id]: 'a1',
-  [mockAlerts[1]?.id]: 'a3',
-  [mockAlerts[2]?.id]: 'a2',
-};
+// Analyst assignments are held locally until an alert is reassigned.
+const DEFAULT_ASSIGNMENTS: Record<string, string> = {};
 
 /* ── Helpers ─────────────────────────────────────────── */
 
@@ -241,7 +238,8 @@ export default function AlertWorkspace() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState('');
-  const [selectedId, setSelectedId] = useState<string>(mockAlerts[0].id);
+  const { alerts, loading: alertsLoading, error: alertsError } = useInstitutionAlerts();
+  const [selectedId, setSelectedId] = useState<string>('');
   const [escalateOpen, setEscalateOpen] = useState(false);
   const [fpDialogOpen, setFpDialogOpen] = useState(false);
   const [fpReason, setFpReason] = useState('');
@@ -298,7 +296,7 @@ export default function AlertWorkspace() {
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   const filtered = useMemo(() => {
-    return mockAlerts.filter((a) => {
+    return alerts.filter((a) => {
       const q = search.toLowerCase();
       const effectiveStatus = getStatus(a.id, a.status);
       const matchesStatus = statusParam ? effectiveStatus === statusParam : true;
@@ -310,7 +308,7 @@ export default function AlertWorkspace() {
         a.ruleTriggered.toLowerCase().includes(q)
       );
     });
-  }, [search, riskParam, statusParam, getStatus]);
+  }, [alerts, search, riskParam, statusParam, getStatus]);
 
   const actionableCount = useMemo(() => {
     return filtered.filter(a => {
@@ -323,7 +321,7 @@ export default function AlertWorkspace() {
 
   // Reset STR state when alert changes
   useEffect(() => {
-    const currentAlert = mockAlerts.find(a => a.id === selectedId);
+    const currentAlert = alerts.find(a => a.id === selectedId);
     // Cross-border flags arrive with the overseas referral data already in
     // the narrative — pre-populate the draft so the analyst only fills in
     // the Nigerian transaction tail.
@@ -335,7 +333,7 @@ export default function AlertWorkspace() {
     setEditVersion(0);
     setChannelFilter('All');
     setEditVersion(0);
-  }, [selectedId]);
+  }, [selectedId, alerts]);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -421,7 +419,52 @@ export default function AlertWorkspace() {
     return () => window.removeEventListener('keydown', handler);
   }, [handleEscalate, handleExport]);
 
-  if (!selected) return null;
+  if (!selected) {
+    return (
+      <SidebarProvider>
+        <div className="flex min-h-screen w-full bg-background">
+          <AppSidebar />
+          <div className="flex-1 flex flex-col min-h-0">
+            <div className="flex items-center justify-between border-b px-6 py-3 bg-card shrink-0">
+              <div className="flex items-center gap-2">
+                <Shield className="h-5 w-5 text-primary" />
+                <div>
+                  <h1 className="text-lg font-bold text-foreground leading-tight">Alert Workspace</h1>
+                  <p className="text-[11px] text-muted-foreground">Investigate flagged transactions and file STRs with NFIU</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <AuditBell />
+                <NotificationBell />
+                <ThemeToggle />
+              </div>
+            </div>
+            <div className="flex-1 flex items-center justify-center p-8">
+              {alertsLoading ? (
+                <div className="w-full max-w-md space-y-3">
+                  <Skeleton className="h-4 w-40" />
+                  <Skeleton className="h-20 w-full" />
+                  <Skeleton className="h-20 w-full" />
+                </div>
+              ) : (
+                <div className="text-center max-w-md space-y-2">
+                  <Shield className="h-8 w-8 text-muted-foreground mx-auto" />
+                  <h2 className="text-base font-semibold text-foreground">
+                    {alertsError ? 'Could not load alerts' : 'No alerts to investigate'}
+                  </h2>
+                  <p className="text-sm text-muted-foreground">
+                    {alertsError
+                      ? alertsError
+                      : 'No alerts have been raised for your institution yet, or none match the current filters.'}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </SidebarProvider>
+    );
+  }
 
   const cp = selected.customerProfile;
   const currentStatus = getStatus(selected.id, selected.status);
