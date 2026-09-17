@@ -343,15 +343,29 @@ export default function AlertWorkspace() {
 
 
 
-  const handleGenerateSTR = () => {
+  const handleGenerateSTR = async () => {
     if (!selected) return;
     setStrLoading(true);
     setStrDraft('');
-    setTimeout(() => {
-      setStrDraft(selected.aiDraftedNarrative);
-      setStrLoading(false);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-str-narrative', {
+        body: { alert_id: selected.id },
+      });
+      if (error) throw error;
+      const narrative = (data as { narrative?: string } | null)?.narrative?.trim();
+      if (!narrative) throw new Error('No narrative was returned.');
+      setStrDraft(narrative);
       setStrGenerated(true);
-    }, 2200);
+    } catch (e) {
+      toast({
+        title: 'Could not draft the report',
+        description:
+          e instanceof Error ? e.message : 'The AI drafting service is unavailable. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setStrLoading(false);
+    }
   };
 
   const handleSendChat = () => {
