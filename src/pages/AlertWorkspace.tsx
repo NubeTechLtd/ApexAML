@@ -25,6 +25,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Label } from '@/components/ui/label';
 import { type Alert, type TxChannel } from '@/data/mockAlerts';
 import { useInstitutionAlerts } from '@/hooks/useInstitutionAlerts';
+import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuditLog } from '@/hooks/useAuditLog';
 import { useCBNRate } from '@/hooks/useCBNRate';
@@ -343,15 +344,29 @@ export default function AlertWorkspace() {
 
 
 
-  const handleGenerateSTR = () => {
+  const handleGenerateSTR = async () => {
     if (!selected) return;
     setStrLoading(true);
     setStrDraft('');
-    setTimeout(() => {
-      setStrDraft(selected.aiDraftedNarrative);
-      setStrLoading(false);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-str-narrative', {
+        body: { alert_id: selected.id },
+      });
+      if (error) throw error;
+      const narrative = (data as { narrative?: string } | null)?.narrative?.trim();
+      if (!narrative) throw new Error('No narrative was returned.');
+      setStrDraft(narrative);
       setStrGenerated(true);
-    }, 2200);
+    } catch (e) {
+      toast({
+        title: 'Could not draft the report',
+        description:
+          e instanceof Error ? e.message : 'The AI drafting service is unavailable. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setStrLoading(false);
+    }
   };
 
   const handleSendChat = () => {
