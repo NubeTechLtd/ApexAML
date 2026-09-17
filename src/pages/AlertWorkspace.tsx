@@ -25,6 +25,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Label } from '@/components/ui/label';
 import { type Alert, type TxChannel } from '@/data/mockAlerts';
 import { useInstitutionAlerts } from '@/hooks/useInstitutionAlerts';
+import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuditLog } from '@/hooks/useAuditLog';
 import { useCBNRate } from '@/hooks/useCBNRate';
