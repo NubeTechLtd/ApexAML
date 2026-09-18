@@ -286,6 +286,7 @@ export default function AlertWorkspace() {
 
   // STR state
   const [strDraft, setStrDraft] = useState('');
+  const [strDraftId, setStrDraftId] = useState<string | null>(null);
   const [strLoading, setStrLoading] = useState(false);
   const [strGenerated, setStrGenerated] = useState(false);
   const [editVersion, setEditVersion] = useState(0);
@@ -353,9 +354,11 @@ export default function AlertWorkspace() {
         body: { alert_id: selected.id },
       });
       if (error) throw error;
-      const narrative = (data as { narrative?: string } | null)?.narrative?.trim();
+      const payload = data as { narrative?: string; draft?: { id?: string } } | null;
+      const narrative = payload?.narrative?.trim();
       if (!narrative) throw new Error('No narrative was returned.');
       setStrDraft(narrative);
+      setStrDraftId(payload?.draft?.id ?? null);
       setStrGenerated(true);
     } catch (e) {
       toast({
@@ -389,11 +392,12 @@ export default function AlertWorkspace() {
         body: { alert_id: selected.id, current_draft: strDraft, message: input },
       });
       if (error) throw error;
-      const result = data as { narrative?: string; confirmation?: string } | null;
+      const result = data as { narrative?: string; confirmation?: string; draft?: { id?: string } } | null;
       if (!result?.narrative || !result?.confirmation) {
         throw new Error('The co-pilot returned an incomplete refinement.');
       }
       setStrDraft(result.narrative);
+      if (result.draft?.id) setStrDraftId(result.draft.id);
       setChatMessages((prev) => [
         ...prev,
         { id: Date.now(), role: 'assistant', content: result.confirmation! },
