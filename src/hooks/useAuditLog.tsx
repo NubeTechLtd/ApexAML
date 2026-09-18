@@ -14,7 +14,8 @@ export type AuditAction =
   | 'KYB_MAKER_APPROVE'
   | 'KYB_MAKER_REJECT'
   | 'KYB_APPROVED'
-  | 'KYB_REJECTED';
+  | 'KYB_REJECTED'
+  | 'STR_EXPORT';
 
 export interface AuditEntry {
   id?: string;
