@@ -329,6 +329,7 @@ export default function AlertWorkspace() {
     // the Nigerian transaction tail.
     const isCrossBorder = currentAlert?.alertType === 'CROSS_BORDER_FLAG';
     setStrDraft(isCrossBorder ? currentAlert!.aiDraftedNarrative : '');
+    setStrDraftId(null);
     setStrLoading(false);
     setStrGenerated(isCrossBorder);
     setChatMessages([]);
@@ -423,18 +424,57 @@ export default function AlertWorkspace() {
     }
   };
 
-  const handleExport = useCallback(() => {
+  const handleExport = useCallback(async () => {
     if (!selected) return;
     const today = new Date().toISOString().split('T')[0];
     const filename = `STR_${selected.caseId}_${today}.xml`;
     const xml = generateGoAMLXml(selected, strDraft);
+
+    // Record the export before downloading so every goAML file leaving the
+    // platform is traceable (CBN examination requirement). Demo alerts are not
+    // backed by database rows, so failures there are non-fatal.
+    try {
+      let draftId = strDraftId;
+      if (!draftId && strDraft.trim()) {
+        const { data: draft, error: draftError } = await supabase
+          .from('str_drafts')
+          .insert({ alert_id: selected.id, version: 1, narrative: strDraft, generated_by: 'analyst' })
+          .select('id')
+          .maybeSingle();
+        if (draftError) throw draftError;
+        draftId = draft?.id ?? null;
+        if (draftId) setStrDraftId(draftId);
+      }
+      if (draftId) {
+        const { data: auth } = await supabase.auth.getUser();
+        const { error: exportError } = await supabase
+          .from('str_exports')
+          .insert({
+            alert_id: selected.id,
+            str_draft_id: draftId,
+            filename,
+            goaml_xml: xml,
+            exported_by: auth?.user?.id ?? null,
+          });
+        if (exportError) throw exportError;
+      }
+      await addAuditEntry({
+        action: 'STR_EXPORT',
+        analyst: '',
+        caseId: selected.caseId,
+        justification: `Exported goAML STR as ${filename} for NFIU portal submission.`,
+      });
+    } catch {
+      // Non-fatal: the file must still reach the analyst even if the record fails.
+    }
+
     downloadXmlFile(xml, filename);
     setExportedIds((prev) => ({ ...prev, [selected.id]: true }));
     toast({
       title: 'STR exported',
       description: `${filename} ready for NFIU goAML portal upload.`,
     });
-  }, [selected, strDraft, toast]);
+  }, [selected, strDraft, strDraftId, addAuditEntry, toast]);
 
   const handleEscalate = useCallback(() => {
     setEscalateOpen(true);
