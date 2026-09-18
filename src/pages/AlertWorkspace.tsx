@@ -369,18 +369,54 @@ export default function AlertWorkspace() {
     }
   };
 
-  const handleSendChat = () => {
-    if (!chatInput.trim()) return;
+  const handleSendChat = async () => {
+    if (!chatInput.trim() || !selected || isTyping) return;
+    if (!strDraft.trim()) {
+      toast({
+        title: 'Draft the report first',
+        description: 'Generate an STR draft before asking the co-pilot to refine it.',
+        variant: 'destructive',
+      });
+      return;
+    }
     const userMsg: ChatMessage = { id: Date.now(), role: 'user', content: chatInput };
     setChatMessages((prev) => [...prev, userMsg]);
     const input = chatInput;
     setChatInput('');
     setIsTyping(true);
-    setTimeout(() => {
-      setChatMessages((prev) => [...prev, { id: Date.now(), role: 'assistant', content: getResponse(input) }]);
-      setIsTyping(false);
+    try {
+      const { data, error } = await supabase.functions.invoke('refine-str-narrative', {
+        body: { alert_id: selected.id, current_draft: strDraft, message: input },
+      });
+      if (error) throw error;
+      const result = data as { narrative?: string; confirmation?: string } | null;
+      if (!result?.narrative || !result?.confirmation) {
+        throw new Error('The co-pilot returned an incomplete refinement.');
+      }
+      setStrDraft(result.narrative);
+      setChatMessages((prev) => [
+        ...prev,
+        { id: Date.now(), role: 'assistant', content: result.confirmation! },
+      ]);
       setEditVersion((v) => v + 1);
-    }, 1400);
+    } catch (e) {
+      // Demo alerts are not backed by a database case, so the refinement
+      // service cannot reach them — fall back to the canned co-pilot replies.
+      setChatMessages((prev) => [
+        ...prev,
+        { id: Date.now(), role: 'assistant', content: getResponse(input) },
+      ]);
+      if (!(e instanceof Error && e.message.includes('Alert not found'))) {
+        toast({
+          title: 'Could not refine the report',
+          description: e instanceof Error ? e.message : 'The AI service is unavailable. Please try again.',
+          variant: 'destructive',
+        });
+      }
+      setEditVersion((v) => v + 1);
+    } finally {
+      setIsTyping(false);
+    }
   };
 
   const handleExport = useCallback(() => {
