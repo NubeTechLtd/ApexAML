@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
-import { Search, Lock, Shield, Eye, UserCog, Users, Building2 } from 'lucide-react';
+import { Search, Lock } from 'lucide-react';
 import { NotificationBell } from '@/components/NotificationBell';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { cn } from '@/lib/utils';
@@ -21,14 +21,6 @@ interface AuditRow {
   resource: string;
   status: 'success' | 'denied';
 }
-
-const roleData = [
-  { role: 'Admin', users: ['Ngozi Ibe', 'Chukwudi Obi'], icon: UserCog, color: 'bg-[hsl(var(--risk-critical)/0.12)] text-[hsl(var(--risk-critical))]' },
-  { role: 'Analyst', users: ['Adeola Kemi', 'Ibrahim Sani', 'Fatima Bello'], icon: Shield, color: 'bg-[hsl(var(--risk-medium)/0.12)] text-[hsl(var(--risk-medium))]' },
-  { role: 'Reviewer', users: ['Chioma Adeyemi'], icon: Users, color: 'bg-[hsl(var(--risk-high)/0.12)] text-[hsl(var(--risk-high))]' },
-  { role: 'Partner Bank Officer', users: ['Adaeze Okolo (Access Bank)', 'Tunde Olatunji (GTBank)'], icon: Building2, color: 'bg-teal-500/15 text-teal-700 dark:text-teal-300' },
-  { role: 'Read-Only', users: ['Yusuf Maina'], icon: Eye, color: 'bg-muted text-muted-foreground' },
-];
 
 const ACTION_LABELS: Record<string, string> = {
   NFIU_ESCALATION: 'Escalated to NFIU',
@@ -93,46 +85,6 @@ const SystemAudit = () => {
           </header>
 
           <main className="flex-1 overflow-y-auto p-6 bg-background space-y-6">
-            {/* Access Management */}
-            <Card>
-              <CardHeader className="pb-3">
-                <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4 text-muted-foreground" />
-                  <CardTitle className="text-sm">Access Management — Role Assignments</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-3 md:grid-cols-3">
-                  {roleData.map((r) => {
-                    const Icon = r.icon;
-                    return (
-                      <div key={r.role} className="rounded-lg border p-3 space-y-2">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <Icon className="h-4 w-4 text-muted-foreground" />
-                            <span className="text-xs font-semibold text-foreground">{r.role}</span>
-                          </div>
-                          <Badge variant="outline" className={cn('text-[10px] border-0 font-semibold', r.color)}>
-                            {r.users.length} user{r.users.length !== 1 ? 's' : ''}
-                          </Badge>
-                        </div>
-                        <div className="space-y-1">
-                          {r.users.map((u) => (
-                            <div key={u} className="flex items-center gap-2 text-xs text-muted-foreground">
-                              <div className="h-5 w-5 rounded-full bg-muted flex items-center justify-center text-[9px] font-semibold text-foreground">
-                                {u.split(' ').map((n) => n[0]).join('')}
-                              </div>
-                              {u}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-
             {/* Immutable Audit Log */}
             <Card>
               <CardHeader className="pb-3">
