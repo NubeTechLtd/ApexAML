@@ -85,46 +85,6 @@ const SystemAudit = () => {
           </header>
 
           <main className="flex-1 overflow-y-auto p-6 bg-background space-y-6">
-            {/* Access Management */}
-            <Card>
-              <CardHeader className="pb-3">
-                <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4 text-muted-foreground" />
-                  <CardTitle className="text-sm">Access Management — Role Assignments</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-3 md:grid-cols-3">
-                  {roleData.map((r) => {
-                    const Icon = r.icon;
-                    return (
-                      <div key={r.role} className="rounded-lg border p-3 space-y-2">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <Icon className="h-4 w-4 text-muted-foreground" />
-                            <span className="text-xs font-semibold text-foreground">{r.role}</span>
-                          </div>
-                          <Badge variant="outline" className={cn('text-[10px] border-0 font-semibold', r.color)}>
-                            {r.users.length} user{r.users.length !== 1 ? 's' : ''}
-                          </Badge>
-                        </div>
-                        <div className="space-y-1">
-                          {r.users.map((u) => (
-                            <div key={u} className="flex items-center gap-2 text-xs text-muted-foreground">
-                              <div className="h-5 w-5 rounded-full bg-muted flex items-center justify-center text-[9px] font-semibold text-foreground">
-                                {u.split(' ').map((n) => n[0]).join('')}
-                              </div>
-                              {u}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-
             {/* Immutable Audit Log */}
             <Card>
               <CardHeader className="pb-3">
