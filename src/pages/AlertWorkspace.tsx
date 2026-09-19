@@ -405,20 +405,36 @@ export default function AlertWorkspace() {
       ]);
       setEditVersion((v) => v + 1);
     } catch (e) {
-      // Demo alerts are not backed by a database case, so the refinement
-      // service cannot reach them — fall back to the canned co-pilot replies.
-      setChatMessages((prev) => [
-        ...prev,
-        { id: Date.now(), role: 'assistant', content: getResponse(input) },
-      ]);
-      if (!(e instanceof Error && e.message.includes('Alert not found'))) {
+      // Demo alerts are not backed by a database case (non-UUID ids), so the
+      // refinement service cannot reach them — fall back to the canned
+      // co-pilot replies for the guided demo only.
+      const isDemoAlert = !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+        selected.id,
+      );
+      if (isDemoAlert) {
+        setChatMessages((prev) => [
+          ...prev,
+          { id: Date.now(), role: 'assistant', content: getResponse(input) },
+        ]);
+        setEditVersion((v) => v + 1);
+      } else {
+        // Never claim the draft changed: the report text is untouched.
+        setChatMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now(),
+            role: 'assistant',
+            content:
+              '⚠️ I could not apply that change — the refinement service did not respond. The draft is unchanged; please try again.',
+          },
+        ]);
         toast({
           title: 'Could not refine the report',
-          description: e instanceof Error ? e.message : 'The AI service is unavailable. Please try again.',
+          description:
+            'The AI service is unavailable. No changes were made to the draft — please try again.',
           variant: 'destructive',
         });
       }
-      setEditVersion((v) => v + 1);
     } finally {
       setIsTyping(false);
     }
