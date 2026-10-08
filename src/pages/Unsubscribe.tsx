@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { CompanyFooterLine } from "@/components/CompanyFooterLine";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
@@ -45,7 +46,7 @@ export default function Unsubscribe() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f172a] text-slate-200 flex items-center justify-center px-6">
+    <div className="min-h-screen bg-[#0f172a] text-slate-200 flex flex-col items-center justify-center gap-5 px-6">
       <div className="w-full max-w-md rounded-xl border border-slate-700 bg-slate-800 p-8">
         <div className="text-xs font-semibold uppercase tracking-[0.14em] text-blue-400 mb-4">
           ApexAML
@@ -99,6 +100,8 @@ export default function Unsubscribe() {
           </>
         )}
       </div>
+
+      <CompanyFooterLine className="text-slate-500" />
     </div>
   );
 }

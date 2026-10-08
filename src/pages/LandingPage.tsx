@@ -51,6 +51,7 @@ import { AudienceProvider, useAudience } from "@/components/landing/AudienceCont
 import { AudienceSelector } from "@/components/landing/AudienceSelector";
 import { Seo } from "@/components/Seo";
 import { useRoadmapCount } from "@/hooks/useRoadmapCount";
+import { CompanyFooterLine } from "@/components/CompanyFooterLine";
 
 // Live-data social-proof line rendered under the hero CTA and inside the
 // RoadmapGeneratorBand. Renders nothing while loading or on failure so we
@@ -992,7 +993,10 @@ function LandingPageInner() {
               <Linkedin className="h-4 w-4" />
             </a>
           </div>
-          <p className="text-white/25">© {new Date().getFullYear()} ApexAML Technologies.</p>
+          <div className="flex flex-col items-center gap-1 text-center">
+            <p className="text-white/25">© {new Date().getFullYear()} ApexAML Technologies.</p>
+            <CompanyFooterLine className="text-white/30" />
+          </div>
         </div>
       </footer>
       

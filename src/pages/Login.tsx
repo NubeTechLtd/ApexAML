@@ -9,6 +9,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, Shield, ShieldCheck } from 'lucide-react';
 import { Seo } from '@/components/Seo';
 import { OtpInput } from '@/components/auth/OtpInput';
+import { CompanyFooterLine } from '@/components/CompanyFooterLine';
 
 type Step = 'password' | 'mfa';
 
@@ -94,7 +95,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-6">
+    <div className="min-h-screen flex flex-col items-center justify-center gap-5 bg-background p-6">
       <Seo
         title="Sign in | ApexAML"
         description="Sign in to the ApexAML compliance platform. Restricted to authorised compliance officers and admin users at customer institutions."
@@ -208,6 +209,7 @@ export default function Login() {
           </>
         )}
       </Card>
+      <CompanyFooterLine />
     </div>
   );
 }

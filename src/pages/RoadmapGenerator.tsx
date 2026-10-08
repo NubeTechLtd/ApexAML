@@ -37,6 +37,7 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { Seo } from '@/components/Seo';
 import { openRoadmapAsPdf } from '@/lib/generateRoadmapPdf';
+import { CompanyFooterLine } from '@/components/CompanyFooterLine';
 
 type Step = 'hook' | 'form' | 'loading' | 'roadmap';
 
@@ -1159,6 +1160,8 @@ Managing Director:                                    Signature: _______________
 
               </AnimatePresence>
             </div>
+
+            <CompanyFooterLine className="mt-10 text-center" />
           </main>
         </div>
 
