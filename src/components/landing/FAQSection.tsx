@@ -31,6 +31,10 @@ const FAQS: FAQ[] = [
           <li>AML/CFT training &amp; board oversight</li>
           <li>5-year examiner-ready record retention</li>
         </ul>
+        <p>
+          Our real-time alerts, dynamic rule engine, NIN/BVN-linked onboarding and audit-ready reporting are also built
+          toward the CBN's 2025 draft standards for Automated AML Solutions — draft standards, not yet final.
+        </p>
       </div>
     ),
   },
@@ -61,8 +65,11 @@ const FAQS: FAQ[] = [
     a: (
       <p>
         Pricing starts from <span className="text-white/80 font-semibold">₦550,000/month</span> — less than the loaded
-        cost of a single compliance analyst (₦3–8M/year salary plus benefits). For institutions submitting their CBN
-        roadmap before <span className="text-primary font-semibold">June 10, 2026</span>, the first month is free.
+        cost of a single compliance analyst (₦3–8M/year salary plus benefits).{" "}
+        <span className="text-primary font-semibold">
+          Founding-client pricing is locked in while the CBN's 2025 draft standards for Automated AML Solutions are
+          being finalised.
+        </span>
       </p>
     ),
   },

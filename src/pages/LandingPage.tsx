@@ -649,7 +649,7 @@ function LandingPageInner() {
                 <span className="hidden sm:inline text-white/20">·</span>
                 <span className="inline-flex items-center gap-1.5">
                   <CheckCircle2 className="h-3 w-3 text-risk-low" />
-                  FATF post-grey-list ready
+                  Aligned with the CBN&apos;s draft automated-AML standards
                 </span>
                 <span className="hidden sm:inline text-white/20">·</span>
                 <span className="inline-flex items-center gap-1.5">

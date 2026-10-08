@@ -170,7 +170,11 @@ export function ComparisonSection() {
         </div>
 
         <p className="text-center text-[11px] text-white/40">
-          All prices NGN. <span className="text-primary/80">First month free for CBN roadmap submissions before June 10, 2026.</span>
+          All prices NGN.{" "}
+          <span className="text-primary/80">
+            Founding-client pricing locked in while the CBN's 2025 draft standards for Automated AML Solutions are
+            finalised.
+          </span>
         </p>
       </div>
     </section>
