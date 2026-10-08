@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Shield, ArrowLeft, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Seo } from "@/components/Seo";
+import { CompanyFooterLine } from "@/components/CompanyFooterLine";
 
 const SECTIONS = [
   {
@@ -100,6 +101,8 @@ export default function Privacy() {
           </a>
           .
         </p>
+
+        <CompanyFooterLine className="text-white/30" />
       </main>
     </div>
   );
