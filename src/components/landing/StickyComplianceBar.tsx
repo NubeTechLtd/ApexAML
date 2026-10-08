@@ -1,17 +1,16 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Clock, X } from 'lucide-react';
+import { Zap, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface Props {
-  daysRemaining: number;
   onBookDemo: () => void;
   onVisibilityChange?: (visible: boolean) => void;
 }
 
 const DISMISS_KEY = 'apexaml_sticky_bar_dismissed';
 
-export function StickyComplianceBar({ daysRemaining, onBookDemo, onVisibilityChange }: Props) {
+export function StickyComplianceBar({ onBookDemo, onVisibilityChange }: Props) {
   const [visible, setVisible] = useState(false);
   const [dismissed, setDismissed] = useState(false);
 
@@ -52,15 +51,16 @@ export function StickyComplianceBar({ daysRemaining, onBookDemo, onVisibilityCha
           transition={{ duration: 0.35, ease: 'easeOut' }}
           className="fixed bottom-0 inset-x-0 z-40 h-16 bg-[hsl(220,25%,8%)]/95 backdrop-blur-xl border-t border-primary/20 shadow-[0_-8px_30px_-10px_hsl(var(--primary)/0.2)]"
           role="region"
-          aria-label="Compliance deadline reminder"
+          aria-label="Compliance standards notice"
         >
           <div className="mx-auto max-w-6xl h-full flex items-center justify-between gap-3 px-4 sm:px-6">
-            {/* LEFT — Countdown */}
+            {/* LEFT — Draft standards */}
             <div className="flex items-center gap-2 shrink-0">
-              <Clock className="h-4 w-4 text-primary" />
+              <Zap className="h-4 w-4 text-primary" />
               <p className="text-xs sm:text-sm font-medium text-white">
-                <span className="tabular-nums text-primary font-bold">{daysRemaining}</span>
-                <span className="text-white/70"> days to CBN deadline</span>
+                <span className="text-white/70">The CBN's </span>
+                <span className="text-primary font-bold">2025 draft standards</span>
+                <span className="text-white/70"> for Automated AML Solutions</span>
               </p>
             </div>
 
