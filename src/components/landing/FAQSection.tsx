@@ -50,6 +50,30 @@ const FAQS: FAQ[] = [
     ),
   },
   {
+    q: "What does the 30-45 day pilot include?",
+    a: (
+      <div className="space-y-3">
+        <p>
+          <span className="text-white/80 font-semibold">What's included.</span> A sample of your own transaction data
+          is loaded into an isolated workspace, detection rules for your products are configured in the visual rule
+          builder and tested in the sandbox, then live alerts run through the case workspace with AI-assisted STR
+          drafting and goAML XML export for review. Nothing is filed with the NFIU during a pilot.
+        </p>
+        <p>
+          <span className="text-white/80 font-semibold">Who's involved.</span> Your compliance officer or MLRO (a few
+          hours a week), one data or IT contact to supply the transaction extract, and an ApexAML implementation lead
+          who sets up the workspace and tunes the rules with you.
+        </p>
+        <p>
+          <span className="text-white/80 font-semibold">How conversion works.</span> At day 30-45 we review the pilot
+          together — alert volume, false-positive rate and time to decision. If you continue, the workspace, rules and
+          case history carry over to a paid plan (Founding Client or Professional) with no re-implementation. If you
+          don't, the extract you supplied is deleted and nothing has been filed.
+        </p>
+      </div>
+    ),
+  },
+  {
     q: "How long does integration take?",
     a: (
       <p>
