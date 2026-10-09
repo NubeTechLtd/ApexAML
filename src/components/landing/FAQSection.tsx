@@ -42,10 +42,10 @@ const FAQS: FAQ[] = [
     q: "Where is our data stored — is it in Nigeria?",
     a: (
       <p>
-        ApexAML is hosted on AWS <span className="text-white/80 font-mono text-[12px]">af-south-1</span> (Cape Town) —
-        the closest AWS region with dedicated data-residency guarantees acceptable under the Nigeria Data Protection Act
-        2023. PII never crosses borders without your written instruction, and we sign a data processing addendum (DPA)
-        at contract signing.
+        Data is hosted on Supabase in the{" "}
+        <span className="text-white/80 font-mono text-[12px]">eu-west-1</span> (Ireland) region, encrypted in transit
+        and at rest. Data residency options for regulated institutions are available on request. We sign a data
+        processing addendum (DPA) at contract signing.
       </p>
     ),
   },
