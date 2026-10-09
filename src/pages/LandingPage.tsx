@@ -614,7 +614,7 @@ function LandingPageInner() {
                   className="relative bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl text-sm font-semibold px-8 group min-h-[44px] py-4 md:py-2 w-full sm:w-auto"
                 >
                   <Calendar className="h-4 w-4 mr-2" />
-                  Book a product demo
+                  Book a 30-minute walkthrough
                   <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
                 </Button>
                 <Button
@@ -627,6 +627,9 @@ function LandingPageInner() {
                   Take a 2-minute product tour →
                 </Button>
               </div>
+              <p className="text-center text-sm text-white/45">
+                Then run a 30-45 day pilot on your own data
+              </p>
               <RoadmapCountLine variant="hero" />
               <a
                 href={WHATSAPP_URL}

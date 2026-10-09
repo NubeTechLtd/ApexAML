@@ -53,9 +53,9 @@ const STEPS = [
   {
     label: 'NFIU Secure Submission',
     time: 0.5,
-    action: 'Filing the report and generating an immutable audit hash.',
+    action: 'Recording the export in an append-only audit trail.',
     reason:
-      'To satisfy the strict reporting mandate and generate cryptographic proof of compliance for future audits.',
+      'To satisfy the reporting mandate and keep a timestamped, attributable record of exactly what was filed.',
     icon: ShieldCheck,
   },
 ];
