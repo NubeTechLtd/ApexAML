@@ -335,7 +335,7 @@ const FAQ_FOR_SCHEMA: Array<{ q: string; a: string }> = [
   },
   {
     q: "Where is our data stored — is it in Nigeria?",
-    a: "ApexAML is hosted on AWS af-south-1 (Cape Town) — the closest AWS region with data-residency guarantees acceptable under the Nigeria Data Protection Act 2023. PII never crosses borders without your written instruction, and we sign a DPA at contract signing.",
+    a: "Data is hosted on Supabase in the eu-west-1 (Ireland) region, encrypted in transit and at rest. Data residency options for regulated institutions are available on request. We sign a DPA at contract signing.",
   },
   {
     q: "How long does integration take?",
