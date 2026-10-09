@@ -25,7 +25,7 @@ const CAPABILITY_AREAS = [
   'Currency Transaction Reporting (CTR)',
   'Independent audit & immutable trail',
   'AML/CFT training programme & board oversight',
-  'Record retention (5-year minimum, examiner-ready)',
+  'Record retention (5-year minimum)',
 ];
 
 function esc(s: string): string {

@@ -129,7 +129,7 @@ const defaultFeatures = [
   },
   {
     title: "AI STR Co-Pilot",
-    desc: "Generative AI drafts NFIU-compliant Suspicious Transaction Reports in seconds, not hours.",
+    desc: "AI-assisted STR drafting grounded in the case's transaction and customer data, with analyst review and full edit history.",
   },
   {
     title: "No-Code Rules Engine",
@@ -137,7 +137,7 @@ const defaultFeatures = [
   },
   {
     title: "Immutable Audit Trail",
-    desc: "Every action timestamped and cryptographically sealed. Always examiner-ready.",
+    desc: "Every action timestamped in an append-only audit trail that cannot be edited or deleted.",
   },
 ];
 
@@ -331,11 +331,11 @@ function RoadmapGeneratorBand() {
 const FAQ_FOR_SCHEMA: Array<{ q: string; a: string }> = [
   {
     q: "Does ApexAML satisfy the CBN circular requirements?",
-    a: "Yes. ApexAML covers all 10 capability areas mandated by Circular BSD/DIR/PUB/LAB/019/002, including tiered CDD with BVN/NIN, EDD, PEP and sanctions screening, beneficial-owner identification, transaction monitoring with Nigerian typologies, NFIU goAML STR/CTR submission, immutable audit trail, AML/CFT training and 5-year examiner-ready record retention.",
+    a: "Yes. ApexAML covers all 10 capability areas mandated by Circular BSD/DIR/PUB/LAB/019/002, including tiered CDD with BVN/NIN, EDD, PEP and sanctions screening, beneficial-owner identification, transaction monitoring with Nigerian typologies, NFIU goAML STR/CTR submission, an append-only audit trail, AML/CFT training and 5-year record retention.",
   },
   {
     q: "Where is our data stored — is it in Nigeria?",
-    a: "ApexAML is hosted on AWS af-south-1 (Cape Town) — the closest AWS region with data-residency guarantees acceptable under the Nigeria Data Protection Act 2023. PII never crosses borders without your written instruction, and we sign a DPA at contract signing.",
+    a: "Data is hosted on Supabase in the eu-west-1 (Ireland) region, encrypted in transit and at rest. Data residency options for regulated institutions are available on request. We sign a DPA at contract signing.",
   },
   {
     q: "How long does integration take?",
@@ -355,7 +355,7 @@ const FAQ_FOR_SCHEMA: Array<{ q: string; a: string }> = [
   },
   {
     q: "What happens during a CBN examiner visit?",
-    a: "Examiners typically request the AML policy, sample STRs, the case-management trail for flagged customers, and evidence of independent review. ApexAML produces all four on demand: one-click examiner pack as a sealed PDF bundle, cryptographically-sealed audit trail, per-customer case file with reviewer sign-off and STR linkage, and a live dashboard for the examiner.",
+    a: "Examiners typically request the AML policy, sample STRs, the case-management trail for flagged customers, and evidence of independent review. ApexAML keeps all four on hand: an append-only audit trail that cannot be edited or deleted, per-customer case files with investigator notes, reviewer sign-off and STR linkage, STRs exported as validated goAML XML, and a live dashboard your compliance officer can present directly.",
   },
   {
     q: "Is ApexAML SOC 2 or ISO 27001 certified?",
@@ -378,7 +378,7 @@ export default function LandingPage() {
     <AudienceProvider>
       <Seo
         title="ApexAML — Compliance Intelligence for Nigerian Fintechs"
-        description="CBN-aligned AML platform for Nigerian fintechs and banks. AI STR co-pilot, BVN/NIN KYC, transaction monitoring, NFIU goAML reporting and examiner-ready audit trails."
+        description="CBN-aligned AML platform for Nigerian fintechs and banks. AI-assisted STR drafting, BVN/NIN KYC, transaction monitoring, NFIU goAML reporting and an append-only audit trail."
         path="/"
         jsonLd={LANDING_JSON_LD}
       />
@@ -614,7 +614,7 @@ function LandingPageInner() {
                   className="relative bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl text-sm font-semibold px-8 group min-h-[44px] py-4 md:py-2 w-full sm:w-auto"
                 >
                   <Calendar className="h-4 w-4 mr-2" />
-                  Book a product demo
+                  Book a 30-minute walkthrough
                   <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
                 </Button>
                 <Button
@@ -627,6 +627,9 @@ function LandingPageInner() {
                   Take a 2-minute product tour →
                 </Button>
               </div>
+              <p className="text-center text-sm text-white/45">
+                Then run a 30-45 day pilot on your own data
+              </p>
               <RoadmapCountLine variant="hero" />
               <a
                 href={WHATSAPP_URL}
@@ -767,14 +770,14 @@ function LandingPageInner() {
               <br /> now in <span className="text-primary">3 minutes</span>.
             </h2>
             <p className="text-white/40 leading-relaxed">
-              Generative AI fine-tuned on Nigerian typologies — POS structuring, Crypto P2P layering, BDC smurfing —
-              drafts examiner-ready STR narratives while your analysts focus on real threats.
+              AI-assisted STR drafting grounded in the case's transaction and customer data — POS structuring, Crypto P2P
+              layering, BDC smurfing — with analyst review and full edit history, so your team focuses on real threats.
             </p>
             <ul className="space-y-3 text-sm text-white/50">
               {[
-                "Auto-classifies alerts by NFIU category",
-                "References specific circular clauses",
-                "Adapts tone for CBN vs. EFCC submissions",
+                "Drafts from the case's own alert, customer record and transactions",
+                "Saves every revision as a new, dated version",
+                "Analyst reviews and edits before anything is exported",
               ].map((t) => (
                 <li key={t} className="flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 text-risk-low shrink-0" />

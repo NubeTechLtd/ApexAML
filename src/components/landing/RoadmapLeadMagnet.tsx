@@ -33,7 +33,7 @@ SECTION 2 — TEN CBN CAPABILITY AREAS — GAP ASSESSMENT
 [ ] 7. Currency Transaction Reporting (CTR)
 [ ] 8. Independent audit & immutable trail
 [ ] 9. AML/CFT training programme & board oversight
-[ ] 10. Record retention (5-year minimum, examiner-ready)
+[ ] 10. Record retention (5-year minimum)
 
 ================================================================
 SECTION 3 — REMEDIATION TIMELINE

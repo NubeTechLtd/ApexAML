@@ -66,7 +66,7 @@ export function StickyComplianceBar({ onBookDemo, onVisibilityChange }: Props) {
 
             {/* CENTER — Tagline (desktop only) */}
             <p className="hidden lg:block text-sm text-white/80 font-medium">
-              Ready to get compliant?
+              Then run a 30-45 day pilot on your own data
             </p>
 
             {/* RIGHT — Actions */}
@@ -76,7 +76,7 @@ export function StickyComplianceBar({ onBookDemo, onVisibilityChange }: Props) {
                 onClick={onBookDemo}
                 className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg text-xs font-semibold h-9 px-3 sm:px-4"
               >
-                Book Demo
+                Book a 30-minute walkthrough
               </Button>
               <button
                 type="button"

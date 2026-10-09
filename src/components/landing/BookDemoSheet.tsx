@@ -158,9 +158,9 @@ export function BookDemoSheet({ open, onOpenChange, prefilledMessage }: Props) {
                 <CalendarCheck className="h-5 w-5" />
               </div>
               <div className="flex-1">
-                <SheetTitle className="text-white text-lg">Book an ApexAML demo</SheetTitle>
+                <SheetTitle className="text-white text-lg">Book a 30-minute walkthrough</SheetTitle>
                 <SheetDescription className="text-white/50 text-xs">
-                  {step === 4 ? 'Confirmed' : `Step ${step} of 3 · 30-minute walkthrough`}
+                  {step === 4 ? 'Confirmed' : `Step ${step} of 3 · then run a 30-45 day pilot on your own data`}
                 </SheetDescription>
               </div>
             </div>
@@ -338,7 +338,7 @@ export function BookDemoSheet({ open, onOpenChange, prefilledMessage }: Props) {
                 </Button>
                 <Button onClick={handleSubmit} disabled={!canSubmitStep3 || submitting}
                   className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg h-11 font-semibold disabled:opacity-40">
-                  {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Book my demo <ArrowRight className="h-4 w-4" /></>}
+                  {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Book a 30-minute walkthrough <ArrowRight className="h-4 w-4" /></>}
                 </Button>
               </div>
             </div>

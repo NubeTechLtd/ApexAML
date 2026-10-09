@@ -29,7 +29,7 @@ const FAQS: FAQ[] = [
           <li>Currency Transaction Reporting (CTR)</li>
           <li>Independent immutable audit trail</li>
           <li>AML/CFT training &amp; board oversight</li>
-          <li>5-year examiner-ready record retention</li>
+          <li>5-year record retention</li>
         </ul>
         <p>
           Our real-time alerts, dynamic rule engine, NIN/BVN-linked onboarding and audit-ready reporting are also built
@@ -42,11 +42,35 @@ const FAQS: FAQ[] = [
     q: "Where is our data stored — is it in Nigeria?",
     a: (
       <p>
-        ApexAML is hosted on AWS <span className="text-white/80 font-mono text-[12px]">af-south-1</span> (Cape Town) —
-        the closest AWS region with dedicated data-residency guarantees acceptable under the Nigeria Data Protection Act
-        2023. PII never crosses borders without your written instruction, and we sign a data processing addendum (DPA)
-        at contract signing.
+        Data is hosted on Supabase in the{" "}
+        <span className="text-white/80 font-mono text-[12px]">eu-west-1</span> (Ireland) region, encrypted in transit
+        and at rest. Data residency options for regulated institutions are available on request. We sign a data
+        processing addendum (DPA) at contract signing.
       </p>
+    ),
+  },
+  {
+    q: "What does the 30-45 day pilot include?",
+    a: (
+      <div className="space-y-3">
+        <p>
+          <span className="text-white/80 font-semibold">What's included.</span> A sample of your own transaction data
+          is loaded into an isolated workspace, detection rules for your products are configured in the visual rule
+          builder and tested in the sandbox, then live alerts run through the case workspace with AI-assisted STR
+          drafting and goAML XML export for review. Nothing is filed with the NFIU during a pilot.
+        </p>
+        <p>
+          <span className="text-white/80 font-semibold">Who's involved.</span> Your compliance officer or MLRO (a few
+          hours a week), one data or IT contact to supply the transaction extract, and an ApexAML implementation lead
+          who sets up the workspace and tunes the rules with you.
+        </p>
+        <p>
+          <span className="text-white/80 font-semibold">How conversion works.</span> At day 30-45 we review the pilot
+          together — alert volume, false-positive rate and time to decision. If you continue, the workspace, rules and
+          case history carry over to a paid plan (Founding Client or Professional) with no re-implementation. If you
+          don't, the extract you supplied is deleted and nothing has been filed.
+        </p>
+      </div>
     ),
   },
   {
@@ -102,16 +126,16 @@ const FAQS: FAQ[] = [
       <div className="space-y-2">
         <p>
           Examiners typically request: (a) the institution's AML policy, (b) a sample of recent STRs, (c) the
-          case-management trail for flagged customers, and (d) evidence of independent review. ApexAML produces all four
-          on demand:
+          case-management trail for flagged customers, and (d) evidence of independent review. ApexAML keeps all four on
+          hand:
         </p>
         <ul className="space-y-1 text-[13px] text-white/55 list-disc list-inside marker:text-primary">
           <li>
-            One-click <span className="text-white/80">examiner pack</span> exporting any date range as a sealed PDF
-            bundle
+            Append-only <span className="text-white/80">audit trail</span> — every entry timestamped and attributed,
+            with no edit or delete path available to any user
           </li>
-          <li>Cryptographically-sealed audit trail proving no record was tampered with</li>
           <li>Per-customer case file with full investigator notes, reviewer sign-off, and STR linkage</li>
+          <li>STRs exported as validated goAML XML, ready for upload to the NFIU portal</li>
           <li>Live dashboard your compliance officer can present directly to the examiner</li>
         </ul>
       </div>
@@ -124,7 +148,8 @@ const FAQS: FAQ[] = [
         ApexAML is architected from the ground up to meet SOC 2 Type II and ISO 27001 standards. We enforce AES-256
         encryption at rest, TLS 1.3 in transit, strict role-based access controls (RBAC), and immutable audit logging.
         We are currently undergoing our formal readiness assessments for both certifications. In the interim, we provide
-        a comprehensive Vendor Security Questionnaire and our AWS infrastructure compliance reports during procurement.
+        a comprehensive Vendor Security Questionnaire and our hosting provider's infrastructure compliance reports
+        during procurement.
       </p>
     ),
   },

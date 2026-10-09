@@ -150,7 +150,7 @@ Initial CBN submission deadline: 10 June 2026
 Full compliance deadline: ${d.deadline}
 
 EXECUTIVE SUMMARY
-${d.institutionName} will implement a comprehensive AML/CFT control framework aligned to CBN Circular BSD/DIR/PUB/LAB/019/002 and the NFIU goAML reporting standard. The programme spans 24 months from initial submission and is sized for monthly transaction volume of ${d.volume}. Current state: ${d.amlSetup}. The roadmap closes all 10 mandated CBN capability areas and produces an examiner-ready evidence pack.
+${d.institutionName} will implement a comprehensive AML/CFT control framework aligned to CBN Circular BSD/DIR/PUB/LAB/019/002 and the NFIU goAML reporting standard. The programme spans 24 months from initial submission and is sized for monthly transaction volume of ${d.volume}. Current state: ${d.amlSetup}. The roadmap closes all 10 mandated CBN capability areas and produces a documented evidence pack.
 
 REGULATORY CONTEXT
 The May 2026 CBN AML Circular requires every regulated institution to file an implementation roadmap by 10 June 2026 and to reach full compliance by ${d.deadline}. Failure to file is a regulatory infraction. ${d.institutionName} is regulated as a ${d.institutionType} and is therefore subject to the licence-specific obligations summarised below, in addition to the universal CDD/EDD, sanctions screening, transaction monitoring, STR/CTR, audit-trail, AI/ML governance, fraud monitoring, and entity-profiling controls.
@@ -179,7 +179,7 @@ PHASE 3 — ADVANCED COMPLIANCE (Months 10-18)
 PHASE 4 — FULL COMPLIANCE CERTIFICATION (Months 18-24)
 - Month 19: External audit attestation against CBN Circular BSD/DIR/PUB/LAB/019/002.
 - Month 21: Full coverage demonstrated across all 10 CBN capability areas.
-- Month 22: 5-year record-retention archive validated and examiner-ready.
+- Month 22: 5-year record-retention archive in place and documented.
 - Month 24: Board sign-off and submission of full compliance certification to CBN before ${d.deadline}.
 
 KEY RISKS AND MITIGATIONS

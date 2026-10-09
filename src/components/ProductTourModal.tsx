@@ -12,7 +12,6 @@ import {
   Sun,
   Download,
   CheckCircle2,
-  Hash,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -51,7 +50,7 @@ const SLIDES = [
   {
     title: "Every action. Every decision. On record for CBN.",
     caption:
-      "Every alert opened, every note added, every STR exported is logged with a timestamp, analyst name, and SHA-256 hash. This is what you show a CBN examiner.",
+      "Every alert opened, every note added, every STR exported is logged with a timestamp, the analyst's name and the reason given. The log is append-only — no one can edit or delete an entry.",
     visual: "audit",
   },
 ] as const;
@@ -347,14 +346,10 @@ function SlideVisual({ kind }: { kind: string }) {
           <span className="text-white/40 font-mono w-16">{row.t}</span>
           <span className="text-white/80 flex-1">{row.act}</span>
           <span className="text-white/50">{row.who}</span>
-          <Hash className="h-3 w-3 text-emerald-400/70" />
-          <span className="font-mono text-emerald-400/70 text-[10px]">
-            a7f{idx}c…{idx}9e2
-          </span>
         </div>
       ))}
       <div className="text-[10px] text-white/40 pt-1">
-        Immutable · SHA-256 hashed · CBN examiner-ready
+        Append-only · Timestamped · Cannot be edited or deleted
       </div>
     </div>
   );
