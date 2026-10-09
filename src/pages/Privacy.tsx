@@ -19,7 +19,7 @@ const SECTIONS = [
   },
   {
     h: "4. Where your data is stored",
-    p: "All personal data submitted via this website is stored on AWS Cape Town (af-south-1) — the closest AWS region with data-residency commitments compatible with NDPA 2023. PII never crosses borders without your written instruction. Backups are encrypted at rest using AES-256.",
+    p: "All personal data submitted via this website is hosted in the eu-west-1 (Ireland) region, encrypted in transit and at rest. Data residency options for regulated institutions are available on request. Backups are encrypted at rest using AES-256.",
   },
   {
     h: "5. Retention",
