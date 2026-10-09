@@ -29,7 +29,7 @@ const FAQS: FAQ[] = [
           <li>Currency Transaction Reporting (CTR)</li>
           <li>Independent immutable audit trail</li>
           <li>AML/CFT training &amp; board oversight</li>
-          <li>5-year examiner-ready record retention</li>
+          <li>5-year record retention</li>
         </ul>
         <p>
           Our real-time alerts, dynamic rule engine, NIN/BVN-linked onboarding and audit-ready reporting are also built
@@ -102,16 +102,16 @@ const FAQS: FAQ[] = [
       <div className="space-y-2">
         <p>
           Examiners typically request: (a) the institution's AML policy, (b) a sample of recent STRs, (c) the
-          case-management trail for flagged customers, and (d) evidence of independent review. ApexAML produces all four
-          on demand:
+          case-management trail for flagged customers, and (d) evidence of independent review. ApexAML keeps all four on
+          hand:
         </p>
         <ul className="space-y-1 text-[13px] text-white/55 list-disc list-inside marker:text-primary">
           <li>
-            One-click <span className="text-white/80">examiner pack</span> exporting any date range as a sealed PDF
-            bundle
+            Append-only <span className="text-white/80">audit trail</span> — every entry timestamped and attributed,
+            with no edit or delete path available to any user
           </li>
-          <li>Cryptographically-sealed audit trail proving no record was tampered with</li>
           <li>Per-customer case file with full investigator notes, reviewer sign-off, and STR linkage</li>
+          <li>STRs exported as validated goAML XML, ready for upload to the NFIU portal</li>
           <li>Live dashboard your compliance officer can present directly to the examiner</li>
         </ul>
       </div>
@@ -124,7 +124,8 @@ const FAQS: FAQ[] = [
         ApexAML is architected from the ground up to meet SOC 2 Type II and ISO 27001 standards. We enforce AES-256
         encryption at rest, TLS 1.3 in transit, strict role-based access controls (RBAC), and immutable audit logging.
         We are currently undergoing our formal readiness assessments for both certifications. In the interim, we provide
-        a comprehensive Vendor Security Questionnaire and our AWS infrastructure compliance reports during procurement.
+        a comprehensive Vendor Security Questionnaire and our hosting provider's infrastructure compliance reports
+        during procurement.
       </p>
     ),
   },
