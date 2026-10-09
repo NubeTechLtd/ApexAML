@@ -148,12 +148,10 @@ const SystemAudit = () => {
                     </TableBody>
                   </Table>
                 </div>
-                <div className="flex items-center justify-between mt-3">
+                <div className="mt-3">
                   <p className="text-[10px] text-muted-foreground">
-                    This log is cryptographically hashed and append-only. Records cannot be modified or deleted per CBN regulatory requirements.
-                  </p>
-                  <p className="text-[10px] font-mono text-muted-foreground">
-                    SHA-256: 4a7d1ed4…f3c8
+                    This log is append-only. Entries are timestamped and attributed, and cannot be modified or deleted by
+                    any user.
                   </p>
                 </div>
               </CardContent>

@@ -40,7 +40,7 @@ const TIERS: Tier[] = [
       'Sanctions screening — OFAC, UN, EU, NFIU domestic lists',
       'Transaction monitoring — 10 pre-built Nigerian typology rules',
       'STR and CTR data generation in NFIU goAML format',
-      'Immutable audit trail — append-only, SHA-256 hashed',
+      'Immutable audit trail — append-only, timestamped',
       'CBN roadmap template PDF — branded, submission-ready',
       'Email support — 48-hour response',
       '5 user accounts included',
