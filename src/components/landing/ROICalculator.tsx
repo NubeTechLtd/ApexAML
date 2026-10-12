@@ -3,6 +3,7 @@ import { motion, useInView, useMotionValue, useTransform, animate } from 'framer
 import { TrendingUp, AlertTriangle, Users, Sparkles, Building2, Activity } from 'lucide-react';
 import { Slider } from '@/components/ui/slider';
 import { Input } from '@/components/ui/input';
+import { PLAN_PRICING, IMPLEMENTATION_PRICE_RANGE, imtoMonthlyCost } from '@/lib/pricing';
 import {
   Select,
   SelectContent,
@@ -14,10 +15,10 @@ import {
 // ── Pricing & risk model ──────────────────────────────────────────────────
 const ANALYST_SALARY = 5_000_000; // ₦/yr fully loaded
 const APEXAML_TIERS: Record<string, { monthly: number; label: string }> = {
-  Fintech: { monthly: 1_500_000, label: '₦1.5M / month · Growth tier' },
-  DMB: { monthly: 2_000_000, label: '₦2M / month · Enterprise tier' },
-  MFB: { monthly: 800_000, label: '₦800k / month · Starter tier' },
-  IMTO: { monthly: 1_200_000, label: '₦1.2M / month · Cross-border tier' },
+  Fintech: { monthly: PLAN_PRICING.starter, label: '₦1,100,000/month · Starter' },
+  DMB: { monthly: PLAN_PRICING.growth, label: '₦2,800,000/month · Growth' },
+  MFB: { monthly: PLAN_PRICING.essential, label: '₦550,000/month · Essential' },
+  IMTO: { monthly: PLAN_PRICING.imtoMonthlyMinimum, label: '₦9 per transaction · ₦3,500,000 monthly minimum' },
 };
 
 // CBN fine exposure model — scales with monthly transaction volume.
@@ -86,7 +87,8 @@ export function ROICalculator() {
     const fineExposure = estimateFineExposure(volume, institutionType);
     const manualCost = Math.max(0, analysts) * ANALYST_SALARY;
     const tier = APEXAML_TIERS[institutionType] ?? APEXAML_TIERS.Fintech;
-    const apexAnnual = tier.monthly * 12;
+    const apexMonthly = institutionType === 'IMTO' ? imtoMonthlyCost(volume) : tier.monthly;
+    const apexAnnual = apexMonthly * 12;
     // Savings model: replace ~70% of manual work + de-risk fine exposure × 0.4 probability
     const operationalSavings = Math.max(0, manualCost - apexAnnual);
     const riskSavings = Math.round(fineExposure * 0.4);
@@ -94,7 +96,7 @@ export function ROICalculator() {
     return {
       fineExposure,
       manualCost,
-      apexMonthly: tier.monthly,
+      apexMonthly,
       apexAnnual,
       tierLabel: tier.label,
       totalSavings,
@@ -293,6 +295,9 @@ export function ROICalculator() {
               <p className="text-[10px] text-white/30 leading-relaxed pt-1">
                 Indicative figures. Actual ROI confirmed during your scoping call.
               </p>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Professional Implementation Programme: {IMPLEMENTATION_PRICE_RANGE.toLowerCase()} Implementation fees are excluded from the annual subscription estimate.
+              </p>
             </div>
           </div>
         </motion.div>
@@ -331,7 +336,7 @@ function OutputRow({
         </div>
         <div className="min-w-0">
           <p className="text-xs font-semibold text-white/80 leading-tight">{label}</p>
-          <p className="text-[10px] text-white/40 mt-0.5 truncate">{helper}</p>
+          <p className="text-[10px] text-white/40 mt-0.5 break-words">{helper}</p>
         </div>
       </div>
       <div className="text-right shrink-0">{children}</div>

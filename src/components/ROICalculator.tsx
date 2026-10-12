@@ -4,10 +4,11 @@ import { ArrowRight, TrendingDown, Sparkles } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { BookDemoSheet } from "@/components/landing/BookDemoSheet";
+import { PLAN_PRICING, IMPLEMENTATION_PRICE_RANGE } from "@/lib/pricing";
 
 const MONTHLY_WORKING_HOURS = 160;
 const APEX_MINUTES_PER_STR = 11;
-const GROWTH_PLAN_COST = 2_800_000;
+const GROWTH_PLAN_COST = PLAN_PRICING.growth;
 
 const formatNaira = (n: number) =>
   `₦${Math.round(n).toLocaleString("en-NG")}`;
@@ -168,6 +169,9 @@ export function ROICalculator() {
                     ApexAML Growth Plan costs{" "}
                     {formatNaira(GROWTH_PLAN_COST)}/month. Your estimated STR
                     saving: {formatNaira(calc.savings)}/month.
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Professional Implementation Programme: {IMPLEMENTATION_PRICE_RANGE.toLowerCase()} Implementation fees are not included in this STR-writing estimate.
                   </p>
                   {calc.paysForItself && (
                     <p className="mt-3 text-sm font-bold text-emerald-400">
