@@ -10,8 +10,6 @@ ApexAML is built specifically to satisfy the 10 capability areas mandated by CBN
 - [CBN Roadmap Generator](/roadmap): Free tool that generates a CBN-compliant AML implementation roadmap, pre-formatted for Circular BSD/DIR/PUB/LAB/019/002.
 - [Privacy Policy](/privacy): How ApexAML collects, processes and stores personal data under the Nigeria Data Protection Act 2023.
 
-## Optional
-
 ## Pricing
 
 - Essential: ₦550,000/month.

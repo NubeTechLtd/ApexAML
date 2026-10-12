@@ -52,6 +52,7 @@ import { AudienceSelector } from "@/components/landing/AudienceSelector";
 import { Seo } from "@/components/Seo";
 import { useRoadmapCount } from "@/hooks/useRoadmapCount";
 import { CompanyFooterLine } from "@/components/CompanyFooterLine";
+import { PLAN_PRICING, IMPLEMENTATION_PRICE_RANGE } from "@/lib/pricing";
 
 // Live-data social-proof line rendered under the hero CTA and inside the
 // RoadmapGeneratorBand. Renders nothing while loading or on failure so we
@@ -343,7 +344,7 @@ const FAQ_FOR_SCHEMA: Array<{ q: string; a: string }> = [
   },
   {
     q: "What does it cost — is it affordable for a tier-3 MFB?",
-    a: "Pricing starts from ₦550,000/month — less than the loaded cost of a single compliance analyst (₦3–8M/year salary plus benefits). Every new client receives onboarding support and a compliance gap assessment at no extra charge.",
+    a: `Essential: ₦${PLAN_PRICING.essential.toLocaleString("en-NG")}/month. Starter: ₦${PLAN_PRICING.starter.toLocaleString("en-NG")}/month. Growth: ₦${PLAN_PRICING.growth.toLocaleString("en-NG")}/month. IMTO: ₦${PLAN_PRICING.imtoPerTransaction} per transaction with a ₦${PLAN_PRICING.imtoMonthlyMinimum.toLocaleString("en-NG")} monthly minimum. Professional Implementation Programme: ${IMPLEMENTATION_PRICE_RANGE.toLowerCase()}`,
   },
   {
     q: "Can ApexAML submit STRs directly to the NFIU goAML portal?",
