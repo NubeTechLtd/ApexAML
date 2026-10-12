@@ -1,5 +1,8 @@
 # Roadmap
 
+## Pricing alignment
+- [ ] Align plan prices, both ROI calculators, FAQ and machine-readable pricing; verify no stale plan figures remain.
+
 ## Data residency / hosting claims
 - [x] FAQSection answer replaced with the Supabase eu-west-1 (Ireland) wording + "Data residency options for regulated institutions are available on request."
 - [x] Landing page JSON-LD FAQ copy aligned to the same wording.
