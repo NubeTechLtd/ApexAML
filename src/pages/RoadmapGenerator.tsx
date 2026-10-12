@@ -38,6 +38,7 @@ import html2canvas from 'html2canvas';
 import { Seo } from '@/components/Seo';
 import { openRoadmapAsPdf } from '@/lib/generateRoadmapPdf';
 import { CompanyFooterLine } from '@/components/CompanyFooterLine';
+import { PLAN_PRICING } from '@/lib/pricing';
 
 type Step = 'hook' | 'form' | 'loading' | 'roadmap';
 
@@ -1090,7 +1091,7 @@ Managing Director:                                    Signature: _______________
                           {
                             icon: Wallet,
                             label: 'Starting from',
-                            value: '₦800,000/month — less than one compliance analyst salary',
+                            value: `Essential: ₦${PLAN_PRICING.essential.toLocaleString('en-NG')}/month`,
                           },
                           {
                             icon: Plug,
