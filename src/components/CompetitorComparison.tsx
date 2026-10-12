@@ -1,4 +1,5 @@
 import { BarChart3, Check, Zap } from "lucide-react";
+import { PLAN_PRICING, IMPLEMENTATION_PRICE_RANGE } from "@/lib/pricing";
 
 type Marker = "check" | "bolt" | "none";
 
@@ -9,7 +10,7 @@ interface Row {
 }
 
 const ROWS: Row[] = [
-  { feature: "Year-one total cost (Growth equivalent)", apex: { value: "₦33,950,000", marker: "check" }, autogon: { value: "₦61,600,000" } },
+  { feature: "Year-one subscription + onboarding (Growth equivalent)", apex: { value: `₦${(PLAN_PRICING.growth * 12 + 350_000).toLocaleString("en-NG")} · excludes implementation`, marker: "check" }, autogon: { value: "₦61,600,000" } },
   { feature: "Setup / onboarding fee", apex: { value: "₦350,000", marker: "check" }, autogon: { value: "₦31,600,000" } },
   { feature: "Time to go live", apex: { value: "5 business days", marker: "check" }, autogon: { value: "4–6 weeks" } },
   { feature: "NFIU goAML XML export", apex: { value: "Confirmed", marker: "check" }, autogon: { value: "Not published" } },
@@ -113,7 +114,7 @@ export function CompetitorComparison() {
         {/* Highlighted summary card */}
         <div className="rounded-2xl border border-amber-400/30 bg-gradient-to-br from-amber-500/[0.08] to-amber-400/[0.03] p-6 md:p-8">
           <p className="text-sm md:text-base text-white/85 leading-relaxed">
-            <span className="text-amber-300 font-semibold">ApexAML saves Nigerian institutions ₦27,650,000 in year one</span> compared to Autogon. We have the IMTO Regulatory Pack, the goAML XML export, and the AI STR co-pilot that Autogon does not offer. They have more clients and proprietary ML. We are building both. In the meantime, you get more for significantly less.
+            <span className="text-primary font-semibold">Growth costs ₦{PLAN_PRICING.growth.toLocaleString("en-NG")}/month.</span> Professional Implementation Programme: {IMPLEMENTATION_PRICE_RANGE.toLowerCase()} Implementation fees are separate from the subscription and onboarding comparison above.
           </p>
         </div>
 

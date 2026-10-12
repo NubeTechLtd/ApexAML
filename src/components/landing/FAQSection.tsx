@@ -3,6 +3,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Button } from "@/components/ui/button";
 import { WhatsAppIcon } from "./WhatsAppIcon";
 import { WHATSAPP_URL } from "@/lib/whatsapp";
+import { PLAN_PRICING, IMPLEMENTATION_PRICE_RANGE } from "@/lib/pricing";
 
 interface FAQ {
   q: string;
@@ -88,8 +89,7 @@ const FAQS: FAQ[] = [
     q: "What does it cost — is it affordable for a tier-3 MFB?",
     a: (
       <p>
-        Pricing starts from <span className="text-white/80 font-semibold">₦550,000/month</span> — less than the loaded
-        cost of a single compliance analyst (₦3–8M/year salary plus benefits).{" "}
+        Essential costs ₦{PLAN_PRICING.essential.toLocaleString("en-NG")}/month, Starter ₦{PLAN_PRICING.starter.toLocaleString("en-NG")}/month, and Growth ₦{PLAN_PRICING.growth.toLocaleString("en-NG")}/month. IMTO costs ₦{PLAN_PRICING.imtoPerTransaction} per transaction with a ₦{PLAN_PRICING.imtoMonthlyMinimum.toLocaleString("en-NG")} monthly minimum. Professional Implementation Programme: {IMPLEMENTATION_PRICE_RANGE.toLowerCase()}{" "}
         <span className="text-primary font-semibold">
           Founding-client pricing is locked in while the CBN's 2025 draft standards for Automated AML Solutions are
           being finalised.

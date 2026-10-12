@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Check, ArrowRight, Sparkles, AlertTriangle, Settings, Info, Crown, Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCBNRate } from '@/hooks/useCBNRate';
+import { PLAN_PRICING, IMPLEMENTATION_PRICING, IMPLEMENTATION_PRICE_RANGE } from '@/lib/pricing';
 
 type BillingCycle = 'monthly' | 'annual';
 
@@ -33,7 +34,7 @@ const TIERS: Tier[] = [
   {
     name: 'Essential',
     audience: 'Microfinance Banks · Payment Initiators · Early-stage fintechs',
-    monthlyPrice: 550_000,
+    monthlyPrice: PLAN_PRICING.essential,
     usdApprox: 348,
     features: [
       '100 BVN/NIN verification checks per month',
@@ -58,7 +59,7 @@ const TIERS: Tier[] = [
   {
     name: 'Starter',
     audience: 'PSPs · Growing fintechs · Mobile Money Operators',
-    monthlyPrice: 1_100_000,
+    monthlyPrice: PLAN_PRICING.starter,
     usdApprox: 696,
     features: [
       'Everything in Essential',
@@ -81,7 +82,7 @@ const TIERS: Tier[] = [
   {
     name: 'Growth',
     audience: 'Tier-3 Banks · Larger PSPs · MMOs',
-    monthlyPrice: 2_800_000,
+    monthlyPrice: PLAN_PRICING.growth,
     usdApprox: 1772,
     popular: true,
     accent: 'primary',
@@ -105,16 +106,15 @@ const TIERS: Tier[] = [
     ctaLabel: 'Start Growth',
   },
   {
-    name: 'IMTO Pack',
+    name: 'IMTO',
     audience: 'International money transfer operators',
     monthlyPrice: null,
     accent: 'teal',
     badge: 'For WorldRemit · LemFi · Sendwave · Ria',
-    priceDisplay: (cycle) => ({
-      primary: '₦9',
+    priceDisplay: () => ({
+      primary: `₦${PLAN_PRICING.imtoPerTransaction}`,
       sub: 'per transaction screened',
-      note: 'Minimum billing: ₦3,500,000 per month',
-      annualNote: cycle === 'annual' ? '₦7.65 per transaction on annual billing' : undefined,
+      note: `Minimum billing: ₦${formatNGN(PLAN_PRICING.imtoMonthlyMinimum)} per month`,
       usd: '≈ $0.006 per transaction',
     }),
     calcBox: '500,000 transactions/month = ₦4,500,000 · Minimum billing = ₦3,500,000',
@@ -200,7 +200,7 @@ interface Programme {
 const PROGRAMMES: Programme[] = [
   {
     name: 'Essential Programme',
-    price: '₦1,500,000',
+    price: `₦${formatNGN(IMPLEMENTATION_PRICING.essential)}`,
     timeline: '10 business days',
     idealFor: 'MFBs and small fintechs',
     deliverables: [
@@ -212,7 +212,7 @@ const PROGRAMMES: Programme[] = [
   },
   {
     name: 'Starter Programme',
-    price: '₦3,000,000',
+    price: `₦${formatNGN(IMPLEMENTATION_PRICING.starter)}`,
     timeline: '15 business days',
     idealFor: 'PSPs and growing fintechs',
     deliverables: [
@@ -225,7 +225,7 @@ const PROGRAMMES: Programme[] = [
   },
   {
     name: 'Growth Programme',
-    price: '₦6,000,000',
+    price: `₦${formatNGN(IMPLEMENTATION_PRICING.growth)}`,
     timeline: '20 business days',
     idealFor: 'Tier-3 banks and larger PSPs',
     deliverables: [
@@ -238,7 +238,7 @@ const PROGRAMMES: Programme[] = [
   },
   {
     name: 'IMTO Programme',
-    price: '₦12,000,000',
+    price: `₦${formatNGN(IMPLEMENTATION_PRICING.imto)}`,
     timeline: '25 business days',
     idealFor: 'IMTOs — WorldRemit, LemFi, Sendwave, Ria',
     deliverables: [
@@ -302,7 +302,7 @@ export function PricingSection({ onBookDemo }: Props) {
         )}
         {tier.usdApprox && (
           <p className="text-[10px] text-white/35 mt-1">
-            ≈ ${tier.usdApprox.toLocaleString()}/month at ₦{rate}/$1
+            ≈ ${Math.round(shown / rate).toLocaleString()}/month at ₦{rate}/$1
           </p>
         )}
       </>
@@ -377,6 +377,7 @@ export function PricingSection({ onBookDemo }: Props) {
               </div>
               <p className="text-[11px] text-white/50">0 of 5 slots claimed — 5 remaining</p>
               <div className="pt-2 border-t border-white/5 space-y-1 text-[11px] text-white/60">
+                <p className="font-semibold">One-time implementation fees · not monthly subscriptions</p>
                 <div className="flex justify-between"><span>Essential</span><span><span style={{ color: '#D4A843' }} className="font-semibold">₦975,000</span> <span className="text-white/35 line-through ml-1">₦1,500,000</span></span></div>
                 <div className="flex justify-between"><span>Starter</span><span><span style={{ color: '#D4A843' }} className="font-semibold">₦1,950,000</span> <span className="text-white/35 line-through ml-1">₦3,000,000</span></span></div>
                 <div className="flex justify-between"><span>Growth</span><span><span style={{ color: '#D4A843' }} className="font-semibold">₦3,900,000</span> <span className="text-white/35 line-through ml-1">₦6,000,000</span></span></div>
@@ -569,6 +570,7 @@ export function PricingSection({ onBookDemo }: Props) {
               <h3 className="text-[18px] font-semibold text-white tracking-tight">
                 Professional Implementation Programme
               </h3>
+              <p className="text-sm font-semibold text-primary">{IMPLEMENTATION_PRICE_RANGE}</p>
               <p className="text-[13px] text-white/55 leading-relaxed">
                 A structured delivery engagement with defined phases, deliverables, and sign-off criteria. Produces the CBN completion certificate and go-live documentation your supervisory file requires. Optional but actively recommended for all clients.
               </p>
@@ -757,8 +759,7 @@ export function PricingSection({ onBookDemo }: Props) {
 
         {/* Comparison summary */}
         <p className="text-center text-[13px] text-white/60 max-w-3xl mx-auto leading-relaxed pt-4">
-          ApexAML Growth Programme year-one total: ₦33,950,000 · Nearest competitor year-one total: ₦61,600,000 · You save{' '}
-          <span className="text-primary font-semibold">₦27,650,000</span> in year one.
+          Growth subscription: ₦{formatNGN(PLAN_PRICING.growth)}/month. Professional Implementation Programme: {IMPLEMENTATION_PRICE_RANGE.toLowerCase()} Subscription, onboarding and implementation fees are quoted separately.
         </p>
 
         {/* Footnote */}
