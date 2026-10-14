@@ -1,5 +1,11 @@
 # Roadmap
 
+## October copy corrections
+- [ ] Apply exact Ireland hosting and no Nigerian residency wording across site, metadata and email copy.
+- [ ] Add verified sub-processors to the existing privacy page.
+- [ ] Relabel follow-up and phone fields as SMS; preserve wa.me chat as "Chat on WhatsApp".
+- [ ] Align AI descriptions to case-data drafting with analyst review; verify copy and unchanged styling.
+
 ## Pricing alignment
 - [x] Align plan prices, both ROI calculators, FAQ, comparisons, roadmap offer and machine-readable pricing; tests and live-page pricing checks passed.
 
