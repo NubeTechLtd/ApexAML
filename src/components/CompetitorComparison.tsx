@@ -19,9 +19,9 @@ const ROWS: Row[] = [
   { feature: "Case management workspace", apex: { value: "Full workspace", marker: "check" }, autogon: { value: "Not published" } },
   { feature: "Explainable alert UI", apex: { value: "Plain-English typology cards", marker: "check" }, autogon: { value: "Not published" } },
   { feature: "Transparent public pricing", apex: { value: "Yes", marker: "check" }, autogon: { value: "Demo only" } },
-  { feature: "Data residency (NDPA 2023)", apex: { value: "Hosted in eu-west-1 (Ireland)", marker: "check" }, autogon: { value: "US-incorporated" } },
+  { feature: "Data residency (NDPA 2023)", apex: { value: "Hosted on Supabase (AWS Ireland, eu-west-1), encrypted in transit and at rest. Data residency in Nigeria is not currently offered. Contact us about your requirements.", marker: "check" }, autogon: { value: "US-incorporated" } },
   { feature: "Live Nigerian clients", apex: { value: "Building", marker: "bolt" }, autogon: { value: "Several deployed", marker: "check" } },
-  { feature: "Proprietary ML engine", apex: { value: "Rules + Claude API", marker: "bolt" }, autogon: { value: "Proprietary ML", marker: "check" } },
+  { feature: "Proprietary ML engine", apex: { value: "Rules + AI-assisted STR drafting", marker: "bolt" }, autogon: { value: "Proprietary ML", marker: "check" } },
 ];
 
 function MarkerIcon({ marker }: { marker?: Marker }) {

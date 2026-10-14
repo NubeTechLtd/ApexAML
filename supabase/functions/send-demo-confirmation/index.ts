@@ -95,7 +95,7 @@ function internalHtml(p: BookingPayload, slotLabel: string, requestId: string) {
       <table width="100%" cellpadding="0" cellspacing="0">
         <tr><td style="color:#6b6b80;width:160px;padding:6px 0;">Contact</td><td style="padding:6px 0;"><strong>${esc(p.fullName)}</strong> · ${esc(p.role)}</td></tr>
         <tr><td style="color:#6b6b80;padding:6px 0;">Email</td><td style="padding:6px 0;"><a href="mailto:${esc(p.email)}">${esc(p.email)}</a></td></tr>
-        <tr><td style="color:#6b6b80;padding:6px 0;">WhatsApp</td><td style="padding:6px 0;">${esc(p.whatsapp || "—")}</td></tr>
+        <tr><td style="color:#6b6b80;padding:6px 0;">SMS number</td><td style="padding:6px 0;">${esc(p.whatsapp || "—")}</td></tr>
         <tr><td style="color:#6b6b80;padding:6px 0;">Institution</td><td style="padding:6px 0;">${esc(p.institutionName)} (${esc(p.institutionType)})</td></tr>
         <tr><td style="color:#6b6b80;padding:6px 0;vertical-align:top;">Wants to see</td><td style="padding:6px 0;">${esc(p.focusAreas || "—")}</td></tr>
         <tr><td style="color:#6b6b80;padding:6px 0;">Request ID</td><td style="padding:6px 0;font-family:monospace;font-size:12px;">${esc(requestId)}</td></tr>

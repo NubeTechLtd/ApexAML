@@ -89,7 +89,7 @@ What brings you here today?`}
               className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg text-white text-sm font-semibold hover:opacity-90 transition"
               style={{ backgroundColor: GREEN }}
             >
-              Reply on WhatsApp →
+              Chat on WhatsApp →
             </a>
           </div>
         </div>
@@ -97,7 +97,7 @@ What brings you here today?`}
 
       <button
         onClick={toggle}
-        aria-label="Chat with us on WhatsApp"
+        aria-label="Chat on WhatsApp"
         className="relative flex items-center justify-center gap-2 text-white font-semibold shadow-lg hover:shadow-xl transition-all rounded-full md:h-11 h-12 md:w-[140px] w-12 md:px-4 px-0"
         style={{ backgroundColor: GREEN }}
       >

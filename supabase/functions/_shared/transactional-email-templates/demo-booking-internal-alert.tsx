@@ -51,7 +51,7 @@ const Email = ({
         <Section style={content}>
           <Text style={row}><span style={rowKey}>Contact</span> <strong>{fullName}</strong> · {role}</Text>
           <Text style={row}><span style={rowKey}>Email</span> <Link href={`mailto:${email}`} style={rowLink}>{email}</Link></Text>
-          <Text style={row}><span style={rowKey}>WhatsApp</span> {whatsapp || '—'}</Text>
+          <Text style={row}><span style={rowKey}>SMS number</span> {whatsapp || '—'}</Text>
           <Text style={row}><span style={rowKey}>Institution</span> {institutionName} ({institutionType})</Text>
           <Text style={row}><span style={rowKey}>Wants to see</span> {focusAreas || '—'}</Text>
           <Text style={row}><span style={rowKey}>Request ID</span> <span style={mono}>{requestId}</span></Text>

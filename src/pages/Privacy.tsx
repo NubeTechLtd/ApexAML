@@ -19,18 +19,22 @@ const SECTIONS = [
   },
   {
     h: "4. Where your data is stored",
-    p: "All personal data submitted via this website is hosted in the eu-west-1 (Ireland) region, encrypted in transit and at rest. Data residency options for regulated institutions are available on request. Backups are encrypted at rest using AES-256.",
+    p: "Hosted on Supabase (AWS Ireland, eu-west-1), encrypted in transit and at rest. Data residency in Nigeria is not currently offered. Contact us about your requirements. Backups are encrypted at rest using AES-256.",
   },
   {
-    h: "5. Retention",
+    h: "5. Sub-processors",
+    p: "Supabase (AWS eu-west-1) provides data hosting. Lovable AI Gateway and its underlying model providers process AI requests. Resend handles email delivery. AI-assisted STR drafting from the case's own data, reviewed and edited by an analyst.",
+  },
+  {
+    h: "6. Retention",
     p: "Lead data is retained for 24 months from the date of last contact, after which it is deleted. You may request deletion at any time by emailing privacy@apexaml.com — we will action verified requests within 30 days as required by NDPA Section 36.",
   },
   {
-    h: "6. Your rights",
+    h: "7. Your rights",
     p: "You have the right to access, rectify, port, restrict processing of, object to, or delete your personal data. To exercise any right contact our Data Protection Officer at privacy@apexaml.com. You may also lodge a complaint with the Nigeria Data Protection Commission (NDPC) at ndpc.gov.ng.",
   },
   {
-    h: "7. Contact",
+    h: "8. Contact",
     p: "Data Protection Officer — privacy@apexaml.com. NubeTech Ltd (trading as ApexAML), a company incorporated in the United Kingdom, Companies House registration number 11844857.",
   },
 ];
@@ -40,7 +44,7 @@ export default function Privacy() {
     <div className="min-h-screen bg-[hsl(220,25%,6%)] text-foreground">
       <Seo
         title="Privacy Policy | ApexAML"
-        description="How ApexAML collects, processes and stores personal data under the Nigeria Data Protection Act 2023. Data residency, lawful basis, and your NDPA rights."
+        description="How ApexAML collects, processes and stores personal data under the Nigeria Data Protection Act 2023. AWS Ireland hosting, sub-processors, lawful basis, and your NDPA rights. Data residency in Nigeria is not currently offered. Contact us about your requirements."
         path="/privacy"
       />
       {/* Header */}

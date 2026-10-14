@@ -100,7 +100,7 @@ INSTITUTION DETAILS
 - Monthly transaction volume: ${d.volume}
 - Compliance Officer: ${d.contactName}, ${d.title}
 - Contact email: ${d.email}
-- WhatsApp: ${d.phone || "not provided"}
+- SMS number: ${d.phone || "not provided"}
 - Full compliance deadline: ${d.deadline}
 - CBN initial submission deadline: 10 June 2026 (Circular BSD/DIR/PUB/LAB/019/002)
 

@@ -136,7 +136,7 @@ export function RoadmapLeadMagnet() {
       })
       .catch((err) => console.warn('Email drip enqueue failed', err));
 
-    // 3) Enrol into the 3-step WhatsApp follow-up if a phone was provided
+    // 3) Enrol into the 3-step SMS follow-up if a phone was provided
     if (trimmedPhone) {
       supabase.functions
         .invoke('whatsapp-followup', {
@@ -151,7 +151,7 @@ export function RoadmapLeadMagnet() {
             deadline,
           },
         })
-        .catch((err) => console.warn('WhatsApp follow-up enqueue failed', err));
+        .catch((err) => console.warn('SMS follow-up enqueue failed', err));
     }
 
     setSubmitting(false);
@@ -211,7 +211,7 @@ export function RoadmapLeadMagnet() {
                     className="flex items-center justify-center gap-2 w-full rounded-lg bg-[#25D366] hover:bg-[#25D366]/90 text-white font-semibold text-sm h-11 px-4 transition-colors group"
                   >
                     <WhatsAppIcon size={18} />
-                    Get a faster response — message us on WhatsApp
+                    Chat on WhatsApp
                     <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
                   </a>
                 </div>
@@ -253,8 +253,8 @@ export function RoadmapLeadMagnet() {
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    placeholder="WhatsApp number (optional)"
-                    aria-label="WhatsApp number"
+                    placeholder="SMS number (optional)"
+                    aria-label="SMS number"
                     maxLength={32}
                     className="bg-white/[0.04] border-white/10 text-white placeholder:text-white/25 h-11 rounded-lg"
                   />

@@ -101,7 +101,7 @@ export function LeadCaptureForm() {
             <div className="space-y-1 flex-1">
               <p className="text-xs uppercase tracking-wider text-[hsl(142,70%,55%)] font-semibold">Option 2 — Faster</p>
               <p className="text-sm text-white/80 font-medium">
-                Get a faster response — message us on WhatsApp
+                Chat on WhatsApp
                 <ArrowRight className="inline h-3.5 w-3.5 ml-1 group-hover:translate-x-0.5 transition-transform" />
               </p>
             </div>

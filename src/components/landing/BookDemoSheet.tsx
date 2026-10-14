@@ -319,7 +319,7 @@ export function BookDemoSheet({ open, onOpenChange, prefilledMessage }: Props) {
                   className="bg-white/[0.04] border-white/10 text-white placeholder:text-white/25 h-11 rounded-lg" />
               </div>
               <div className="space-y-2">
-                <Label className="text-white/70 text-xs uppercase tracking-wider">WhatsApp Number <span className="text-white/30 normal-case">(optional)</span></Label>
+                <Label className="text-white/70 text-xs uppercase tracking-wider">SMS Number <span className="text-white/30 normal-case">(optional)</span></Label>
                 <Input value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)}
                   placeholder="+234 801 234 5678" inputMode="tel"
                   className="bg-white/[0.04] border-white/10 text-white placeholder:text-white/25 h-11 rounded-lg" />
@@ -378,8 +378,8 @@ export function BookDemoSheet({ open, onOpenChange, prefilledMessage }: Props) {
 
               <div className="flex flex-col gap-2 pt-1">
                 <Button asChild variant="outline" className="border-emerald-500/30 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 hover:text-emerald-200">
-                  <a href={buildWhatsAppUrl(`Hi, I just booked a demo for ${fmtConfirmedLabel(confirmedAt)} WAT — please add me to a WhatsApp reminder.`)} target="_blank" rel="noreferrer">
-                    Get WhatsApp reminder
+                  <a href={buildWhatsAppUrl(`Hi, I just booked a demo for ${fmtConfirmedLabel(confirmedAt)} WAT — I would like to discuss my booking.`)} target="_blank" rel="noreferrer">
+                    Chat on WhatsApp
                   </a>
                 </Button>
                 <Button onClick={() => onOpenChange(false)} variant="ghost" className="text-white/60 hover:text-white hover:bg-white/5">

@@ -1,8 +1,8 @@
 # ApexAML
 
-> Compliance Intelligence platform for Nigerian fintechs, banks and IMTOs. CBN-aligned AML controls — AI STR co-pilot, BVN/NIN KYC, transaction monitoring with Nigerian typologies, and NFIU goAML reporting.
+> Compliance Intelligence platform for Nigerian fintechs, banks and IMTOs. CBN-aligned AML controls — AI-assisted STR drafting from the case's own data, reviewed and edited by an analyst. BVN/NIN KYC, transaction monitoring with Nigerian typologies, and NFIU goAML reporting.
 
-ApexAML is built specifically to satisfy the 10 capability areas mandated by CBN Circular BSD/DIR/PUB/LAB/019/002 (initial submission deadline 10 June 2026). Data is hosted in the eu-west-1 (Ireland) region, encrypted in transit and at rest; data residency options are available on request.
+ApexAML is built specifically to satisfy the 10 capability areas mandated by CBN Circular BSD/DIR/PUB/LAB/019/002 (initial submission deadline 10 June 2026). Hosted on Supabase (AWS Ireland, eu-west-1), encrypted in transit and at rest. Data residency in Nigeria is not currently offered. Contact us about your requirements.
 
 ## Pages
 
