@@ -356,25 +356,6 @@ Managing Director:                                    Signature: _______________
       })
       .catch((err) => console.warn('Roadmap email dispatch failed', err));
 
-    // Fire-and-forget: enqueue the SMS follow-up sequence (M1 sent immediately;
-    // M2 at 48h and M3 at 7d are dispatched by the pg_cron tick). Only if a phone was given.
-    if (phone.trim()) {
-      supabase.functions
-        .invoke('whatsapp-followup', {
-          body: {
-            action: 'enqueue',
-            leadId,
-            contactName: contactName.trim(),
-            institutionName: institutionName.trim(),
-            institutionType,
-            phone: phone.trim(),
-            email: email.trim(),
-            refNumber: referenceNumber,
-            deadline,
-          },
-        })
-        .catch((err) => console.warn('SMS follow-up enqueue failed', err));
-    }
     // Ensure the loading UX runs at least ~5s so the cycling messages are visible.
     const elapsed = Date.now() - startedAt;
     const minMs = 5000;
@@ -484,18 +465,6 @@ Managing Director:                                    Signature: _______________
         variant: 'destructive',
       });
       return;
-    }
-    // Stop the SMS follow-up sequence — the lead has converted.
-    if (phone.trim() || referenceNumber) {
-      supabase.functions
-        .invoke('whatsapp-followup', {
-          body: {
-            action: 'mark_demo_booked',
-            phone: phone.trim() || null,
-            refNumber: referenceNumber,
-          },
-        })
-        .catch((err) => console.warn('SMS mark_demo_booked failed', err));
     }
     // Stop the email drip sequence too — the lead has converted.
     supabase.functions
@@ -846,12 +815,12 @@ Managing Director:                                    Signature: _______________
                           />
                         </div>
 
-                        {/* 8. SMS */}
+                        {/* 8. Phone */}
                         <div className="space-y-1.5">
                           <Label htmlFor="phone">
-                            SMS number{' '}
+                            Phone number{' '}
                             <span className="text-muted-foreground font-normal">
-                              (optional — for SMS follow-up)
+                              (optional, for our team to call you)
                             </span>
                           </Label>
                           <Input

@@ -136,23 +136,6 @@ export function RoadmapLeadMagnet() {
       })
       .catch((err) => console.warn('Email drip enqueue failed', err));
 
-    // 3) Enrol into the 3-step SMS follow-up if a phone was provided
-    if (trimmedPhone) {
-      supabase.functions
-        .invoke('whatsapp-followup', {
-          body: {
-            action: 'enqueue',
-            contactName: trimmedName,
-            institutionName: trimmedInst,
-            institutionType: 'Unknown',
-            phone: trimmedPhone,
-            email: trimmedEmail,
-            refNumber,
-            deadline,
-          },
-        })
-        .catch((err) => console.warn('SMS follow-up enqueue failed', err));
-    }
 
     setSubmitting(false);
     setDone(true);
@@ -253,8 +236,8 @@ export function RoadmapLeadMagnet() {
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    placeholder="SMS number (optional)"
-                    aria-label="SMS number"
+                    placeholder="Phone number (optional)"
+                    aria-label="Phone number"
                     maxLength={32}
                     className="bg-white/[0.04] border-white/10 text-white placeholder:text-white/25 h-11 rounded-lg"
                   />
