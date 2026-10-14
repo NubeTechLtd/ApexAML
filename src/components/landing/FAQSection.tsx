@@ -43,10 +43,7 @@ const FAQS: FAQ[] = [
     q: "Where is our data stored — is it in Nigeria?",
     a: (
       <p>
-        Data is hosted on Supabase in the{" "}
-        <span className="text-white/80 font-mono text-[12px]">eu-west-1</span> (Ireland) region, encrypted in transit
-        and at rest. Data residency options for regulated institutions are available on request. We sign a data
-        processing addendum (DPA) at contract signing.
+        Hosted on Supabase (AWS Ireland, eu-west-1), encrypted in transit and at rest. Data residency in Nigeria is not currently offered. Contact us about your requirements. We sign a data processing addendum (DPA) at contract signing.
       </p>
     ),
   },
@@ -58,7 +55,7 @@ const FAQS: FAQ[] = [
           <span className="text-white/80 font-semibold">What's included.</span> A sample of your own transaction data
           is loaded into an isolated workspace, detection rules for your products are configured in the visual rule
           builder and tested in the sandbox, then live alerts run through the case workspace with AI-assisted STR
-          drafting and goAML XML export for review. Nothing is filed with the NFIU during a pilot.
+          drafting from the case's own data, reviewed and edited by an analyst, and goAML XML export for review. Nothing is filed with the NFIU during a pilot.
         </p>
         <p>
           <span className="text-white/80 font-semibold">Who's involved.</span> Your compliance officer or MLRO (a few
@@ -165,7 +162,7 @@ export function FAQSection() {
           <p className="text-white/45 text-sm max-w-xl mx-auto">
             Straight answers from our compliance team. Still unsure?{" "}
             <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-              Message us on WhatsApp
+              Chat on WhatsApp
             </a>
             .
           </p>
@@ -197,7 +194,7 @@ export function FAQSection() {
           >
             <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
               <WhatsAppIcon size={16} />
-              Message us on WhatsApp
+              Chat on WhatsApp
               <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
             </a>
           </Button>

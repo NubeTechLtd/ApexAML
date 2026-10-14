@@ -130,7 +130,7 @@ const defaultFeatures = [
   },
   {
     title: "AI STR Co-Pilot",
-    desc: "AI-assisted STR drafting grounded in the case's transaction and customer data, with analyst review and full edit history.",
+    desc: "AI-assisted STR drafting from the case's own data, reviewed and edited by an analyst.",
   },
   {
     title: "No-Code Rules Engine",
@@ -336,7 +336,7 @@ const FAQ_FOR_SCHEMA: Array<{ q: string; a: string }> = [
   },
   {
     q: "Where is our data stored — is it in Nigeria?",
-    a: "Data is hosted on Supabase in the eu-west-1 (Ireland) region, encrypted in transit and at rest. Data residency options for regulated institutions are available on request. We sign a DPA at contract signing.",
+    a: "Hosted on Supabase (AWS Ireland, eu-west-1), encrypted in transit and at rest. Data residency in Nigeria is not currently offered. Contact us about your requirements. We sign a DPA at contract signing.",
   },
   {
     q: "How long does integration take?",
@@ -379,7 +379,7 @@ export default function LandingPage() {
     <AudienceProvider>
       <Seo
         title="ApexAML — Compliance Intelligence for Nigerian Fintechs"
-        description="CBN-aligned AML platform for Nigerian fintechs and banks. AI-assisted STR drafting, BVN/NIN KYC, transaction monitoring, NFIU goAML reporting and an append-only audit trail."
+        description="CBN-aligned AML platform for Nigerian fintechs and banks. AI-assisted STR drafting from the case's own data, reviewed and edited by an analyst. BVN/NIN KYC, transaction monitoring, NFIU goAML reporting and an append-only audit trail."
         path="/"
         jsonLd={LANDING_JSON_LD}
       />
@@ -639,7 +639,7 @@ function LandingPageInner() {
                 className="inline-flex items-center gap-1.5 text-sm text-white/60 hover:text-white transition-colors"
               >
                 <WhatsAppIcon size={14} />
-                or chat on WhatsApp
+                Chat on WhatsApp
               </a>
               <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-xs text-white/40">
                 <span className="inline-flex items-center gap-1.5">
@@ -659,7 +659,7 @@ function LandingPageInner() {
                 <span className="hidden sm:inline text-white/20">·</span>
                 <span className="inline-flex items-center gap-1.5">
                   <CheckCircle2 className="h-3 w-3 text-risk-low" />
-                  Encrypted in transit and at rest
+                  Hosted on Supabase (AWS Ireland, eu-west-1), encrypted in transit and at rest. Data residency in Nigeria is not currently offered. Contact us about your requirements.
                 </span>
               </div>
             </div>
@@ -771,8 +771,7 @@ function LandingPageInner() {
               <br /> now in <span className="text-primary">3 minutes</span>.
             </h2>
             <p className="text-white/40 leading-relaxed">
-              AI-assisted STR drafting grounded in the case's transaction and customer data — POS structuring, Crypto P2P
-              layering, BDC smurfing — with analyst review and full edit history, so your team focuses on real threats.
+              AI-assisted STR drafting from the case's own data, reviewed and edited by an analyst. Every revision is saved in the edit history.
             </p>
             <ul className="space-y-3 text-sm text-white/50">
               {[

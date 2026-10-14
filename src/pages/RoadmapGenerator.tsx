@@ -356,7 +356,7 @@ Managing Director:                                    Signature: _______________
       })
       .catch((err) => console.warn('Roadmap email dispatch failed', err));
 
-    // Fire-and-forget: enqueue the WhatsApp follow-up sequence (M1 sent immediately;
+    // Fire-and-forget: enqueue the SMS follow-up sequence (M1 sent immediately;
     // M2 at 48h and M3 at 7d are dispatched by the pg_cron tick). Only if a phone was given.
     if (phone.trim()) {
       supabase.functions
@@ -373,7 +373,7 @@ Managing Director:                                    Signature: _______________
             deadline,
           },
         })
-        .catch((err) => console.warn('WhatsApp follow-up enqueue failed', err));
+        .catch((err) => console.warn('SMS follow-up enqueue failed', err));
     }
     // Ensure the loading UX runs at least ~5s so the cycling messages are visible.
     const elapsed = Date.now() - startedAt;
@@ -485,7 +485,7 @@ Managing Director:                                    Signature: _______________
       });
       return;
     }
-    // Stop the WhatsApp follow-up sequence — the lead has converted.
+    // Stop the SMS follow-up sequence — the lead has converted.
     if (phone.trim() || referenceNumber) {
       supabase.functions
         .invoke('whatsapp-followup', {
@@ -495,7 +495,7 @@ Managing Director:                                    Signature: _______________
             refNumber: referenceNumber,
           },
         })
-        .catch((err) => console.warn('WhatsApp mark_demo_booked failed', err));
+        .catch((err) => console.warn('SMS mark_demo_booked failed', err));
     }
     // Stop the email drip sequence too — the lead has converted.
     supabase.functions
@@ -660,7 +660,7 @@ Managing Director:                                    Signature: _______________
                         'CBN circular aligned',
                         'NFIU goAML format',
                         'NDPR compliant',
-                        'AWS Nigeria hosted',
+                        'Hosted on Supabase (AWS Ireland, eu-west-1), encrypted in transit and at rest. Data residency in Nigeria is not currently offered. Contact us about your requirements.',
                         'Free — no account required',
                       ].map((badge) => (
                         <span
@@ -846,12 +846,12 @@ Managing Director:                                    Signature: _______________
                           />
                         </div>
 
-                        {/* 8. WhatsApp */}
+                        {/* 8. SMS */}
                         <div className="space-y-1.5">
                           <Label htmlFor="phone">
-                            WhatsApp{' '}
+                            SMS number{' '}
                             <span className="text-muted-foreground font-normal">
-                              (optional — for faster follow-up)
+                              (optional — for SMS follow-up)
                             </span>
                           </Label>
                           <Input

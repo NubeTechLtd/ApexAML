@@ -1,15 +1,19 @@
 # Roadmap
 
+## October copy corrections
+- [x] Apply exact Ireland hosting and no Nigerian residency wording wherever hosting is described; align AI metadata and email labels.
+- [x] Add verified active sub-processors to the existing privacy page. Termii excluded: no configured API key; dispatcher logs only. Delivery behavior unchanged.
+- [x] Relabel follow-up and phone fields as SMS; preserve wa.me chat as "Chat on WhatsApp".
+- [x] Align AI descriptions to case-data drafting with analyst review; browser checks, pricing tests and build passed; no styles changed.
+
 ## Pricing alignment
 - [x] Align plan prices, both ROI calculators, FAQ, comparisons, roadmap offer and machine-readable pricing; tests and live-page pricing checks passed.
 
 ## Data residency / hosting claims
-- [x] FAQSection answer replaced with the Supabase eu-west-1 (Ireland) wording + "Data residency options for regulated institutions are available on request."
-- [x] Landing page JSON-LD FAQ copy aligned to the same wording.
-- [ ] Hero chip still reads "AWS Cape Town data residency" (LandingPage.tsx) — awaiting user go-ahead.
-- [ ] Competitor comparison row still claims "Data residency (NDPA 2023): AWS af-south-1".
-- [ ] Privacy Policy section 4 still claims AWS Cape Town storage and "PII never crosses borders".
-- [ ] public/llms.txt still claims "Hosted on AWS af-south-1 (Cape Town) with NDPA 2023 data-residency commitments".
+- [x] FAQ and landing page JSON-LD use exact Ireland hosting wording and explicitly state Nigerian residency is not offered.
+- [x] Hero chip and competitor comparison corrected.
+- [x] Privacy policy and public/llms.txt corrected.
+- [x] Roadmap and social-proof Nigerian hosting badges corrected.
 
 ## AI & audit-trail copy audit
 - [x] "Generative AI" / "fine-tuned" / "ApexAML-trained" / "examiner-ready" / "examiner-defensible" rewritten to describe only what is built.

@@ -151,7 +151,7 @@ const TIERS: Tier[] = [
     highlightFeatures: [
       'Unlimited BVN/NIN & beneficiary verification checks',
       'Dedicated isolated infrastructure (single-tenant AWS)',
-      'Custom AI/ML model training on your institution\'s historical data',
+      'AI-assisted STR drafting from the case\'s own data, reviewed and edited by an analyst',
       'On-premise or private cloud deployment option',
       'White-label compliance portal with your branding',
       'API-first architecture — full REST + webhook coverage',
