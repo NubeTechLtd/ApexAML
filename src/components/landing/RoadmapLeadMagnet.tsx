@@ -118,7 +118,7 @@ export function RoadmapLeadMagnet() {
       return;
     }
 
-    const deadline = '10 June 2026';
+    const deadline = '';
 
     // 2) Enrol into the 5-step email drip (M1 marked as the magnet download itself)
     supabase.functions

@@ -42,23 +42,6 @@ import { PLAN_PRICING } from '@/lib/pricing';
 
 type Step = 'hook' | 'form' | 'loading' | 'roadmap';
 
-const CBN_DEADLINE = '2026-06-10T00:00:00Z';
-
-function CountdownChip() {
-  const { days, hours } = useCountdown(CBN_DEADLINE);
-  return (
-    <div className="inline-flex items-center gap-2 rounded-full border border-destructive/30 bg-destructive/10 px-2.5 py-1 text-[11px] font-medium text-destructive">
-      <span className="relative flex h-2 w-2">
-        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-destructive opacity-75" />
-        <span className="relative inline-flex h-2 w-2 rounded-full bg-destructive" />
-      </span>
-      <span className="tabular-nums">
-        {days}d {hours}h to CBN deadline
-      </span>
-    </div>
-  );
-}
-
 const fade = {
   initial: { opacity: 0 },
   animate: { opacity: 1 },
@@ -525,7 +508,6 @@ Managing Director:                                    Signature: _______________
             <div className="flex items-center gap-3">
               <SidebarTrigger />
               <h1 className="text-sm font-semibold text-foreground">CBN Roadmap Generator</h1>
-              <CountdownChip />
             </div>
             <div className="flex items-center gap-2">
               <ThemeToggle />
