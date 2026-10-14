@@ -1,0 +1,1 @@
+COMMENT ON TABLE public.whatsapp_sequences IS 'UNUSED: SMS/WhatsApp follow-up feature removed Oct 2026. Kept for historical reference only; nothing reads or writes this table.';

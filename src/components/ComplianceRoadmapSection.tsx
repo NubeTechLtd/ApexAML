@@ -64,7 +64,7 @@ export function ComplianceRoadmapSection({ onBookDemo, onSeePath }: Props) {
         <FadeIn>
           <div className="text-center space-y-4 max-w-3xl mx-auto">
             <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight leading-snug">
-              The June 10 deadline was step one. Here is what comes next.
+              Submitting the roadmap was step one. Here is what comes next.
             </h2>
             <p className="text-sm md:text-base text-white/50 leading-relaxed">
               Institutions that submitted their roadmap are now in the
@@ -186,7 +186,7 @@ export function ComplianceRoadmapSection({ onBookDemo, onSeePath }: Props) {
                 For institutions that submitted their roadmap
               </h3>
               <p className="text-sm text-white/40 leading-relaxed mb-5">
-                Your June 10 roadmap is a commitment to CBN. ApexAML executes that
+                Your roadmap is a commitment to CBN. ApexAML executes that
                 commitment within your technology environment.
               </p>
               <button
@@ -203,10 +203,10 @@ export function ComplianceRoadmapSection({ onBookDemo, onSeePath }: Props) {
           <FadeIn delay={0.5}>
             <div className="h-full rounded-2xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-md p-7 hover:border-primary/40 transition-all duration-500">
               <h3 className="text-sm font-semibold text-white leading-snug mb-3">
-                For institutions that missed June 10
+                For institutions that have not yet submitted
               </h3>
               <p className="text-sm text-white/40 leading-relaxed mb-5">
-                Missing the deadline is an infraction but not licence-ending. The right
+                A late roadmap is an infraction but not licence-ending. The right
                 response is a remediation plan within 30 days, combined with immediate
                 technology deployment. ApexAML provides both.
               </p>

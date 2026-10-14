@@ -102,7 +102,6 @@ const TIERS: Tier[] = [
       'Database import: ₦400 per record',
     ],
     onboardingFee: '₦350,000 onboarding fee — charged at contract signing*',
-    offer: 'First month free for all new annual plan clients — founding client slots remaining',
     ctaLabel: 'Start Growth',
   },
   {
@@ -132,7 +131,6 @@ const TIERS: Tier[] = [
     ],
     limits: ['Additional beneficiary checks: ₦600 each'],
     onboardingFee: '₦600,000 onboarding fee — charged at contract signing*',
-    offer: 'First month free for all new annual plan clients',
     ctaLabel: 'Get IMTO pricing',
     ctaMessage: 'I am interested in the IMTO Pack pricing for [institution name]',
   },
@@ -172,7 +170,7 @@ const SERVICES = [
   {
     name: 'CBN Roadmap Submission',
     price: '₦200,000 one-time',
-    desc: 'CBN-formatted, submission-ready by June 10. Free with any annual plan.',
+    desc: 'CBN-formatted and submission-ready. Free with any annual plan.',
     cta: 'Book service',
   },
   {
@@ -388,19 +386,6 @@ export function PricingSection({ onBookDemo }: Props) {
           <p className="text-[11px] text-white/40 text-center md:text-left px-1">
             Founding client discount is permanent — it applies to all future engagements with ApexAML, not just the first implementation.
           </p>
-        </div>
-
-        {/* Urgency banner */}
-        <div className="mx-auto max-w-3xl">
-          <div className="relative flex items-start gap-3 rounded-xl border border-risk-high/40 bg-risk-high/10 px-4 py-3 overflow-hidden">
-            <span className="absolute inset-0 bg-risk-high/10 animate-pulse pointer-events-none" />
-            <AlertTriangle className="relative h-4 w-4 text-risk-high shrink-0 mt-0.5" />
-            <p className="relative text-sm text-white/85 leading-relaxed">
-              <span className="font-semibold text-risk-high">First month free</span> for institutions
-              submitting their CBN roadmap before <span className="font-semibold">10 June 2026</span> —
-              applies to all annual plans.
-            </p>
-          </div>
         </div>
 
         {/* Billing toggle */}

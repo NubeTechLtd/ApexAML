@@ -135,22 +135,22 @@ function tmplEmail3(r: Row) {
     `${APP_BASE}/?utm_source=drip&utm_campaign=cbn_followup&utm_content=email3#book-demo`,
   );
   const html = shell({
-    preheader: `What CBN does to institutions that miss the June 10 deadline.`,
+    preheader: `What CBN does when an institution's AML controls fall short.`,
     step: 3,
     token: r.tracking_token,
     ctaText: "Start your ApexAML implementation →",
     ctaUrl: cta,
     bodyHtml: `<p>Hi ${escapeHtml(r.contact_name.split(" ")[0])},</p>
-<p>What happens if <strong>${escapeHtml(r.institution_name)}</strong> misses the 10 June 2026 CBN AML roadmap deadline? Based on prior CBN enforcement patterns under Circular BSD/DIR/PUB/LAB/019/002 and earlier AML guidance:</p>
+<p>What happens if <strong>${escapeHtml(r.institution_name)}</strong> falls behind on its CBN AML roadmap? Based on prior CBN enforcement patterns under Circular BSD/DIR/PUB/LAB/019/002 and earlier AML guidance:</p>
 <ol style="padding-left:18px;margin:0 0 16px 0">
 <li><strong>Initial warning letter</strong> from the BSD demanding written justification within 14 days.</li>
 <li><strong>Escalation to a targeted AML examination</strong> — on-site review of CDD files, STR/CTR submissions, sanctions screening evidence, and board minutes.</li>
 <li><strong>Conditional licence renewal</strong> with mandated remediation milestones, additional capital reporting, or restrictions on new product launches.</li>
 <li><strong>Public publication</strong> in the CBN's enforcement bulletin — visible to correspondent banks and counterparties.</li>
 </ol>
-<p>ApexAML clients have already submitted their roadmaps. You can too — covering all 10 CBN capability areas, live in 48 hours.</p>`,
+<p>ApexAML covers all 10 CBN capability areas. Book a 30-minute walkthrough, then run a 30-45 day pilot on your own data.</p>`,
   });
-  return { subject: `What happens if ${r.institution_name} misses the June 10 CBN deadline?`, html };
+  return { subject: `What happens if ${r.institution_name} falls behind on its CBN AML roadmap?`, html };
 }
 
 function tmplEmail4(r: Row) {
@@ -168,35 +168,29 @@ function tmplEmail4(r: Row) {
     ctaUrl: cta,
     bodyHtml: `<p>Hi ${escapeHtml(r.contact_name.split(" ")[0])},</p>
 <p>Your peers — other ${escapeHtml(peer)}s — are already live on ApexAML.</p>
-<blockquote style="margin:16px 0;padding:12px 16px;border-left:3px solid #1d4ed8;background:#f1f5f9;font-style:italic;color:#1e293b">
-"Took 90 seconds to generate the roadmap, 48 hours to go live, and we filed our first NFIU goAML STR through ApexAML the same week."<br/>
-<span style="font-style:normal;font-size:12px;color:#64748b">— CCO, Tier-3 ${escapeHtml(peer)}, Lagos</span>
-</blockquote>
-<p style="margin:16px 0"><strong>Average ApexAML client goes from zero to CBN milestone 1 in 48 hours.</strong></p>
+<p style="margin:16px 0"><strong>See it on your own data: a 30-45 day pilot covering transaction monitoring, AI-assisted STR drafting and NFIU goAML export.</strong></p>
 <p>Don't let <strong>${escapeHtml(r.institution_name)}</strong> be the one explaining to the BSD why your roadmap is still in draft.</p>`,
   });
   return { subject: `Your ${peer} peers are already live on ApexAML`, html };
 }
 
 function tmplEmail5(r: Row) {
-  const days = daysUntilDeadline();
   const cta = trackedLink(
     r.tracking_token,
     5,
     `${APP_BASE}/?utm_source=drip&utm_campaign=cbn_followup&utm_content=email5#pricing`,
   );
   const html = shell({
-    preheader: `First-month-free for CBN roadmap holders expires June 10.`,
+    preheader: `Book a 30-minute walkthrough of ApexAML.`,
     step: 5,
     token: r.tracking_token,
-    ctaText: "Claim your free month →",
+    ctaText: "Book a 30-minute walkthrough →",
     ctaUrl: cta,
     bodyHtml: `<p>Hi ${escapeHtml(r.contact_name.split(" ")[0])},</p>
 <p>Last reminder for <strong>${escapeHtml(r.institution_name)}</strong>.</p>
-<p>Our <strong>first-month-free offer for CBN roadmap holders expires on 10 June 2026</strong> — the same day as your CBN roadmap submission deadline (${days} days away). After that, standard pricing applies.</p>
-<p>This is the cheapest your AML platform will ever be. One reply gets you onboarded this week.</p>`,
+<p>If you would like to see how ApexAML would run your CBN roadmap, book a 30-minute walkthrough. Then run a 30-45 day pilot on your own data.</p>`,
   });
-  return { subject: `Last chance — first month free expires with the CBN deadline`, html };
+  return { subject: `Ready to see ApexAML on your own data?`, html };
 }
 
 // ---------- Resend send + logging ----------
@@ -315,7 +309,7 @@ async function handleEnqueue(p: z.infer<typeof EnqueueSchema>) {
       institution_type: p.institutionType ?? null,
       email: p.email.toLowerCase(),
       ref_number: p.refNumber,
-      deadline: p.deadline ?? "10 June 2026",
+      deadline: p.deadline ?? "",
       // Email 1 (the roadmap email) is sent by send-roadmap-email — record it as already-sent.
       email_1_sent_at: new Date().toISOString(),
     })

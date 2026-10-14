@@ -15,7 +15,7 @@ import { WHATSAPP_URL } from '@/lib/whatsapp';
 const INSTITUTIONS = ['DMB', 'Fintech', 'PSP', 'MMO', 'MFB', 'IMTO'];
 const SETUPS = ['Manual spreadsheets', 'Legacy software', 'No formal system', 'Other'];
 const TIMELINES = [
-  { value: 'before_june', label: 'Before June 10 roadmap deadline' },
+  { value: 'before_june', label: 'Within the next 3 months' },
   { value: 'within_6_months', label: 'Within 6 months' },
   { value: 'exploring', label: 'Exploring options' },
 ];

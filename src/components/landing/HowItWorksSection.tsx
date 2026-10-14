@@ -3,7 +3,7 @@ import { Plug, SlidersHorizontal, FileText, CheckCircle2 } from 'lucide-react';
 const STEPS = [
   {
     icon: Plug,
-    title: 'Connect in 48 hours',
+    title: 'Connect your systems',
     desc: 'ApexAML integrates with your core banking system or Paystack/Flutterwave via REST API. No legacy middleware.',
   },
   {
@@ -14,7 +14,7 @@ const STEPS = [
   {
     icon: FileText,
     title: 'Submit your CBN roadmap',
-    desc: 'Use our pre-built template to file your implementation plan to the CBN Compliance Department by June 10. We co-author it with you.',
+    desc: 'Use our pre-built template to file your implementation plan to the CBN Compliance Department. We co-author it with you.',
   },
 ];
 
