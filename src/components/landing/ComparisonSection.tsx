@@ -15,7 +15,7 @@ const ROWS: Row[] = [
     feature: 'Setup Time',
     manual: { value: '6–12 months hiring', tone: 'bad' },
     enterprise: { value: '18–24 months', tone: 'bad' },
-    apexaml: '48-hour API integration',
+    apexaml: 'REST API or batch SFTP integration',
   },
   {
     feature: 'Monthly Cost',

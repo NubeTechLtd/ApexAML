@@ -286,7 +286,7 @@ export const PrintableRoadmap = forwardRef<HTMLDivElement, PrintableRoadmapProps
                 { k: 'Monthly Volume', v: volume, highlight: false as const },
                 {
                   k: 'CBN Target Deadline',
-                  v: '10 June 2026',
+                  v: 'Circular BSD/DIR/PUB/LAB/019/002',
                   highlight: true as const,
                   pill: deadline,
                 },
@@ -491,7 +491,7 @@ export const PrintableRoadmap = forwardRef<HTMLDivElement, PrintableRoadmapProps
             12-Week Remediation Timeline
           </h2>
           <div style={{ fontSize: '10px', color: MUTED, marginBottom: '14px' }}>
-            Tactical sprint to deliver the initial CBN roadmap submission by 10 June 2026.
+            Tactical sprint to deliver and file the CBN implementation roadmap.
           </div>
 
           {/* Week axis */}
@@ -594,7 +594,7 @@ export const PrintableRoadmap = forwardRef<HTMLDivElement, PrintableRoadmapProps
             Remediation Timeline (24 months)
           </h2>
           <div style={{ fontSize: '10px', color: MUTED, marginBottom: '14px' }}>
-            From initial CBN submission (10 June 2026) to full compliance attestation ({fullDeadline}).
+            From CBN roadmap submission to full compliance attestation ({fullDeadline}).
           </div>
 
           {/* Month axis */}

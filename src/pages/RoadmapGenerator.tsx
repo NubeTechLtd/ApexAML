@@ -187,14 +187,13 @@ const RoadmapGenerator = () => {
 Prepared for: ${institutionName}
 Institution type: ${institutionType}
 Compliance Officer: ${contactName}, ${contactTitle}
-Initial CBN submission deadline: 10 June 2026
 Full compliance deadline: ${deadline}
 
 EXECUTIVE SUMMARY
 ${institutionName} will implement a comprehensive AML/CFT control framework aligned to CBN Circular BSD/DIR/PUB/LAB/019/002 and the NFIU goAML reporting standard. Programme spans 24 months from initial submission and is sized for a monthly transaction volume of ${volume}. Current state: ${amlSetup}.
 
 REGULATORY CONTEXT
-The May 2026 CBN AML Circular requires every regulated institution to file an implementation roadmap by 10 June 2026 and to reach full compliance by ${deadline}. Failure to file is a regulatory infraction. ${institutionName} is regulated as a ${institutionType}.
+The May 2026 CBN AML Circular requires every regulated institution to file an implementation roadmap and to reach full compliance by ${deadline}. ${institutionName} is regulated as a ${institutionType}.
 
 PHASE 1 — FOUNDATION (Months 1-3)
 - Board-approved AML/CFT policy refresh; appointment letter for ${contactName}.
@@ -431,7 +430,7 @@ Managing Director:                                    Signature: _______________
 
 
   const handleShareWhatsApp = () => {
-    const message = `I just generated my CBN AML implementation roadmap for ${institutionName} using ApexAML (apexaml.com) — pre-formatted for CBN Circular BSD/DIR/PUB/LAB/019/002. Submission deadline is 10 June 2026. You can generate yours free at apexaml.com/roadmap.`;
+    const message = `I just generated my CBN AML implementation roadmap for ${institutionName} using ApexAML (apexaml.com) — pre-formatted for CBN Circular BSD/DIR/PUB/LAB/019/002. You can generate yours free at apexaml.com/roadmap.`;
     window.open(buildWhatsAppUrl(message), '_blank', 'noopener,noreferrer');
   };
 
@@ -516,7 +515,7 @@ Managing Director:                                    Signature: _______________
     <SidebarProvider>
       <Seo
         title="Free CBN AML Roadmap Generator | ApexAML"
-        description="Generate a CBN-compliant AML implementation roadmap for your Nigerian fintech, MFB or IMTO in 60 seconds. Pre-formatted for Circular BSD/DIR/PUB/LAB/019/002 and the 10 June 2026 deadline."
+        description="Generate a CBN-compliant AML implementation roadmap for your Nigerian fintech, MFB or IMTO in 60 seconds. Pre-formatted for Circular BSD/DIR/PUB/LAB/019/002."
         path="/roadmap"
       />
       <div className="min-h-screen flex w-full">
@@ -561,8 +560,7 @@ Managing Director:                                    Signature: _______________
                       </span>
                       <p className="text-[13px] leading-relaxed text-foreground/90">
                         <span className="font-medium text-destructive">CBN Circular BSD/DIR/PUB/LAB/019/002</span> requires
-                        every regulated institution to submit an AML implementation roadmap by{' '}
-                        <span className="font-medium">10 June 2026</span>. Failure to submit is a regulatory infraction.
+                        every regulated institution to submit an AML implementation roadmap and reach full compliance by its licence-specific deadline.
                       </p>
                     </div>
 
@@ -963,7 +961,7 @@ Managing Director:                                    Signature: _______________
                       <div className="flex flex-wrap gap-2">
                         <span className="inline-flex items-center gap-1.5 rounded-md border border-destructive/30 bg-destructive/10 px-2.5 py-1 text-[11px] font-medium text-destructive">
                           <CalendarClock className="h-3 w-3" />
-                          Roadmap deadline: 10 June 2026
+                          CBN Circular BSD/DIR/PUB/LAB/019/002
                         </span>
                         <span
                           className={
@@ -1050,7 +1048,7 @@ Managing Director:                                    Signature: _______________
                           {
                             icon: Clock,
                             label: 'Time to first CBN milestone',
-                            value: '48 hours after API connection',
+                            value: 'Scoped in your walkthrough, proven in the pilot',
                           },
                           {
                             icon: Zap,
@@ -1065,7 +1063,7 @@ Managing Director:                                    Signature: _______________
                           {
                             icon: Plug,
                             label: 'Setup time',
-                            value: '48-hour integration — no IT project required',
+                            value: 'REST API or batch SFTP — timeline agreed during the pilot',
                           },
                         ].map(({ icon: Icon, label, value }) => (
                           <Card key={label} className="p-4 space-y-2">
@@ -1082,19 +1080,6 @@ Managing Director:                                    Signature: _______________
                         ))}
                       </div>
 
-                      {/* Offer callout */}
-                      <div className="flex items-start gap-3 rounded-lg border border-risk-low/30 bg-risk-low/10 p-4">
-                        <Gift className="h-5 w-5 text-risk-low shrink-0 mt-0.5" />
-                        <div className="space-y-1">
-                          <p className="text-[13px] font-semibold text-foreground">
-                            First month free — for institutions submitting their CBN roadmap before 10 June
-                            2026.
-                          </p>
-                          <p className="text-[12px] text-foreground/80 leading-relaxed">
-                            Book your demo this week and we will waive the first month's subscription fee.
-                          </p>
-                        </div>
-                      </div>
 
                       {/* Conversion CTAs */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

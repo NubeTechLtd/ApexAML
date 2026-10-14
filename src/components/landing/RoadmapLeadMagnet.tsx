@@ -11,7 +11,6 @@ import { NDPRConsent } from './NDPRConsent';
 
 const ROADMAP_CONTENT = `CBN AML COMPLIANCE ROADMAP TEMPLATE
 Circular: BSD/DIR/PUB/LAB/019/002
-Submission Deadline: June 10, 2026
 
 ================================================================
 SECTION 1 — INSTITUTION PROFILE

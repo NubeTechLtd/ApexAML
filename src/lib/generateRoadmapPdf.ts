@@ -230,10 +230,6 @@ export function openRoadmapAsPdf(args: OpenRoadmapAsPdfArgs): void {
       </div>
 
       <div class="deadlines">
-        <div class="chip chip-red">
-          <span class="label">CBN Roadmap Submission</span>
-          10 June 2026
-        </div>
         <div class="chip chip-deadline">
           <span class="label">Full Compliance Deadline</span>
           ${esc(fullDeadline)}
@@ -244,7 +240,7 @@ export function openRoadmapAsPdf(args: OpenRoadmapAsPdfArgs): void {
       <div class="reg-box">
         This roadmap is prepared in accordance with <strong>CBN Circular BSD/DIR/PUB/LAB/019/002</strong>,
         which requires every regulated institution in Nigeria to file an AML/CFT implementation
-        roadmap with the Central Bank of Nigeria by <strong>10 June 2026</strong>, with full
+        roadmap with the Central Bank of Nigeria, with full
         compliance demonstrated by the licence-specific deadline above. Reporting alignment
         follows the NFIU goAML XML standard.
       </div>

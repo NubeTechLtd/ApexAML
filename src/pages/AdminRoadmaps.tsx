@@ -560,7 +560,6 @@ export default function AdminRoadmaps() {
         <Card className="p-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-semibold">Daily Roadmaps — Last 30 Days</h2>
-            <span className="text-xs text-muted-foreground">CBN deadline: 10 Jun 2026</span>
           </div>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">

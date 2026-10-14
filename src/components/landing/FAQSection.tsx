@@ -75,10 +75,9 @@ const FAQS: FAQ[] = [
     q: "How long does integration take?",
     a: (
       <p>
-        <span className="text-white/80 font-semibold">48 hours</span> for API-first fintechs (Paystack, Flutterwave,
-        Mono, Okra). For legacy core banking systems (Finacle, T24, Flexcube) we typically deliver in{" "}
-        <span className="text-white/80 font-semibold">2 weeks</span> via batch SFTP or middleware adapters. No vendor
-        middleware required.
+        API-first fintechs (Paystack, Flutterwave, Mono, Okra) connect over REST API. Legacy core banking systems
+        (Finacle, T24, Flexcube) connect via batch SFTP or middleware adapters. We scope the timeline in your
+        walkthrough and prove it during the 30-45 day pilot on your own data.
       </p>
     ),
   },
