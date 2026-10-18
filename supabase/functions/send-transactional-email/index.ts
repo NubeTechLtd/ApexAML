@@ -74,8 +74,8 @@ Deno.serve(async (req) => {
       { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }
-  const claims = parseJwtClaims(authHeader.slice('Bearer '.length).trim())
-  if (claims?.role !== 'service_role') {
+  const callerKey = authHeader.slice('Bearer '.length).trim()
+  if (callerKey !== supabaseServiceKey) {
     return new Response(
       JSON.stringify({ error: 'Forbidden' }),
       { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
