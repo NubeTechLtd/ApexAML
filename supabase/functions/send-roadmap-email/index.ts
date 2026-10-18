@@ -1,6 +1,6 @@
 // Deliver only the roadmap requested by a fresh, matching lead.
 // No promotional follow-ups, Resend fallback, or client-supplied roadmap HTML.
-import { createClient } from 'npm:@supabase/supabase-js@2'
+import { createClient, FunctionsHttpError } from 'npm:@supabase/supabase-js@2'
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors'
 import { z } from 'npm:zod@3.25.76'
 import { canDeliverRoadmap } from './validation.ts'
@@ -44,8 +44,9 @@ Deno.serve(async (req) => {
       },
     })
     if (sendError) {
-      console.error('Roadmap enqueue failed', { message: sendError.message })
-      return json({ ok: false, reason: 'enqueue_failed' }, 502)
+      const details = sendError instanceof FunctionsHttpError ? await sendError.context.text() : sendError.message
+      console.error('Roadmap enqueue failed', { details })
+      return json({ ok: false, reason: 'enqueue_failed', details }, 502)
     }
     if (!data?.success || !data?.queued) {
       return json({ ok: false, reason: data?.reason ?? 'not_queued' })
