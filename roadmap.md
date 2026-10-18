@@ -1,5 +1,10 @@
 # Roadmap
 
+## Transactional-only email
+- [ ] Archive and disable sales follow-ups; remove roadmap enrollment and follow-up promises; verify drip job absent.
+- [ ] Move requested roadmap delivery to Lovable Emails and add legal footers to email templates.
+- [ ] Deploy and verify delivery, suppression and no enrollment; registered postal address awaits user input.
+
 ## October copy corrections
 - [x] Apply exact Ireland hosting and no Nigerian residency wording wherever hosting is described; align AI metadata and email labels.
 - [x] Add verified active sub-processors to the existing privacy page. Termii excluded: no configured API key; dispatcher logs only. Delivery behavior unchanged.
