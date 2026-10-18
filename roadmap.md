@@ -1,9 +1,10 @@
 # Roadmap
 
 ## Transactional-only email
-- [ ] Archive and disable sales follow-ups; remove roadmap enrollment and follow-up promises; verify drip job absent.
-- [ ] Move requested roadmap delivery to Lovable Emails and add legal footers to email templates.
-- [ ] Deploy and verify delivery, suppression and no enrollment; registered postal address awaits user input.
+- [x] Archive and disable sales follow-ups; remove roadmap enrollment and follow-up promises; verified drip job absent and dispatcher returns 410.
+- [x] Move requested roadmap delivery to Lovable Emails and add shared legal footers to email templates; mandatory unsubscribe handling retained.
+- [x] Deploy and verify requested roadmap queued and sent, unrelated recipients rejected, trusted-only sender rejected public calls, and no enrollment (0 sequences); six regression tests pass. Browser reached roadmap display, but its requests did not reach the live database, so live delivery was verified separately through the deployed sender.
+- [ ] Replace [ENTER address] in legal email footer — awaiting the registered postal address from the user.
 
 ## October copy corrections
 - [x] Apply exact Ireland hosting and no Nigerian residency wording wherever hosting is described; align AI metadata and email labels.
