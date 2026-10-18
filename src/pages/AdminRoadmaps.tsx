@@ -302,7 +302,7 @@ export default function AdminRoadmaps() {
 
   const exportCSV = () => {
     const rows = [
-      ['Date', 'Institution', 'Type', 'Contact', 'Email', 'Phone', 'AML Setup', 'Demo Booked', 'Email Step'],
+      ['Date', 'Institution', 'Type', 'Contact', 'Email', 'Phone', 'AML Setup', 'Demo Booked', 'Archived Sales Emails Sent'],
       ...filtered.map((l) => {
         const seq = sequencesByEmail.get(l.email.toLowerCase());
         const step = seq
@@ -318,7 +318,7 @@ export default function AdminRoadmaps() {
           l.phone ?? '',
           l.aml_setup,
           demoByEmail.has(l.email.toLowerCase()) ? 'Yes' : 'No',
-          `${step}/5`,
+          `${step}`,
         ];
       }),
     ];
@@ -645,7 +645,7 @@ export default function AdminRoadmaps() {
                       <TableHead className="text-center">WA</TableHead>
                       <TableHead>AML Setup</TableHead>
                       <TableHead className="text-center">Demo</TableHead>
-                      <TableHead className="text-center">Email seq</TableHead>
+                      <TableHead className="text-center">Archived emails</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -693,7 +693,7 @@ export default function AdminRoadmaps() {
                             )}
                           </TableCell>
                           <TableCell className="text-center text-xs tabular-nums">
-                            {step}/5
+                            {step}
                           </TableCell>
                         </TableRow>
                       );

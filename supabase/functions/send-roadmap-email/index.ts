@@ -47,7 +47,7 @@ Deno.serve(async (req) => {
     if (sendError) {
       const details = sendError instanceof FunctionsHttpError ? await sendError.context.text() : sendError.message
       console.error('Roadmap enqueue failed', { details })
-      return json({ ok: false, reason: 'enqueue_failed', details }, 502)
+      return json({ ok: false, reason: 'enqueue_failed' }, 502)
     }
     if (!data?.success || !data?.queued) {
       return json({ ok: false, reason: data?.reason ?? 'not_queued' })
