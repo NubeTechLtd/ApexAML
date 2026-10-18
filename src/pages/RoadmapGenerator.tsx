@@ -298,27 +298,6 @@ Managing Director:                                    Signature: _______________
       roadmapText = buildFallbackRoadmap();
     }
 
-    // Enqueue the 5-email Resend drip sequence FIRST. This creates the email_sequences
-    // row that send-roadmap-email validates against. Email 1 (the roadmap email) is
-    // dispatched immediately below; emails 2-5 are sent on day 3/7/14/21 by the
-    // pg_cron tick unless the lead books a demo or unsubscribes.
-    try {
-      await supabase.functions.invoke('email-sequence-dispatch', {
-        body: {
-          action: 'enqueue',
-          leadId,
-          contactName: contactName.trim(),
-          institutionName: institutionName.trim(),
-          institutionType,
-          email: email.trim(),
-          refNumber: referenceNumber,
-          deadline,
-        },
-      });
-    } catch (err) {
-      console.warn('Email drip enqueue failed', err);
-    }
-
     // Fire-and-forget: email the roadmap. Failures are silent — in-app display is primary.
     supabase.functions
       .invoke('send-roadmap-email', {
@@ -447,16 +426,6 @@ Managing Director:                                    Signature: _______________
       });
       return;
     }
-    // Stop the email drip sequence too — the lead has converted.
-    supabase.functions
-      .invoke('email-sequence-dispatch', {
-        body: {
-          action: 'mark_demo_booked',
-          email: email.trim() || null,
-          refNumber: referenceNumber,
-        },
-      })
-      .catch((err) => console.warn('Email drip mark_demo_booked failed', err));
     toast({
       title: 'Demo booked',
       description: 'We will be in touch within 24 hours to confirm.',

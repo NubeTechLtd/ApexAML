@@ -118,23 +118,6 @@ export function RoadmapLeadMagnet() {
       return;
     }
 
-    const deadline = '';
-
-    // 2) Enrol into the 5-step email drip (M1 marked as the magnet download itself)
-    supabase.functions
-      .invoke('email-sequence-dispatch', {
-        body: {
-          action: 'enqueue',
-          contactName: trimmedName,
-          institutionName: trimmedInst,
-          institutionType: 'Unknown',
-          email: trimmedEmail,
-          refNumber,
-          deadline,
-        },
-      })
-      .catch((err) => console.warn('Email drip enqueue failed', err));
-
 
     setSubmitting(false);
     setDone(true);

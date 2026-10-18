@@ -66,10 +66,10 @@ Deno.serve(async (req) => {
     return page({ title: "Not found", body: `<h1>We couldn't find that subscription</h1><p>The link may have expired. If you'd like to opt out, email hello@apexaml.com.</p>` });
   }
   if (res.alreadyDone) {
-    return page({ title: "Already unsubscribed", body: `<h1>You're already unsubscribed</h1><p>${res.email ?? "Your address"} is no longer in the CBN roadmap follow-up sequence.</p>` });
+    return page({ title: "Already unsubscribed", body: `<h1>You're already unsubscribed</h1><p>Your email preferences have already been updated.</p>` });
   }
   return page({
     title: "Unsubscribed",
-    body: `<h1>You're unsubscribed</h1><p>${res.email ?? "Your address"} has been removed from the CBN roadmap follow-up sequence. You may still receive transactional emails (e.g. roadmap copies you generate yourself).</p><a class="btn" href="https://apexaml.com">Back to ApexAML</a>`,
+    body: `<h1>You're unsubscribed</h1><p>Your email preferences have been updated.</p><a class="btn" href="https://apexaml.com">Back to ApexAML</a>`,
   });
 });

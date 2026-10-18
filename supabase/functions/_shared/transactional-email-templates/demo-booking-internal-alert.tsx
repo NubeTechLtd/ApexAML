@@ -11,6 +11,7 @@ import {
   Text,
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
+import { LegalFooter } from './legal-footer.tsx'
 
 interface Props {
   institutionName?: string
@@ -62,6 +63,7 @@ const Email = ({
               relevant typologies ({institutionType}), and prep the focus-area demo: {focusAreas || 'general walkthrough'}.
             </Text>
           </Section>
+          <LegalFooter />
         </Section>
       </Container>
     </Body>

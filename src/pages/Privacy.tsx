@@ -23,7 +23,7 @@ const SECTIONS = [
   },
   {
     h: "5. Sub-processors",
-    p: "Supabase (AWS eu-west-1) provides data hosting. Lovable AI Gateway and its underlying model providers process AI requests. Resend handles email delivery. AI-assisted STR drafting from the case's own data, reviewed and edited by an analyst.",
+    p: "Supabase (AWS eu-west-1) provides data hosting. Lovable AI Gateway and its underlying model providers process AI requests. Lovable Emails handles requested email delivery. AI-assisted STR drafting from the case's own data, reviewed and edited by an analyst.",
   },
   {
     h: "6. Retention",
