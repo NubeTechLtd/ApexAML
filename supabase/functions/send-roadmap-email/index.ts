@@ -31,6 +31,7 @@ Deno.serve(async (req) => {
     if (error) throw new Error('Unable to load requested roadmap')
     if (!lead || !canDeliverRoadmap(lead, parsed.data.to)) return json({ ok: false, reason: 'unauthorized' }, 403)
     const { data, error: sendError } = await admin.functions.invoke('send-transactional-email', {
+      headers: { Authorization: `Bearer ${key}` },
       body: {
         templateName: 'roadmap-delivery',
         recipientEmail: lead.email.trim().toLowerCase(),

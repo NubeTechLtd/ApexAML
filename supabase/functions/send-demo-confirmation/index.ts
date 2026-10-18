@@ -134,6 +134,7 @@ Deno.serve(async (req: Request) => {
     try {
       const invokeSend = (templateName: string, recipientEmail: string, templateData: Record<string, unknown>) =>
         admin.functions.invoke("send-transactional-email", {
+          headers: { Authorization: `Bearer ${SERVICE_ROLE}` },
           body: {
             templateName,
             recipientEmail,
