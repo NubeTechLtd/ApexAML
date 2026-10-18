@@ -1,382 +1,60 @@
-// Send the generated CBN AML roadmap to the compliance officer via Resend.
-// Failures are logged to console only — the in-app roadmap is the primary UX.
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+// Deliver only the roadmap requested by a fresh, matching lead.
+// No promotional follow-ups, Resend fallback, or client-supplied roadmap HTML.
+import { createClient, FunctionsHttpError } from 'npm:@supabase/supabase-js@2'
+import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors'
+import { z } from 'npm:zod@3.25.76'
+import { canDeliverRoadmap } from './validation.ts'
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
+const BodySchema = z.object({
+  leadId: z.string().uuid(),
+  to: z.string().trim().email().max(255),
+  refNumber: z.string().trim().min(1).max(80),
+})
 
-const RESEND_GATEWAY_URL = "https://connector-gateway.lovable.dev/resend";
-
-// Admin alert recipient — swap this out as needed
-const ADMIN_ALERT_EMAIL = "adetokunboogun@gmail.com";
-
-const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
-const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-const adminDb = createClient(SUPABASE_URL, SERVICE_ROLE, { auth: { persistSession: false } });
-
-// Anti-abuse: verify (leadId, recipient email) corresponds to a roadmap_leads row
-// inserted within the last 30 minutes, and fetch the server-stored roadmap text.
-// The roadmap content is NEVER taken from the request body — it is read from the
-// DB row written by `generate-roadmap`. This prevents the endpoint from being used
-// as an open relay for arbitrary attacker content via ApexAML's verified sender.
-const LEAD_FRESHNESS_MS = 30 * 60 * 1000;
-async function loadFreshLeadRoadmap(
-  leadId: string | undefined | null,
-  email: string,
-): Promise<string | null> {
-  if (!leadId || typeof leadId !== "string") return null;
-  const { data } = await adminDb
-    .from("roadmap_leads")
-    .select("id, email, created_at, roadmap_text")
-    .eq("id", leadId)
-    .maybeSingle();
-  if (!data) return null;
-  if ((data.email ?? "").trim().toLowerCase() !== email.trim().toLowerCase()) return null;
-  const created = new Date(data.created_at).getTime();
-  if (!Number.isFinite(created) || Date.now() - created > LEAD_FRESHNESS_MS) return null;
-  const text = typeof data.roadmap_text === "string" ? data.roadmap_text.trim() : "";
-  if (text.length < 200) return null;
-  return text;
+function json(data: Record<string, unknown>, status = 200) {
+  return new Response(JSON.stringify(data), { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
 }
 
-interface RoadmapEmailPayload {
-  to: string;
-  name: string;
-  institution: string;
-  type: string;
-  roadmapText: string;
-  refNumber: string;
-  leadId?: string;
-  contactTitle?: string;
-  phoneNumber?: string;
-  amlSetup?: string;
-}
-
-function escapeHtml(input: string): string {
-  return input
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
-
-function isEmail(s: unknown): s is string {
-  return typeof s === "string" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
-}
-
-function buildHtml(p: RoadmapEmailPayload): string {
-  const safeName = escapeHtml(p.name || "Compliance Officer");
-  const safeInst = escapeHtml(p.institution || "your institution");
-  const safeRef = escapeHtml(p.refNumber);
-  const safeRoadmap = escapeHtml(p.roadmapText);
-  const today = new Date().toLocaleDateString("en-GB", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-  const ctaUrl = "https://apexaml.com/?utm_source=roadmap_email&utm_medium=email&utm_campaign=cbn_roadmap";
-  const unsubUrl = `https://apexaml.com/unsubscribe?email=${encodeURIComponent(p.to)}`;
-
-  return `<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Your CBN AML Roadmap</title>
-  </head>
-  <body style="margin:0;padding:0;background:#f4f4f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:#1a1a2e;">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f4f4f7;padding:24px 0;">
-      <tr>
-        <td align="center">
-          <table role="presentation" width="640" cellpadding="0" cellspacing="0" border="0" style="max-width:640px;width:100%;background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.04);">
-            <!-- HEADER -->
-            <tr>
-              <td style="background:#1a1a2e;padding:24px 28px;">
-                <div style="font-size:22px;font-weight:600;color:#ffffff;letter-spacing:-0.01em;">ApexAML</div>
-                <div style="font-size:12px;color:rgba(255,255,255,0.55);margin-top:4px;">CBN AML Compliance Platform</div>
-              </td>
-            </tr>
-
-            <!-- BODY -->
-            <tr>
-              <td style="padding:32px 28px 8px 28px;">
-                <p style="font-size:15px;line-height:1.6;color:#1a1a2e;margin:0 0 16px;">Dear ${safeName},</p>
-                <p style="font-size:14px;line-height:1.7;color:#3a3a4e;margin:0 0 24px;">
-                  Your CBN AML implementation roadmap for <strong style="color:#1a1a2e;">${safeInst}</strong> has been
-                  generated and is attached below. This document is pre-formatted for submission to the CBN
-                  Compliance Department in response to Circular
-                  <span style="font-family:'SF Mono',Menlo,Consolas,monospace;font-size:13px;">BSD/DIR/PUB/LAB/019/002</span>.
-                </p>
-              </td>
-            </tr>
-
-            <!-- ROADMAP BODY -->
-            <tr>
-              <td style="padding:0 28px 24px 28px;">
-                <pre style="background:#f4f4f7;border:1px solid #e5e5ec;border-radius:6px;padding:16px;font-family:'SF Mono',Menlo,Consolas,monospace;font-size:11.5px;line-height:1.7;color:#1a1a2e;white-space:pre-wrap;word-wrap:break-word;margin:0;overflow-x:auto;">${safeRoadmap}</pre>
-              </td>
-            </tr>
-
-            <!-- DIVIDER -->
-            <tr>
-              <td style="padding:0 28px;">
-                <div style="border-top:1px solid #e5e5ec;"></div>
-              </td>
-            </tr>
-
-            <!-- WHAT NEXT -->
-            <tr>
-              <td style="padding:24px 28px 8px 28px;">
-                <div style="font-size:13px;font-weight:600;color:#1a1a2e;margin:0 0 8px;text-transform:uppercase;letter-spacing:0.04em;">What next?</div>
-                <p style="font-size:14px;line-height:1.7;color:#3a3a4e;margin:0 0 20px;">
-                  This roadmap covers the controls — ApexAML is the platform that operates them. Sanctions screening,
-                  transaction monitoring, NFIU goAML STRs, and the full IMTO regulatory pack are all live and
-                  CBN-aligned.
-                </p>
-                <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px;">
-                  <tr>
-                    <td style="background:#1a1a2e;border-radius:6px;">
-                      <a href="${ctaUrl}" style="display:inline-block;padding:12px 22px;font-size:14px;font-weight:600;color:#ffffff;text-decoration:none;">Implement this roadmap with ApexAML →</a>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-
-            <!-- FOOTER -->
-            <tr>
-              <td style="padding:20px 28px 28px 28px;background:#fafafc;border-top:1px solid #eeeef3;">
-                <div style="font-size:11px;line-height:1.7;color:#6b6b80;">
-                  <div><strong style="color:#3a3a4e;">Reference:</strong> <span style="font-family:'SF Mono',Menlo,Consolas,monospace;">${safeRef}</span></div>
-                  <div><strong style="color:#3a3a4e;">Generated:</strong> ${today}</div>
-                  <div style="margin-top:10px;">
-                    This email contains regulatory guidance prepared for ${safeInst}. NDPR notice: your contact
-                    details were collected with consent at apexaml.com/roadmap and are processed solely to deliver this
-                    roadmap and respond to compliance enquiries. We do not share your data with third parties.
-                  </div>
-                  <div style="margin-top:10px;">
-                    <a href="${unsubUrl}" style="color:#6b6b80;text-decoration:underline;">Unsubscribe</a>
-                    &nbsp;·&nbsp; ApexAML · hello@apexaml.com
-                  </div>
-                </div>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-  </body>
-</html>`;
-}
-function buildAdminAlertHtml(p: RoadmapEmailPayload): string {
-  const safeName = escapeHtml(p.name || "Unknown");
-  const safeTitle = escapeHtml(p.contactTitle || "");
-  const safeInst = escapeHtml(p.institution || "Unknown");
-  const safeType = escapeHtml(p.type || "");
-  const safeEmail = escapeHtml(p.to);
-  const safePhone = escapeHtml(p.phoneNumber || "Not provided");
-  const safeSetup = escapeHtml(p.amlSetup || "Unknown");
-  const safeRef = escapeHtml(p.refNumber);
-
-  return `<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>New Enterprise Lead</title>
-  </head>
-  <body style="margin:0;padding:0;background:#f4f4f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:#1a1a2e;">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f4f4f7;padding:24px 0;">
-      <tr>
-        <td align="center">
-          <table role="presentation" width="640" cellpadding="0" cellspacing="0" border="0" style="max-width:640px;width:100%;background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.04);">
-            <tr>
-              <td style="background:#dc2626;padding:24px 28px;">
-                <div style="font-size:18px;font-weight:600;color:#ffffff;letter-spacing:-0.01em;">🚨 New Enterprise Lead</div>
-                <div style="font-size:12px;color:rgba(255,255,255,0.75);margin-top:4px;">ApexAML System Alert</div>
-              </td>
-            </tr>
-            <tr>
-              <td style="padding:28px;">
-                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size:14px;line-height:1.6;">
-                  <tr>
-                    <td style="padding:8px 0;border-bottom:1px solid #e5e5ec;width:140px;color:#6b6b80;vertical-align:top;"><strong>Name</strong></td>
-                    <td style="padding:8px 0;border-bottom:1px solid #e5e5ec;color:#1a1a2e;vertical-align:top;">${safeName}${safeTitle ? ` <span style="color:#6b6b80;">(${safeTitle})</span>` : ""}</td>
-                  </tr>
-                  <tr>
-                    <td style="padding:8px 0;border-bottom:1px solid #e5e5ec;color:#6b6b80;vertical-align:top;"><strong>Institution</strong></td>
-                    <td style="padding:8px 0;border-bottom:1px solid #e5e5ec;color:#1a1a2e;vertical-align:top;">${safeInst}${safeType ? ` <span style="color:#6b6b80;">(${safeType})</span>` : ""}</td>
-                  </tr>
-                  <tr>
-                    <td style="padding:8px 0;border-bottom:1px solid #e5e5ec;color:#6b6b80;vertical-align:top;"><strong>Email</strong></td>
-                    <td style="padding:8px 0;border-bottom:1px solid #e5e5ec;color:#1a1a2e;vertical-align:top;"><a href="mailto:${safeEmail}" style="color:#1a1a2e;text-decoration:underline;">${safeEmail}</a></td>
-                  </tr>
-                  <tr>
-                    <td style="padding:8px 0;border-bottom:1px solid #e5e5ec;color:#6b6b80;vertical-align:top;"><strong>Phone</strong></td>
-                    <td style="padding:8px 0;border-bottom:1px solid #e5e5ec;color:#1a1a2e;vertical-align:top;">${safePhone}</td>
-                  </tr>
-                  <tr>
-                    <td style="padding:8px 0;border-bottom:1px solid #e5e5ec;color:#6b6b80;vertical-align:top;"><strong>Current Setup</strong></td>
-                    <td style="padding:8px 0;border-bottom:1px solid #e5e5ec;color:#1a1a2e;vertical-align:top;">${safeSetup}</td>
-                  </tr>
-                  <tr>
-                    <td style="padding:8px 0;color:#6b6b80;vertical-align:top;"><strong>Reference</strong></td>
-                    <td style="padding:8px 0;color:#1a1a2e;vertical-align:top;font-family:'SF Mono',Menlo,Consolas,monospace;font-size:13px;">${safeRef}</td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-            <tr>
-              <td style="padding:0 28px 24px 28px;">
-                <table role="presentation" cellpadding="0" cellspacing="0" border="0">
-                  <tr>
-                    <td style="background:#1a1a2e;border-radius:6px;">
-                      <a href="https://apexaml.com/admin/roadmaps" style="display:inline-block;padding:12px 22px;font-size:14px;font-weight:600;color:#ffffff;text-decoration:none;">View in Admin Dashboard →</a>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-            <tr>
-              <td style="padding:16px 28px;background:#fafafc;border-top:1px solid #eeeef3;">
-                <div style="font-size:11px;line-height:1.6;color:#6b6b80;">
-                  This alert was generated automatically by the ApexAML system when a lead requested a CBN AML roadmap.
-                </div>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-  </body>
-</html>`;
-}
-Deno.serve(async (req: Request) => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
-  }
-
+Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders })
+  if (req.method !== 'POST') return json({ ok: false, reason: 'method_not_allowed' }, 405)
+  const parsed = BodySchema.safeParse(await req.json().catch(() => null))
+  if (!parsed.success) return json({ ok: false, reason: 'invalid_payload' }, 400)
+  const url = Deno.env.get('SUPABASE_URL')
+  const key = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+  if (!url || !key) return json({ ok: false, reason: 'configuration_error' }, 500)
+  const admin = createClient(url, key, { auth: { persistSession: false } })
   try {
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) {
-      console.error("send-roadmap-email: LOVABLE_API_KEY not configured");
-      return new Response(JSON.stringify({ ok: false, reason: "config" }), {
-        status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-    const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
-    if (!RESEND_API_KEY) {
-      console.error("send-roadmap-email: RESEND_API_KEY not configured");
-      return new Response(JSON.stringify({ ok: false, reason: "config" }), {
-        status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    const body = (await req.json().catch(() => null)) as Partial<RoadmapEmailPayload> | null;
-    if (
-      !body ||
-      !isEmail(body.to) ||
-      typeof body.refNumber !== "string"
-    ) {
-      console.error("send-roadmap-email: invalid payload", {
-        hasBody: !!body,
-        toOk: isEmail(body?.to),
-      });
-      return new Response(JSON.stringify({ ok: false, reason: "invalid_payload" }), {
-        status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    // Anti-abuse: load roadmap text from the server-stored DB row tied to a fresh
-    // lead. The client-supplied `roadmapText` field is IGNORED to prevent open-relay
-    // abuse where an attacker could send arbitrary content from our verified sender.
-    const serverRoadmapText = await loadFreshLeadRoadmap(body.leadId, body.to);
-    if (!serverRoadmapText) {
-      console.warn("send-roadmap-email: lead validation or roadmap fetch failed", {
-        leadId: body.leadId,
-      });
-      return new Response(JSON.stringify({ ok: false, reason: "unauthorized" }), {
-        status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    const payload: RoadmapEmailPayload = {
-      to: body.to,
-      name: body.name || "Compliance Officer",
-      institution: body.institution || "your institution",
-      type: body.type || "",
-      roadmapText: serverRoadmapText,
-      refNumber: body.refNumber,
-      contactTitle: body.contactTitle,
-      phoneNumber: body.phoneNumber,
-      amlSetup: body.amlSetup,
-    };
-
-    const subject = `Your CBN AML Roadmap — ${payload.institution} — Ref ${payload.refNumber}`;
-    const html = buildHtml(payload);
-
-    const response = await fetch(`${RESEND_GATEWAY_URL}/emails`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "X-Connection-Api-Key": RESEND_API_KEY,
+    const { data: lead, error } = await admin.from('roadmap_leads')
+      .select('id,email,created_at,roadmap_text,contact_name,institution_name')
+      .eq('id', parsed.data.leadId).maybeSingle()
+    if (error) throw new Error('Unable to load requested roadmap')
+    if (!lead || !canDeliverRoadmap(lead, parsed.data.to)) return json({ ok: false, reason: 'unauthorized' }, 403)
+    const { data, error: sendError } = await admin.functions.invoke('send-transactional-email', {
+      headers: { Authorization: `Bearer ${key}` },
+      body: {
+        templateName: 'roadmap-delivery',
+        recipientEmail: lead.email.trim().toLowerCase(),
+        idempotencyKey: `roadmap-delivery-${lead.id}`,
+        templateData: {
+          name: lead.contact_name,
+          institution: lead.institution_name,
+          refNumber: parsed.data.refNumber,
+          roadmapText: lead.roadmap_text,
+        },
       },
-      body: JSON.stringify({
-        from: "ApexAML <hello@apexaml.com>>",
-        to: [payload.to],
-        reply_to: "hello@apexaml.com",
-        subject,
-        html,
-      }),
-    });
-
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok) {
-      console.error("send-roadmap-email: Resend error", response.status, data);
-      return new Response(JSON.stringify({ ok: false, reason: "send_failed" }), {
-        status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    })
+    if (sendError) {
+      const details = sendError instanceof FunctionsHttpError ? await sendError.context.text() : sendError.message
+      console.error('Roadmap enqueue failed', { details })
+      return json({ ok: false, reason: 'enqueue_failed' }, 502)
     }
-
-    // Fire-and-forget internal admin alert — never blocks the user-facing response
-    const alertSubject = `🚨 NEW ENTERPRISE LEAD: ${payload.institution}`;
-    const alertHtml = buildAdminAlertHtml(payload);
-    fetch(`${RESEND_GATEWAY_URL}/emails`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "X-Connection-Api-Key": RESEND_API_KEY,
-      },
-      body: JSON.stringify({
-        from: "ApexAML System <hello@apexaml.com>",
-        to: [ADMIN_ALERT_EMAIL],
-        subject: alertSubject,
-        html: alertHtml,
-      }),
-    }).catch((alertErr) => {
-      console.error("send-roadmap-email: admin alert dispatch failed", alertErr);
-    });
-
-    return new Response(JSON.stringify({ ok: true, id: (data as { id?: string }).id ?? null }), {
-      status: 200,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-  } catch (err) {
-    console.error("send-roadmap-email: unexpected error", err);
-    return new Response(JSON.stringify({ ok: false, reason: "exception" }), {
-      status: 200,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    if (!data?.success || !data?.queued) {
+      return json({ ok: false, reason: data?.reason ?? 'not_queued' })
+    }
+    return json({ ok: true, queued: true })
+  } catch (error) {
+    console.error('Requested roadmap delivery failed', error instanceof Error ? error.message : 'Unknown error')
+    return json({ ok: false, reason: 'delivery_failed' }, 500)
   }
-});
+})

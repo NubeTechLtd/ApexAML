@@ -11,6 +11,7 @@ import {
   Text,
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
+import { LegalFooter } from './legal-footer.tsx'
 
 interface Props {
   firstName?: string
@@ -84,6 +85,7 @@ const Email = ({
           <Text style={footerText}>
             ApexAML — Nigeria's AML Compliance Intelligence Platform
           </Text>
+          <LegalFooter />
         </Section>
       </Container>
     </Body>
