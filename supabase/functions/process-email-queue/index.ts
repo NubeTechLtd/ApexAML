@@ -34,7 +34,23 @@ function getRetryAfterSeconds(error: unknown): number {
   return 60
 }
 
+function parseJwtClaims(token: string): Record<string, unknown> | null {
+  const parts = token.split('.')
+  if (parts.length < 2) {
+    return null
+  }
 
+  try {
+    const payload = parts[1]
+      .replaceAll('-', '+')
+      .replaceAll('_', '/')
+      .padEnd(Math.ceil(parts[1].length / 4) * 4, '=')
+
+    return JSON.parse(atob(payload)) as Record<string, unknown>
+  } catch {
+    return null
+  }
+}
 
 // Move a message to the dead letter queue and log the reason.
 async function moveToDlq(
@@ -58,7 +74,7 @@ async function moveToDlq(
     payload,
   })
   if (error) {
-    console.error('Failed to move message to DLQ', { queue, msg_id: msg.msg_id, reason, error })
+    console.error('Failed to move message to DLQ', { queue, msg_id: msg.msg_id, reason, code: error.code, message: error.message })
   }
 }
 
@@ -83,10 +99,12 @@ Deno.serve(async (req) => {
     )
   }
 
-  // Only the exact configured service credential authorizes queue processing.
-  // Supports current server keys without trusting unverified JWT role claims.
+  // Defense in depth: verify_jwt=true already requires a valid JWT at the
+  // gateway layer. This adds an explicit role check so only service-role
+  // callers can trigger queue processing.
   const token = authHeader.slice('Bearer '.length).trim()
-  if (token !== supabaseServiceKey) {
+  const claims = parseJwtClaims(token)
+  if (claims?.role !== 'service_role') {
     return new Response(
       JSON.stringify({ error: 'Forbidden' }),
       { status: 403, headers: { 'Content-Type': 'application/json' } }
@@ -126,7 +144,7 @@ Deno.serve(async (req) => {
     })
 
     if (readError) {
-      console.error('Failed to read email batch', { queue, error: readError })
+      console.error('Failed to read email batch', { queue, code: readError.code, message: readError.message })
       continue
     }
 
@@ -157,7 +175,8 @@ Deno.serve(async (req) => {
       if (failedRowsError) {
         console.error('Failed to load failed-attempt counters', {
           queue,
-          error: failedRowsError,
+          code: failedRowsError.code,
+          message: failedRowsError.message,
         })
       } else {
         for (const row of failedRows ?? []) {
@@ -224,7 +243,7 @@ Deno.serve(async (req) => {
             message_id: msg.msg_id,
           })
           if (dupDelError) {
-            console.error('Failed to delete duplicate message from queue', { queue, msg_id: msg.msg_id, error: dupDelError })
+            console.error('Failed to delete duplicate message from queue', { queue, msg_id: msg.msg_id, code: dupDelError.code, message: dupDelError.message })
           }
           continue
         }
@@ -266,7 +285,7 @@ Deno.serve(async (req) => {
           message_id: msg.msg_id,
         })
         if (delError) {
-          console.error('Failed to delete sent message from queue', { queue, msg_id: msg.msg_id, error: delError })
+          console.error('Failed to delete sent message from queue', { queue, msg_id: msg.msg_id, code: delError.code, message: delError.message })
         }
         totalProcessed++
       } catch (error) {
