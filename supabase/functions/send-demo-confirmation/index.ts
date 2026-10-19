@@ -1,6 +1,37 @@
 // Book a demo: validate, persist the demo_request, mark the slot as booked,
 // and dispatch both an attendee confirmation email and an internal alert.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { sendTemplateEmail } from "../_shared/transactional-email-templates/send-email.ts";
+
+// Record the send outcome in email_send_log (append-only audit trail).
+// A log row never decides the send result — failures are only logged.
+async function logSend(
+  templateName: string,
+  recipient: string,
+  status: "sent" | "suppressed" | "failed",
+  errorMessage?: string,
+) {
+  const { error } = await admin.from("email_send_log").insert({
+    template_name: templateName,
+    recipient_email: recipient,
+    status,
+    error_message: errorMessage?.slice(0, 1000) ?? null,
+  });
+  if (error) console.error("email_send_log insert failed", { code: error.code, message: error.message });
+}
+
+// Send one templated email and log the outcome. Never throws — email
+// failures must not fail the booking.
+async function sendAndLog(templateName: string, recipient: string, idempotencyKey: string, templateData: Record<string, unknown>) {
+  try {
+    const result = await sendTemplateEmail(templateName, recipient, { idempotencyKey, templateData });
+    await logSend(templateName, recipient, result.sent ? "sent" : "suppressed");
+  } catch (e) {
+    const message = e instanceof Error ? e.message : String(e);
+    console.error(`${templateName} send failed`, { message });
+    await logSend(templateName, recipient, "failed", message);
+  }
+}
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -129,46 +160,32 @@ Deno.serve(async (req: Request) => {
 
     const slot = fmtSlot(payload.slotDatetime);
 
-    // Enqueue both emails via the shared transactional email pipeline.
-    // Failures here don't fail the booking — the queue retries and DLQs.
-    try {
-      const invokeSend = (templateName: string, recipientEmail: string, templateData: Record<string, unknown>) =>
-        admin.functions.invoke("send-transactional-email", {
-          headers: { Authorization: `Bearer ${SERVICE_ROLE}` },
-          body: {
-            templateName,
-            recipientEmail,
-            idempotencyKey: `${templateName}-${insertReq.id}`,
-            templateData,
-          },
-        });
+    // Send both emails through the shared transactional email sender.
+    // Failures here don't fail the booking — delivery is retried by the
+    // managed email service and outcomes are logged above.
+    const firstName = payload.fullName.split(" ")[0];
+    const shared = {
+      institutionName: payload.institutionName,
+      institutionType: payload.institutionType,
+      focusAreas: payload.focusAreas || "",
+      slotLabel: slot.label,
+    };
 
-      const firstName = payload.fullName.split(" ")[0];
-      const shared = {
-        institutionName: payload.institutionName,
-        institutionType: payload.institutionType,
-        focusAreas: payload.focusAreas || "",
-        slotLabel: slot.label,
-      };
-
-      await Promise.all([
-        invokeSend("demo-booking-confirmation", payload.email, {
-          ...shared,
-          firstName,
-          zoomLink: ZOOM_LINK,
-        }).catch((e) => console.error("attendee email enqueue failed", e)),
-        invokeSend("demo-booking-internal-alert", INTERNAL_ALERT_EMAIL, {
-          ...shared,
-          fullName: payload.fullName,
-          role: payload.role,
-          email: payload.email,
-          whatsapp: payload.whatsapp || "",
-          requestId: insertReq.id,
-        }).catch((e) => console.error("internal email enqueue failed", e)),
-      ]);
-    } catch (e) {
-      console.error("send-demo-confirmation: email dispatch failed", e);
-    }
+    await Promise.all([
+      sendAndLog("demo-booking-confirmation", payload.email, `demo-booking-confirmation-${insertReq.id}`, {
+        ...shared,
+        firstName,
+        zoomLink: ZOOM_LINK,
+      }),
+      sendAndLog("demo-booking-internal-alert", INTERNAL_ALERT_EMAIL, `demo-booking-internal-alert-${insertReq.id}`, {
+        ...shared,
+        fullName: payload.fullName,
+        role: payload.role,
+        email: payload.email,
+        whatsapp: payload.whatsapp || "",
+        requestId: insertReq.id,
+      }),
+    ]);
 
     return new Response(
       JSON.stringify({
