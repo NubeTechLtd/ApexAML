@@ -4,7 +4,7 @@ import { WhatsAppIcon } from "@/components/landing/WhatsAppIcon";
 import { WHATSAPP_NUMBER } from "@/lib/whatsapp";
 
 const CHAT_MESSAGE =
-  "Hi ApexAML, I visited apexaml.com and I'd like to know more about the platform.";
+  "Hi ApexAML, I'd like to talk about AML compliance.";
 const CHAT_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(CHAT_MESSAGE)}`;
 
 const GREEN = "#25D366";
