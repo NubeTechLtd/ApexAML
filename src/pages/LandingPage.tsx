@@ -584,7 +584,7 @@ function LandingPageInner() {
 
           <AnimatedSection delay={0.2}>
             <p className="mx-auto max-w-2xl text-base text-white/50 leading-relaxed">
-              The first AML compliance platform built for CBN Circular BSD/DIR/PUB/LAB/019/002 — with an AI STR co-pilot, a pre-configured IMTO regulatory pack, and NFIU goAML export built in from day one.
+              An AML compliance platform built around CBN Circular BSD/DIR/PUB/LAB/019/002 — with an AI STR co-pilot, a pre-configured IMTO regulatory pack, and NFIU goAML export built in from day one.
             </p>
           </AnimatedSection>
 
