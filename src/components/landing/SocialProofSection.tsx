@@ -47,7 +47,7 @@ const TESTIMONIALS = [
 const TRUST_BADGES = [
   { icon: ShieldCheck, label: 'NDPR Compliant' },
   { icon: Cloud, label: 'Hosted on Supabase (AWS Ireland, eu-west-1), encrypted in transit and at rest. Data residency in Nigeria is not currently offered. Contact us about your requirements.' },
-  { icon: FileCheck2, label: 'goAML XML Certified' },
+  { icon: FileCheck2, label: 'NFIU goAML format' },
   { icon: Award, label: 'ISO 27001 In Progress' },
   { icon: Plug, label: 'NFIU goAML API Integration' },
 ];
