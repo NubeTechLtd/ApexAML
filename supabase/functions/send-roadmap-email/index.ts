@@ -1,9 +1,27 @@
 // Deliver only the roadmap requested by a fresh, matching lead.
 // No promotional follow-ups, Resend fallback, or client-supplied roadmap HTML.
-import { createClient, FunctionsHttpError } from 'npm:@supabase/supabase-js@2'
+import { createClient } from 'npm:@supabase/supabase-js@2'
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors'
 import { z } from 'npm:zod@3.25.76'
 import { canDeliverRoadmap } from './validation.ts'
+import { sendTemplateEmail } from '../_shared/transactional-email-templates/send-email.ts'
+
+// Record the send outcome in email_send_log (append-only audit trail).
+// A log row never decides the send result — failures are only logged.
+async function logSend(
+  admin: ReturnType<typeof createClient>,
+  recipient: string,
+  status: 'sent' | 'suppressed' | 'failed',
+  errorMessage?: string,
+) {
+  const { error } = await admin.from('email_send_log').insert({
+    template_name: 'roadmap-delivery',
+    recipient_email: recipient,
+    status,
+    error_message: errorMessage?.slice(0, 1000) ?? null,
+  })
+  if (error) console.error('email_send_log insert failed', { code: error.code, message: error.message })
+}
 
 const BodySchema = z.object({
   leadId: z.string().uuid(),
@@ -30,11 +48,9 @@ Deno.serve(async (req) => {
       .eq('id', parsed.data.leadId).maybeSingle()
     if (error) throw new Error('Unable to load requested roadmap')
     if (!lead || !canDeliverRoadmap(lead, parsed.data.to)) return json({ ok: false, reason: 'unauthorized' }, 403)
-    const { data, error: sendError } = await admin.functions.invoke('send-transactional-email', {
-      headers: { Authorization: `Bearer ${key}` },
-      body: {
-        templateName: 'roadmap-delivery',
-        recipientEmail: lead.email.trim().toLowerCase(),
+    const recipient = lead.email.trim().toLowerCase()
+    try {
+      const result = await sendTemplateEmail('roadmap-delivery', recipient, {
         idempotencyKey: `roadmap-delivery-${lead.id}`,
         templateData: {
           name: lead.contact_name,
@@ -42,15 +58,14 @@ Deno.serve(async (req) => {
           refNumber: parsed.data.refNumber,
           roadmapText: lead.roadmap_text,
         },
-      },
-    })
-    if (sendError) {
-      const details = sendError instanceof FunctionsHttpError ? await sendError.context.text() : sendError.message
-      console.error('Roadmap enqueue failed', { details })
-      return json({ ok: false, reason: 'enqueue_failed' }, 502)
-    }
-    if (!data?.success || !data?.queued) {
-      return json({ ok: false, reason: data?.reason ?? 'not_queued' })
+      })
+      await logSend(admin, recipient, result.sent ? 'sent' : 'suppressed')
+      if (!result.sent) return json({ ok: false, reason: 'recipient_suppressed' })
+    } catch (sendError) {
+      const message = sendError instanceof Error ? sendError.message : 'Unknown error'
+      console.error('Roadmap send failed', { message })
+      await logSend(admin, recipient, 'failed', message)
+      return json({ ok: false, reason: 'send_failed' }, 502)
     }
     return json({ ok: true, queued: true })
   } catch (error) {
