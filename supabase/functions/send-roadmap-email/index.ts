@@ -44,7 +44,7 @@ Deno.serve(async (req) => {
   const admin = createClient(url, key, { auth: { persistSession: false } })
   try {
     const { data: lead, error } = await admin.from('roadmap_leads')
-      .select('id,email,created_at,roadmap_text,contact_name,institution_name')
+      .select('id,email,created_at,roadmap_text,contact_name,institution_name,institution_type,title,phone,aml_setup,volume')
       .eq('id', parsed.data.leadId).maybeSingle()
     if (error) throw new Error('Unable to load requested roadmap')
     if (!lead || !canDeliverRoadmap(lead, parsed.data.to)) return json({ ok: false, reason: 'unauthorized' }, 403)
@@ -66,6 +66,19 @@ Deno.serve(async (req) => {
       console.error('Roadmap send failed', { message })
       await logSend(admin, recipient, 'failed', message)
       return json({ ok: false, reason: 'send_failed' }, 502)
+    }
+    // Internal new-lead alert for the team (fixed recipient in the template).
+    try {
+      await sendTemplateEmail('roadmap-lead-internal-alert', 'adetokunboogun@gmail.com', {
+        idempotencyKey: `roadmap-lead-internal-alert-${lead.id}`,
+        templateData: {
+          contactName: lead.contact_name, title: lead.title, institutionName: lead.institution_name,
+          institutionType: lead.institution_type, email: lead.email, phone: lead.phone ?? '',
+          amlSetup: lead.aml_setup, volume: lead.volume, refNumber: parsed.data.refNumber,
+        },
+      })
+    } catch (alertError) {
+      console.error('Lead alert failed', alertError instanceof Error ? alertError.message : 'Unknown error')
     }
     return json({ ok: true, queued: true })
   } catch (error) {
