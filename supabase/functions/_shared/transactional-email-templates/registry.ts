@@ -1,6 +1,7 @@
 import type { ComponentType } from 'npm:react@18.3.1'
 import { template as demoBookingConfirmation } from './demo-booking-confirmation.tsx'
 import { template as demoBookingInternalAlert } from './demo-booking-internal-alert.tsx'
+import { template as roadmapLeadInternalAlert } from './roadmap-lead-internal-alert.tsx'
 import { template as roadmapDelivery } from './roadmap-delivery.tsx'
 
 export interface TemplateEntry {
@@ -15,4 +16,5 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'demo-booking-confirmation': demoBookingConfirmation,
   'demo-booking-internal-alert': demoBookingInternalAlert,
   'roadmap-delivery': roadmapDelivery,
+  'roadmap-lead-internal-alert': roadmapLeadInternalAlert,
 }

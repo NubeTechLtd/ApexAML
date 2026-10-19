@@ -242,9 +242,12 @@ Managing Director:                                    Signature: _______________
     }
     setShowError(false);
     setSubmitting(true);
-    const { data: leadRow, error } = await supabase
+    // Generate the id client-side: visitors may insert but not read leads back.
+    const newLeadId = crypto.randomUUID();
+    const { error } = await supabase
       .from('roadmap_leads')
       .insert({
+        id: newLeadId,
         institution_name: institutionName.trim(),
         institution_type: institutionType,
         aml_setup: amlSetup,
@@ -254,11 +257,9 @@ Managing Director:                                    Signature: _______________
         email: email.trim(),
         phone: phone.trim() || null,
         source: 'roadmap_generator',
-      })
-      .select('id')
-      .single();
+      });
     setSubmitting(false);
-    const leadId = leadRow?.id ?? null;
+    const leadId = error ? null : newLeadId;
     if (error) {
       toast({
         title: 'Submission failed',
