@@ -36,13 +36,13 @@ const CARDS = [
     icon: Brain,
     title: "11 minutes. Not 3 hours.",
     body: "Our AI co-pilot generates a complete NFIU-compliant STR narrative from alert data in 11 minutes. At 50 STRs per month, that is 145 analyst hours saved.",
-    badge: "First in Nigeria",
+    badge: "AI-assisted drafting",
     badgeColor:
       "bg-primary/10 border-primary/30 text-primary",
   },
   {
     icon: Globe,
-    title: "The world's only pre-configured IMTO compliance module.",
+    title: "A pre-configured IMTO compliance module.",
     body: "Six CBN-specific IMTO obligations — from the $200 cash-limit structuring rule to settlement account commingling detection — pre-built and ready to activate.",
     badge: "IMTO-exclusive",
     badgeColor:
