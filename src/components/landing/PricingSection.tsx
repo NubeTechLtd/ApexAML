@@ -376,10 +376,15 @@ export function PricingSection({ onBookDemo }: Props) {
               <p className="text-[11px] text-white/50">0 of 5 slots claimed — 5 remaining</p>
               <div className="pt-2 border-t border-white/5 space-y-1 text-[11px] text-white/60">
                 <p className="font-semibold">One-time implementation fees · not monthly subscriptions</p>
-                <div className="flex justify-between"><span>Essential</span><span><span style={{ color: '#D4A843' }} className="font-semibold">₦975,000</span> <span className="text-white/35 line-through ml-1">₦1,500,000</span></span></div>
-                <div className="flex justify-between"><span>Starter</span><span><span style={{ color: '#D4A843' }} className="font-semibold">₦1,950,000</span> <span className="text-white/35 line-through ml-1">₦3,000,000</span></span></div>
-                <div className="flex justify-between"><span>Growth</span><span><span style={{ color: '#D4A843' }} className="font-semibold">₦3,900,000</span> <span className="text-white/35 line-through ml-1">₦6,000,000</span></span></div>
-                <div className="flex justify-between"><span>IMTO</span><span><span style={{ color: '#D4A843' }} className="font-semibold">₦7,800,000</span> <span className="text-white/35 line-through ml-1">₦12,000,000</span></span></div>
+                {(['essential', 'starter', 'growth', 'imto'] as const).map((tier) => (
+                  <div key={tier} className="flex justify-between">
+                    <span className="capitalize">{tier === 'imto' ? 'IMTO' : tier}</span>
+                    <span>
+                      <span style={{ color: '#D4A843' }} className="font-semibold">₦{formatNGN(IMPLEMENTATION_PRICING[tier] * 0.65)}</span>
+                      <span className="text-white/35 line-through ml-1">₦{formatNGN(IMPLEMENTATION_PRICING[tier])}</span>
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
