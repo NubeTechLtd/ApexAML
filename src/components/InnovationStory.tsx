@@ -81,9 +81,11 @@ export function InnovationStory({ onBookDemo }: Props) {
               the first one that speaks CBN.
             </h2>
             <p className="text-sm md:text-base text-white/50 leading-relaxed">
-              After Nigeria exited the FATF grey list in 2025, we saw the gap:
-              powerful global platforms that could not handle a NUBAN, could not
-              verify a BVN, and had never filed an NFIU goAML report.
+              The CBN&apos;s 2025 draft standards for Automated AML Solutions point to
+              real-time alerts, dynamic rules, NIN/BVN-linked onboarding and
+              audit-ready reporting. We saw the gap: powerful global platforms
+              that could not handle a NUBAN, could not verify a BVN, and had
+              never filed an NFIU goAML report.
             </p>
           </div>
         </FadeIn>
@@ -127,11 +129,12 @@ export function InnovationStory({ onBookDemo }: Props) {
                   layer for Nigerian finance.
                 </h3>
                 <p className="text-sm md:text-base text-white/50 leading-relaxed">
-                  Nigeria&apos;s exit from the FATF grey list was a commitment — not
-                  a destination. CBN examinations will continue. Transaction
-                  volumes will increase. ApexAML is the permanent compliance
-                  nervous system: every alert reviewed, every STR filed, every
-                  KYC approval, every audit entry.
+                  The CBN&apos;s 2025 draft standards for Automated AML Solutions point
+                  to real-time alerts, dynamic rules, NIN/BVN-linked onboarding
+                  and audit-ready reporting. CBN examinations will continue.
+                  Transaction volumes will increase. ApexAML is the permanent
+                  compliance nervous system: every alert reviewed, every STR
+                  filed, every KYC approval, every audit entry.
                 </p>
                 <Button
                   onClick={onBookDemo}
