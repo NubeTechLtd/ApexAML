@@ -1,5 +1,8 @@
 # Roadmap
 
+## Dark primary contrast
+- [ ] Separate dark primary text from primary button colours and verify default, hover, focus and chip states with contrast ratios.
+
 ## Marketing dark isolation
 - [x] Isolate marketing dark tokens, including booking and other portals, from stored/system app themes.
 - [x] Replace low-opacity marketing white text and placeholders with the requested opaque muted and hover tokens; preserve white/50 and above. AIMockUI source remains untouched, with its legacy text colour overridden within the marketing scope.
