@@ -33,6 +33,7 @@ import Unsubscribe from "./pages/Unsubscribe.tsx";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { DemoGuide } from "./components/DemoGuide";
 import { WhatsAppChat } from "./components/WhatsAppChat";
+import { MarketingZone } from "./components/MarketingZone";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +46,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <MarketingZone>
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/alerts" element={<Index />} />
@@ -76,6 +78,7 @@ const App = () => (
           </Routes>
           <DemoGuide />
           <WhatsAppChat />
+          </MarketingZone>
         </BrowserRouter>
       </TooltipProvider>
       </NotificationsProvider>
