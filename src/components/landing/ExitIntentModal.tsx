@@ -101,7 +101,7 @@ export function ExitIntentModal({ onBookDemo }: { onBookDemo?: () => void } = {}
               type="button"
               onClick={() => setOpen(false)}
               aria-label="Close"
-              className="absolute right-3 top-3 h-8 w-8 flex items-center justify-center rounded-md text-white/40 hover:text-white hover:bg-white/5 transition-colors"
+              className="absolute right-3 top-3 h-8 w-8 flex items-center justify-center rounded-md text-muted-on-dark hover:text-white hover:bg-white/5 transition-colors"
             >
               <X className="h-4 w-4" />
             </button>
@@ -135,11 +135,11 @@ export function ExitIntentModal({ onBookDemo }: { onBookDemo?: () => void } = {}
                 Book a 30-minute walkthrough
                 <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
               </Button>
-              <p className="text-center text-xs text-white/45 -mt-1">
+              <p className="text-center text-xs text-muted-on-dark -mt-1">
                 Then run a 30-45 day pilot on your own data
               </p>
 
-              <p className="text-[11px] uppercase tracking-wider text-white/30 font-semibold pt-1">
+              <p className="text-[11px] uppercase tracking-wider text-muted-on-dark font-semibold pt-1">
                 Or download the roadmap template
               </p>
 
@@ -153,7 +153,7 @@ export function ExitIntentModal({ onBookDemo }: { onBookDemo?: () => void } = {}
                   aria-label="Work email"
                   maxLength={255}
                   autoFocus
-                  className="bg-white/[0.04] border-white/10 text-white placeholder:text-white/25 h-11 rounded-lg"
+                  className="bg-white/[0.04] border-white/10 text-white placeholder:text-muted-on-dark h-11 rounded-lg"
                 />
                 <Button
                   type="submit"
@@ -176,7 +176,7 @@ export function ExitIntentModal({ onBookDemo }: { onBookDemo?: () => void } = {}
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                className="block w-full text-center text-xs text-white/30 hover:text-white/60 transition-colors"
+                className="block w-full text-center text-xs text-muted-on-dark hover:text-muted-on-dark-hover transition-colors"
               >
                 No thanks, I'll figure it out myself
               </button>

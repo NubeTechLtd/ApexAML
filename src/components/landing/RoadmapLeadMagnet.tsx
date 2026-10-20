@@ -191,7 +191,7 @@ export function RoadmapLeadMagnet() {
                       placeholder="Full name"
                       aria-label="Full name"
                       maxLength={150}
-                      className="bg-white/[0.04] border-white/10 text-white placeholder:text-white/25 h-11 rounded-lg"
+                      className="bg-white/[0.04] border-white/10 text-white placeholder:text-muted-on-dark h-11 rounded-lg"
                     />
                     <Input
                       type="text"
@@ -201,7 +201,7 @@ export function RoadmapLeadMagnet() {
                       placeholder="Institution"
                       aria-label="Institution"
                       maxLength={200}
-                      className="bg-white/[0.04] border-white/10 text-white placeholder:text-white/25 h-11 rounded-lg"
+                      className="bg-white/[0.04] border-white/10 text-white placeholder:text-muted-on-dark h-11 rounded-lg"
                     />
                   </div>
                   <Input
@@ -212,7 +212,7 @@ export function RoadmapLeadMagnet() {
                     placeholder="you@institution.com"
                     aria-label="Work email"
                     maxLength={255}
-                    className="bg-white/[0.04] border-white/10 text-white placeholder:text-white/25 h-11 rounded-lg"
+                    className="bg-white/[0.04] border-white/10 text-white placeholder:text-muted-on-dark h-11 rounded-lg"
                   />
                   <Input
                     type="tel"
@@ -221,7 +221,7 @@ export function RoadmapLeadMagnet() {
                     placeholder="Phone number (optional)"
                     aria-label="Phone number"
                     maxLength={32}
-                    className="bg-white/[0.04] border-white/10 text-white placeholder:text-white/25 h-11 rounded-lg"
+                    className="bg-white/[0.04] border-white/10 text-white placeholder:text-muted-on-dark h-11 rounded-lg"
                   />
                   <Button
                     type="submit"
@@ -249,15 +249,15 @@ export function RoadmapLeadMagnet() {
                   { icon: Download, label: 'Instant download' },
                   { icon: Layers, label: 'Covers all 10 CBN capability areas' },
                 ].map(({ icon: Icon, label }) => (
-                  <span key={label} className="inline-flex items-center gap-1.5 text-[11px] text-white/45">
-                    <Icon className="h-3 w-3 text-white/35" />
+                  <span key={label} className="inline-flex items-center gap-1.5 text-[11px] text-muted-on-dark">
+                    <Icon className="h-3 w-3 text-muted-on-dark" />
                     {label}
                   </span>
                 ))}
               </div>
 
               {/* Urgency */}
-              <p className="text-[11px] text-white/35 leading-relaxed pt-1 border-t border-white/[0.04] mt-3 pt-3">
+              <p className="text-[11px] text-muted-on-dark leading-relaxed pt-1 border-t border-white/[0.04] mt-3 pt-3">
                 Most valuable before <span className="text-primary/80 font-medium">{urgencyDate}</span> — deadline pressure increases after that.
               </p>
             </div>

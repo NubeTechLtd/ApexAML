@@ -70,7 +70,7 @@ export function AudienceSelector() {
                   </div>
                   <div className="space-y-1 min-w-0">
                     <p className="text-base font-bold text-white leading-tight">{profile.shortLabel}</p>
-                    <p className="text-[11px] text-white/45 leading-snug">{tagline}</p>
+                    <p className="text-[11px] text-muted-on-dark leading-snug">{tagline}</p>
                   </div>
                 </div>
               </motion.button>
@@ -82,7 +82,7 @@ export function AudienceSelector() {
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-center text-xs text-white/45"
+            className="text-center text-xs text-muted-on-dark"
           >
             Showing ApexAML tailored for{' '}
             <span className="text-primary font-semibold">{AUDIENCES[audience].label}</span>.{' '}

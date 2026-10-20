@@ -51,13 +51,13 @@ export function CompetitorComparison() {
         <div className="hidden md:block rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-md overflow-hidden">
           <div className="grid grid-cols-[1.4fr_1fr_1fr]">
             <div className="p-4 border-b border-white/10">
-              <p className="text-[10px] uppercase tracking-[0.18em] text-white/40 font-semibold">Feature</p>
+              <p className="text-[10px] uppercase tracking-[0.18em] text-muted-on-dark font-semibold">Feature</p>
             </div>
             <div className="p-4 border-b border-l border-primary/30 bg-primary/[0.05]">
               <p className="text-[10px] uppercase tracking-[0.18em] text-primary font-semibold">ApexAML</p>
             </div>
             <div className="p-4 border-b border-l border-white/10">
-              <p className="text-[10px] uppercase tracking-[0.18em] text-white/40 font-semibold">Autogon OmniGuard</p>
+              <p className="text-[10px] uppercase tracking-[0.18em] text-muted-on-dark font-semibold">Autogon OmniGuard</p>
             </div>
 
             {ROWS.map((row, i) => {
@@ -90,7 +90,7 @@ export function CompetitorComparison() {
         <div className="md:hidden space-y-3">
           {ROWS.map((row, i) => (
             <div key={row.feature} className={`rounded-xl border border-white/10 p-4 ${i % 2 === 1 ? "bg-white/[0.02]" : "bg-white/[0.04]"}`}>
-              <p className="text-[10px] uppercase tracking-wider text-white/40 font-semibold">{row.feature}</p>
+              <p className="text-[10px] uppercase tracking-wider text-muted-on-dark font-semibold">{row.feature}</p>
               <div className="mt-3 grid grid-cols-2 gap-3">
                 <div className="border-l-2 border-primary/40 pl-2">
                   <p className="text-[9px] uppercase tracking-wider text-primary font-semibold mb-1">ApexAML</p>
@@ -100,7 +100,7 @@ export function CompetitorComparison() {
                   </div>
                 </div>
                 <div>
-                  <p className="text-[9px] uppercase tracking-wider text-white/40 font-semibold mb-1">Autogon</p>
+                  <p className="text-[9px] uppercase tracking-wider text-muted-on-dark font-semibold mb-1">Autogon</p>
                   <div className="flex items-start gap-1.5">
                     <MarkerIcon marker={row.autogon.marker} />
                     <span className="text-xs text-white/60">{row.autogon.value}</span>
@@ -118,7 +118,7 @@ export function CompetitorComparison() {
           </p>
         </div>
 
-        <p className="text-[11px] text-white/40 leading-relaxed max-w-3xl">
+        <p className="text-[11px] text-muted-on-dark leading-relaxed max-w-3xl">
           Autogon pricing based on publicly reported ₦31,600,000 setup fee and ₦2,500,000/month for commercial banks as reported in industry press, July 2026. Features based on published product information. Last updated July 2026.
         </p>
       </div>

@@ -20,7 +20,7 @@ const TIMELINES = [
   { value: 'exploring', label: 'Exploring options' },
 ];
 
-const inputCls = 'bg-white/[0.04] border-white/10 text-white placeholder:text-white/25 h-11 rounded-lg';
+const inputCls = 'bg-white/[0.04] border-white/10 text-white placeholder:text-muted-on-dark h-11 rounded-lg';
 const labelCls = 'text-white/70 text-xs uppercase tracking-wider';
 
 export function LeadCaptureForm() {
@@ -85,7 +85,7 @@ export function LeadCaptureForm() {
               <Mail className="h-4 w-4" />
             </div>
             <div className="space-y-1">
-              <p className="text-xs uppercase tracking-wider text-white/40 font-semibold">Option 1</p>
+              <p className="text-xs uppercase tracking-wider text-muted-on-dark font-semibold">Option 1</p>
               <p className="text-sm text-white/70">We'll email you within 24 hours.</p>
             </div>
           </div>
@@ -117,7 +117,7 @@ export function LeadCaptureForm() {
       <div className="flex items-center gap-2 mb-6">
         <div className={`h-1 flex-1 rounded-full transition-colors ${step >= 1 ? 'bg-primary' : 'bg-white/10'}`} />
         <div className={`h-1 flex-1 rounded-full transition-colors ${step >= 2 ? 'bg-primary' : 'bg-white/10'}`} />
-        <span className="text-[10px] uppercase tracking-wider text-white/40 font-medium ml-2">Step {step} / 2</span>
+        <span className="text-[10px] uppercase tracking-wider text-muted-on-dark font-medium ml-2">Step {step} / 2</span>
       </div>
 
       <AnimatePresence mode="wait">

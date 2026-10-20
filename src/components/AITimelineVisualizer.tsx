@@ -215,7 +215,7 @@ export function AITimelineVisualizer() {
                   ) : isActive ? (
                     <Loader2 className="h-5 w-5 text-primary animate-spin" />
                   ) : (
-                    <Icon className="h-5 w-5 text-white/40" />
+                    <Icon className="h-5 w-5 text-muted-on-dark" />
                   )}
                   {isActive && (
                     <span className="absolute inset-0 rounded-full border-2 border-primary/40 animate-ping" />
@@ -228,7 +228,7 @@ export function AITimelineVisualizer() {
                     'mt-3 text-[11px] font-semibold uppercase tracking-wider text-center leading-tight',
                     isDone && 'text-emerald-300/80',
                     isActive && 'text-white',
-                    isUpcoming && 'text-white/40',
+                    isUpcoming && 'text-muted-on-dark',
                   )}
                 >
                   {step.label}
@@ -269,7 +269,7 @@ export function AITimelineVisualizer() {
                   )}
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase tracking-[0.18em] text-white/40 font-semibold">
+                  <p className="text-[10px] uppercase tracking-[0.18em] text-muted-on-dark font-semibold">
                     Step {activeStep + 1} of {STEPS.length}
                   </p>
                   <h3 className="text-lg font-semibold text-white leading-tight">
@@ -303,7 +303,7 @@ export function AITimelineVisualizer() {
               <p className="text-base md:text-lg font-medium text-white leading-snug">
                 {current.action}
               </p>
-              <p className="text-sm italic text-white/45 leading-relaxed">
+              <p className="text-sm italic text-muted-on-dark leading-relaxed">
                 {current.reason}
               </p>
             </div>

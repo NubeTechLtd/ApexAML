@@ -61,7 +61,7 @@ function ToneCell({ value, tone }: { value: string; tone?: 'bad' | 'mid' | 'ok' 
       {tone === 'bad' ? (
         <X className="h-3.5 w-3.5 text-risk-high shrink-0 mt-0.5" />
       ) : tone === 'ok' ? (
-        <Check className="h-3.5 w-3.5 text-white/40 shrink-0 mt-0.5" />
+        <Check className="h-3.5 w-3.5 text-muted-on-dark shrink-0 mt-0.5" />
       ) : (
         <span className="h-1.5 w-1.5 rounded-full bg-white/30 shrink-0 mt-2" />
       )}
@@ -87,13 +87,13 @@ export function ComparisonSection() {
             {/* Header row */}
             <div className="p-5 border-b border-white/10" />
             <div className="p-5 border-b border-l border-white/10">
-              <p className="text-[10px] uppercase tracking-[0.18em] text-white/40 font-semibold">In-house</p>
+              <p className="text-[10px] uppercase tracking-[0.18em] text-muted-on-dark font-semibold">In-house</p>
               <p className="text-sm text-white/80 font-semibold mt-1">Manual Compliance Team</p>
             </div>
             <div className="p-5 border-b border-l border-white/10">
-              <p className="text-[10px] uppercase tracking-[0.18em] text-white/40 font-semibold">Legacy vendor</p>
+              <p className="text-[10px] uppercase tracking-[0.18em] text-muted-on-dark font-semibold">Legacy vendor</p>
               <p className="text-sm text-white/80 font-semibold mt-1">Enterprise AML</p>
-              <p className="text-[10px] text-white/30 mt-0.5">NICE Actimize, etc.</p>
+              <p className="text-[10px] text-muted-on-dark mt-0.5">NICE Actimize, etc.</p>
             </div>
             <div className="relative p-5 border-b border-l border-primary/30 bg-primary/[0.07]">
               <span className="absolute -top-3 left-1/2 -translate-x-1/2 inline-flex items-center gap-1 rounded-full bg-primary text-primary-foreground text-[10px] font-semibold uppercase tracking-wider px-2.5 py-0.5 shadow-lg">
@@ -148,11 +148,11 @@ export function ComparisonSection() {
                 </span>
               )}
               <p className={`text-sm font-semibold ${col.recommended ? 'text-white' : 'text-white/80'}`}>{col.title}</p>
-              <p className={`text-[10px] mt-0.5 ${col.recommended ? 'text-primary/70' : 'text-white/30'}`}>{col.subtitle}</p>
+              <p className={`text-[10px] mt-0.5 ${col.recommended ? 'text-primary/70' : 'text-muted-on-dark'}`}>{col.subtitle}</p>
               <div className="mt-4 space-y-3 divide-y divide-white/5">
                 {ROWS.map((row) => (
                   <div key={row.feature} className="pt-3 first:pt-0">
-                    <p className="text-[10px] uppercase tracking-wider text-white/40 font-semibold">{row.feature}</p>
+                    <p className="text-[10px] uppercase tracking-wider text-muted-on-dark font-semibold">{row.feature}</p>
                     {col.key === 'apexaml' ? (
                       <div className="flex items-start gap-2 mt-1.5">
                         <Check className="h-3.5 w-3.5 text-risk-low shrink-0 mt-0.5" strokeWidth={3} />
@@ -170,7 +170,7 @@ export function ComparisonSection() {
           ))}
         </div>
 
-        <p className="text-center text-[11px] text-white/40">
+        <p className="text-center text-[11px] text-muted-on-dark">
           All prices NGN.{" "}
           <span className="text-primary/80">
             Founding-client pricing locked in while the CBN's 2025 draft standards for Automated AML Solutions are

@@ -91,18 +91,18 @@ export function ComplianceRoadmapSection({ onBookDemo, onSeePath }: Props) {
                 ? "bg-[#D4A843]/[0.04]"
                 : "bg-emerald-500/[0.03]";
             const badgeClasses = isPast
-              ? "bg-white/[0.06] border-white/10 text-white/40"
+              ? "bg-white/[0.06] border-white/10 text-muted-on-dark"
               : isActive
                 ? "bg-[#D4A843]/10 border-[#D4A843]/30 text-[#D4A843]"
                 : "bg-emerald-500/10 border-emerald-500/30 text-emerald-400";
             const dateColor = isPast
-              ? "text-white/30"
+              ? "text-muted-on-dark"
               : isActive
                 ? "text-[#D4A843]"
                 : "text-emerald-400";
             const labelColor = isPast ? "text-white/50" : "text-white";
             const icon = isPast ? (
-              <CheckCircle2 className="h-5 w-5 text-white/30" />
+              <CheckCircle2 className="h-5 w-5 text-muted-on-dark" />
             ) : isActive ? (
               <Clock className="h-5 w-5 text-[#D4A843]" />
             ) : (
@@ -140,7 +140,7 @@ export function ComplianceRoadmapSection({ onBookDemo, onSeePath }: Props) {
                   <h3 className={`text-sm font-semibold ${labelColor} leading-snug mb-2`}>
                     {m.label}
                   </h3>
-                  <p className={`text-sm leading-relaxed ${isPast ? "text-white/30" : "text-white/50"}`}>
+                  <p className={`text-sm leading-relaxed ${isPast ? "text-muted-on-dark" : "text-white/50"}`}>
                     {m.body}
                   </p>
                 </div>
@@ -185,7 +185,7 @@ export function ComplianceRoadmapSection({ onBookDemo, onSeePath }: Props) {
               <h3 className="text-sm font-semibold text-white leading-snug mb-3">
                 For institutions that submitted their roadmap
               </h3>
-              <p className="text-sm text-white/40 leading-relaxed mb-5">
+              <p className="text-sm text-muted-on-dark leading-relaxed mb-5">
                 Your roadmap is a commitment to CBN. ApexAML executes that
                 commitment within your technology environment.
               </p>
@@ -205,7 +205,7 @@ export function ComplianceRoadmapSection({ onBookDemo, onSeePath }: Props) {
               <h3 className="text-sm font-semibold text-white leading-snug mb-3">
                 For institutions that have not yet submitted
               </h3>
-              <p className="text-sm text-white/40 leading-relaxed mb-5">
+              <p className="text-sm text-muted-on-dark leading-relaxed mb-5">
                 A late roadmap is an infraction but not licence-ending. The right
                 response is a remediation plan within 30 days, combined with immediate
                 technology deployment. ApexAML provides both.
