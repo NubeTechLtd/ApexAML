@@ -1,7 +1,7 @@
 # Roadmap
 
 ## Dark primary contrast
-- [ ] Separate dark primary text from primary button colours and verify default, hover, focus and chip states with contrast ratios.
+- [x] Separate dark primary text from button colours; 547 rendered primary samples passed 4.5:1 in both stored themes, including hover, focus, selected booking slots and contact step. Ratio report delivered; unrelated WhatsApp contrast failures and unrendered confirmation/result states explicitly qualified.
 
 ## Marketing dark isolation
 - [x] Isolate marketing dark tokens, including booking and other portals, from stored/system app themes.
