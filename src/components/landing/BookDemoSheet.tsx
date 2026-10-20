@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { buildWhatsAppUrl } from '@/lib/whatsapp';
+import { MarketingSurface } from '@/components/MarketingZone';
 
 interface Props {
   open: boolean;
@@ -148,6 +149,7 @@ export function BookDemoSheet({ open, onOpenChange, prefilledMessage }: Props) {
   };
 
   return (
+    <MarketingSurface>
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="bg-[hsl(220,25%,8%)] border-l border-white/10 text-white sm:max-w-lg w-full overflow-y-auto p-0">
         <div className="p-6">
@@ -391,5 +393,6 @@ export function BookDemoSheet({ open, onOpenChange, prefilledMessage }: Props) {
         </div>
       </SheetContent>
     </Sheet>
+    </MarketingSurface>
   );
 }

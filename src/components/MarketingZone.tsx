@@ -8,6 +8,10 @@ export function useMarketingZone() {
   return useContext(MarketingContext);
 }
 
+export function MarketingSurface({ children }: { children: ReactNode }) {
+  return <MarketingContext.Provider value={true}>{children}</MarketingContext.Provider>;
+}
+
 // Context follows React portals; CSS variables need an explicit scope there.
 export function MarketingZone({ children }: { children: ReactNode }) {
   const { pathname } = useLocation();

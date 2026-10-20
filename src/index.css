@@ -275,9 +275,7 @@
   color: var(--text-muted-on-dark-hover);
 }
 
-.marketing-zone :is(a, button):hover {
-  /* Muted footer text can be inherited from its container. */
-}
+/* Muted footer text can be inherited from its container. */
 .marketing-zone footer :is(a, button):hover,
 .marketing-zone .text-muted-on-dark :is(a, button):hover {
   color: var(--text-muted-on-dark-hover);
