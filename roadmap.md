@@ -1,5 +1,10 @@
 # Roadmap
 
+## Marketing dark isolation
+- [ ] Isolate marketing dark tokens, including booking and other portals, from stored/system app themes.
+- [ ] Replace low-opacity marketing white text and placeholders with the requested opaque muted and hover tokens; preserve white/50 and above.
+- [ ] Verify marketing routes and booking in both stored themes, and verify app theme isolation.
+
 ## Transactional-only email
 - [x] Archive and disable sales follow-ups; remove roadmap enrollment and follow-up promises; verified drip job absent and dispatcher returns 410.
 - [x] Move requested roadmap delivery to Lovable Emails and add shared legal footers to email templates; mandatory unsubscribe handling retained.
