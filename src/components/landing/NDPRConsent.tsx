@@ -38,7 +38,7 @@ export function NDPRConsent({ checked, onCheckedChange, id = 'ndpr-consent', cla
           and consent to being contacted in accordance with the Nigeria Data Protection Act 2023.
         </span>
       </label>
-      <p className="text-[10px] text-white/35 leading-relaxed pl-7">
+      <p className="text-[10px] text-muted-on-dark leading-relaxed pl-7">
         Your data is stored on AWS servers in Nigeria. We never sell or share your information. You can request deletion at any time.
       </p>
     </div>

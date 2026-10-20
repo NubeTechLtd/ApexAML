@@ -69,7 +69,7 @@ export default function Privacy() {
             NDPR Compliant
           </p>
           <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight">Privacy Policy</h1>
-          <p className="text-sm text-white/45">
+          <p className="text-sm text-muted-on-dark">
             Effective date: {new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}
           </p>
         </div>
@@ -97,7 +97,7 @@ export default function Privacy() {
           </div>
         </div>
 
-        <p className="text-xs text-white/30 pt-6 border-t border-white/[0.06]">
+        <p className="text-xs text-muted-on-dark pt-6 border-t border-white/[0.06]">
           A signed Data Processing Agreement (DPA) is provided to all institutional clients at contract signing. Request
           a copy at{" "}
           <a href="mailto:privacy@apexaml.com" className="text-primary hover:underline">
@@ -106,7 +106,7 @@ export default function Privacy() {
           .
         </p>
 
-        <CompanyFooterLine className="text-white/30" />
+        <CompanyFooterLine className="text-muted-on-dark" />
       </main>
     </div>
   );

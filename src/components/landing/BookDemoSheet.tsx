@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { buildWhatsAppUrl } from '@/lib/whatsapp';
+import { MarketingSurface } from '@/components/MarketingZone';
 
 interface Props {
   open: boolean;
@@ -148,6 +149,7 @@ export function BookDemoSheet({ open, onOpenChange, prefilledMessage }: Props) {
   };
 
   return (
+    <MarketingSurface>
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="bg-[hsl(220,25%,8%)] border-l border-white/10 text-white sm:max-w-lg w-full overflow-y-auto p-0">
         <div className="p-6">
@@ -193,7 +195,7 @@ export function BookDemoSheet({ open, onOpenChange, prefilledMessage }: Props) {
                   value={institutionName}
                   onChange={(e) => setInstitutionName(e.target.value)}
                   placeholder="e.g. First Bank Nigeria"
-                  className="bg-white/[0.04] border-white/10 text-white placeholder:text-white/25 h-11 rounded-lg"
+                  className="bg-white/[0.04] border-white/10 text-white placeholder:text-muted-on-dark h-11 rounded-lg"
                 />
               </div>
               <div className="space-y-2">
@@ -240,7 +242,7 @@ export function BookDemoSheet({ open, onOpenChange, prefilledMessage }: Props) {
                 <Clock className="h-3.5 w-3.5" /> All times shown in WAT (West Africa Time)
               </div>
               {loadingSlots ? (
-                <div className="flex items-center justify-center py-12 text-white/40">
+                <div className="flex items-center justify-center py-12 text-muted-on-dark">
                   <Loader2 className="h-5 w-5 animate-spin" />
                 </div>
               ) : (
@@ -251,7 +253,7 @@ export function BookDemoSheet({ open, onOpenChange, prefilledMessage }: Props) {
                       <div key={date.toISOString()} className="rounded-lg border border-white/10 bg-white/[0.02] p-3">
                         <div className="flex items-baseline gap-2 mb-2">
                           <span className="text-white font-semibold text-sm">{wd}</span>
-                          <span className="text-white/40 text-xs">{dm}</span>
+                          <span className="text-muted-on-dark text-xs">{dm}</span>
                         </div>
                         <div className="grid grid-cols-4 gap-1.5">
                           {slots.map((slot) => {
@@ -267,7 +269,7 @@ export function BookDemoSheet({ open, onOpenChange, prefilledMessage }: Props) {
                                 className={`
                                   h-9 rounded-md text-xs font-medium transition-all border
                                   ${isBooked
-                                    ? 'bg-white/[0.02] border-white/5 text-white/20 cursor-not-allowed line-through'
+                                    ? 'bg-white/[0.02] border-white/5 text-muted-on-dark cursor-not-allowed line-through'
                                     : isSelected
                                       ? 'bg-primary border-primary text-primary-foreground shadow-lg shadow-primary/30'
                                       : 'bg-white/[0.04] border-white/10 text-white/80 hover:border-primary/50 hover:bg-primary/10'}
@@ -310,26 +312,26 @@ export function BookDemoSheet({ open, onOpenChange, prefilledMessage }: Props) {
               <div className="space-y-2">
                 <Label className="text-white/70 text-xs uppercase tracking-wider">Full Name</Label>
                 <Input value={fullName} onChange={(e) => setFullName(e.target.value)}
-                  className="bg-white/[0.04] border-white/10 text-white placeholder:text-white/25 h-11 rounded-lg" />
+                  className="bg-white/[0.04] border-white/10 text-white placeholder:text-muted-on-dark h-11 rounded-lg" />
               </div>
               <div className="space-y-2">
                 <Label className="text-white/70 text-xs uppercase tracking-wider">Work Email</Label>
                 <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@bank.com"
-                  className="bg-white/[0.04] border-white/10 text-white placeholder:text-white/25 h-11 rounded-lg" />
+                  className="bg-white/[0.04] border-white/10 text-white placeholder:text-muted-on-dark h-11 rounded-lg" />
               </div>
               <div className="space-y-2">
-                <Label className="text-white/70 text-xs uppercase tracking-wider">SMS Number <span className="text-white/30 normal-case">(optional)</span></Label>
+                <Label className="text-white/70 text-xs uppercase tracking-wider">SMS Number <span className="text-muted-on-dark normal-case">(optional)</span></Label>
                 <Input value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)}
                   placeholder="+234 801 234 5678" inputMode="tel"
-                  className="bg-white/[0.04] border-white/10 text-white placeholder:text-white/25 h-11 rounded-lg" />
+                  className="bg-white/[0.04] border-white/10 text-white placeholder:text-muted-on-dark h-11 rounded-lg" />
               </div>
               <div className="space-y-2">
                 <Label className="text-white/70 text-xs uppercase tracking-wider">What do you most want to see?</Label>
                 <Textarea value={focusAreas} onChange={(e) => setFocusAreas(e.target.value)}
                   placeholder="e.g. AI STR co-pilot, IMTO module, transaction monitoring..."
                   rows={3}
-                  className="bg-white/[0.04] border-white/10 text-white placeholder:text-white/25 rounded-lg resize-none" />
+                  className="bg-white/[0.04] border-white/10 text-white placeholder:text-muted-on-dark rounded-lg resize-none" />
               </div>
               <div className="flex gap-2">
                 <Button variant="outline" onClick={() => setStep(2)} disabled={submitting}
@@ -391,5 +393,6 @@ export function BookDemoSheet({ open, onOpenChange, prefilledMessage }: Props) {
         </div>
       </SheetContent>
     </Sheet>
+    </MarketingSurface>
   );
 }

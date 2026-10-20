@@ -158,7 +158,7 @@ export function FAQSection() {
         <div className="text-center space-y-3">
           <p className="text-xs uppercase tracking-[0.2em] text-primary font-semibold">FAQ</p>
           <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight">Common questions</h2>
-          <p className="text-white/45 text-sm max-w-xl mx-auto">
+          <p className="text-muted-on-dark text-sm max-w-xl mx-auto">
             Straight answers from our compliance team. Still unsure?{" "}
             <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
               Chat on WhatsApp

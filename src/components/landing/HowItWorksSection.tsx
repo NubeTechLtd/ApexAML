@@ -74,7 +74,7 @@ export function HowItWorksSection() {
             <p className="text-xs uppercase tracking-[0.2em] text-white/50 font-semibold">
               Typical 30-day rollout
             </p>
-            <p className="text-[10px] text-white/30 uppercase tracking-wider">
+            <p className="text-[10px] text-muted-on-dark uppercase tracking-wider">
               Live status
             </p>
           </div>
@@ -98,7 +98,7 @@ export function HowItWorksSection() {
                           ? 'bg-primary border-primary text-primary-foreground shadow-[0_0_20px_hsl(var(--primary)/0.5)]'
                           : isDone
                             ? 'bg-primary/20 border-primary/60 text-primary'
-                            : 'bg-[hsl(220,25%,8%)] border-white/15 text-white/30'
+                            : 'bg-[hsl(220,25%,8%)] border-white/15 text-muted-on-dark'
                       }`}
                     >
                       {isDone ? (
@@ -109,14 +109,14 @@ export function HowItWorksSection() {
                     </div>
                     <p
                       className={`mt-3 text-[11px] uppercase tracking-wider font-semibold ${
-                        isCurrent ? 'text-primary' : isDone ? 'text-white/70' : 'text-white/40'
+                        isCurrent ? 'text-primary' : isDone ? 'text-white/70' : 'text-muted-on-dark'
                       }`}
                     >
                       {t.label}
                     </p>
                     <p
                       className={`mt-1 text-xs ${
-                        isCurrent ? 'text-white/80 font-medium' : 'text-white/40'
+                        isCurrent ? 'text-white/80 font-medium' : 'text-muted-on-dark'
                       }`}
                     >
                       {t.detail}

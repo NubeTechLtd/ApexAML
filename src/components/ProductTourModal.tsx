@@ -93,7 +93,7 @@ export function ProductTourModal({ open, onClose, onBookDemo }: Props) {
             <span className="text-[11px] uppercase tracking-widest text-white/50">
               Product tour · Slide {i + 1} of {SLIDES.length}
             </span>
-            <span className="text-[11px] text-white/40">~2 min</span>
+            <span className="text-[11px] text-muted-on-dark">~2 min</span>
           </div>
           <div className="flex gap-1">
             {SLIDES.map((_, idx) => (
@@ -237,7 +237,7 @@ function SlideVisual({ kind }: { kind: string }) {
                   idx <= 2 ? "bg-[#D4A843]" : "bg-white/10",
                 )}
               />
-              <span className={idx <= 2 ? "text-white" : "text-white/40"}>{s}</span>
+              <span className={idx <= 2 ? "text-white" : "text-muted-on-dark"}>{s}</span>
             </div>
           ))}
         </div>
@@ -343,12 +343,12 @@ function SlideVisual({ kind }: { kind: string }) {
           key={idx}
           className="flex items-center gap-3 text-xs rounded border border-white/5 bg-white/[0.02] px-3 py-2"
         >
-          <span className="text-white/40 font-mono w-16">{row.t}</span>
+          <span className="text-muted-on-dark font-mono w-16">{row.t}</span>
           <span className="text-white/80 flex-1">{row.act}</span>
           <span className="text-white/50">{row.who}</span>
         </div>
       ))}
-      <div className="text-[10px] text-white/40 pt-1">
+      <div className="text-[10px] text-muted-on-dark pt-1">
         Append-only · Timestamped · Cannot be edited or deleted
       </div>
     </div>

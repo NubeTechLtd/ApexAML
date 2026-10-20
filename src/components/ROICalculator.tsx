@@ -119,7 +119,7 @@ export function ROICalculator() {
                 })}{" "}
                 hours per month on STR writing
               </p>
-              <p className="text-xs text-white/45">
+              <p className="text-xs text-muted-on-dark">
                 That is {calc.timePct.toFixed(1)}% of your analyst's working time
               </p>
             </div>
@@ -137,7 +137,7 @@ export function ROICalculator() {
                 })}{" "}
                 hours per month — AI co-pilot reduces to 11 minutes per STR
               </p>
-              <p className="text-xs text-white/45">
+              <p className="text-xs text-muted-on-dark">
                 Time saved:{" "}
                 {calc.timeSaved.toLocaleString("en-NG", {
                   maximumFractionDigits: 1,
@@ -242,7 +242,7 @@ function SliderRow({
         step={step}
         className="[&_[role=slider]]:bg-primary [&_[role=slider]]:border-primary"
       />
-      <div className="flex justify-between text-[10px] text-white/35 font-medium">
+      <div className="flex justify-between text-[10px] text-muted-on-dark font-medium">
         <span>{scaleLabels[0]}</span>
         <span>{scaleLabels[1]}</span>
         <span>{scaleLabels[2]}</span>

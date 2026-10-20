@@ -110,7 +110,7 @@ export function InnovationStory({ onBookDemo }: Props) {
                         {card.badge}
                       </span>
                     </div>
-                    <p className="text-sm text-white/40 leading-relaxed">
+                    <p className="text-sm text-muted-on-dark leading-relaxed">
                       {card.body}
                     </p>
                   </div>
@@ -152,7 +152,7 @@ export function InnovationStory({ onBookDemo }: Props) {
         {/* Founder strip */}
         <FadeIn delay={0.5}>
           <div className="text-center">
-            <p className="text-xs md:text-sm text-white/40 leading-relaxed">
+            <p className="text-xs md:text-sm text-muted-on-dark leading-relaxed">
               Built by practitioners · Designed around real Nigerian compliance
               workflows · Not adapted from a US or European product
             </p>

@@ -141,7 +141,7 @@ export function ROICalculator() {
             {/* ── INPUTS ─────────────────────────────────────────────── */}
             <div className="p-7 md:p-9 space-y-7">
               <div>
-                <p className="text-[10px] uppercase tracking-[0.18em] text-white/40 font-semibold mb-1">
+                <p className="text-[10px] uppercase tracking-[0.18em] text-muted-on-dark font-semibold mb-1">
                   Step 1
                 </p>
                 <h3 className="text-xl font-bold text-white">Your Current State</h3>
@@ -185,7 +185,7 @@ export function ROICalculator() {
                   step={10_000}
                   className="[&_[role=slider]]:bg-primary [&_[role=slider]]:border-primary"
                 />
-                <div className="flex justify-between text-[10px] text-white/35 font-medium">
+                <div className="flex justify-between text-[10px] text-muted-on-dark font-medium">
                   <span>10k</span>
                   <span>1M</span>
                   <span>5M</span>
@@ -208,7 +208,7 @@ export function ROICalculator() {
                   }
                   className="bg-white/[0.04] border-white/10 text-white h-11 rounded-lg tabular-nums text-base"
                 />
-                <p className="text-[10px] text-white/35">
+                <p className="text-[10px] text-muted-on-dark">
                   Average loaded cost ₦5M/year per analyst (salary + benefits + tooling)
                 </p>
               </div>
@@ -247,7 +247,7 @@ export function ROICalculator() {
                 tone="muted"
               >
                 <AnimatedNaira value={calc.manualCost} className="text-xl font-bold text-white/85" />
-                <span className="text-xs text-white/45 ml-1">/yr</span>
+                <span className="text-xs text-muted-on-dark ml-1">/yr</span>
               </OutputRow>
 
               {/* ApexAML cost */}
@@ -258,7 +258,7 @@ export function ROICalculator() {
                 tone="primary"
               >
                 <AnimatedNaira value={calc.apexAnnual} className="text-xl font-bold text-primary" />
-                <span className="text-xs text-white/45 ml-1">/yr</span>
+                <span className="text-xs text-muted-on-dark ml-1">/yr</span>
               </OutputRow>
 
               {/* Savings — hero */}
@@ -285,14 +285,14 @@ export function ROICalculator() {
                       />
                       <span className="text-xs text-emerald-400/70 font-medium">/ year</span>
                     </div>
-                    <p className="text-[11px] text-white/45 mt-1.5 leading-relaxed">
+                    <p className="text-[11px] text-muted-on-dark mt-1.5 leading-relaxed">
                       Operational savings + de-risked CBN fine exposure (40% probability adjusted)
                     </p>
                   </div>
                 </div>
               </motion.div>
 
-              <p className="text-[10px] text-white/30 leading-relaxed pt-1">
+              <p className="text-[10px] text-muted-on-dark leading-relaxed pt-1">
                 Indicative figures. Actual ROI confirmed during your scoping call.
               </p>
               <p className="text-xs text-muted-foreground leading-relaxed">
@@ -336,7 +336,7 @@ function OutputRow({
         </div>
         <div className="min-w-0">
           <p className="text-xs font-semibold text-white/80 leading-tight">{label}</p>
-          <p className="text-[10px] text-white/40 mt-0.5 break-words">{helper}</p>
+          <p className="text-[10px] text-muted-on-dark mt-0.5 break-words">{helper}</p>
         </div>
       </div>
       <div className="text-right shrink-0">{children}</div>

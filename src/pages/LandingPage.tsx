@@ -294,7 +294,7 @@ function RoadmapGeneratorBand() {
             </div>
             <blockquote className="border-l-2 border-primary/40 pl-4 mt-6 text-sm text-white/50 italic">
               "Took 90 seconds. Submitted to CBN the same afternoon."
-              <span className="block not-italic text-xs text-white/35 mt-1">— CCO, Tier-3 Fintech, Abuja</span>
+              <span className="block not-italic text-xs text-muted-on-dark mt-1">— CCO, Tier-3 Fintech, Abuja</span>
             </blockquote>
           </AnimatedSection>
 
@@ -316,7 +316,7 @@ function RoadmapGeneratorBand() {
                 </Link>
               </Button>
 
-              <p className="text-xs text-center text-white/40 leading-relaxed">
+              <p className="text-xs text-center text-muted-on-dark leading-relaxed">
                 or scroll down to enter your email for a demo call.
               </p>
             </div>
@@ -628,7 +628,7 @@ function LandingPageInner() {
                   Take a 2-minute product tour →
                 </Button>
               </div>
-              <p className="text-center text-sm text-white/45">
+              <p className="text-center text-sm text-muted-on-dark">
                 Then run a 30-45 day pilot on your own data
               </p>
               <RoadmapCountLine variant="hero" />
@@ -641,22 +641,22 @@ function LandingPageInner() {
                 <WhatsAppIcon size={14} />
                 Chat on WhatsApp
               </a>
-              <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-xs text-white/40">
+              <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-xs text-muted-on-dark">
                 <span className="inline-flex items-center gap-1.5">
                   <CheckCircle2 className="h-3 w-3 text-risk-low" />
                   CBN Circular BSD/DIR/PUB/LAB/019/002 aligned
                 </span>
-                <span className="hidden sm:inline text-white/20">·</span>
+                <span className="hidden sm:inline text-muted-on-dark">·</span>
                 <span className="inline-flex items-center gap-1.5">
                   <CheckCircle2 className="h-3 w-3 text-risk-low" />
                   NFIU goAML format
                 </span>
-                <span className="hidden sm:inline text-white/20">·</span>
+                <span className="hidden sm:inline text-muted-on-dark">·</span>
                 <span className="inline-flex items-center gap-1.5">
                   <CheckCircle2 className="h-3 w-3 text-risk-low" />
                   Aligned with the CBN&apos;s draft automated-AML standards
                 </span>
-                <span className="hidden sm:inline text-white/20">·</span>
+                <span className="hidden sm:inline text-muted-on-dark">·</span>
                 <span className="inline-flex items-center gap-1.5">
                   <CheckCircle2 className="h-3 w-3 text-risk-low" />
                   Hosted on Supabase (AWS Ireland, eu-west-1), encrypted in transit and at rest. Data residency in Nigeria is not currently offered. Contact us about your requirements.
@@ -672,7 +672,7 @@ function LandingPageInner() {
             <div className="pt-10 mt-6 border-t border-white/[0.06] space-y-8">
               <div className="flex items-center justify-center gap-4">
                 <div className="h-px flex-1 max-w-[80px] bg-white/10" />
-                <p className="text-[10px] uppercase tracking-[0.2em] text-white/40 font-medium text-center">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-muted-on-dark font-medium text-center">
                   Built for compliance teams at Nigerian financial institutions
                 </p>
                 <div className="h-px flex-1 max-w-[80px] bg-white/10" />
@@ -683,7 +683,7 @@ function LandingPageInner() {
                   (label) => (
                     <span
                       key={label}
-                      className="rounded-full border border-white/10 bg-white/[0.03] px-4 py-1.5 text-xs font-medium text-white/40"
+                      className="rounded-full border border-white/10 bg-white/[0.03] px-4 py-1.5 text-xs font-medium text-muted-on-dark"
                     >
                       {label}
                     </span>
@@ -696,7 +696,7 @@ function LandingPageInner() {
                   "The AI STR co-pilot cut our investigation time from 3 hours to 12 minutes — and the CBN roadmap
                   template passed first review."
                 </p>
-                <footer className="mt-3 text-[11px] uppercase tracking-wider text-white/35 not-italic">
+                <footer className="mt-3 text-[11px] uppercase tracking-wider text-muted-on-dark not-italic">
                   — Head of Compliance, Licensed PSP, Lagos
                 </footer>
               </blockquote>
@@ -729,7 +729,7 @@ function LandingPageInner() {
                     </div>
                     <div className="space-y-2">
                       <h3 className="font-semibold text-white text-base">{f.title}</h3>
-                      <p className="text-sm text-white/40 leading-relaxed">{f.desc}</p>
+                      <p className="text-sm text-muted-on-dark leading-relaxed">{f.desc}</p>
                     </div>
                   </div>
                 </div>
@@ -770,7 +770,7 @@ function LandingPageInner() {
               45-minute investigations,
               <br /> now in <span className="text-primary">3 minutes</span>.
             </h2>
-            <p className="text-white/40 leading-relaxed">
+            <p className="text-muted-on-dark leading-relaxed">
               AI-assisted STR drafting from the case's own data, reviewed and edited by an analyst. Every revision is saved in the edit history.
             </p>
             <ul className="space-y-3 text-sm text-white/50">
@@ -891,11 +891,11 @@ function LandingPageInner() {
                   </p>
                   <p className="mt-3 text-sm text-white/60 font-medium">{m.label}</p>
                   <div className="mt-auto pt-5 flex items-start justify-between gap-3 border-t border-white/[0.06] mt-6">
-                    <p className="text-[10px] text-white/30 leading-relaxed">{m.source}</p>
+                    <p className="text-[10px] text-muted-on-dark leading-relaxed">{m.source}</p>
                     <button
                       type="button"
                       aria-label="View methodology"
-                      className="shrink-0 text-white/25 hover:text-primary transition-colors"
+                      className="shrink-0 text-muted-on-dark hover:text-primary transition-colors"
                     >
                       <ExternalLink className="h-3 w-3" />
                     </button>
@@ -911,11 +911,11 @@ function LandingPageInner() {
               Protect your license.
               <br /> Scale with confidence.
             </h2>
-            <p className="text-white/40 max-w-lg mx-auto">
+            <p className="text-muted-on-dark max-w-lg mx-auto">
               Join Nigerian financial institutions modernising their compliance infrastructure with ApexAML.
             </p>
             <LeadCaptureForm />
-            <div className="mt-4 flex items-center justify-center gap-2 text-[11px] text-white/30">
+            <div className="mt-4 flex items-center justify-center gap-2 text-[11px] text-muted-on-dark">
               <Lock className="h-3 w-3" />
               <span>Bank-grade security. 256-bit encryption. NDPA compliant.</span>
             </div>
@@ -948,7 +948,7 @@ function LandingPageInner() {
 
       {/* ── Footer ─────────────────────────────────────────────── */}
       <footer className="border-t border-white/[0.06] py-10 px-6">
-        <div className="mx-auto max-w-6xl flex flex-col sm:flex-row items-center justify-between gap-6 text-xs text-white/30">
+        <div className="mx-auto max-w-6xl flex flex-col sm:flex-row items-center justify-between gap-6 text-xs text-muted-on-dark">
           <div className="flex items-center gap-3 flex-wrap">
             <img src={logo} alt="ApexAML" className="h-5 w-5" />
             <span className="font-semibold text-white/50">ApexAML</span>
@@ -997,8 +997,8 @@ function LandingPageInner() {
             </a>
           </div>
           <div className="flex flex-col items-center gap-1 text-center">
-            <p className="text-white/25">© {new Date().getFullYear()} ApexAML Technologies.</p>
-            <CompanyFooterLine className="text-white/30" />
+            <p className="text-muted-on-dark">© {new Date().getFullYear()} ApexAML Technologies.</p>
+            <CompanyFooterLine className="text-muted-on-dark" />
           </div>
         </div>
       </footer>

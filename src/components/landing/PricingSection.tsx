@@ -271,7 +271,7 @@ export function PricingSection({ onBookDemo }: Props) {
           </div>
           {p.note && <p className="text-[11px] text-white/55 mt-1.5">{p.note}</p>}
           {p.annualNote && <p className="text-[11px] text-risk-low mt-1 font-medium">{p.annualNote}</p>}
-          {p.usd && <p className="text-[10px] text-white/35 mt-1">{p.usd}</p>}
+          {p.usd && <p className="text-[10px] text-muted-on-dark mt-1">{p.usd}</p>}
         </>
       );
     }
@@ -287,19 +287,19 @@ export function PricingSection({ onBookDemo }: Props) {
           <span className="text-3xl md:text-4xl font-extrabold text-white tracking-tight tabular-nums">
             ₦{formatNGN(shown)}
           </span>
-          <span className="text-xs text-white/40 font-medium">/month</span>
+          <span className="text-xs text-muted-on-dark font-medium">/month</span>
         </div>
         {isAnnual ? (
           <p className="text-[11px] text-risk-low mt-1.5 font-medium">
             ₦{formatNGN(annualTotal)} billed annually · 15% off
           </p>
         ) : (
-          <p className="text-[11px] text-white/35 mt-1.5">
+          <p className="text-[11px] text-muted-on-dark mt-1.5">
             or ₦{formatNGN(annualMonthly)}/mo billed annually (save 15%)
           </p>
         )}
         {tier.usdApprox && (
-          <p className="text-[10px] text-white/35 mt-1">
+          <p className="text-[10px] text-muted-on-dark mt-1">
             ≈ ${Math.round(shown / rate).toLocaleString()}/month at ₦{rate}/$1
           </p>
         )}
@@ -317,7 +317,7 @@ export function PricingSection({ onBookDemo }: Props) {
           <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight">
             One plan for every regulated institution
           </h2>
-          <p className="text-white/45 text-sm">
+          <p className="text-muted-on-dark text-sm">
             Less than the cost of a single compliance analyst — without the hiring, training, or attrition risk.
           </p>
         </div>
@@ -381,14 +381,14 @@ export function PricingSection({ onBookDemo }: Props) {
                     <span className="capitalize">{tier === 'imto' ? 'IMTO' : tier}</span>
                     <span>
                       <span style={{ color: '#D4A843' }} className="font-semibold">₦{formatNGN(IMPLEMENTATION_PRICING[tier] * 0.65)}</span>
-                      <span className="text-white/35 line-through ml-1">₦{formatNGN(IMPLEMENTATION_PRICING[tier])}</span>
+                      <span className="text-muted-on-dark line-through ml-1">₦{formatNGN(IMPLEMENTATION_PRICING[tier])}</span>
                     </span>
                   </div>
                 ))}
               </div>
             </div>
           </div>
-          <p className="text-[11px] text-white/40 text-center md:text-left px-1">
+          <p className="text-[11px] text-muted-on-dark text-center md:text-left px-1">
             Founding client discount is permanent — it applies to all future engagements with ApexAML, not just the first implementation.
           </p>
         </div>
@@ -467,7 +467,7 @@ export function PricingSection({ onBookDemo }: Props) {
                       </span>
                     )}
                   </div>
-                  <p className="text-[11px] uppercase tracking-wider text-white/40 font-medium">
+                  <p className="text-[11px] uppercase tracking-wider text-muted-on-dark font-medium">
                     {tier.audience}
                   </p>
                 </div>
@@ -486,7 +486,7 @@ export function PricingSection({ onBookDemo }: Props) {
                 <ul className="mt-5 space-y-2.5 flex-1">
                   {tier.features.map((f) => (
                     <li key={f} className="flex items-start gap-2 text-[13px] text-white/65">
-                      <Check className="h-3.5 w-3.5 text-white/40 shrink-0 mt-0.5" />
+                      <Check className="h-3.5 w-3.5 text-muted-on-dark shrink-0 mt-0.5" />
                       <span>{f}</span>
                     </li>
                   ))}
@@ -506,7 +506,7 @@ export function PricingSection({ onBookDemo }: Props) {
                 {tier.limits && (
                   <ul className="mt-4 pt-4 border-t border-white/[0.06] space-y-1.5">
                     {tier.limits.map((l) => (
-                      <li key={l} className="text-[11px] text-white/35 leading-relaxed">
+                      <li key={l} className="text-[11px] text-muted-on-dark leading-relaxed">
                         · {l}
                       </li>
                     ))}
@@ -517,7 +517,7 @@ export function PricingSection({ onBookDemo }: Props) {
                   <div className="mt-4 pt-4 border-t border-white/[0.06] space-y-1.5">
                     {tier.onboardingFee && (
                       <p className="text-[11px] text-white/55">
-                        <span className="text-white/40 uppercase tracking-wider text-[9px] font-semibold">Onboarding:</span>{' '}
+                        <span className="text-muted-on-dark uppercase tracking-wider text-[9px] font-semibold">Onboarding:</span>{' '}
                         {tier.onboardingFee}
                       </p>
                     )}
@@ -582,7 +582,7 @@ export function PricingSection({ onBookDemo }: Props) {
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <h4 className="text-base font-semibold text-white tracking-tight">{p.name}</h4>
-                      <p className="text-[11px] uppercase tracking-wider text-white/40 font-medium mt-1">
+                      <p className="text-[11px] uppercase tracking-wider text-muted-on-dark font-medium mt-1">
                         Ideal for: {p.idealFor}
                       </p>
                     </div>
@@ -593,7 +593,7 @@ export function PricingSection({ onBookDemo }: Props) {
 
                   <div className="flex items-baseline gap-1.5 pb-4 border-b border-white/[0.06]">
                     <span className="text-2xl font-extrabold text-white tabular-nums tracking-tight">{p.price}</span>
-                    <span className="text-xs text-white/45 font-medium">(one-time)</span>
+                    <span className="text-xs text-muted-on-dark font-medium">(one-time)</span>
                   </div>
 
                   <ul className="space-y-2.5 flex-1">
@@ -608,7 +608,7 @@ export function PricingSection({ onBookDemo }: Props) {
               ))}
             </div>
 
-            <p className="text-center text-[12px] text-white/40 max-w-3xl mx-auto leading-relaxed pt-2">
+            <p className="text-center text-[12px] text-muted-on-dark max-w-3xl mx-auto leading-relaxed pt-2">
               For comparison: Autogon AI charges ₦31,600,000 for setup alone. Our IMTO Programme at ₦12,000,000 delivers faster implementation, more documentation, and a named onsite session.
             </p>
 
@@ -716,7 +716,7 @@ export function PricingSection({ onBookDemo }: Props) {
         {/* Professional Services */}
         <div className="pt-8 space-y-5">
           <div className="text-center space-y-2">
-            <p className="text-[11px] uppercase tracking-[0.2em] text-white/40 font-semibold">
+            <p className="text-[11px] uppercase tracking-[0.2em] text-muted-on-dark font-semibold">
               Professional Services
             </p>
             <h3 className="text-xl md:text-2xl font-semibold text-white tracking-tight">

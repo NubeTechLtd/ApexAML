@@ -127,12 +127,12 @@ export function SocialProofSection() {
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
                       <span className="text-white font-semibold text-sm">{t.name}</span>
-                      <span className="text-white/40 text-xs">— {t.title}</span>
+                      <span className="text-muted-on-dark text-xs">— {t.title}</span>
                       <span className="rounded-full bg-primary/15 text-primary px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider">
                         Beta Tester
                       </span>
                     </div>
-                    <p className="text-[11px] text-white/40 mt-0.5">{t.institution}</p>
+                    <p className="text-[11px] text-muted-on-dark mt-0.5">{t.institution}</p>
                   </div>
                   <div className="hidden sm:flex items-center gap-0.5 shrink-0">
                     {Array.from({ length: t.rating }).map((_, i) => (

@@ -61,7 +61,7 @@ export function QuickDemoBar({ open, onClose }: Props) {
                   placeholder="your@bank.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="bg-white/[0.06] border-white/10 text-white placeholder:text-white/30 rounded-lg h-9 text-sm focus-visible:ring-primary/40"
+                  className="bg-white/[0.06] border-white/10 text-white placeholder:text-muted-on-dark rounded-lg h-9 text-sm focus-visible:ring-primary/40"
                 />
                 <Button type="submit" disabled={submitting} size="sm"
                   className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg text-xs font-semibold h-9 px-4 whitespace-nowrap">

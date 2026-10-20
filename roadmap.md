@@ -1,5 +1,10 @@
 # Roadmap
 
+## Marketing dark isolation
+- [x] Isolate marketing dark tokens, including booking and other portals, from stored/system app themes.
+- [x] Replace low-opacity marketing white text and placeholders with the requested opaque muted and hover tokens; preserve white/50 and above. AIMockUI source remains untouched, with its legacy text colour overridden within the marketing scope.
+- [x] Verify all named marketing path scopes, booking qualification and scheduling screen, dropdowns, placeholders and footer hover colours in both stored themes; app theme preferences remain unchanged. Seven boundary tests pass. /pricing and /security still have no dedicated pages (existing not-found behaviour preserved).
+
 ## Transactional-only email
 - [x] Archive and disable sales follow-ups; remove roadmap enrollment and follow-up promises; verified drip job absent and dispatcher returns 410.
 - [x] Move requested roadmap delivery to Lovable Emails and add shared legal footers to email templates; mandatory unsubscribe handling retained.

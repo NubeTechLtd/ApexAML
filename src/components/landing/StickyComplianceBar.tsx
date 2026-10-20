@@ -82,7 +82,7 @@ export function StickyComplianceBar({ onBookDemo, onVisibilityChange }: Props) {
                 type="button"
                 aria-label="Dismiss bar"
                 onClick={handleClose}
-                className="ml-1 h-9 w-9 flex items-center justify-center rounded-lg text-white/40 hover:text-white hover:bg-white/5 transition-colors"
+                className="ml-1 h-9 w-9 flex items-center justify-center rounded-lg text-muted-on-dark hover:text-white hover:bg-white/5 transition-colors"
               >
                 <X className="h-4 w-4" />
               </button>
