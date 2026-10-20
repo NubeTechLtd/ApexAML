@@ -74,8 +74,10 @@
     --popover: 220 18% 11%;
     --popover-foreground: 210 20% 90%;
 
-    --primary: 213 55% 50%;
-    --primary-foreground: 220 20% 8%;
+    --primary: 213.722628 59.307359% 45.294118%;
+    --primary-foreground: 0 0% 100%;
+    --primary-on-dark: #5B93D6;
+    --primary-button-hover: #285EA3;
 
     --secondary: 220 14% 18%;
     --secondary-foreground: 210 20% 90%;
@@ -216,8 +218,10 @@
     --popover: 220 18% 11%;
     --popover-foreground: 210 20% 90%;
 
-    --primary: 213 55% 50%;
-    --primary-foreground: 220 20% 8%;
+    --primary: 213.722628 59.307359% 45.294118%;
+    --primary-foreground: 0 0% 100%;
+    --primary-on-dark: #5B93D6;
+    --primary-button-hover: #285EA3;
 
     --secondary: 220 14% 18%;
     --secondary-foreground: 210 20% 90%;
@@ -284,4 +288,28 @@
 .marketing-zone [data-placeholder] {
   color: var(--text-muted-on-dark);
   opacity: 1;
+}
+
+/* Primary foregrounds remain opaque and independent of filled button surfaces.
+   This also covers preserved mock UI and utility variants in portal content. */
+:is(.dark, .marketing-zone) :is(.text-primary, .text-primary-on-dark,
+  [class^="text-primary/"], [class*=" text-primary/"]) {
+  color: var(--primary-on-dark);
+}
+:is(.dark, .marketing-zone) [class*="hover:text-primary"]:hover,
+:is(.dark, .marketing-zone) .group:hover [class*="group-hover:text-primary"] {
+  color: var(--primary-on-dark);
+}
+:is(.dark, .marketing-zone) [class*="marker:text-primary"]::marker,
+:is(.dark, .marketing-zone) [class*="marker:text-primary"] ::marker {
+  color: var(--primary-on-dark);
+}
+:is(.dark, .marketing-zone) .fill-primary { fill: var(--primary-on-dark); }
+:is(.dark, .marketing-zone) .stroke-primary { stroke: var(--primary-on-dark); }
+:is(.dark, .marketing-zone) .bg-primary {
+  color: hsl(var(--primary-foreground));
+}
+:is(.dark, .marketing-zone) :is(button, a, [role="button"]).bg-primary:hover {
+  background-color: var(--primary-button-hover);
+  color: hsl(var(--primary-foreground));
 }
