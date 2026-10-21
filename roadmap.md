@@ -1,9 +1,10 @@
 # Roadmap
 
 ## Platform and institution access separation
-- [ ] Restrict platform roles to platform_admin; enforce institution roles and remove staff tenant bypasses.
-- [ ] Add explicit institution-scoped, audit-logged support access and update admin pages.
-- [ ] Seed the requesting user's platform and institution roles; verify tenant isolation and support lifecycle.
+- [x] Restrict platform roles to platform_admin; enforce institution roles and remove staff tenant bypasses, including storage and tenant service-function paths.
+- [x] Add explicit institution-scoped, audit-logged, thirty-minute read-only support access and update both admin pages.
+- [x] Seed the requesting user's platform and institution roles; live workspace and five authorization regression tests passed. Support access without MFA is rejected by the server.
+- [ ] Verify successful support activation and revocation through the UI — waiting for the user's two-factor setup; existing MFA gate preserved.
 
 ## Green controls, links and roadmap contrast
 - [x] Applied requested hero/WhatsApp colours, opaque dark chat status, permanent FAQ/Privacy paragraph underlines, dark risk badge foregrounds and theme-specific roadmap label/warning tokens.
