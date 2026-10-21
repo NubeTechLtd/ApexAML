@@ -1,5 +1,10 @@
 # Roadmap
 
+## Platform and institution access separation
+- [ ] Restrict platform roles to platform_admin; enforce institution roles and remove staff tenant bypasses.
+- [ ] Add explicit institution-scoped, audit-logged support access and update admin pages.
+- [ ] Seed the requesting user's platform and institution roles; verify tenant isolation and support lifecycle.
+
 ## Green controls, links and roadmap contrast
 - [x] Applied requested hero/WhatsApp colours, opaque dark chat status, permanent FAQ/Privacy paragraph underlines, dark risk badge foregrounds and theme-specific roadmap label/warning tokens.
 - [x] Browser checked in both stored themes; public roadmap retains dark colours, isolated light/dark token probes match requested values. Hero 5.42:1, WhatsApp/status 9.00:1, filled dark risk token pairs 4.57–4.61:1; FAQ underlines persist on hover/focus. Seven boundary tests pass; AIMockUI untouched; no forms submitted or emails sent.
