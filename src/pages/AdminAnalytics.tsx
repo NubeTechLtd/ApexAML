@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
+import { SupportAccessPanel } from '@/components/SupportAccessPanel';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -125,7 +126,7 @@ export default function AdminAnalytics() {
             <div className="flex items-center gap-3">
               <SidebarTrigger />
               <div>
-                <h1 className="text-sm font-semibold">Visitor Analytics</h1>
+                <h1 className="text-sm font-semibold">Platform Visitor Analytics</h1>
                 <p className="text-xs text-muted-foreground">Who visited, what they saw, where they converted</p>
               </div>
             </div>
@@ -141,6 +142,7 @@ export default function AdminAnalytics() {
               <ThemeToggle />
             </div>
           </header>
+          <SupportAccessPanel />
 
           <main className="flex-1 p-6 space-y-6 overflow-auto">
             {/* KPIs */}
