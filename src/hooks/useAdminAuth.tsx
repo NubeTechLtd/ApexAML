@@ -24,7 +24,7 @@ export function useAdminAuth() {
         .from('user_roles')
         .select('role')
         .eq('user_id', userId)
-        .eq('role', 'admin')
+        .eq('role', 'platform_admin')
         .maybeSingle();
       if (!mounted) return;
       setEmail(userEmail);
@@ -33,7 +33,7 @@ export function useAdminAuth() {
     };
 
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
-      evaluate(session?.user?.id ?? null, session?.user?.email ?? null);
+      setTimeout(() => { void evaluate(session?.user?.id ?? null, session?.user?.email ?? null); }, 0);
     });
 
     supabase.auth.getSession().then(({ data: { session } }) => {
