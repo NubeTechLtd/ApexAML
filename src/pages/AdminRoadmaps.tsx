@@ -188,7 +188,7 @@ export default function AdminRoadmaps() {
   };
 
   useEffect(() => {
-    if (state !== 'admin') return;
+    if (state !== 'platform_admin') return;
     loadAll();
     const ch = supabase
       .channel('admin-realtime')
