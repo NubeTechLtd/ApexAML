@@ -1,5 +1,9 @@
 # Roadmap
 
+## Green controls, links and roadmap contrast
+- [ ] Apply requested hero/WhatsApp colours, opaque chat status, permanent FAQ/Privacy paragraph underlines, dark risk badge foregrounds and theme-specific roadmap label/warning tokens.
+- [ ] Verify affected colours and link states in the browser; preserve fixed-dark public pages and AIMockUI source.
+
 ## Field and muted-text contrast
 - [x] Updated light/dark input borders and muted foregrounds, plus marketing form borders, placeholders and fixed-dark focus rings; verified booking, landing leads, roadmap fields and Login focus, plus exact theme tokens in both stored themes. Sample borders 3.06–3.08:1, placeholders 4.89:1, focus 5.35:1, muted text 4.56–5.04:1; seven theme-boundary tests passed. AIMockUI untouched; no forms submitted or emails sent.
 
