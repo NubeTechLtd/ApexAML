@@ -1,5 +1,8 @@
 # Roadmap
 
+## Field and muted-text contrast
+- [x] Updated light/dark input borders and muted foregrounds, plus marketing form borders, placeholders and fixed-dark focus rings; verified booking, landing leads, roadmap fields and Login focus, plus exact theme tokens in both stored themes. Sample borders 3.06–3.08:1, placeholders 4.89:1, focus 5.35:1, muted text 4.56–5.04:1; seven theme-boundary tests passed. AIMockUI untouched; no forms submitted or emails sent.
+
 ## Dark primary contrast
 - [x] Separate dark primary text from button colours; 547 rendered primary samples passed 4.5:1 in both stored themes, including hover, focus, selected booking slots and contact step. Ratio report delivered; unrelated WhatsApp contrast failures and unrendered confirmation/result states explicitly qualified.
 
