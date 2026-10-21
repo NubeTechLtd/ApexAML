@@ -160,7 +160,7 @@ export function FAQSection() {
           <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight">Common questions</h2>
           <p className="text-muted-on-dark text-sm max-w-xl mx-auto">
             Straight answers from our compliance team. Still unsure?{" "}
-            <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+            <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-2">
               Chat on WhatsApp
             </a>
             .
@@ -177,7 +177,7 @@ export function FAQSection() {
               <AccordionTrigger className="px-5 py-4 text-left text-sm sm:text-base font-medium text-white hover:no-underline hover:bg-white/[0.02] min-h-[60px]">
                 {item.q}
               </AccordionTrigger>
-              <AccordionContent className="px-5 pb-5 pt-1 text-sm text-white/55 leading-relaxed">
+              <AccordionContent className="px-5 pb-5 pt-1 text-sm text-white/55 leading-relaxed [&_p_a]:underline [&_p_a]:underline-offset-2">
                 {item.a}
               </AccordionContent>
             </AccordionItem>
@@ -189,7 +189,7 @@ export function FAQSection() {
           <Button
             asChild
             size="sm"
-            className="bg-[#25D366] hover:bg-[#25D366]/90 text-white rounded-lg text-xs font-semibold h-10 px-4 group"
+            className="bg-whatsapp hover:bg-whatsapp text-green-control-foreground hover:text-green-control-foreground rounded-lg text-xs font-semibold h-10 px-4 group"
           >
             <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
               <WhatsAppIcon size={16} />

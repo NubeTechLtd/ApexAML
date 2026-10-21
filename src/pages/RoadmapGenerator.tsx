@@ -464,7 +464,7 @@ Managing Director:                                    Signature: _______________
 
 
   return (
-    <SidebarProvider>
+    <SidebarProvider className="roadmap-surface">
       <Seo
         title="Free CBN AML Roadmap Generator | ApexAML"
         description="Generate a CBN-compliant AML implementation roadmap for your Nigerian fintech, MFB or IMTO in 60 seconds. Pre-formatted for Circular BSD/DIR/PUB/LAB/019/002."
@@ -510,7 +510,7 @@ Managing Director:                                    Signature: _______________
                         <span className="relative inline-flex h-2 w-2 rounded-full bg-destructive" />
                       </span>
                       <p className="text-[13px] leading-relaxed text-foreground/90">
-                        <span className="font-medium text-destructive">CBN Circular BSD/DIR/PUB/LAB/019/002</span> requires
+                        <span className="font-medium text-roadmap-warning">CBN Circular BSD/DIR/PUB/LAB/019/002</span> requires
                         every regulated institution to submit an AML implementation roadmap and reach full compliance by its licence-specific deadline.
                       </p>
                     </div>
@@ -1082,7 +1082,7 @@ Managing Director:                                    Signature: _______________
             <span className="hidden md:inline-flex items-center mr-3 px-3 py-2 rounded-lg bg-card border border-border text-foreground text-xs font-medium opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 shadow-xl pointer-events-none whitespace-nowrap">
               Get implementation support →
             </span>
-            <span className="flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_8px_30px_-4px_rgba(37,211,102,0.5)] hover:scale-105 active:scale-95 transition-transform">
+            <span className="flex h-14 w-14 items-center justify-center rounded-full bg-whatsapp text-green-control-foreground shadow-[0_8px_30px_-4px_rgba(37,211,102,0.5)] hover:scale-105 active:scale-95 transition-transform">
               <WhatsAppIcon size={28} />
             </span>
           </button>

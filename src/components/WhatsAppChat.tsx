@@ -2,12 +2,11 @@ import { useState } from "react";
 import { X } from "lucide-react";
 import { WhatsAppIcon } from "@/components/landing/WhatsAppIcon";
 import { WHATSAPP_NUMBER } from "@/lib/whatsapp";
+import { Button } from "@/components/ui/button";
 
 const CHAT_MESSAGE =
   "Hi ApexAML, I'd like to talk about AML compliance.";
 const CHAT_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(CHAT_MESSAGE)}`;
-
-const GREEN = "#25D366";
 
 function TypingDots() {
   return (
@@ -15,7 +14,7 @@ function TypingDots() {
       {[0, 1, 2].map((i) => (
         <span
           key={i}
-          className="block w-1 h-1 rounded-full bg-white animate-bounce"
+          className="block w-1 h-1 rounded-full bg-green-control-foreground animate-bounce"
           style={{ animationDelay: `${i * 120}ms` }}
         />
       ))}
@@ -44,28 +43,29 @@ export function WhatsAppChat() {
           style={{ width: 280 }}
         >
           <div
-            className="flex items-center gap-3 px-4 py-3 text-white"
-            style={{ backgroundColor: GREEN }}
+            className="flex items-center gap-3 px-4 py-3 bg-whatsapp text-green-control-foreground"
           >
             <div className="relative">
               <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center">
-                <WhatsAppIcon className="w-5 h-5 text-white" />
+                <WhatsAppIcon className="w-5 h-5 text-green-control-foreground" />
               </div>
               <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-green-400 border-2 border-white" />
             </div>
             <div className="flex-1 min-w-0">
               <div className="font-bold text-sm leading-tight">ApexAML</div>
-              <div className="text-[11px] text-white/70 leading-tight">
+              <div className="text-[11px] text-whatsapp-status leading-tight">
                 Compliance team · Typically replies in 4 hours
               </div>
             </div>
-            <button
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={() => setOpen(false)}
               aria-label="Close chat"
-              className="text-white/80 hover:text-white"
+              className="h-6 w-6 text-green-control-foreground hover:text-green-control-foreground hover:bg-transparent"
             >
               <X className="w-4 h-4" />
-            </button>
+            </Button>
           </div>
 
           <div className="bg-[#ECE5DD] px-4 py-4">
@@ -82,24 +82,23 @@ What brings you here today?`}
           </div>
 
           <div className="p-3 bg-white">
+            <Button asChild className="w-full h-auto py-2.5 bg-whatsapp hover:bg-whatsapp text-green-control-foreground hover:text-green-control-foreground text-sm font-semibold">
             <a
               href={CHAT_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg text-white text-sm font-semibold hover:opacity-90 transition"
-              style={{ backgroundColor: GREEN }}
             >
               Chat on WhatsApp →
             </a>
+            </Button>
           </div>
         </div>
       )}
 
-      <button
+      <Button
         onClick={toggle}
         aria-label="Chat on WhatsApp"
-        className="relative flex items-center justify-center gap-2 text-white font-semibold shadow-lg hover:shadow-xl transition-all rounded-full md:h-11 h-12 md:w-[140px] w-12 md:px-4 px-0"
-        style={{ backgroundColor: GREEN }}
+        className="relative flex items-center justify-center gap-2 bg-whatsapp hover:bg-whatsapp text-green-control-foreground hover:text-green-control-foreground font-semibold shadow-lg hover:shadow-xl transition-all rounded-full md:h-11 h-12 md:w-[140px] w-12 md:px-4 px-0"
       >
         <WhatsAppIcon className="w-5 h-5 shrink-0" />
         <span className="hidden md:inline text-sm">Chat with us</span>
@@ -109,7 +108,7 @@ What brings you here today?`}
             1
           </span>
         )}
-      </button>
+      </Button>
     </div>
   );
 }

@@ -594,7 +594,7 @@ function LandingPageInner() {
                 <Clock className="h-3.5 w-3.5" />
                 3 hrs → 11 min — STR drafting time
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-green-600 text-white px-3 py-1" style={{ fontSize: 12, fontWeight: 600 }}>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-status-positive text-green-control-foreground px-3 py-1" style={{ fontSize: 12, fontWeight: 600 }}>
                 <Zap className="h-3.5 w-3.5" />
                 5 days — time to go live
               </span>

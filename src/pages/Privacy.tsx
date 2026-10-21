@@ -89,7 +89,7 @@ export default function Privacy() {
             <p className="font-medium text-white">Need to exercise a data right?</p>
             <p>
               Email{" "}
-              <a href="mailto:privacy@apexaml.com" className="text-primary hover:underline">
+              <a href="mailto:privacy@apexaml.com" className="text-primary underline underline-offset-2">
                 privacy@apexaml.com
               </a>{" "}
               — we respond within 30 days.
@@ -100,7 +100,7 @@ export default function Privacy() {
         <p className="text-xs text-muted-on-dark pt-6 border-t border-white/[0.06]">
           A signed Data Processing Agreement (DPA) is provided to all institutional clients at contract signing. Request
           a copy at{" "}
-          <a href="mailto:privacy@apexaml.com" className="text-primary hover:underline">
+          <a href="mailto:privacy@apexaml.com" className="text-primary underline underline-offset-2">
             privacy@apexaml.com
           </a>
           .
