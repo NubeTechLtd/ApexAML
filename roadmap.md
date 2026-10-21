@@ -1,5 +1,8 @@
 # Roadmap
 
+## Field and muted-text contrast
+- [ ] Update light/dark input borders and muted foregrounds, plus marketing form borders, placeholders and fixed-dark focus rings; verify rendered fields in both stored themes.
+
 ## Dark primary contrast
 - [x] Separate dark primary text from button colours; 547 rendered primary samples passed 4.5:1 in both stored themes, including hover, focus, selected booking slots and contact step. Ratio report delivered; unrelated WhatsApp contrast failures and unrendered confirmation/result states explicitly qualified.
 

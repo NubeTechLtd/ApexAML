@@ -22,7 +22,7 @@
     --secondary-foreground: 215 25% 12%;
 
     --muted: 214 18% 93%;
-    --muted-foreground: 215 14% 46%;
+    --muted-foreground: 215.225806 14.155251% 42.941176%;
 
     --accent: 214 20% 94%;
     --accent-foreground: 215 25% 12%;
@@ -31,7 +31,7 @@
     --destructive-foreground: 210 40% 98%;
 
     --border: 214 20% 90%;
-    --input: 214 20% 90%;
+    --input: 211.914894 21.065022% 57.843137%;
     --ring: 217 55% 22%;
 
     --radius: 0.5rem;
@@ -83,7 +83,7 @@
     --secondary-foreground: 210 20% 90%;
 
     --muted: 220 14% 16%;
-    --muted-foreground: 215 14% 55%;
+    --muted-foreground: 214 14.705882% 60%;
 
     --accent: 220 14% 18%;
     --accent-foreground: 210 20% 90%;
@@ -92,7 +92,7 @@
     --destructive-foreground: 210 20% 95%;
 
     --border: 220 14% 20%;
-    --input: 220 14% 20%;
+    --input: 218.571429 13.592233% 40.392157%;
     --ring: 213 55% 50%;
 
     --risk-critical: 0 62% 50%;
@@ -227,7 +227,7 @@
     --secondary-foreground: 210 20% 90%;
 
     --muted: 220 14% 16%;
-    --muted-foreground: 215 14% 55%;
+    --muted-foreground: 214 14.705882% 60%;
 
     --accent: 220 14% 18%;
     --accent-foreground: 210 20% 90%;
@@ -236,8 +236,10 @@
     --destructive-foreground: 210 20% 95%;
 
     --border: 220 14% 20%;
-    --input: 220 14% 20%;
-    --ring: 213 55% 50%;
+    --input: 218.571429 13.592233% 40.392157%;
+    --ring: 212.682927 60% 59.803922%;
+    --lead-field-border: #626975;
+    --field-placeholder: #818A98;
 
     --risk-critical: 0 62% 50%;
     --risk-critical-foreground: 0 0% 100%;
@@ -267,7 +269,7 @@
   --radius: 0.5rem;
   --text-muted-on-dark: #9CA3AF;
   --text-muted-on-dark-hover: #E5E7EB;
-  --muted-foreground: 218 11% 65%;
+   --muted-foreground: 214 14.705882% 60%;
   color-scheme: dark;
 }
 
@@ -285,9 +287,18 @@
   color: var(--text-muted-on-dark-hover);
 }
 .marketing-zone :is(input, textarea)::placeholder,
-.marketing-zone [data-placeholder] {
-  color: var(--text-muted-on-dark);
+.marketing-zone [role="combobox"][data-placeholder] {
+   color: var(--field-placeholder);
   opacity: 1;
+}
+
+/* Preserve glass surfaces, but make field boundaries and focus indicators opaque. */
+.marketing-zone :is(input, textarea, [role="combobox"], [role="listbox"])[class*="border-white/10"],
+.marketing-zone span[class*="border-white/10"]:has(+ input) {
+  border-color: var(--lead-field-border);
+}
+.marketing-zone :is(input, textarea, button, a, [tabindex]):is(:focus, :focus-visible) {
+  --tw-ring-color: var(--primary-on-dark);
 }
 
 /* Primary foregrounds remain opaque and independent of filled button surfaces.
