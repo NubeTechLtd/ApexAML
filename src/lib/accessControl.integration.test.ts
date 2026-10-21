@@ -1,4 +1,5 @@
 import { execFileSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 // Opt-in live authorization checks; no mutations or secrets are printed.
@@ -16,7 +17,8 @@ payload=json.loads(base64.urlsafe_b64decode(token.split('.')[1]+'==='))
 issuer=payload['iss'].split('/auth/v1')[0]
 request=urllib.request.Request(issuer+'/rest/v1/'+sys.argv[1],headers={'Authorization':'Bearer '+token,'apikey':sys.argv[2]})
 with urllib.request.urlopen(request) as response: print(response.read().decode())`;
-  const client = execFileSync('python3', ['-c', "from pathlib import Path; import re; print(re.search(r'VITE_SUPABASE_PUBLISHABLE_KEY=[\"\']?([^\"\'\\n]+)',Path('.env').read_text()).group(1))"], { encoding: 'utf8' }).trim();
+  const client = readFileSync('.env', 'utf8').split('\n').find(line => line.startsWith('VITE_SUPABASE_PUBLISHABLE_KEY='))?.split('=').slice(1).join('=').replace(/["']/g, '').trim();
+  if (!client) throw new Error('Publishable key unavailable for live tests');
   return JSON.parse(execFileSync('python3', ['-c', script, path, client], { encoding: 'utf8' }));
 }
 describe.skipIf(!live)('institution and platform authorization', () => {
