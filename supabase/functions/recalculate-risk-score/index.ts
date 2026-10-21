@@ -4,6 +4,7 @@
 // Called by database triggers (ctr_queue filings), by the app when an alert
 // fires or is resolved, and by the nightly clean-period sweep.
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { authorizeCustomer } from '../_shared/tenant-access.ts';
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -99,6 +100,10 @@ Deno.serve(async (req) => {
   const triggerReference =
     typeof body?.trigger_reference === "string" ? body.trigger_reference.slice(0, 128) : null;
   const signals = body?.signals ?? {};
+
+  if (!await authorizeCustomer(req, customerId, ['compliance_officer', 'institution_admin'])) {
+    return json({ error: 'Institution compliance role required' }, 403);
+  }
 
   const supabase = createClient(
     Deno.env.get("SUPABASE_URL")!,
