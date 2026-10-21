@@ -1,5 +1,8 @@
 # Project rules
 
+- Keep platform authorization separate from tenant membership; tenant RLS uses institution roles and read-only expiring support grants, never platform role bypasses, so staff privileges cannot expose customer data.
+- Activate and revoke support access only through authenticated security-definer RPCs that atomically write audit events; require MFA and a scoped justification to prevent silent support grants.
+
 - Scope public-page dark variables to MarketingZone, and propagate its scope to portal content via React context; app theme preferences must remain independent.
 - Use semantic muted-on-dark text utilities for low-opacity marketing copy; retain translucent surfaces and higher-opacity text separately.
 - Keep dark primary foreground accents separate from filled primary button tokens, with shared scoped utility compatibility for existing and preserved UI; this prevents translucent foregrounds or button hover utilities from lowering contrast.
