@@ -50,6 +50,13 @@
       "when": 1792625123073,
       "tag": "0006_add_platform_admin_role",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1792625211732,
+      "tag": "0007_institution_roles_and_audited_support_access",
+      "breakpoints": true
     }
   ]
 }
