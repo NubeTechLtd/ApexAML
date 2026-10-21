@@ -1,6 +1,7 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { z } from 'npm:zod@3';
+import { authorizeCustomer } from '../_shared/tenant-access.ts';
 
 const BodySchema = z.object({
   alert_id: z.string().uuid(),
@@ -56,6 +57,10 @@ Deno.serve(async (req) => {
 
     if (alertError) return json({ error: alertError.message }, 400);
     if (!alert) return json({ error: 'Alert not found' }, 404);
+
+    if (!await authorizeCustomer(req, alert.customer_id, ['analyst', 'compliance_officer', 'institution_admin'])) {
+      return json({ error: 'Institution role required to edit reports' }, 403);
+    }
 
     const c = alert.customers as Record<string, unknown> | null;
     const context = `CASE CONTEXT
@@ -116,7 +121,8 @@ ${message}`;
     }
 
     // Consume the SSE stream server-side and accumulate the final text.
-    const reader = aiRes.body!.getReader();
+    if (!aiRes.body) return json({ error: 'AI returned no response body' }, 502);
+    const reader = aiRes.body.getReader();
     const decoder = new TextDecoder();
     let buffer = '';
     let fullText = '';
