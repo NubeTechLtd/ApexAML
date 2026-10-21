@@ -35,9 +35,16 @@ export default function Login() {
     if (searchParams.get('error') === 'unauthorized') return;
     if (searchParams.get('mfa') === 'required') return;
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) navigate('/admin/roadmaps', { replace: true });
+      if (session?.user) void navigateAfterSignIn();
     });
   }, [navigate, searchParams]);
+
+  const navigateAfterSignIn = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const { data } = await supabase.from('user_roles').select('role').eq('user_id', user.id).eq('role', 'platform_admin').maybeSingle();
+    navigate(data ? '/admin/roadmaps' : '/dashboard', { replace: true });
+  };
 
   const triggerShake = () => {
     setShake(true);
@@ -73,7 +80,7 @@ export default function Login() {
       return;
     }
 
-    navigate('/admin/roadmaps', { replace: true });
+    await navigateAfterSignIn();
   };
 
   const verifyCode = async (otp: string) => {
@@ -91,7 +98,7 @@ export default function Login() {
       setError('Incorrect code — please try again');
       return;
     }
-    navigate('/admin/roadmaps', { replace: true });
+    await navigateAfterSignIn();
   };
 
   return (

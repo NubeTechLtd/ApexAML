@@ -1,6 +1,7 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { z } from 'npm:zod@3';
+import { authorizeCustomer } from '../_shared/tenant-access.ts';
 
 const BodySchema = z.object({ alert_id: z.string().uuid() });
 
@@ -57,6 +58,10 @@ Deno.serve(async (req) => {
 
     if (alertError) return json({ error: alertError.message }, 400);
     if (!alert) return json({ error: 'Alert not found' }, 404);
+
+    if (!await authorizeCustomer(req, alert.customer_id, ['analyst', 'compliance_officer', 'institution_admin'])) {
+      return json({ error: 'Institution role required to draft reports' }, 403);
+    }
 
     const { data: txs } = await supabase
       .from('transactions')

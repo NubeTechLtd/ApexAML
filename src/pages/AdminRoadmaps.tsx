@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
+import { SupportAccessPanel } from '@/components/SupportAccessPanel';
 import { useAuth } from '@/hooks/useAuth';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
@@ -187,7 +188,7 @@ export default function AdminRoadmaps() {
   };
 
   useEffect(() => {
-    if (state !== 'admin') return;
+    if (state !== 'platform_admin') return;
     loadAll();
     const ch = supabase
       .channel('admin-realtime')
@@ -344,11 +345,11 @@ export default function AdminRoadmaps() {
     });
     setGrantingAdmin(false);
     if (error || (data && (data as { error?: string }).error)) {
-      const msg = (data as { error?: string } | null)?.error ?? error?.message ?? 'Failed to grant admin access.';
+      const msg = (data as { error?: string } | null)?.error ?? error?.message ?? 'Failed to grant platform staff access.';
       toast.error(msg);
       return;
     }
-    toast.success(`${email} now has admin access.`);
+    toast.success(`${email} now has platform staff access, without institution access.`);
     setNewAdminEmail('');
     setAdminSheetOpen(false);
   };
@@ -371,7 +372,7 @@ export default function AdminRoadmaps() {
           <ShieldCheck className="h-10 w-10 mx-auto mb-4 text-muted-foreground" />
           <h1 className="text-lg font-semibold mb-2">Access denied</h1>
           <p className="text-sm text-muted-foreground mb-4">
-            Your account ({adminEmail}) doesn't have admin access.
+            Your account ({adminEmail}) doesn't have platform staff access.
           </p>
           <Button variant="outline" onClick={handleSignOut}>Sign out</Button>
         </Card>
@@ -394,7 +395,7 @@ export default function AdminRoadmaps() {
                     Roadmap Analytics
                   </h1>
                   <p className="text-xs text-muted-foreground truncate">
-                    CBN AML roadmap lead intelligence — ApexAML admin
+                    CBN AML roadmap lead intelligence — Platform staff
                   </p>
                 </div>
               </div>
@@ -424,14 +425,14 @@ export default function AdminRoadmaps() {
                   <SheetTrigger asChild>
                     <Button variant="outline" size="sm">
                       <UserPlus className="h-4 w-4 mr-2" />
-                      Add admin user
+                      Add platform staff
                     </Button>
                   </SheetTrigger>
                   <SheetContent>
                     <SheetHeader>
-                      <SheetTitle>Grant admin access</SheetTitle>
+                      <SheetTitle>Grant platform staff access</SheetTitle>
                       <SheetDescription>
-                        The user must already have a ApexAML account. Their email will be promoted to the admin role.
+                        The user must already have an ApexAML account. This grants platform_admin only, not institution membership or customer data access.
                       </SheetDescription>
                     </SheetHeader>
                     <form onSubmit={handleGrantAdmin} className="space-y-4 py-6">
@@ -448,7 +449,7 @@ export default function AdminRoadmaps() {
                       </div>
                       <SheetFooter>
                         <Button type="submit" disabled={grantingAdmin} className="w-full">
-                          {grantingAdmin ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Grant admin access'}
+                          {grantingAdmin ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Grant platform staff access'}
                         </Button>
                       </SheetFooter>
                     </form>
@@ -462,6 +463,7 @@ export default function AdminRoadmaps() {
               </div>
             </div>
           </header>
+          <SupportAccessPanel />
 
           <main className="flex-1 px-6 py-8 space-y-8">
             {/* KPI cards */}

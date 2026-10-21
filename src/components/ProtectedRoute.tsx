@@ -34,7 +34,7 @@ export function ProtectedRoute({ children, requireAdmin = true }: ProtectedRoute
         .from('user_roles')
         .select('role')
         .eq('user_id', session.user.id)
-        .eq('role', 'admin')
+        .eq('role', 'platform_admin')
         .maybeSingle();
 
       if (cancelled) return;
@@ -81,9 +81,7 @@ export function ProtectedRoute({ children, requireAdmin = true }: ProtectedRoute
   }
 
   if (requireAdmin && gate === 'denied') {
-    // Sign the non-admin out so they don't get stuck in a redirect loop.
-    supabase.auth.signOut();
-    return <Navigate to="/login?error=unauthorized" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   if (requireAdmin && gate === 'mfa-required') {

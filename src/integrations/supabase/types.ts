@@ -1260,6 +1260,44 @@ export type Database = {
           },
         ]
       }
+      support_access_grants: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          institution_id: string
+          justification: string
+          revoked_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          institution_id: string
+          justification: string
+          revoked_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          institution_id?: string
+          justification?: string
+          revoked_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_access_grants_institution_id_fkey"
+            columns: ["institution_id"]
+            isOneToOne: false
+            referencedRelation: "institutions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       suppressed_emails: {
         Row: {
           created_at: string
@@ -1521,6 +1559,7 @@ export type Database = {
       }
     }
     Functions: {
+      end_support_access: { Args: never; Returns: undefined }
       request_risk_recalculation: {
         Args: {
           _customer_id: string
@@ -1545,9 +1584,24 @@ export type Database = {
       }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
+      start_support_access: {
+        Args: {
+          _confirmed: boolean
+          _institution_id: string
+          _justification: string
+        }
+        Returns: string
+      }
+      support_institutions: {
+        Args: never
+        Returns: {
+          id: string
+          name: string
+        }[]
+      }
     }
     Enums: {
-      app_role: "admin" | "user"
+      app_role: "admin" | "user" | "platform_admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1675,7 +1729,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "user"],
+      app_role: ["admin", "user", "platform_admin"],
     },
   },
 } as const

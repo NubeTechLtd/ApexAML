@@ -11,9 +11,11 @@ const corsHeaders = {
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
-  const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
-  const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-  const ANON = Deno.env.get("SUPABASE_ANON_KEY")!;
+  if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
+  const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+  const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  const ANON = Deno.env.get("SUPABASE_ANON_KEY");
+  if (!SUPABASE_URL || !SERVICE_ROLE || !ANON) return json({ error: "Service unavailable" }, 503);
 
   const authHeader = req.headers.get("Authorization") ?? "";
   const jwt = authHeader.replace(/^Bearer\s+/i, "");
@@ -36,11 +38,14 @@ Deno.serve(async (req) => {
     .from("user_roles")
     .select("role")
     .eq("user_id", callerId)
-    .eq("role", "admin")
+    .eq("role", "platform_admin")
     .maybeSingle();
   if (roleErr || !roleRow) {
-    return json({ error: "Forbidden — admin role required" }, 403);
+    return json({ error: "Forbidden — platform_admin role required" }, 403);
   }
+
+  const { data: assurance, error: assuranceError } = await userClient.auth.mfa.getAuthenticatorAssuranceLevel();
+  if (assuranceError || assurance?.currentLevel !== "aal2") return json({ error: "Two-factor authentication required" }, 403);
 
   // 2) Read target email.
   let body: { email?: string } = {};
@@ -75,11 +80,16 @@ Deno.serve(async (req) => {
   // 4) Insert role (idempotent via unique constraint).
   const { error: insErr } = await admin
     .from("user_roles")
-    .insert({ user_id: target.id, role: "admin" });
+    .insert({ user_id: target.id, role: "platform_admin" });
   if (insErr && !/duplicate key/i.test(insErr.message)) {
     return json({ error: insErr.message }, 500);
   }
 
+  const { error: auditError } = await admin.from("audit_log").insert({
+    user_id: callerId, user_name: userResp.user.email ?? "Platform staff", action: "PLATFORM_ROLE_GRANTED",
+    resource: target.id, justification: "Explicit platform staff role assignment", metadata: { role: "platform_admin" },
+  });
+  if (auditError) return json({ error: "Role assigned but audit recording failed" }, 500);
   return json({ success: true, email });
 });
 

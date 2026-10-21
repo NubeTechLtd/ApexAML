@@ -111,9 +111,7 @@ export function AuditLogProvider({ children }: { children: ReactNode }) {
       timestamp: new Date().toISOString(),
       status: entry.status ?? 'success',
     };
-    setEntries((prev) => [optimistic, ...prev]);
-
-    if (!user) return;
+    if (!user) throw new Error('Sign in to record an audit entry');
 
     const { data, error } = await supabase
       .from('audit_log')
@@ -128,7 +126,8 @@ export function AuditLogProvider({ children }: { children: ReactNode }) {
       .select('id, occurred_at, user_id, user_name, action, resource, justification, status')
       .maybeSingle();
 
-    if (!error && data) {
+    if (error) throw error;
+    if (data) {
       const saved = toEntry(data as Row);
       setEntries((prev) => [saved, ...prev.filter((e) => e !== optimistic)]);
     }

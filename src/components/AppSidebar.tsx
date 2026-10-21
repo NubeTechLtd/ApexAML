@@ -1,5 +1,7 @@
 import { LayoutDashboard, Inbox, Users, Settings2, FileText, Fingerprint, ShieldAlert, Banknote, Building2, BarChart2, LogOut, FolderOpen, Search, Activity } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
+import { useEffect, useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import logo from '@/assets/logo.svg';
 import { Button } from '@/components/ui/button';
@@ -19,7 +21,7 @@ import {
 
 const todaysWork = [
   { title: "Compliance Overview", url: '/dashboard', icon: LayoutDashboard },
-  { title: 'Suspicious Activity Alerts', url: '/', icon: Inbox },
+  { title: 'Suspicious Activity Alerts', url: '/alerts', icon: Inbox },
   { title: 'Alert Workspace', url: '/workspace', icon: Search },
   { title: 'Case Files', url: '/case/ALT-2026-0891', icon: FolderOpen },
 ];
@@ -43,7 +45,6 @@ const system = [
 ];
 
 const admin = [
-  { title: 'Partner Bank View', url: '/partner-bank', icon: Building2 },
   { title: 'Visitor Analytics', url: '/admin/analytics', icon: Activity },
   { title: 'Roadmap Analytics', url: '/admin/roadmaps', icon: BarChart2 },
 ];
@@ -53,13 +54,20 @@ const groups = [
   { label: 'Customer management', items: customerManagement },
   { label: 'Reporting', items: reporting },
   { label: 'System', items: system },
-  { label: 'Admin', items: admin },
+  { label: 'Platform staff', items: admin },
 ];
 
 export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === 'collapsed';
   const { session, signOut } = useAuth();
+  const [platformStaff, setPlatformStaff] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    setPlatformStaff(false);
+    if (session?.user) void supabase.from('user_roles').select('role').eq('user_id', session.user.id).eq('role', 'platform_admin').maybeSingle().then(({ data }) => { if (!cancelled) setPlatformStaff(!!data); });
+    return () => { cancelled = true; };
+  }, [session?.user.id]);
 
   return (
     <Sidebar collapsible="icon" className="border-r-0">
@@ -76,7 +84,7 @@ export function AppSidebar() {
       </SidebarHeader>
 
       <SidebarContent>
-        {groups.map((group) => (
+        {groups.filter(group => group.label !== 'Platform staff' || platformStaff).map((group) => (
           <SidebarGroup key={group.label}>
             <SidebarGroupLabel className="text-sidebar-muted text-[10px] uppercase tracking-wider">
               {!collapsed && group.label}

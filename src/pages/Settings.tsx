@@ -130,7 +130,7 @@ export default function Settings() {
               <Alert>
                 <ShieldAlert className="h-4 w-4" />
                 <AlertDescription>
-                  Your organisation requires two-factor authentication for admin accounts. Please set
+                  Platform staff access requires two-factor authentication. Please set
                   it up to continue.
                 </AlertDescription>
               </Alert>

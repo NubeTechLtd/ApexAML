@@ -7,6 +7,7 @@
 // Callable by the app (an authenticated compliance officer) and by the weekly
 // re-screening cron (Lovable-Context: cron + service role key).
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { authorizeCustomer } from '../_shared/tenant-access.ts';
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -236,6 +237,10 @@ Deno.serve(async (req) => {
   const screenedBy = String(payload?.screened_by ?? "system").slice(0, 120);
 
   const supabase = createClient(supabaseUrl, serviceKey);
+
+  if (!await authorizeCustomer(req, customerId, ['analyst', 'compliance_officer', 'institution_admin'])) {
+    return json({ error: 'Institution membership required for screening' }, 403);
+  }
 
   try {
     // Previous screening outcome — used to detect newly-surfaced High risk.

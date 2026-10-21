@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
-type AuthState = 'loading' | 'unauthenticated' | 'forbidden' | 'admin';
+type AuthState = 'loading' | 'unauthenticated' | 'forbidden' | 'platform_admin';
 
 export function useAdminAuth() {
   const [state, setState] = useState<AuthState>('loading');
@@ -24,16 +24,16 @@ export function useAdminAuth() {
         .from('user_roles')
         .select('role')
         .eq('user_id', userId)
-        .eq('role', 'admin')
+        .eq('role', 'platform_admin')
         .maybeSingle();
       if (!mounted) return;
       setEmail(userEmail);
       if (error || !data) setState('forbidden');
-      else setState('admin');
+      else setState('platform_admin');
     };
 
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
-      evaluate(session?.user?.id ?? null, session?.user?.email ?? null);
+      setTimeout(() => { void evaluate(session?.user?.id ?? null, session?.user?.email ?? null); }, 0);
     });
 
     supabase.auth.getSession().then(({ data: { session } }) => {
