@@ -36,6 +36,13 @@
 
     --radius: 0.5rem;
 
+    --status-positive: #16A34A;
+    --green-control-foreground: #0F172A;
+    --whatsapp: #25D366;
+    --whatsapp-status: #0F172A;
+    --roadmap-sidebar-muted: 216.176471 30.357143% 56.078431%;
+    --roadmap-warning: #D52323;
+
     /* AML-specific tokens */
     --risk-critical: 0 72% 51%;
     --risk-critical-foreground: 0 0% 100%;
@@ -98,11 +105,11 @@
     --risk-critical: 0 62% 50%;
     --risk-critical-foreground: 0 0% 100%;
     --risk-high: 25 85% 55%;
-    --risk-high-foreground: 25 85% 90%;
+    --risk-high-foreground: 24.800000 84.269663% 17.450980%;
     --risk-medium: 45 83% 50%;
-    --risk-medium-foreground: 45 83% 90%;
+    --risk-medium-foreground: 44.651163 84.313725% 20.000000%;
     --risk-low: 142 61% 45%;
-    --risk-low-foreground: 142 61% 90%;
+    --risk-low-foreground: 140.816327 60.493827% 15.882353%;
 
     --navy: 213 55% 50%;
     --navy-light: 213 45% 40%;
@@ -120,6 +127,8 @@
     --sidebar-border: 220 14% 18%;
     --sidebar-ring: 213 55% 40%;
     --sidebar-muted: 215 14% 45%;
+    --roadmap-sidebar-muted: 215 14.173228% 50.196078%;
+    --roadmap-warning: #D75454;
   }
 }
 
@@ -244,11 +253,11 @@
     --risk-critical: 0 62% 50%;
     --risk-critical-foreground: 0 0% 100%;
     --risk-high: 25 85% 55%;
-    --risk-high-foreground: 25 85% 90%;
+    --risk-high-foreground: 24.800000 84.269663% 17.450980%;
     --risk-medium: 45 83% 50%;
-    --risk-medium-foreground: 45 83% 90%;
+    --risk-medium-foreground: 44.651163 84.313725% 20.000000%;
     --risk-low: 142 61% 45%;
-    --risk-low-foreground: 142 61% 90%;
+    --risk-low-foreground: 140.816327 60.493827% 15.882353%;
 
     --navy: 213 55% 50%;
     --navy-light: 213 45% 40%;
@@ -266,6 +275,8 @@
     --sidebar-border: 220 14% 18%;
     --sidebar-ring: 213 55% 40%;
     --sidebar-muted: 215 14% 45%;
+    --roadmap-sidebar-muted: 215 14.173228% 50.196078%;
+    --roadmap-warning: #D75454;
   --radius: 0.5rem;
   --text-muted-on-dark: #9CA3AF;
   --text-muted-on-dark-hover: #E5E7EB;
@@ -299,6 +310,11 @@
 }
 .marketing-zone :is(input, textarea, button, a, [tabindex]):is(:focus, :focus-visible) {
   --tw-ring-color: var(--primary-on-dark);
+}
+
+/* Roadmap-specific roles never alter sidebar or warning colours elsewhere. */
+.roadmap-surface {
+  --sidebar-muted: var(--roadmap-sidebar-muted);
 }
 
 /* Primary foregrounds remain opaque and independent of filled button surfaces.

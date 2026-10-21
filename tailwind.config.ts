@@ -24,6 +24,11 @@ export default {
         foreground: "hsl(var(--foreground))",
         "muted-on-dark": "var(--text-muted-on-dark)",
         "muted-on-dark-hover": "var(--text-muted-on-dark-hover)",
+        "status-positive": "var(--status-positive)",
+        "green-control-foreground": "var(--green-control-foreground)",
+        whatsapp: "var(--whatsapp)",
+        "whatsapp-status": "var(--whatsapp-status)",
+        "roadmap-warning": "var(--roadmap-warning)",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",

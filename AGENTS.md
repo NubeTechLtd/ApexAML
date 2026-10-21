@@ -4,6 +4,7 @@
 - Use semantic muted-on-dark text utilities for low-opacity marketing copy; retain translucent surfaces and higher-opacity text separately.
 - Keep dark primary foreground accents separate from filled primary button tokens, with shared scoped utility compatibility for existing and preserved UI; this prevents translucent foregrounds or button hover utilities from lowering contrast.
 - Keep field borders and muted text in theme tokens, with scoped marketing overrides for legacy translucent field boundaries, placeholders and focus rings; this preserves glass surfaces and app-theme independence.
+- Keep green-control foregrounds and roadmap-specific sidebar/warning roles in semantic tokens; scope roadmap sidebar overrides to its page so other app sidebars retain their own styling.
 
 - Keep subscription amounts and implementation fees in `src/lib/pricing.ts`, and derive calculators and price displays from them so pricing changes stay consistent across the site.
 - Register requested email templates in the shared transactional registry and invoke the shared queued sender from validated server paths; this keeps delivery, suppression and unsubscribe handling consistent.
