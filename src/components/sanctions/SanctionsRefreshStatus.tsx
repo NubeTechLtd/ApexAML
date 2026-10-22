@@ -70,7 +70,8 @@ export function SanctionsRefreshStatus() {
   const onUpload = async (file: File) => {
     setUploading(true);
     try {
-      const path = `${new Date().toISOString().slice(0, 10)}-${file.name}`;
+      const institutionId = await getCurrentInstitutionId();
+      const path = `${institutionId}/${new Date().toISOString().slice(0, 10)}-${file.name}`;
       const { error } = await supabase.storage
         .from('nfiu-list-uploads')
         .upload(path, file, { upsert: false });
