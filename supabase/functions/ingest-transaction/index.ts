@@ -123,9 +123,22 @@ Deno.serve(async (req) => {
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
   );
 
+  // Scope the row to the account holder's institution; fall back to the
+  // only institution when exactly one exists. Unknown accounts are rejected.
+  let institutionId: string | null = null;
+  const { data: owners } = await supabase
+    .from("customers").select("institution_id").eq("nuban", account_number).limit(2);
+  if (owners && owners.length === 1) institutionId = owners[0].institution_id;
+  if (!institutionId && (!owners || owners.length === 0)) {
+    const { data: insts } = await supabase.from("institutions").select("id").limit(2);
+    if (insts && insts.length === 1) institutionId = insts[0].id;
+  }
+  if (!institutionId) return json({ error: "Unknown institution for account" }, 422);
+
   const { data, error } = await supabase
     .from("transaction_queue")
     .insert({
+      institution_id: institutionId,
       transaction_id,
       account_number,
       amount,

@@ -238,7 +238,8 @@ Deno.serve(async (req) => {
 
   const supabase = createClient(supabaseUrl, serviceKey);
 
-  if (!await authorizeCustomer(req, customerId, ['analyst', 'compliance_officer', 'institution_admin'])) {
+  const institutionId = await authorizeCustomer(req, customerId, ['analyst', 'compliance_officer', 'institution_admin']);
+  if (!institutionId) {
     return json({ error: 'Institution membership required for screening' }, 403);
   }
 
@@ -247,6 +248,7 @@ Deno.serve(async (req) => {
     const { data: previous } = await supabase
       .from("adverse_media_results")
       .select("overall_risk_level")
+      .eq("institution_id", institutionId)
       .eq("customer_id", customerId)
       .order("search_date", { ascending: false })
       .limit(1)
@@ -288,6 +290,7 @@ Deno.serve(async (req) => {
     const { data: inserted, error } = await supabase
       .from("adverse_media_results")
       .insert({
+        institution_id: institutionId,
         customer_id: customerId,
         customer_name: customerName,
         bvn,

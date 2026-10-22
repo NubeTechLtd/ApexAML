@@ -56,7 +56,7 @@ Deno.serve(async (req) => {
   const { data: txns, error: fetchErr } = await supabase
     .from("transaction_queue")
     .select(
-      "transaction_id, account_number, amount, channel, transaction_datetime, raw_payload",
+      "institution_id, transaction_id, account_number, amount, channel, transaction_datetime, raw_payload",
     )
     .gte("transaction_datetime", start)
     .lt("transaction_datetime", end)
@@ -73,11 +73,12 @@ Deno.serve(async (req) => {
     total: number;
     ids: string[];
     name: string | null;
+    institution: string;
   };
   const groups = new Map<string, Agg>();
 
   for (const tx of txns ?? []) {
-    const acct = tx.account_number as string;
+    const acct = `${tx.institution_id}:${tx.account_number}`;
     const amt = Number(tx.amount) || 0;
     const payload = (tx.raw_payload ?? {}) as Record<string, unknown>;
     const name =
@@ -91,7 +92,8 @@ Deno.serve(async (req) => {
       if (!existing.name && name) existing.name = name;
     } else {
       groups.set(acct, {
-        account: acct,
+        account: tx.account_number as string,
+        institution: tx.institution_id as string,
         total: amt,
         ids: [tx.transaction_id as string],
         name,
@@ -102,6 +104,7 @@ Deno.serve(async (req) => {
   const rows = [...groups.values()]
     .filter((g) => g.total > CTR_THRESHOLD_NGN)
     .map((g) => ({
+      institution_id: g.institution,
       customer_id: g.account,
       customer_name: g.name ?? `Account ${g.account}`,
       report_date: reportDate,
