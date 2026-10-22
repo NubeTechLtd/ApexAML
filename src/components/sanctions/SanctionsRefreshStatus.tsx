@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { getCurrentInstitutionId } from '@/lib/institution';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Upload, CheckCircle2, AlertTriangle, XCircle } from 'lucide-react';
