@@ -101,7 +101,8 @@ Deno.serve(async (req) => {
     typeof body?.trigger_reference === "string" ? body.trigger_reference.slice(0, 128) : null;
   const signals = body?.signals ?? {};
 
-  if (!await authorizeCustomer(req, customerId, ['compliance_officer', 'institution_admin'])) {
+  const institutionId = await authorizeCustomer(req, customerId, ['compliance_officer', 'institution_admin']);
+  if (!institutionId) {
     return json({ error: 'Institution compliance role required' }, 403);
   }
 
@@ -203,6 +204,7 @@ Deno.serve(async (req) => {
 
     // ---- Persist -----------------------------------------------------------
     const { error: histError } = await supabase.from("risk_score_history").insert({
+      institution_id: institutionId,
       customer_id: customerId,
       previous_score: previousScore,
       new_score: newScore,
@@ -216,6 +218,7 @@ Deno.serve(async (req) => {
 
     const { error: upsertError } = await supabase.from("customer_risk_scores").upsert(
       {
+        institution_id: institutionId,
         customer_id: customerId,
         risk_score: newScore,
         risk_level: levelFor(newScore),

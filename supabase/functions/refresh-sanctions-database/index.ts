@@ -273,10 +273,16 @@ async function refreshList(
 async function refreshNFIU(supabase: any) {
   try {
     const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-    const { data: files, error } = await supabase.storage
-      .from(NFIU_BUCKET)
-      .list("", { limit: 100, sortBy: { column: "created_at", order: "desc" } });
+    // Uploads live under <institution_id>/<file>; scan each institution folder.
+    const { data: folders, error } = await supabase.storage.from(NFIU_BUCKET).list("", { limit: 100 });
     if (error) throw error;
+    const files: any[] = [];
+    for (const folder of folders ?? []) {
+      if (folder?.id) continue; // root-level files are not institution scoped
+      const { data: inner } = await supabase.storage.from(NFIU_BUCKET)
+        .list(folder.name, { limit: 100, sortBy: { column: "created_at", order: "desc" } });
+      for (const f of inner ?? []) files.push({ ...f, name: `${folder.name}/${f.name}` });
+    }
     const recent = (files ?? []).filter((f: any) =>
       f?.created_at && f.created_at >= cutoff &&
       /\.(csv|xml)$/i.test(f.name)

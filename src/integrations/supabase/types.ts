@@ -21,6 +21,7 @@ export type Database = {
           customer_id: string
           customer_name: string
           id: string
+          institution_id: string
           institution_name: string | null
           next_review_date: string
           overall_risk_level: string
@@ -35,6 +36,7 @@ export type Database = {
           customer_id: string
           customer_name: string
           id?: string
+          institution_id: string
           institution_name?: string | null
           next_review_date?: string
           overall_risk_level?: string
@@ -49,6 +51,7 @@ export type Database = {
           customer_id?: string
           customer_name?: string
           id?: string
+          institution_id?: string
           institution_name?: string | null
           next_review_date?: string
           overall_risk_level?: string
@@ -57,7 +60,15 @@ export type Database = {
           search_date?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "adverse_media_results_institution_id_fkey"
+            columns: ["institution_id"]
+            isOneToOne: false
+            referencedRelation: "institutions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       alerts: {
         Row: {
@@ -196,6 +207,7 @@ export type Database = {
           filed_at: string | null
           goaml_xml: string | null
           id: string
+          institution_id: string
           report_date: string
           reviewed_at: string | null
           reviewed_by: string | null
@@ -213,6 +225,7 @@ export type Database = {
           filed_at?: string | null
           goaml_xml?: string | null
           id?: string
+          institution_id: string
           report_date: string
           reviewed_at?: string | null
           reviewed_by?: string | null
@@ -230,6 +243,7 @@ export type Database = {
           filed_at?: string | null
           goaml_xml?: string | null
           id?: string
+          institution_id?: string
           report_date?: string
           reviewed_at?: string | null
           reviewed_by?: string | null
@@ -239,13 +253,22 @@ export type Database = {
           transaction_ids?: Json
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "ctr_queue_institution_id_fkey"
+            columns: ["institution_id"]
+            isOneToOne: false
+            referencedRelation: "institutions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       customer_risk_scores: {
         Row: {
           created_at: string
           customer_id: string
           id: string
+          institution_id: string
           kyc_tier: string | null
           last_calculated_at: string
           risk_level: string
@@ -256,6 +279,7 @@ export type Database = {
           created_at?: string
           customer_id: string
           id?: string
+          institution_id: string
           kyc_tier?: string | null
           last_calculated_at?: string
           risk_level?: string
@@ -266,13 +290,22 @@ export type Database = {
           created_at?: string
           customer_id?: string
           id?: string
+          institution_id?: string
           kyc_tier?: string | null
           last_calculated_at?: string
           risk_level?: string
           risk_score?: number
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "customer_risk_scores_institution_id_fkey"
+            columns: ["institution_id"]
+            isOneToOne: false
+            referencedRelation: "institutions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       customers: {
         Row: {
@@ -649,6 +682,7 @@ export type Database = {
           expiry_date: string | null
           file_size_bytes: number | null
           id: string
+          institution_id: string
           is_current: boolean
           kyc_tier_at_upload: string | null
           storage_path: string
@@ -667,6 +701,7 @@ export type Database = {
           expiry_date?: string | null
           file_size_bytes?: number | null
           id?: string
+          institution_id: string
           is_current?: boolean
           kyc_tier_at_upload?: string | null
           storage_path: string
@@ -685,6 +720,7 @@ export type Database = {
           expiry_date?: string | null
           file_size_bytes?: number | null
           id?: string
+          institution_id?: string
           is_current?: boolean
           kyc_tier_at_upload?: string | null
           storage_path?: string
@@ -695,7 +731,15 @@ export type Database = {
           verified_at?: string | null
           verified_by?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "kyc_documents_institution_id_fkey"
+            columns: ["institution_id"]
+            isOneToOne: false
+            referencedRelation: "institutions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       kyc_verification_vectors: {
         Row: {
@@ -995,6 +1039,7 @@ export type Database = {
           customer_id: string
           factors: Json | null
           id: string
+          institution_id: string
           new_score: number
           previous_score: number | null
           score_change: number | null
@@ -1007,6 +1052,7 @@ export type Database = {
           customer_id: string
           factors?: Json | null
           id?: string
+          institution_id: string
           new_score: number
           previous_score?: number | null
           score_change?: number | null
@@ -1019,13 +1065,22 @@ export type Database = {
           customer_id?: string
           factors?: Json | null
           id?: string
+          institution_id?: string
           new_score?: number
           previous_score?: number | null
           score_change?: number | null
           trigger_reference?: string | null
           trigger_type?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "risk_score_history_institution_id_fkey"
+            columns: ["institution_id"]
+            isOneToOne: false
+            referencedRelation: "institutions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       roadmap_lead_counter: {
         Row: {
@@ -1333,6 +1388,7 @@ export type Database = {
           currency: string
           direction: string
           id: string
+          institution_id: string
           narration: string | null
           raw_payload: Json | null
           status: string
@@ -1350,6 +1406,7 @@ export type Database = {
           currency: string
           direction: string
           id?: string
+          institution_id: string
           narration?: string | null
           raw_payload?: Json | null
           status?: string
@@ -1367,6 +1424,7 @@ export type Database = {
           currency?: string
           direction?: string
           id?: string
+          institution_id?: string
           narration?: string | null
           raw_payload?: Json | null
           status?: string
@@ -1374,7 +1432,15 @@ export type Database = {
           transaction_id?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "transaction_queue_institution_id_fkey"
+            columns: ["institution_id"]
+            isOneToOne: false
+            referencedRelation: "institutions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       transactions: {
         Row: {

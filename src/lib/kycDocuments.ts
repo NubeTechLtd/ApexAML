@@ -1,7 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
-
-/** Single-tenant institution namespace used as the first storage path segment. */
-export const INSTITUTION_ID = 'apexaml';
+import { getCurrentInstitutionId } from '@/lib/institution';
 export const KYC_BUCKET = 'kyc-documents';
 export const MAX_FILE_BYTES = 5 * 1024 * 1024;
 export const ACCEPTED_MIME = ['application/pdf', 'image/jpeg', 'image/png'];
@@ -119,7 +117,8 @@ export async function uploadKycDocument(params: {
   replaceExisting?: boolean;
 }): Promise<KycDocument> {
   const { file, customerId, documentType, uploadedBy, kycTier, replaceExisting } = params;
-  const path = `${INSTITUTION_ID}/${customerId}/${documentType}/${Date.now()}-${safeName(file.name)}`;
+  const institutionId = await getCurrentInstitutionId();
+  const path = `${institutionId}/${customerId}/${documentType}/${Date.now()}-${safeName(file.name)}`;
 
   const { error: uploadError } = await supabase.storage
     .from(KYC_BUCKET)
@@ -138,6 +137,7 @@ export async function uploadKycDocument(params: {
   const { data, error } = await supabase
     .from('kyc_documents')
     .insert({
+      institution_id: institutionId,
       customer_id: customerId,
       document_type: documentType,
       document_name: file.name,

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { getCurrentInstitutionId } from '@/lib/institution';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Upload, CheckCircle2, AlertTriangle, XCircle } from 'lucide-react';
@@ -70,7 +71,8 @@ export function SanctionsRefreshStatus() {
   const onUpload = async (file: File) => {
     setUploading(true);
     try {
-      const path = `${new Date().toISOString().slice(0, 10)}-${file.name}`;
+      const institutionId = await getCurrentInstitutionId();
+      const path = `${institutionId}/${new Date().toISOString().slice(0, 10)}-${file.name}`;
       const { error } = await supabase.storage
         .from('nfiu-list-uploads')
         .upload(path, file, { upsert: false });
