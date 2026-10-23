@@ -71,6 +71,13 @@
       "when": 1792702424464,
       "tag": "0009_institution_scope_compliance_tables",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1792776619977,
+      "tag": "0010_harden_hash_chained_audit_log",
+      "breakpoints": true
     }
   ]
 }
