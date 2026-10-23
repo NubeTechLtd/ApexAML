@@ -5,7 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
-import { Search, Lock } from 'lucide-react';
+import { Search, Lock, ShieldCheck, ShieldAlert, RefreshCw } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { NotificationBell } from '@/components/NotificationBell';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { cn } from '@/lib/utils';
@@ -40,7 +41,9 @@ const ACTION_LABELS: Record<string, string> = {
 
 const SystemAudit = () => {
   const [search, setSearch] = useState('');
-  const { entries, loading } = useAuditLog();
+  const { entries, loading, error, chains, canRead, refresh } = useAuditLog();
+  const brokenChain = chains.find(chain => !chain.is_valid);
+  const verified = !loading && !error && chains.length > 0 && !brokenChain;
 
   const rows: AuditRow[] = entries
     .map((e, i) => ({
@@ -72,7 +75,7 @@ const SystemAudit = () => {
               <Lock className="h-4 w-4 text-muted-foreground" />
               <div>
                 <h1 className="text-sm font-semibold text-foreground leading-tight">Audit Trail & Access Control</h1>
-                <p className="text-[10px] text-muted-foreground">Immutable record of all compliance actions — for CBN examination</p>
+                <p className="text-[10px] text-muted-foreground">Append-only, hash-chained compliance actions</p>
               </div>
               <Badge variant="outline" className="text-[10px] border-border text-muted-foreground ml-1">
                 Read-Only
@@ -91,9 +94,9 @@ const SystemAudit = () => {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Lock className="h-4 w-4 text-muted-foreground" />
-                    <CardTitle className="text-sm">Immutable Activity Log</CardTitle>
+                    <CardTitle className="text-sm">Activity Log</CardTitle>
                     <Badge variant="outline" className="text-[9px] border-border text-muted-foreground font-mono">
-                      APPEND-ONLY • TAMPER-PROOF
+                      APPEND-ONLY, HASH-CHAINED
                     </Badge>
                   </div>
                   <div className="relative w-56">
@@ -103,6 +106,18 @@ const SystemAudit = () => {
                 </div>
               </CardHeader>
               <CardContent>
+                <div className="mb-4 flex flex-wrap items-center gap-2" role="status">
+                  {verified ? (
+                    <Badge variant="outline" className="gap-1 text-foreground"><ShieldCheck className="h-3.5 w-3.5" />Chain verified</Badge>
+                  ) : brokenChain ? (
+                    <Badge variant="destructive" className="gap-1"><ShieldAlert className="h-3.5 w-3.5" />Chain break detected — entry {brokenChain.break_at}</Badge>
+                  ) : (
+                    <span className="text-xs text-muted-foreground">{loading ? 'Verifying chain…' : error ? 'Chain verification unavailable' : 'Compliance officer or institution administrator access required'}</span>
+                  )}
+                  {verified && <span className="text-xs text-muted-foreground">{chains.reduce((total, chain) => total + chain.checked_entries, 0)} entries checked across {chains.length} institution{chains.length === 1 ? '' : 's'}</span>}
+                  <Button variant="ghost" size="icon" onClick={() => void refresh()} disabled={loading} aria-label="Refresh and verify audit chain" title="Refresh and verify audit chain"><RefreshCw className="h-4 w-4" /></Button>
+                </div>
+                {error && <p role="alert" className="mb-3 text-xs text-destructive">{error}</p>}
                 <div className="rounded-lg border overflow-auto">
                   <Table>
                     <TableHeader>
@@ -141,7 +156,7 @@ const SystemAudit = () => {
                       {filtered.length === 0 && (
                         <TableRow className="hover:bg-transparent">
                           <TableCell colSpan={6} className="text-xs text-muted-foreground text-center py-8">
-                            {loading ? 'Loading audit entries…' : 'No audit entries recorded yet.'}
+                            {loading ? 'Loading audit entries…' : error ? 'Audit entries unavailable.' : !canRead ? 'Your institution role does not permit audit-log access.' : 'No audit entries recorded yet.'}
                           </TableCell>
                         </TableRow>
                       )}
@@ -150,8 +165,7 @@ const SystemAudit = () => {
                 </div>
                 <div className="mt-3">
                   <p className="text-[10px] text-muted-foreground">
-                    This log is append-only. Entries are timestamped and attributed, and cannot be modified or deleted by
-                    any user.
+                    This log is append-only, hash-chained per institution. Verification checks stored content and chain links; it does not provide external cryptographic sealing.
                   </p>
                 </div>
               </CardContent>

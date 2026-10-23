@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { getCurrentInstitutionId } from '@/lib/institution';
 
 export type AuditAction =
   | 'NFIU_ESCALATION'
@@ -26,11 +27,23 @@ export interface AuditEntry {
   justification: string;
   status?: 'success' | 'denied';
   userId?: string | null;
+  institutionId?: string;
+}
+
+export interface AuditChainResult {
+  institutionId: string;
+  is_valid: boolean;
+  checked_entries: number;
+  break_at: number | null;
+  reason: string | null;
 }
 
 interface AuditLogContextValue {
   entries: AuditEntry[];
   loading: boolean;
+  error: string | null;
+  chains: AuditChainResult[];
+  canRead: boolean;
   append: (entry: Omit<AuditEntry, 'timestamp'>) => Promise<void>;
   refresh: () => Promise<void>;
 }
@@ -46,6 +59,7 @@ type Row = {
   resource: string;
   justification: string | null;
   status: string;
+  institution_id: string;
 };
 
 const toEntry = (row: Row): AuditEntry => ({
@@ -57,21 +71,50 @@ const toEntry = (row: Row): AuditEntry => ({
   justification: row.justification ?? '',
   status: row.status === 'denied' ? 'denied' : 'success',
   userId: row.user_id,
+  institutionId: row.institution_id,
 });
 
 export function AuditLogProvider({ children }: { children: ReactNode }) {
   const [entries, setEntries] = useState<AuditEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [chains, setChains] = useState<AuditChainResult[]>([]);
+  const [canRead, setCanRead] = useState(false);
 
   const refresh = useCallback(async () => {
-    const { data, error } = await supabase
-      .from('audit_log')
-      .select('id, occurred_at, user_id, user_name, action, resource, justification, status')
-      .order('occurred_at', { ascending: false })
-      .limit(500);
-
-    if (!error && data) setEntries((data as Row[]).map(toEntry));
-    setLoading(false);
+    setLoading(true);
+    setError(null);
+    setChains([]);
+    try {
+      const { data: auth } = await supabase.auth.getUser();
+      if (!auth.user) { setEntries([]); setCanRead(false); return; }
+      const { data: memberships, error: membershipError } = await supabase.from('user_institutions')
+        .select('institution_id, role').eq('user_id', auth.user.id);
+      if (membershipError) throw membershipError;
+      const readable = (memberships ?? []).filter(m => ['compliance_officer', 'institution_admin'].includes(m.role));
+      setCanRead(readable.length > 0);
+      if (readable.length === 0) { setEntries([]); return; }
+      const [log, results] = await Promise.all([
+        supabase.from('audit_log')
+          .select('id, occurred_at, user_id, user_name, action, resource, justification, status, institution_id')
+          .in('institution_id', readable.map(m => m.institution_id))
+          .order('occurred_at', { ascending: false }).limit(500),
+        Promise.all(readable.map(async m => {
+          const { data, error: verificationError } = await supabase.rpc('verify_audit_chain', { institution_id: m.institution_id });
+          if (verificationError) throw verificationError;
+          const result = data?.[0];
+          if (!result) throw new Error('Chain verification returned no result.');
+          return { ...result, institutionId: m.institution_id };
+        })),
+      ]);
+      if (log.error) throw log.error;
+      setEntries((log.data as Row[]).map(toEntry));
+      setChains(results);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'Unable to load or verify the audit chain.');
+      setEntries([]);
+      setChains([]);
+    } finally { setLoading(false); }
   }, []);
 
   useEffect(() => {
@@ -82,16 +125,13 @@ export function AuditLogProvider({ children }: { children: ReactNode }) {
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'audit_log' },
-        (payload) => {
-          const row = payload.new as Row;
-          setEntries((prev) =>
-            prev.some((e) => e.id === row.id) ? prev : [toEntry(row), ...prev],
-          );
-        },
+        () => { void refresh(); },
       )
       .subscribe();
+    const { data: authListener } = supabase.auth.onAuthStateChange(() => { setTimeout(() => { void refresh(); }, 0); });
 
     return () => {
+      authListener.subscription.unsubscribe();
       void supabase.removeChannel(channel);
     };
   }, [refresh]);
@@ -105,36 +145,27 @@ export function AuditLogProvider({ children }: { children: ReactNode }) {
       user?.email ||
       'Unknown';
 
-    const optimistic: AuditEntry = {
-      ...entry,
-      analyst,
-      timestamp: new Date().toISOString(),
-      status: entry.status ?? 'success',
-    };
     if (!user) throw new Error('Sign in to record an audit entry');
 
-    const { data, error } = await supabase
+    const institutionId = entry.institutionId ?? await getCurrentInstitutionId();
+    const { error } = await supabase
       .from('audit_log')
       .insert({
         user_id: user.id,
+        institution_id: institutionId,
         user_name: analyst,
         action: entry.action,
         resource: entry.caseId,
         justification: entry.justification,
         status: entry.status ?? 'success',
-      })
-      .select('id, occurred_at, user_id, user_name, action, resource, justification, status')
-      .maybeSingle();
+      });
 
     if (error) throw error;
-    if (data) {
-      const saved = toEntry(data as Row);
-      setEntries((prev) => [saved, ...prev.filter((e) => e !== optimistic)]);
-    }
-  }, []);
+    await refresh();
+  }, [refresh]);
 
   return (
-    <AuditLogContext.Provider value={{ entries, loading, append, refresh }}>
+    <AuditLogContext.Provider value={{ entries, loading, error, chains, canRead, append, refresh }}>
       {children}
     </AuditLogContext.Provider>
   );
