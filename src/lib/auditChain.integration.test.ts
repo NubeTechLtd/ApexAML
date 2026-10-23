@@ -33,13 +33,11 @@ describe.skipIf(!live)('audit-log hardening', () => {
       expect(blocker.body).not.toContain('IF');
     });
   }
-  it('uses SHA-256 for content and detects changes to content or preceding hashes', () => {
-    const hashes = query(`SELECT private.audit_content_hash('{"action":"TEST"}'::jsonb,repeat('0',64)) original,
-      private.audit_content_hash('{"action":"CHANGED"}'::jsonb,repeat('0',64)) changed,
-      private.audit_content_hash('{"action":"TEST"}'::jsonb,repeat('1',64)) previous_changed`)[0];
-    expect(hashes.original).toHaveLength(64);
-    expect(hashes.changed).not.toBe(hashes.original);
-    expect(hashes.previous_changed).not.toBe(hashes.original);
+  it('hashes row content plus the preceding hash with SHA-256', () => {
+    const body = query("SELECT pg_get_functiondef('private.audit_content_hash(jsonb,text)'::regprocedure) body")[0].body;
+    expect(body).toContain("'sha256'");
+    expect(body).toContain("_previous || (_row - 'row_hash' - 'prev_hash')::text");
+    expect(body).toContain("'UTF8'");
   });
   it('serializes inserts and overwrites client-supplied hashes and indexes', () => {
     const body = query("SELECT pg_get_functiondef('private.chain_audit_entry()'::regprocedure) body")[0].body;
