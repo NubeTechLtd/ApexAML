@@ -1,9 +1,9 @@
 # Roadmap
 
 ## Audit-log hardening
-- [ ] Restrict audit writes and reads by institution membership and role, revoke mutations, and enforce mutation-blocking triggers.
-- [ ] Backfill and serialize per-institution SHA-256 chains; expose authorized verification and show its real result on the audit page.
-- [ ] Run authorization/integrity regression tests and verify the signed-in audit page.
+- [x] Restrict audit writes and reads by institution membership and role, revoke mutations, and enforce unconditional UPDATE/DELETE/TRUNCATE blockers.
+- [x] Serialize per-institution SHA-256 chains and expose officer-only verification with real verified/broken/unavailable states on the audit page. No pre-existing records required backfill.
+- [x] Thirteen read-only authorization/structure tests passed; rollback-only database tests confirmed generated links and service-role UPDATE/DELETE rejection. Signed-in /audit insertion, readback, verification and cross-institution denial passed; one clearly labelled permanent verification-test entry remains.
 
 ## Platform and institution access separation
 - [x] Restrict platform roles to platform_admin; enforce institution roles and remove staff tenant bypasses, including storage and tenant service-function paths.
