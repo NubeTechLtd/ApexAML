@@ -162,7 +162,7 @@ export type Database = {
           actor_id?: string | null
           actor_name?: string | null
           case_id?: string | null
-          chain_index: number
+          chain_index?: number
           created_at?: string
           id?: string
           institution_id: string
@@ -170,9 +170,9 @@ export type Database = {
           justification?: string | null
           metadata?: Json
           occurred_at?: string
-          prev_hash: string
+          prev_hash?: string
           resource?: string
-          row_hash: string
+          row_hash?: string
           status?: string
           user_id?: string | null
           user_name?: string
