@@ -1,5 +1,7 @@
 # Project rules
 
+- Audit logs use serialized per-institution SHA-256 chains, server-side role-scoped verification, and unconditional mutation triggers; inserts never request a returned row because writers may lack read access.
+
 - Keep platform authorization separate from tenant membership; tenant RLS uses institution roles and read-only expiring support grants, never platform role bypasses, so staff privileges cannot expose customer data.
 - Activate and revoke support access only through authenticated security-definer RPCs that atomically write audit events; require MFA and a scoped justification to prevent silent support grants.
 - Guard service-credential tenant functions with exact system credentials or verified customer membership and operation roles; read-only support cannot invoke tenant writes or AI drafting.
