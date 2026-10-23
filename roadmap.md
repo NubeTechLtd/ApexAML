@@ -1,5 +1,10 @@
 # Roadmap
 
+## Audit-log hardening
+- [ ] Restrict audit writes and reads by institution membership and role, revoke mutations, and enforce mutation-blocking triggers.
+- [ ] Backfill and serialize per-institution SHA-256 chains; expose authorized verification and show its real result on the audit page.
+- [ ] Run authorization/integrity regression tests and verify the signed-in audit page.
+
 ## Platform and institution access separation
 - [x] Restrict platform roles to platform_admin; enforce institution roles and remove staff tenant bypasses, including storage and tenant service-function paths.
 - [x] Add explicit institution-scoped, audit-logged, thirty-minute read-only support access and update both admin pages.
