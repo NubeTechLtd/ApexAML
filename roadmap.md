@@ -1,5 +1,10 @@
 # Roadmap
 
+## Platform role changes
+- [ ] Rename the endpoint, require platform staff MFA and justification, atomically audit grants/revokes, and enforce call limits and lockout protections.
+- [ ] Notify other platform admins in-app and show platform role changes on admin analytics; document pending email notices.
+- [ ] Run authorization tests and check the signed-in admin screens.
+
 ## Audit-log hardening
 - [x] Restrict audit writes and reads by institution membership and role, revoke mutations, and enforce unconditional UPDATE/DELETE/TRUNCATE blockers.
 - [x] Serialize per-institution SHA-256 chains and expose officer-only verification with real verified/broken/unavailable states on the audit page. No pre-existing records required backfill.
