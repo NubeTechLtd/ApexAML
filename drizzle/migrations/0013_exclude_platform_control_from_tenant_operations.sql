@@ -1,0 +1,10 @@
+CREATE OR REPLACE FUNCTION private.default_institution() RETURNS uuid LANGUAGE sql STABLE SECURITY DEFINER SET search_path='' AS $fn$ SELECT CASE WHEN count(*)=1 THEN (array_agg(id))[1] ELSE NULL END FROM public.institutions WHERE institution_type <> 'platform_control' $fn$;
+CREATE OR REPLACE FUNCTION public.support_institutions() RETURNS TABLE(id uuid,name text) LANGUAGE sql STABLE SECURITY DEFINER SET search_path='' AS $fn$ SELECT i.id,i.name FROM public.institutions i WHERE i.institution_type <> 'platform_control' AND private.is_platform_admin() AND auth.jwt()->>'aal'='aal2' $fn$;
+CREATE OR REPLACE FUNCTION public.start_support_access(_institution_id uuid,_justification text,_confirmed boolean) RETURNS uuid LANGUAGE plpgsql SECURITY DEFINER SET search_path='' AS $fn$ DECLARE gid uuid; BEGIN
+ IF NOT private.is_platform_admin() OR auth.jwt()->>'aal' IS DISTINCT FROM 'aal2' THEN RAISE EXCEPTION 'Platform staff MFA required'; END IF;
+ IF NOT coalesce(_confirmed,false) OR length(trim(coalesce(_justification,'')))<20 THEN RAISE EXCEPTION 'Confirm support access and provide at least 20 characters of justification'; END IF;
+ IF NOT EXISTS(SELECT 1 FROM public.institutions WHERE id=_institution_id AND institution_type <> 'platform_control') THEN RAISE EXCEPTION 'A tenant institution is required'; END IF;
+ PERFORM pg_advisory_xact_lock(hashtextextended(auth.uid()::text,0)); PERFORM public.end_support_access();
+ INSERT INTO public.support_access_grants(user_id,institution_id,justification) VALUES(auth.uid(),_institution_id,trim(_justification)) RETURNING id INTO gid;
+ INSERT INTO public.audit_log(user_id,user_name,institution_id,action,resource,justification,metadata) VALUES(auth.uid(),coalesce(auth.jwt()->>'email','Unknown'),_institution_id,'SUPPORT_ACCESS_STARTED',gid::text,trim(_justification),jsonb_build_object('grant_id',gid,'access','read_only','expires_at',now()+interval '30 minutes')); RETURN gid;
+END $fn$;

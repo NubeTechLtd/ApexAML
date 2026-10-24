@@ -1,5 +1,7 @@
 # Project rules
 
+- Platform role changes use a caller-authenticated atomic RPC for mutation, audit and per-recipient in-app notices, with serialized lockout checks and database-backed call limits; a dedicated non-tenant audit scope prevents platform events from granting tenant memberships.
+
 - Audit logs use serialized per-institution SHA-256 chains, server-side role-scoped verification, and unconditional mutation triggers; inserts never request a returned row because writers may lack read access.
 
 - Keep platform authorization separate from tenant membership; tenant RLS uses institution roles and read-only expiring support grants, never platform role bypasses, so staff privileges cannot expose customer data.

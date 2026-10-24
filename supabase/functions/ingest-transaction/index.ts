@@ -130,7 +130,7 @@ Deno.serve(async (req) => {
     .from("customers").select("institution_id").eq("nuban", account_number).limit(2);
   if (owners && owners.length === 1) institutionId = owners[0].institution_id;
   if (!institutionId && (!owners || owners.length === 0)) {
-    const { data: insts } = await supabase.from("institutions").select("id").limit(2);
+    const { data: insts } = await supabase.from("institutions").select("id").neq("institution_type", "platform_control").limit(2);
     if (insts && insts.length === 1) institutionId = insts[0].id;
   }
   if (!institutionId) return json({ error: "Unknown institution for account" }, 422);

@@ -85,6 +85,20 @@
       "when": 1792776691787,
       "tag": "0011_audit_chain_generated_field_defaults",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1792822779637,
+      "tag": "0012_atomic_platform_role_changes",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1792822957547,
+      "tag": "0013_exclude_platform_control_from_tenant_operations",
+      "breakpoints": true
     }
   ]
 }

@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { SupportAccessPanel } from '@/components/SupportAccessPanel';
+import { PlatformRoleChanges } from '@/components/PlatformRoleChanges';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -145,6 +146,7 @@ export default function AdminAnalytics() {
           <SupportAccessPanel />
 
           <main className="flex-1 p-6 space-y-6 overflow-auto">
+            <PlatformRoleChanges />
             {/* KPIs */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <KpiCard label="Unique visitors" value={totalVisitors} loading={loading} />

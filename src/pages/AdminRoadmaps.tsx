@@ -171,6 +171,8 @@ export default function AdminRoadmaps() {
   const [adminSheetOpen, setAdminSheetOpen] = useState(false);
   const [newAdminEmail, setNewAdminEmail] = useState('');
   const [grantingAdmin, setGrantingAdmin] = useState(false);
+  const [roleAction, setRoleAction] = useState<'grant' | 'revoke'>('grant');
+  const [roleJustification, setRoleJustification] = useState('');
 
   const loadAll = async () => {
     const [l, s, d, ev, pe] = await Promise.all([
@@ -338,10 +340,10 @@ export default function AdminRoadmaps() {
   const handleGrantAdmin = async (e: React.FormEvent) => {
     e.preventDefault();
     const email = newAdminEmail.trim().toLowerCase();
-    if (!email) return;
+    if (!email || roleJustification.trim().length < 20) return;
     setGrantingAdmin(true);
-    const { data, error } = await supabase.functions.invoke('grant-admin-role', {
-      body: { email },
+    const { data, error } = await supabase.functions.invoke('grant-platform-role', {
+      body: { email, action: roleAction, justification: roleJustification.trim() },
     });
     setGrantingAdmin(false);
     if (error || (data && (data as { error?: string }).error)) {
@@ -349,8 +351,9 @@ export default function AdminRoadmaps() {
       toast.error(msg);
       return;
     }
-    toast.success(`${email} now has platform staff access, without institution access.`);
+    toast.success(`${email}: platform staff access ${roleAction === 'grant' ? 'granted' : 'revoked'}.`);
     setNewAdminEmail('');
+    setRoleJustification('');
     setAdminSheetOpen(false);
   };
 
@@ -425,17 +428,18 @@ export default function AdminRoadmaps() {
                   <SheetTrigger asChild>
                     <Button variant="outline" size="sm">
                       <UserPlus className="h-4 w-4 mr-2" />
-                      Add platform staff
+                      Manage platform staff
                     </Button>
                   </SheetTrigger>
                   <SheetContent>
                     <SheetHeader>
-                      <SheetTitle>Grant platform staff access</SheetTitle>
+                      <SheetTitle>Manage platform staff access</SheetTitle>
                       <SheetDescription>
                         The user must already have an ApexAML account. This grants platform_admin only, not institution membership or customer data access.
                       </SheetDescription>
                     </SheetHeader>
                     <form onSubmit={handleGrantAdmin} className="space-y-4 py-6">
+                      <div className="space-y-1.5"><Label htmlFor="platform-role-action">Action</Label><Select value={roleAction} onValueChange={value => setRoleAction(value === 'revoke' ? 'revoke' : 'grant')}><SelectTrigger id="platform-role-action"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="grant">Grant platform access</SelectItem><SelectItem value="revoke">Revoke platform access</SelectItem></SelectContent></Select></div>
                       <div className="space-y-1.5">
                         <Label htmlFor="new-admin-email">Email</Label>
                         <Input
@@ -447,9 +451,10 @@ export default function AdminRoadmaps() {
                           onChange={(e) => setNewAdminEmail(e.target.value)}
                         />
                       </div>
+                      <div className="space-y-1.5"><Label htmlFor="platform-role-justification">Justification</Label><Input id="platform-role-justification" required minLength={20} maxLength={2000} value={roleJustification} onChange={e => setRoleJustification(e.target.value)} /></div>
                       <SheetFooter>
-                        <Button type="submit" disabled={grantingAdmin} className="w-full">
-                          {grantingAdmin ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Grant platform staff access'}
+                        <Button type="submit" variant={roleAction === 'revoke' ? 'destructive' : 'default'} disabled={grantingAdmin || roleJustification.trim().length < 20} className="w-full">
+                          {grantingAdmin ? <Loader2 className="h-4 w-4 animate-spin" /> : roleAction === 'grant' ? 'Grant platform staff access' : 'Revoke platform staff access'}
                         </Button>
                       </SheetFooter>
                     </form>
