@@ -1,9 +1,11 @@
 # Roadmap
 
 ## Platform role changes
-- [ ] Rename the endpoint, require platform staff MFA and justification, atomically audit grants/revokes, and enforce call limits and lockout protections.
-- [ ] Notify other platform admins in-app and show platform role changes on admin analytics; document pending email notices.
-- [ ] Run authorization tests and check the signed-in admin screens.
+- [x] Rename the endpoint, require platform staff MFA and justification, atomically audit grants/revokes, and enforce five calls per fifteen minutes plus self/last-admin lockout protections. Retired live endpoint removed.
+- [x] Notify other platform admins in-app and show platform role changes on admin analytics; email TODO recorded in docs/EDGE_FUNCTIONS.md. Non-tenant audit scope excluded from tenant fallback and support access.
+- [x] Twenty-two authorization/structure tests passed; signed-in browser and deployed endpoint both reject missing MFA; build OK.
+- [ ] Verify successful grants, revocations, history readback and notification delivery end-to-end — blocked by missing MFA setup and a second administrator account. No live roles changed during verification.
+- [ ] Administrator email notices — intentionally pending until a second admin exists and an approved sending route is available; no Resend use.
 
 ## Audit-log hardening
 - [x] Restrict audit writes and reads by institution membership and role, revoke mutations, and enforce unconditional UPDATE/DELETE/TRUNCATE blockers.
