@@ -905,6 +905,103 @@ export type Database = {
         }
         Relationships: []
       }
+      platform_role_call_limits: {
+        Row: {
+          calls: number
+          user_id: string
+          window_start: string
+        }
+        Insert: {
+          calls?: number
+          user_id: string
+          window_start?: string
+        }
+        Update: {
+          calls?: number
+          user_id?: string
+          window_start?: string
+        }
+        Relationships: []
+      }
+      platform_role_changes: {
+        Row: {
+          action: string
+          actor_email: string
+          actor_id: string
+          audit_id: string
+          created_at: string
+          id: string
+          justification: string
+          role: string
+          target_email: string
+          target_id: string
+        }
+        Insert: {
+          action: string
+          actor_email: string
+          actor_id: string
+          audit_id: string
+          created_at?: string
+          id?: string
+          justification: string
+          role?: string
+          target_email: string
+          target_id: string
+        }
+        Update: {
+          action?: string
+          actor_email?: string
+          actor_id?: string
+          audit_id?: string
+          created_at?: string
+          id?: string
+          justification?: string
+          role?: string
+          target_email?: string
+          target_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "platform_role_changes_audit_id_fkey"
+            columns: ["audit_id"]
+            isOneToOne: false
+            referencedRelation: "audit_log"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      platform_role_notifications: {
+        Row: {
+          change_id: string
+          created_at: string
+          id: string
+          read_at: string | null
+          recipient_id: string
+        }
+        Insert: {
+          change_id: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          recipient_id: string
+        }
+        Update: {
+          change_id?: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          recipient_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "platform_role_notifications_change_id_fkey"
+            columns: ["change_id"]
+            isOneToOne: false
+            referencedRelation: "platform_role_changes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       regulatory_jurisdictions: {
         Row: {
           base_currency: string
@@ -1634,7 +1731,15 @@ export type Database = {
       }
     }
     Functions: {
+      change_platform_role: {
+        Args: { _action: string; _email: string; _justification: string }
+        Returns: Json
+      }
       end_support_access: { Args: never; Returns: undefined }
+      mark_platform_notification_read: {
+        Args: { _id: string }
+        Returns: undefined
+      }
       request_risk_recalculation: {
         Args: {
           _customer_id: string
