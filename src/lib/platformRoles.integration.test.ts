@@ -12,6 +12,11 @@ describe.skipIf(!live)('platform role authorization', () => {
     expect(body()).toContain("IS DISTINCT FROM 'aal2'");
     expect(query("SELECT has_function_privilege('anon','public.change_platform_role(text,text,text)','EXECUTE') allowed")[0].allowed).toBe(false);
   });
+  it('keeps the platform audit scope outside tenant fallback and support access', () => {
+    for (const fn of ['private.default_institution()', 'public.support_institutions()', 'public.start_support_access(uuid,text,boolean)']) {
+      expect(query(`SELECT pg_get_functiondef('${fn}'::regprocedure) body`)[0].body).toContain("institution_type <> 'platform_control'");
+    }
+  });
   it('requires at least 20 justification characters', () => { expect(body()).toContain('length(trim(_justification))<20'); });
   it('grants only platform_admin and never writes memberships', () => {
     expect(body()).toContain("VALUES(target,'platform_admin')");
