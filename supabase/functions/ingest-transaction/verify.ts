@@ -30,17 +30,21 @@ export async function signatureValid(secret: string, timestamp: string, rawBody:
 
 const b64 = (s: string) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
 
-/** Stored secrets are base64(iv[12] || AES-256-GCM ciphertext) under a base64 32-byte master key. */
+/** AES-256 key = SHA-256 of the server-held master string. */
+const aesKey = async (master: string, use: KeyUsage) =>
+  crypto.subtle.importKey("raw", await crypto.subtle.digest("SHA-256", enc.encode(master)), "AES-GCM", false, [use]);
+
+/** Stored secrets are base64(iv[12] || AES-256-GCM ciphertext). */
 export async function decryptSecret(encrypted: string, masterKeyB64: string): Promise<string> {
   const raw = b64(encrypted);
-  const key = await crypto.subtle.importKey("raw", b64(masterKeyB64), "AES-GCM", false, ["decrypt"]);
+  const key = await aesKey(masterKeyB64, "decrypt");
   const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv: raw.slice(0, 12) }, key, raw.slice(12));
   return new TextDecoder().decode(plain);
 }
 
 export async function encryptSecret(secret: string, masterKeyB64: string): Promise<string> {
   const iv = crypto.getRandomValues(new Uint8Array(12));
-  const key = await crypto.subtle.importKey("raw", b64(masterKeyB64), "AES-GCM", false, ["encrypt"]);
+  const key = await aesKey(masterKeyB64, "encrypt");
   const ct = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, enc.encode(secret)));
   const out = new Uint8Array(12 + ct.length);
   out.set(iv); out.set(ct, 12);
