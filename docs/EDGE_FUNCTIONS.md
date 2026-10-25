@@ -5,3 +5,11 @@
 Role mutation, hash-chained audit_log entry, platform history and notifications commit together. Audit entries use a dedicated non-tenant platform-control institution without creating any memberships. Platform administrators read the platform history, not tenant audit data. Other platform admins receive individual in-app notices; no email is sent.
 
 TODO: Add administrator email notices once a second admin exists and an approved sending route is in place; do not use Resend for this feature.
+## ingest-transaction
+
+Headers: `x-institution-key` (key_id), `x-webhook-timestamp` (Unix seconds), `x-webhook-signature` (hex HMAC-SHA256 of `timestamp + "." + rawBody`, optional `sha256=` prefix).
+- Rejects timestamps more than 5 minutes old (or ahead).
+- Body must include a unique `event_id`; duplicates per institution return `{status:"duplicate"}` without re-queuing (processed_webhook_events unique constraint, atomic RPC `record_webhook_transaction`).
+- Secrets live per institution in `institution_webhook_secrets` as AES-256-GCM ciphertext under `WEBHOOK_SECRETS_KEY`; institution_id always comes from the key, never the payload.
+- Every rejection is written to `webhook_rejections` (reason, key, ip, user agent).
+- TODO: admin screen to issue/rotate keys (use `encryptSecret` from `verify.ts`).
