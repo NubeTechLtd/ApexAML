@@ -1,164 +1,93 @@
 // Ingest transaction webhook from core banking.
-// Validates HMAC-SHA256 signature, queues payload, returns immediately.
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.4";
+// Per-institution keys (x-institution-key), signed timestamp + "." + body (HMAC-SHA256),
+// 5-minute freshness window, idempotent on event_id. Institution always comes from the key.
+import { createClient } from "npm:@supabase/supabase-js@2";
+import { decryptSecret, signatureValid, timestampFresh } from "./verify.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-webhook-signature",
+    "authorization, x-client-info, apikey, content-type, x-webhook-signature, x-webhook-timestamp, x-institution-key",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
 const json = (body: unknown, status = 200) =>
-  new Response(JSON.stringify(body), {
-    status,
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
-  });
-
-function hexToBytes(hex: string): Uint8Array {
-  const clean = hex.startsWith("sha256=") ? hex.slice(7) : hex;
-  if (clean.length % 2 !== 0) return new Uint8Array();
-  const out = new Uint8Array(clean.length / 2);
-  for (let i = 0; i < out.length; i++) {
-    const b = parseInt(clean.substr(i * 2, 2), 16);
-    if (Number.isNaN(b)) return new Uint8Array();
-    out[i] = b;
-  }
-  return out;
-}
-
-function bytesToHex(bytes: ArrayBuffer): string {
-  return Array.from(new Uint8Array(bytes))
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("");
-}
-
-function timingSafeEqual(a: Uint8Array, b: Uint8Array): boolean {
-  if (a.length !== b.length || a.length === 0) return false;
-  let diff = 0;
-  for (let i = 0; i < a.length; i++) diff |= a[i] ^ b[i];
-  return diff === 0;
-}
-
-async function verifySignature(
-  secret: string,
-  rawBody: string,
-  headerSig: string,
-): Promise<boolean> {
-  const key = await crypto.subtle.importKey(
-    "raw",
-    new TextEncoder().encode(secret),
-    { name: "HMAC", hash: "SHA-256" },
-    false,
-    ["sign"],
-  );
-  const mac = await crypto.subtle.sign(
-    "HMAC",
-    key,
-    new TextEncoder().encode(rawBody),
-  );
-  const expectedHex = bytesToHex(mac);
-  return timingSafeEqual(
-    new TextEncoder().encode(expectedHex),
-    new TextEncoder().encode(
-      headerSig.startsWith("sha256=") ? headerSig.slice(7) : headerSig,
-    ),
-  ) || timingSafeEqual(hexToBytes(expectedHex), hexToBytes(headerSig));
-}
+  new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
 
 Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
-  }
-  if (req.method !== "POST") {
-    return json({ error: "Method not allowed" }, 405);
-  }
+  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
-  const secret = Deno.env.get("CORE_BANKING_WEBHOOK_SECRET");
-  if (!secret) {
-    return json({ error: "Webhook secret not configured" }, 500);
-  }
+  const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+  const keyId = (req.headers.get("x-institution-key") ?? "").slice(0, 128) || null;
+  let institutionId: string | null = null;
+  let eventId: string | null = null;
 
+  const reject = async (reason: string, status: number, message: string) => {
+    const { error } = await supabase.from("webhook_rejections").insert({
+      key_id: keyId,
+      institution_id: institutionId,
+      event_id: eventId,
+      reason,
+      ip_address: (req.headers.get("x-forwarded-for") ?? "").split(",")[0].trim() || null,
+      user_agent: (req.headers.get("user-agent") ?? "").slice(0, 500) || null,
+    });
+    if (error) console.error("rejection log failed", reason, error.message);
+    console.warn("ingest-transaction rejected", { reason, keyId });
+    return json({ error: message }, status);
+  };
+
+  if (req.method !== "POST") return reject("method_not_allowed", 405, "Method not allowed");
+
+  const masterKey = Deno.env.get("WEBHOOK_SECRETS_KEY");
+  if (!masterKey) return reject("server_misconfigured", 500, "Webhook verification unavailable");
+
+  const timestamp = req.headers.get("x-webhook-timestamp") ?? "";
   const signature = req.headers.get("x-webhook-signature") ?? "";
-  if (!signature) return json({ error: "Missing signature" }, 401);
+  if (!keyId) return reject("missing_key", 401, "Missing x-institution-key");
+  if (!timestamp) return reject("missing_timestamp", 401, "Missing x-webhook-timestamp");
+  if (!signature) return reject("missing_signature", 401, "Missing signature");
+  if (!timestampFresh(timestamp)) return reject("stale_or_invalid_timestamp", 401, "Timestamp outside the 5-minute window");
+
+  const { data: keyRow } = await supabase
+    .from("institution_webhook_secrets")
+    .select("institution_id, encrypted_secret, institutions!inner(institution_type)")
+    .eq("key_id", keyId).eq("active", true).maybeSingle();
+  if (!keyRow || (keyRow as any).institutions?.institution_type === "platform_control") {
+    return reject("unknown_or_inactive_key", 401, "Invalid signature");
+  }
+
+  let secret: string;
+  try { secret = await decryptSecret(keyRow.encrypted_secret, masterKey); }
+  catch { return reject("secret_decrypt_failed", 500, "Webhook verification unavailable"); }
 
   const rawBody = await req.text();
-  const valid = await verifySignature(secret, rawBody, signature);
-  if (!valid) return json({ error: "Invalid signature" }, 401);
+  if (rawBody.length > 256_000) return reject("payload_too_large", 413, "Payload too large");
+  if (!(await signatureValid(secret, timestamp, rawBody, signature))) return reject("invalid_signature", 401, "Invalid signature");
+  institutionId = keyRow.institution_id; // authenticated: only now attribute the request
 
   let payload: Record<string, unknown>;
-  try {
-    payload = JSON.parse(rawBody);
-  } catch {
-    return json({ error: "Invalid JSON" }, 400);
-  }
+  try { payload = JSON.parse(rawBody); } catch { return reject("invalid_json", 400, "Invalid JSON"); }
+  if (typeof payload.event_id === "string") eventId = payload.event_id.slice(0, 200);
 
-  const {
-    transaction_id,
-    account_number,
-    amount,
-    currency,
-    channel,
-    counterparty_account,
-    counterparty_bank_code,
-    transaction_datetime,
-    narration,
-    direction,
-  } = payload as Record<string, unknown>;
-
+  const p = payload;
+  const optStr = (v: unknown) => v === undefined || v === null || typeof v === "string";
   if (
-    typeof transaction_id !== "string" ||
-    typeof account_number !== "string" ||
-    typeof amount !== "number" ||
-    typeof currency !== "string" ||
-    typeof channel !== "string" ||
-    typeof transaction_datetime !== "string" ||
-    (direction !== "debit" && direction !== "credit")
-  ) {
-    return json({ error: "Invalid payload" }, 400);
-  }
+    typeof p.event_id !== "string" || !/^[A-Za-z0-9_.:-]{1,200}$/.test(p.event_id) ||
+    typeof p.transaction_id !== "string" || typeof p.account_number !== "string" ||
+    typeof p.amount !== "number" || !Number.isFinite(p.amount) ||
+    typeof p.currency !== "string" || typeof p.channel !== "string" ||
+    typeof p.transaction_datetime !== "string" || Number.isNaN(Date.parse(p.transaction_datetime)) ||
+    (p.direction !== "debit" && p.direction !== "credit") ||
+    !optStr(p.counterparty_account) || !optStr(p.counterparty_bank_code) || !optStr(p.narration)
+  ) return reject("invalid_payload", 400, "Invalid payload");
 
-  const supabase = createClient(
-    Deno.env.get("SUPABASE_URL")!,
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-  );
+  // Any institution_id in the payload is ignored; the key decides.
+  const { institution_id: _ignored, ...tx } = p;
+  const { data, error } = await supabase.rpc("record_webhook_transaction", {
+    _institution_id: institutionId, _key_id: keyId, _event_id: p.event_id, _tx: tx,
+  });
+  if (error || !data) return reject("queue_failed", 500, "Failed to queue transaction");
 
-  // Scope the row to the account holder's institution; fall back to the
-  // only institution when exactly one exists. Unknown accounts are rejected.
-  let institutionId: string | null = null;
-  const { data: owners } = await supabase
-    .from("customers").select("institution_id").eq("nuban", account_number).limit(2);
-  if (owners && owners.length === 1) institutionId = owners[0].institution_id;
-  if (!institutionId && (!owners || owners.length === 0)) {
-    const { data: insts } = await supabase.from("institutions").select("id").neq("institution_type", "platform_control").limit(2);
-    if (insts && insts.length === 1) institutionId = insts[0].id;
-  }
-  if (!institutionId) return json({ error: "Unknown institution for account" }, 422);
-
-  const { data, error } = await supabase
-    .from("transaction_queue")
-    .insert({
-      institution_id: institutionId,
-      transaction_id,
-      account_number,
-      amount,
-      currency,
-      channel,
-      counterparty_account: (counterparty_account as string) ?? null,
-      counterparty_bank_code: (counterparty_bank_code as string) ?? null,
-      transaction_datetime,
-      narration: (narration as string) ?? null,
-      direction,
-      status: "pending",
-      raw_payload: payload,
-    })
-    .select("id")
-    .single();
-
-  if (error || !data) {
-    return json({ error: "Failed to queue transaction" }, 500);
-  }
-
-  // Return immediately — no downstream processing awaited.
-  return json({ status: "queued", id: data.id }, 200);
+  const result = data as { status: string; id: string | null };
+  return json(result, 200);
 });
