@@ -658,6 +658,44 @@ export type Database = {
         }
         Relationships: []
       }
+      institution_webhook_secrets: {
+        Row: {
+          active: boolean
+          created_at: string
+          deactivated_at: string | null
+          encrypted_secret: string
+          id: string
+          institution_id: string
+          key_id: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          deactivated_at?: string | null
+          encrypted_secret: string
+          id?: string
+          institution_id: string
+          key_id: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          deactivated_at?: string | null
+          encrypted_secret?: string
+          id?: string
+          institution_id?: string
+          key_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "institution_webhook_secrets_institution_id_fkey"
+            columns: ["institution_id"]
+            isOneToOne: false
+            referencedRelation: "institutions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       institutions: {
         Row: {
           cbn_licence_number: string | null
@@ -998,6 +1036,41 @@ export type Database = {
             columns: ["change_id"]
             isOneToOne: false
             referencedRelation: "platform_role_changes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      processed_webhook_events: {
+        Row: {
+          event_id: string
+          id: string
+          institution_id: string
+          key_id: string
+          received_at: string
+          transaction_queue_id: string | null
+        }
+        Insert: {
+          event_id: string
+          id?: string
+          institution_id: string
+          key_id: string
+          received_at?: string
+          transaction_queue_id?: string | null
+        }
+        Update: {
+          event_id?: string
+          id?: string
+          institution_id?: string
+          key_id?: string
+          received_at?: string
+          transaction_queue_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "processed_webhook_events_institution_id_fkey"
+            columns: ["institution_id"]
+            isOneToOne: false
+            referencedRelation: "institutions"
             referencedColumns: ["id"]
           },
         ]
@@ -1655,6 +1728,50 @@ export type Database = {
         }
         Relationships: []
       }
+      webhook_rejections: {
+        Row: {
+          endpoint: string
+          event_id: string | null
+          id: string
+          institution_id: string | null
+          ip_address: string | null
+          key_id: string | null
+          reason: string
+          received_at: string
+          user_agent: string | null
+        }
+        Insert: {
+          endpoint?: string
+          event_id?: string | null
+          id?: string
+          institution_id?: string | null
+          ip_address?: string | null
+          key_id?: string | null
+          reason: string
+          received_at?: string
+          user_agent?: string | null
+        }
+        Update: {
+          endpoint?: string
+          event_id?: string | null
+          id?: string
+          institution_id?: string | null
+          ip_address?: string | null
+          key_id?: string | null
+          reason?: string
+          received_at?: string
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "webhook_rejections_institution_id_fkey"
+            columns: ["institution_id"]
+            isOneToOne: false
+            referencedRelation: "institutions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       whatsapp_sequences: {
         Row: {
           contact_name: string
@@ -1739,6 +1856,15 @@ export type Database = {
       mark_platform_notification_read: {
         Args: { _id: string }
         Returns: undefined
+      }
+      record_webhook_transaction: {
+        Args: {
+          _event_id: string
+          _institution_id: string
+          _key_id: string
+          _tx: Json
+        }
+        Returns: Json
       }
       request_risk_recalculation: {
         Args: {
