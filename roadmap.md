@@ -1,5 +1,8 @@
 # Roadmap
 
+## Live tenant isolation suite
+- [ ] Create two temporary auth users, exercise all tenant CRUD boundaries and audit mutation roles using rollback-only fixtures, publish per-attempt results, and remove the accounts.
+
 ## Platform role changes
 - [x] Rename the endpoint, require platform staff MFA and justification, atomically audit grants/revokes, and enforce five calls per fifteen minutes plus self/last-admin lockout protections. Retired live endpoint removed.
 - [x] Notify other platform admins in-app and show platform role changes on admin analytics; email TODO recorded in docs/EDGE_FUNCTIONS.md. Non-tenant audit scope excluded from tenant fallback and support access.
