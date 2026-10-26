@@ -410,7 +410,7 @@ export default function AdminRoadmaps() {
                   variant="outline"
                   size="sm"
                   onClick={async () => {
-                    const url = 'https://apexaml.com/app?demo=true';
+                    const url = 'https://apexaml.com/demo?demo=true';
                     try {
                       await navigator.clipboard.writeText(url);
                       toast.success('Demo link copied — share with prospects before your Zoom call', {
