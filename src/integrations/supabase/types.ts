@@ -870,6 +870,7 @@ export type Database = {
       }
       leads: {
         Row: {
+          client_fingerprint: string | null
           compliance_timeline: string | null
           created_at: string
           current_setup: string | null
@@ -878,11 +879,14 @@ export type Database = {
           id: string
           institution_name: string | null
           institution_type: string | null
+          message: string | null
           ndpr_consent: boolean | null
           phone: string | null
+          role: string | null
           source: string | null
         }
         Insert: {
+          client_fingerprint?: string | null
           compliance_timeline?: string | null
           created_at?: string
           current_setup?: string | null
@@ -891,11 +895,14 @@ export type Database = {
           id?: string
           institution_name?: string | null
           institution_type?: string | null
+          message?: string | null
           ndpr_consent?: boolean | null
           phone?: string | null
+          role?: string | null
           source?: string | null
         }
         Update: {
+          client_fingerprint?: string | null
           compliance_timeline?: string | null
           created_at?: string
           current_setup?: string | null
@@ -904,8 +911,10 @@ export type Database = {
           id?: string
           institution_name?: string | null
           institution_type?: string | null
+          message?: string | null
           ndpr_consent?: boolean | null
           phone?: string | null
+          role?: string | null
           source?: string | null
         }
         Relationships: []
