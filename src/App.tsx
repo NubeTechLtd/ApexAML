@@ -95,12 +95,14 @@ const App = () => (
             </Route>
 
             {/* Live zone: signed-in institution data */}
-            <Route path="/app/*" element={<AppLayout />}>
-              <Route path="workspace" element={<AlertWorkspace />} />
-              <Route path="*" element={<Navigate to={APP_HOME} replace />} />
+            <Route path="/app">
+              {/* Old /app opened the dashboard; keep that link working in the demo */}
+              <Route index element={<LegacyRedirect to="/dashboard" />} />
+              <Route element={<AppLayout />}>
+                <Route path="workspace" element={<AlertWorkspace />} />
+                <Route path="*" element={<Navigate to={APP_HOME} replace />} />
+              </Route>
             </Route>
-            {/* Old /app opened the dashboard; keep that link working in the demo */}
-            <Route path="/app" element={<LegacyRedirect to="/dashboard" />} />
 
             {/* Old top-level operational URLs → /demo */}
             {OPERATIONAL_BASES.map((base) => (
