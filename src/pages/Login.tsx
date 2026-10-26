@@ -43,7 +43,7 @@ export default function Login() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
     const { data } = await supabase.from('user_roles').select('role').eq('user_id', user.id).eq('role', 'platform_admin').maybeSingle();
-    navigate(data ? '/admin/roadmaps' : '/dashboard', { replace: true });
+    navigate(data ? '/admin/roadmaps' : '/app/workspace', { replace: true });
   };
 
   const triggerShake = () => {
