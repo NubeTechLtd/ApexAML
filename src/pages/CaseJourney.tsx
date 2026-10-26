@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { useZoneNavigate } from '@/hooks/useZone';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -253,7 +254,7 @@ const statusStyles: Record<CaseFile['status'], string> = {
 
 export default function CaseJourney() {
   const { caseId = '' } = useParams<{ caseId: string }>();
-  const navigate = useNavigate();
+  const navigate = useZoneNavigate();
 
   const caseFile = useMemo<CaseFile>(() => {
     if (caseId === 'ALT-2026-0891' || caseId === '1') return adebayoCase;

@@ -1,5 +1,6 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
+import { useZoneNavigate } from '@/hooks/useZone';
 import { ActiveFilterChip } from '@/components/ActiveFilterChip';
 import { NotificationBell } from '@/components/NotificationBell';
 import { SidebarProvider } from '@/components/ui/sidebar';
@@ -236,7 +237,7 @@ function MiniAlertCard({ alert, isSelected, onClick, status, assignedAnalyst }: 
 
 export default function AlertWorkspace() {
   const { toast } = useToast();
-  const navigate = useNavigate();
+  const navigate = useZoneNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState('');
   const { alerts, loading: alertsLoading, error: alertsError } = useInstitutionAlerts();

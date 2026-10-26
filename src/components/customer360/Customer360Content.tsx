@@ -7,7 +7,7 @@ import { customer360Data } from '@/data/mockCustomer360';
 import { mockLegacyAlerts as mockAlerts } from '@/data/mockLegacyAlerts';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
+import { useZoneNavigate } from '@/hooks/useZone';
 import { Customer360IdentityCard } from './IdentityCard';
 import { Customer360RiskRadar } from './RiskRadar';
 import { Customer360Entities } from './EntitiesCard';
@@ -33,7 +33,7 @@ interface Props {
 }
 
 export function Customer360Content({ customerId, onClose }: Props) {
-  const navigate = useNavigate();
+  const navigate = useZoneNavigate();
   const customer = customer360Data[customerId];
   const [freezeOpen, setFreezeOpen] = useState(false);
   const [escalateOpen, setEscalateOpen] = useState(false);

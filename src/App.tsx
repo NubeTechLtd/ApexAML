@@ -35,6 +35,10 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 import { DemoGuide } from "./components/DemoGuide";
 import { WhatsAppChat } from "./components/WhatsAppChat";
 import { MarketingZone } from "./components/MarketingZone";
+import { AppLayout, DemoLayout, LegacyRedirect, MarketingLayout } from "./components/layouts/ZoneLayouts";
+import { APP_HOME, OPERATIONAL_BASES } from "./lib/zones";
+import Pricing from "./pages/Pricing.tsx";
+import Security from "./pages/Security.tsx";
 
 const queryClient = new QueryClient();
 
@@ -49,35 +53,62 @@ const App = () => (
         <BrowserRouter>
           <MarketingZone>
           <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/alerts" element={<Index />} />
-            <Route path="/rules" element={<RulesEngine />} />
-            <Route path="/reports/cbn" element={<RegulatoryReports />} />
-            <Route path="/reports/nfiu" element={<RegulatoryReports />} />
-            <Route path="/identity" element={<IdentityKYC />} />
-            <Route path="/kyb/corporate" element={<CorporateKYB />} />
-            <Route path="/customers" element={<Customers />} />
-            <Route path="/customers/:id" element={<Customer360 />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/app" element={<Dashboard />} />
-            <Route path="/audit" element={<SystemAudit />} />
-            <Route path="/workspace" element={<AlertWorkspace />} />
-            <Route path="/sanctions" element={<SanctionsScreening />} />
-            <Route path="/accounts" element={<Accounts />} />
-            <Route path="/partner-bank" element={<PartnerBankDashboard />} />
-            <Route path="/roadmap" element={<RoadmapGenerator />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/settings" element={<ProtectedRoute requireAdmin={false}><Settings /></ProtectedRoute>} />
-
-            <Route path="/admin/roadmaps" element={<ProtectedRoute><AdminRoadmaps /></ProtectedRoute>} />
-            <Route path="/admin/analytics" element={<ProtectedRoute><AdminAnalytics /></ProtectedRoute>} />
-            <Route path="/case/:caseId" element={<CaseJourney />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/contact" element={<Contact />} />
+            {/* Marketing zone */}
+            <Route element={<MarketingLayout />}>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/pricing" element={<Pricing />} />
+              <Route path="/security" element={<Security />} />
+              <Route path="/roadmap" element={<RoadmapGenerator />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/unsubscribe" element={<Unsubscribe />} />
+              <Route path="/contact" element={<Contact />} />
+            </Route>
             <Route path="/contact-us" element={<Navigate to="/contact" replace />} />
             <Route path="/contact.html" element={<Navigate to="/contact" replace />} />
             <Route path="/book" element={<Navigate to="/contact" replace />} />
-            <Route path="/unsubscribe" element={<Unsubscribe />} />
+
+            {/* Internal zone */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/settings" element={<ProtectedRoute requireAdmin={false}><Settings /></ProtectedRoute>} />
+            <Route path="/admin/roadmaps" element={<ProtectedRoute><AdminRoadmaps /></ProtectedRoute>} />
+            <Route path="/admin/analytics" element={<ProtectedRoute><AdminAnalytics /></ProtectedRoute>} />
+
+            {/* Demo zone: sample data */}
+            <Route path="/demo" element={<DemoLayout />}>
+              <Route index element={<LegacyRedirect to="/dashboard" />} />
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="alerts" element={<Index />} />
+              <Route path="workspace" element={<AlertWorkspace />} />
+              <Route path="rules" element={<RulesEngine />} />
+              <Route path="reports/cbn" element={<RegulatoryReports />} />
+              <Route path="reports/nfiu" element={<RegulatoryReports />} />
+              <Route path="identity" element={<IdentityKYC />} />
+              <Route path="kyb/corporate" element={<CorporateKYB />} />
+              <Route path="customers" element={<Customers />} />
+              <Route path="customers/:id" element={<Customer360 />} />
+              <Route path="audit" element={<SystemAudit />} />
+              <Route path="sanctions" element={<SanctionsScreening />} />
+              <Route path="accounts" element={<Accounts />} />
+              <Route path="partner-bank" element={<PartnerBankDashboard />} />
+              <Route path="case/:caseId" element={<CaseJourney />} />
+              <Route path="*" element={<LegacyRedirect to="/dashboard" />} />
+            </Route>
+
+            {/* Live zone: signed-in institution data */}
+            <Route path="/app">
+              {/* Old /app opened the dashboard; keep that link working in the demo */}
+              <Route index element={<LegacyRedirect to="/dashboard" />} />
+              <Route element={<AppLayout />}>
+                <Route path="workspace" element={<AlertWorkspace />} />
+                <Route path="*" element={<Navigate to={APP_HOME} replace />} />
+              </Route>
+            </Route>
+
+            {/* Old top-level operational URLs → /demo */}
+            {OPERATIONAL_BASES.map((base) => (
+              <Route key={base} path={`${base}/*`} element={<LegacyRedirect />} />
+            ))}
+
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

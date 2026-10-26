@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useZoneNavigate } from '@/hooks/useZone';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -108,7 +108,7 @@ const statusBadgeClass: Record<string, string> = {
 };
 
 export default function Dashboard() {
-  const navigate = useNavigate();
+  const navigate = useZoneNavigate();
   const [refreshing, setRefreshing] = useState(false);
   const [lastRefreshed, setLastRefreshed] = useState(() => new Date());
   const chart = useChartTheme();

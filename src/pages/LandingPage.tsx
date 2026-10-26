@@ -464,6 +464,7 @@ function LandingPageInner() {
               </button>
             ))}
             <Link to="/contact" className="hover:text-white transition-colors">Contact</Link>
+            <Link to="/demo?demo=true" className="hover:text-white transition-colors">Try the demo</Link>
           </div>
 
           {/* Desktop Book Demo */}
@@ -472,7 +473,7 @@ function LandingPageInner() {
             onClick={handleBookDemo}
             className={`hidden md:inline-flex bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg text-xs font-semibold ${pulseActive ? "ring-2 ring-primary/30 animate-pulse" : ""}`}
           >
-            Book Demo
+            Book a walkthrough
           </Button>
 
           {/* Mobile hamburger */}
@@ -513,6 +514,12 @@ function LandingPageInner() {
                 >
                   Contact
                 </Link>
+                <Link
+                  to="/demo?demo=true"
+                  className="w-full text-left h-11 px-3 rounded-lg text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors flex items-center"
+                >
+                  Try the demo
+                </Link>
                 <Button
                   onClick={() => {
                     setMobileMenuOpen(false);
@@ -520,7 +527,7 @@ function LandingPageInner() {
                   }}
                   className="w-full mt-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg text-sm font-semibold h-11"
                 >
-                  Book Demo
+                  Book a walkthrough
                 </Button>
               </div>
             </motion.div>

@@ -81,7 +81,7 @@ export function ProtectedRoute({ children, requireAdmin = true }: ProtectedRoute
   }
 
   if (requireAdmin && gate === 'denied') {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/demo/dashboard" replace />;
   }
 
   if (requireAdmin && gate === 'mfa-required') {

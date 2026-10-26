@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useZoneNavigate } from '@/hooks/useZone';
 import { CheckCircle2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -19,7 +19,7 @@ interface Props {
 }
 
 export function RequiredActions({ customer, openAlertCount }: Props) {
-  const navigate = useNavigate();
+  const navigate = useZoneNavigate();
 
   const items: ActionItem[] = useMemo(() => {
     if (customer.riskLevel === 'High' && openAlertCount > 0) {

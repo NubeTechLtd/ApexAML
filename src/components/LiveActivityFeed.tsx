@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useZoneNavigate } from '@/hooks/useZone';
 import { ArrowRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -64,7 +64,7 @@ function nowTime(): string {
 }
 
 export function LiveActivityFeed() {
-  const navigate = useNavigate();
+  const navigate = useZoneNavigate();
   const [entries, setEntries] = useState<FeedEntry[]>(INITIAL_ENTRIES);
   const pausedRef = useRef(false);
   const counterRef = useRef(0);

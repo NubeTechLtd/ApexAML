@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useZoneNavigate } from '@/hooks/useZone';
 import { BookDemoSheet } from '@/components/landing/BookDemoSheet';
 import { ChevronLeft, ChevronRight, Play, X, Minimize2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -66,7 +66,7 @@ export function DemoGuide() {
   const [step, setStep] = useDemoStep();
   const [minimized, setMinimized] = useState(false);
   const [demoSheetOpen, setDemoSheetOpen] = useState(false);
-  const navigate = useNavigate();
+  const navigate = useZoneNavigate();
 
   if (!isDemoMode) return null;
 

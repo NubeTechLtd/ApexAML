@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useZoneNavigate } from '@/hooks/useZone';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -217,7 +217,7 @@ function NewSTRSheet({ open, onOpenChange }: { open: boolean; onOpenChange: (v: 
 /* ── Main Component ───────────────────────────── */
 
 export function STRManagement() {
-  const navigate = useNavigate();
+  const navigate = useZoneNavigate();
   const [sheetOpen, setSheetOpen] = useState(false);
   const [resubmitting, setResubmitting] = useState<string | null>(null);
 

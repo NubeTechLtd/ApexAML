@@ -3,6 +3,7 @@ import { NavLink } from '@/components/NavLink';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useZone, useZoneHref } from '@/hooks/useZone';
 import logo from '@/assets/logo.svg';
 import { Button } from '@/components/ui/button';
 import {
@@ -61,6 +62,16 @@ export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === 'collapsed';
   const { session, signOut } = useAuth();
+  const zone = useZone();
+  const zoneHref = useZoneHref();
+  // In the live zone, show only pages that exist there (and skip marketing tools).
+  const zoneGroups = groups
+    .map((g) => ({ ...g, items: g.items.flatMap((item) => {
+      if (zone === 'app' && item.url === '/roadmap') return [];
+      const url = zoneHref(item.url);
+      return url ? [{ ...item, url }] : [];
+    }) }))
+    .filter((g) => g.items.length > 0);
   const [platformStaff, setPlatformStaff] = useState(false);
   useEffect(() => {
     let cancelled = false;
@@ -84,7 +95,7 @@ export function AppSidebar() {
       </SidebarHeader>
 
       <SidebarContent>
-        {groups.filter(group => group.label !== 'Platform staff' || platformStaff).map((group) => (
+        {zoneGroups.filter(group => group.label !== 'Platform staff' || platformStaff).map((group) => (
           <SidebarGroup key={group.label}>
             <SidebarGroupLabel className="text-sidebar-muted text-[10px] uppercase tracking-wider">
               {!collapsed && group.label}

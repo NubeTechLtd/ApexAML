@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useZoneNavigate } from '@/hooks/useZone';
 import { Bell, AlertTriangle, FileText, ShieldAlert, CheckCheck } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -16,7 +16,7 @@ const typeConfig: Record<NotificationType, { icon: typeof Bell; color: string }>
 
 export function NotificationBell() {
   const { notifications, unreadCount, markRead, markAllRead } = useNotifications();
-  const navigate = useNavigate();
+  const navigate = useZoneNavigate();
 
   return (
     <Popover>
