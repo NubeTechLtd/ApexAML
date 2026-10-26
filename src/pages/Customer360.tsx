@@ -1,4 +1,5 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { useZoneNavigate } from '@/hooks/useZone';
 import { NotificationBell } from '@/components/NotificationBell';
 import { AddNoteSheet, type ComplianceNote } from '@/components/customer360/AddNoteSheet';
 import { useState } from 'react';
@@ -46,7 +47,7 @@ const riskColors: Record<string, string> = {
 
 export default function Customer360() {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+  const navigate = useZoneNavigate();
   const customer = customer360Data[Number(id)];
   const [freezeOpen, setFreezeOpen] = useState(false);
   const [escalateOpen, setEscalateOpen] = useState(false);

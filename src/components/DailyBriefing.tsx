@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useZoneNavigate } from '@/hooks/useZone';
 import { AlertTriangle, Clock, Fingerprint, CheckCircle2, ArrowRight } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
@@ -16,7 +16,7 @@ type Item = {
 };
 
 export function DailyBriefing() {
-  const navigate = useNavigate();
+  const navigate = useZoneNavigate();
   const { user } = useAuth();
 
   const firstName = useMemo(() => {
