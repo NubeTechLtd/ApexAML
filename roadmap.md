@@ -1,7 +1,7 @@
 # Roadmap
 
 ## Live tenant isolation suite
-- [ ] Create two temporary auth users, exercise all tenant CRUD boundaries and audit mutation roles using rollback-only fixtures, publish per-attempt results, and remove the accounts.
+- [x] Created two temporary Auth users and rollback-only institutions A/B; 458 live attempts passed across all 18 directly/indirectly tenant-scoped tables, both cross-tenant directions, anon, own-tenant controls, and audit mutation roles including service_role and postgres. Three local regression checks passed. Fixtures rolled back, both accounts deleted, temporary provisioning endpoint removed; per-attempt CSV and Markdown delivered. Storage and HTTP/session flows are outside this database-only suite.
 
 ## Platform role changes
 - [x] Rename the endpoint, require platform staff MFA and justification, atomically audit grants/revokes, and enforce five calls per fifteen minutes plus self/last-admin lockout protections. Retired live endpoint removed.
