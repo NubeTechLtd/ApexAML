@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -19,6 +19,7 @@ import AlertWorkspace from "./pages/AlertWorkspace.tsx";
 import SanctionsScreening from "./pages/SanctionsScreening.tsx";
 import LandingPage from "./pages/LandingPage.tsx";
 import Privacy from "./pages/Privacy.tsx";
+import Contact from "./pages/Contact.tsx";
 import Accounts from "./pages/Accounts.tsx";
 import PartnerBankDashboard from "./pages/PartnerBankDashboard.tsx";
 import RoadmapGenerator from "./pages/RoadmapGenerator.tsx";
@@ -72,6 +73,10 @@ const App = () => (
             <Route path="/admin/analytics" element={<ProtectedRoute><AdminAnalytics /></ProtectedRoute>} />
             <Route path="/case/:caseId" element={<CaseJourney />} />
             <Route path="/privacy" element={<Privacy />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/contact-us" element={<Navigate to="/contact" replace />} />
+            <Route path="/contact.html" element={<Navigate to="/contact" replace />} />
+            <Route path="/book" element={<Navigate to="/contact" replace />} />
             <Route path="/unsubscribe" element={<Unsubscribe />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

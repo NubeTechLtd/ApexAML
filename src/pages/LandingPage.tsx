@@ -463,6 +463,7 @@ function LandingPageInner() {
                 {label}
               </button>
             ))}
+            <Link to="/contact" className="hover:text-white transition-colors">Contact</Link>
           </div>
 
           {/* Desktop Book Demo */}
@@ -506,6 +507,12 @@ function LandingPageInner() {
                     {label}
                   </button>
                 ))}
+                <Link
+                  to="/contact"
+                  className="w-full text-left h-11 px-3 rounded-lg text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors flex items-center"
+                >
+                  Contact
+                </Link>
                 <Button
                   onClick={() => {
                     setMobileMenuOpen(false);
@@ -967,6 +974,9 @@ function LandingPageInner() {
           <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
             <Link to="/privacy" className="hover:text-white/70 transition-colors">
               Privacy Policy
+            </Link>
+            <Link to="/contact" className="hover:text-white/70 transition-colors">
+              Contact
             </Link>
             <a
               href="mailto:privacy@apexaml.com?subject=DPA%20request"
