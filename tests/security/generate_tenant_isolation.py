@@ -72,7 +72,7 @@ def generate(user_a, user_b):
     audit=fixtures[0]['audit_log']['id']
     for role in ('anon','authenticated_no_membership','analyst','compliance_officer','institution_admin','platform_admin','service_role','postgres'):
       for op in ('UPDATE','DELETE','TRUNCATE'):
-        sql={'UPDATE':f"UPDATE public.audit_log SET justification='tampered' WHERE id='{audit}'",'DELETE':f"DELETE FROM public.audit_log WHERE id='{audit}'",'TRUNCATE':'TRUNCATE public.audit_log'}[op]
+        sql={'UPDATE':f"UPDATE public.audit_log SET justification='tampered' WHERE id='{audit}'",'DELETE':f"DELETE FROM public.audit_log WHERE id='{audit}'",'TRUNCATE':'TRUNCATE public.audit_log, public.platform_role_changes, public.platform_role_notifications'}[op]
         cases.append(('audit_log','role_'+role,op,0,False,sql))
     out=['DO $suite$ DECLARE results jsonb:=\'[]\'::jsonb; n bigint; code text; message text; ok boolean; BEGIN']+setup
     for table,scenario,op,actor,allowed,sql in cases:
