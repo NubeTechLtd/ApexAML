@@ -1,26 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { useDataProvider } from '@/data-layer/hooks';
+import type { RiskScoreEntry, RiskTriggerType } from '@/data-layer/types';
 
-export type RiskTriggerType =
-  | 'ALERT_FIRED'
-  | 'ALERT_DISMISSED'
-  | 'STR_FILED'
-  | 'KYC_UPGRADE'
-  | 'SANCTIONS_MATCH'
-  | 'CLEAN_PERIOD_30D'
-  | 'MANUAL_REVIEW';
+export type { RiskScoreEntry, RiskTriggerType } from '@/data-layer/types';
 
-export interface RiskScoreEntry {
-  id: string;
-  customerId: string;
-  previousScore: number | null;
-  newScore: number;
-  scoreChange: number | null;
-  triggerType: RiskTriggerType;
-  triggerReference: string | null;
-  calculatedBy: string;
-  createdAt: string;
-}
 
 /** Plain-English label for a score trigger, for tooltips and chart markers. */
 export const TRIGGER_LABELS: Record<RiskTriggerType, string> = {
@@ -109,84 +92,48 @@ export function useRiskScoreHistory(customerId: string, options: Options) {
   const [loading, setLoading] = useState(true);
   const [recalculating, setRecalculating] = useState(false);
 
+  const provider = useDataProvider();
+
   const load = useCallback(async () => {
     const since = new Date();
     since.setMonth(since.getMonth() - 12);
-
-    const { data, error } = await supabase
-      .from('risk_score_history')
-      .select('*')
-      .eq('customer_id', customerId)
-      .gte('created_at', since.toISOString())
-      .order('created_at', { ascending: true });
-
-    if (!error && data && data.length > 0) {
-      setHistory(
-        data.map((r) => ({
-          id: r.id,
-          customerId: r.customer_id,
-          previousScore: r.previous_score,
-          newScore: r.new_score,
-          scoreChange: r.score_change,
-          triggerType: r.trigger_type as RiskTriggerType,
-          triggerReference: r.trigger_reference,
-          calculatedBy: r.calculated_by,
-          createdAt: r.created_at,
-        })),
-      );
+    let rows: RiskScoreEntry[] = [];
+    try {
+      rows = await provider.riskScores.history(customerId, since);
+    } catch {
+      rows = [];
+    }
+    if (rows.length > 0) {
+      setHistory(rows);
       setIsLive(true);
     } else {
       setHistory(synthesiseHistory(customerId, fallbackScore));
       setIsLive(false);
     }
     setLoading(false);
-  }, [customerId, fallbackScore]);
+  }, [provider, customerId, fallbackScore]);
 
   useEffect(() => {
     setLoading(true);
     load();
   }, [load]);
 
-  // Live updates: any new score row for this customer refreshes the trail.
-  useEffect(() => {
-    const channel = supabase
-      .channel(`risk-score-${customerId}`)
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'risk_score_history',
-          filter: `customer_id=eq.${customerId}`,
-        },
-        () => load(),
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [customerId, load]);
+  // Any new score row for this customer refreshes the trail.
+  useEffect(() => provider.riskScores.subscribe(customerId, () => { void load(); }), [provider, customerId, load]);
 
   const recalculate = useCallback(
     async (triggerType: RiskTriggerType, triggerReference?: string) => {
       setRecalculating(true);
       try {
-        const { error } = await supabase.functions.invoke('recalculate-risk-score', {
-          body: {
-            customer_id: customerId,
-            trigger_type: triggerType,
-            trigger_reference: triggerReference ?? null,
-            signals: { kyc_tier: kycTier, customer_name: customerName },
-          },
+        await provider.riskScores.recalculate({
+          customerId, triggerType, triggerReference: triggerReference ?? null, kycTier, customerName, fallbackScore,
         });
-        if (error) throw error;
         await load();
       } finally {
         setRecalculating(false);
       }
     },
-    [customerId, kycTier, customerName, load],
+    [provider, customerId, kycTier, customerName, fallbackScore, load],
   );
 
   const latest = history.length > 0 ? history[history.length - 1] : null;
