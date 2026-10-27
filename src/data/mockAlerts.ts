@@ -647,7 +647,7 @@ export const mockAlerts: Alert[] = [
 
 // ---------------------------------------------------------------------------
 // Guided demo mode: Adebayo Ogunlesi POS Round-Trip case.
-// When the URL contains ?demo=true, this alert is prepended so that the
+// Always prepended for the demo zone so that the
 // first Critical alert in every list matches the scripted walk-through.
 // ---------------------------------------------------------------------------
 
