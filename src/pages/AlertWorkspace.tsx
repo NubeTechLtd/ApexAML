@@ -26,11 +26,11 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Label } from '@/components/ui/label';
 import { type Alert, type TxChannel } from '@/data/mockAlerts';
 import { useInstitutionAlerts } from '@/hooks/useInstitutionAlerts';
-import { supabase } from '@/integrations/supabase/client';
+import { useDataProvider, useRiskRecalculation } from '@/data-layer/hooks';
 import { useToast } from '@/hooks/use-toast';
 import { useAuditLog } from '@/hooks/useAuditLog';
 import { useCBNRate } from '@/hooks/useCBNRate';
-import { requestRiskRecalculation, riskScoreKey } from '@/lib/riskScore';
+import { riskScoreKey } from '@/lib/riskScore';
 
 import { generateGoAMLXml, downloadXmlFile } from '@/lib/generateGoAMLXml';
 import { IMTOInvestigation } from '@/components/IMTOInvestigation';
@@ -94,27 +94,6 @@ interface ChatMessage {
   id: number;
   role: 'user' | 'assistant';
   content: string;
-}
-
-const quickResponses: Record<string, string> = {
-  shorter: '✅ Done — I\'ve condensed the narrative to focus on key facts while preserving regulatory compliance language.',
-  flags: '✅ Done — I\'ve appended the behavioral red flags as a numbered appendix to the narrative.',
-  fatf: '✅ Done — FATF Recommendation 20 on STR obligations referenced in section 2 of the narrative.',
-  circular: '✅ Done — CBN Circular BSD/DIR/PUB/LAB/019/002 cited in the regulatory basis paragraph.',
-  hausa: '✅ Done — Narrative section translated to Hausa for internal memo distribution. goAML field labels retained in English.',
-  formal: '✅ Done — Narrative reformatted to formal NFIU register: passive voice, institutional phrasing, and regulatory cross-references applied throughout.',
-  default: '✅ Understood — Draft updated accordingly. Review changes in the editor.',
-};
-
-function getResponse(input: string): string {
-  const l = input.toLowerCase();
-  if (l.includes('short') || l.includes('concise')) return quickResponses.shorter;
-  if (l.includes('flag') || l.includes('red flag')) return quickResponses.flags;
-  if (l.includes('fatf') || l.includes('recommendation')) return quickResponses.fatf;
-  if (l.includes('circular') || l.includes('bsd/dir')) return quickResponses.circular;
-  if (l.includes('hausa')) return quickResponses.hausa;
-  if (l.includes('formal') || l.includes('nfiu language')) return quickResponses.formal;
-  return quickResponses.default;
 }
 
 const DISMISSAL_REASONS = [
@@ -251,6 +230,8 @@ export default function AlertWorkspace() {
   // Assignment state
   const [assignments, setAssignments] = useState<Record<string, string>>(DEFAULT_ASSIGNMENTS);
   const { append: addAuditEntry } = useAuditLog();
+  const provider = useDataProvider();
+  const requestRiskRecalculation = useRiskRecalculation();
   const { rate: cbnRate } = useCBNRate();
 
   const getStatus = useCallback((alertId: string, original: string): CaseStatus => {
@@ -352,15 +333,9 @@ export default function AlertWorkspace() {
     setStrLoading(true);
     setStrDraft('');
     try {
-      const { data, error } = await supabase.functions.invoke('generate-str-narrative', {
-        body: { alert_id: selected.id },
-      });
-      if (error) throw error;
-      const payload = data as { narrative?: string; draft?: { id?: string } } | null;
-      const narrative = payload?.narrative?.trim();
-      if (!narrative) throw new Error('No narrative was returned.');
+      const { narrative, draftId } = await provider.str.generate(selected.id);
       setStrDraft(narrative);
-      setStrDraftId(payload?.draft?.id ?? null);
+      setStrDraftId(draftId);
       setStrGenerated(true);
     } catch (e) {
       toast({
@@ -390,52 +365,32 @@ export default function AlertWorkspace() {
     setChatInput('');
     setIsTyping(true);
     try {
-      const { data, error } = await supabase.functions.invoke('refine-str-narrative', {
-        body: { alert_id: selected.id, current_draft: strDraft, message: input },
-      });
-      if (error) throw error;
-      const result = data as { narrative?: string; confirmation?: string; draft?: { id?: string } } | null;
-      if (!result?.narrative || !result?.confirmation) {
-        throw new Error('The co-pilot returned an incomplete refinement.');
-      }
+      const result = await provider.str.refine(selected.id, strDraft, input);
+      const changed = result.narrative !== strDraft;
       setStrDraft(result.narrative);
-      if (result.draft?.id) setStrDraftId(result.draft.id);
+      if (result.draftId) setStrDraftId(result.draftId);
       setChatMessages((prev) => [
         ...prev,
-        { id: Date.now(), role: 'assistant', content: result.confirmation! },
+        { id: Date.now(), role: 'assistant', content: result.confirmation },
       ]);
-      setEditVersion((v) => v + 1);
-    } catch (e) {
-      // Demo alerts are not backed by a database case (non-UUID ids), so the
-      // refinement service cannot reach them — fall back to the canned
-      // co-pilot replies for the guided demo only.
-      const isDemoAlert = !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
-        selected.id,
-      );
-      if (isDemoAlert) {
-        setChatMessages((prev) => [
-          ...prev,
-          { id: Date.now(), role: 'assistant', content: getResponse(input) },
-        ]);
-        setEditVersion((v) => v + 1);
-      } else {
-        // Never claim the draft changed: the report text is untouched.
-        setChatMessages((prev) => [
-          ...prev,
-          {
-            id: Date.now(),
-            role: 'assistant',
-            content:
-              '⚠️ I could not apply that change — the refinement service did not respond. The draft is unchanged; please try again.',
-          },
-        ]);
-        toast({
-          title: 'Could not refine the report',
-          description:
-            'The AI service is unavailable. No changes were made to the draft — please try again.',
-          variant: 'destructive',
-        });
-      }
+      if (changed) setEditVersion((v) => v + 1);
+    } catch {
+      // Never claim the draft changed: the report text is untouched.
+      setChatMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now(),
+          role: 'assistant',
+          content:
+            '⚠️ I could not apply that change — the refinement service did not respond. The draft is unchanged; please try again.',
+        },
+      ]);
+      toast({
+        title: 'Could not refine the report',
+        description:
+          'The AI service is unavailable. No changes were made to the draft — please try again.',
+        variant: 'destructive',
+      });
     } finally {
       setIsTyping(false);
     }
@@ -453,27 +408,11 @@ export default function AlertWorkspace() {
     try {
       let draftId = strDraftId;
       if (!draftId && strDraft.trim()) {
-        const { data: draft, error: draftError } = await supabase
-          .from('str_drafts')
-          .insert({ alert_id: selected.id, version: 1, narrative: strDraft, generated_by: 'analyst' })
-          .select('id')
-          .maybeSingle();
-        if (draftError) throw draftError;
-        draftId = draft?.id ?? null;
+        draftId = await provider.str.saveDraft(selected.id, strDraft);
         if (draftId) setStrDraftId(draftId);
       }
       if (draftId) {
-        const { data: auth } = await supabase.auth.getUser();
-        const { error: exportError } = await supabase
-          .from('str_exports')
-          .insert({
-            alert_id: selected.id,
-            str_draft_id: draftId,
-            filename,
-            goaml_xml: xml,
-            exported_by: auth?.user?.id ?? null,
-          });
-        if (exportError) throw exportError;
+        await provider.str.recordExport({ alertId: selected.id, draftId, filename, xml });
       }
       await addAuditEntry({
         action: 'STR_EXPORT',
@@ -491,7 +430,7 @@ export default function AlertWorkspace() {
       title: 'STR exported',
       description: `${filename} ready for NFIU goAML portal upload.`,
     });
-  }, [selected, strDraft, strDraftId, addAuditEntry, toast]);
+  }, [selected, strDraft, strDraftId, addAuditEntry, toast, provider]);
 
   const handleEscalate = useCallback(() => {
     setEscalateOpen(true);
