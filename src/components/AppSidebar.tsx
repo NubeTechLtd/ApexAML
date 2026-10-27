@@ -1,7 +1,7 @@
 import { LayoutDashboard, Inbox, Users, Settings2, FileText, Fingerprint, ShieldAlert, Banknote, Building2, BarChart2, LogOut, FolderOpen, Search, Activity } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { useEffect, useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { useDataProvider } from '@/data-layer/hooks';
 import { useAuth } from '@/hooks/useAuth';
 import { useZone, useZoneHref } from '@/hooks/useZone';
 import logo from '@/assets/logo.svg';
@@ -73,12 +73,13 @@ export function AppSidebar() {
     }) }))
     .filter((g) => g.items.length > 0);
   const [platformStaff, setPlatformStaff] = useState(false);
+  const provider = useDataProvider();
   useEffect(() => {
     let cancelled = false;
     setPlatformStaff(false);
-    if (session?.user) void supabase.from('user_roles').select('role').eq('user_id', session.user.id).eq('role', 'platform_admin').maybeSingle().then(({ data }) => { if (!cancelled) setPlatformStaff(!!data); });
+    if (session?.user) void provider.platform.isPlatformStaff().then((staff) => { if (!cancelled) setPlatformStaff(staff); }).catch(() => undefined);
     return () => { cancelled = true; };
-  }, [session?.user.id]);
+  }, [provider, session?.user.id]);
 
   return (
     <Sidebar collapsible="icon" className="border-r-0">

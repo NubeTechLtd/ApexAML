@@ -458,7 +458,7 @@ export default function AlertWorkspace() {
     setFpDialogOpen(false);
     setFpReason('');
 
-  }, [selected, fpReason, setAlertStatus, toast]);
+  }, [selected, fpReason, setAlertStatus, toast, requestRiskRecalculation]);
 
   // Keyboard shortcuts
   useEffect(() => {

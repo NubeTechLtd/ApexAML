@@ -342,8 +342,8 @@ export default function AdminRoadmaps() {
     const email = newAdminEmail.trim().toLowerCase();
     if (!email || roleJustification.trim().length < 20) return;
     setGrantingAdmin(true);
-    const { data, error } = await supabase.functions.invoke('grant-platform-role', {
-      body: { email, action: roleAction, justification: roleJustification.trim() },
+    const { data, error } = await provider.platform.changeRole({
+      email, action: roleAction, justification: roleJustification.trim(),
     });
     setGrantingAdmin(false);
     if (error || (data && (data as { error?: string }).error)) {
