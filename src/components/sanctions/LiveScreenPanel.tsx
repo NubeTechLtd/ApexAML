@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { useDataProvider } from '@/data-layer/hooks';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -23,6 +23,7 @@ export function LiveScreenPanel() {
   const [results, setResults] = useState<ScreenResult[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const provider = useDataProvider();
 
   const run = async () => {
     const name = query.trim();
@@ -30,12 +31,7 @@ export function LiveScreenPanel() {
     setLoading(true);
     setError(null);
     try {
-      const { data, error } = await supabase.rpc('screen_entity', {
-        search_name: name,
-        threshold,
-      });
-      if (error) throw error;
-      setResults((data ?? []) as ScreenResult[]);
+      setResults((await provider.sanctions.screen(name, threshold)) as ScreenResult[]);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Screening failed');
       setResults([]);

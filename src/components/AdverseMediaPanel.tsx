@@ -12,33 +12,13 @@ import {
   StickyNote,
   AlertTriangle,
 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { useDataProvider } from '@/data-layer/hooks';
+import type { AdverseMediaItem, AdverseMediaScreening } from '@/data-layer/types';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
-export type AdverseMediaRisk = 'High' | 'Medium' | 'Low';
-export type AdverseMediaOverall = AdverseMediaRisk | 'None';
-
-export interface AdverseMediaItem {
-  source: string;
-  headline: string;
-  url: string;
-  published_at: string | null;
-  relevance_score: number;
-  risk_level: AdverseMediaRisk;
-  rationale?: string;
-}
-
-export interface AdverseMediaScreening {
-  id: string;
-  customer_id: string;
-  customer_name: string;
-  search_date: string;
-  results: AdverseMediaItem[];
-  overall_risk_level: AdverseMediaOverall;
-  screened_by: string;
-  next_review_date: string;
-}
+export type { AdverseMediaRisk, AdverseMediaOverall, AdverseMediaItem, AdverseMediaScreening } from '@/data-layer/types';
+import type { AdverseMediaRisk } from '@/data-layer/types';
 
 const riskStyles: Record<AdverseMediaRisk, string> = {
   High: 'bg-[hsl(var(--risk-critical)/0.1)] text-[hsl(var(--risk-critical))] border-[hsl(var(--risk-critical)/0.25)]',
@@ -71,31 +51,21 @@ function formatDate(value: string | null) {
 export function useAdverseMediaScreening(customerId: string) {
   const [screening, setScreening] = useState<AdverseMediaScreening | null>(null);
   const [loading, setLoading] = useState(true);
+  const provider = useDataProvider();
 
   const load = useCallback(async () => {
     if (!customerId) {
       setLoading(false);
       return;
     }
-    const { data, error } = await supabase
-      .from('adverse_media_results')
-      .select('*')
-      .eq('customer_id', customerId)
-      .order('search_date', { ascending: false })
-      .limit(1)
-      .maybeSingle();
-
-    if (error) console.warn('adverse media load failed', error.message);
-    setScreening(
-      data
-        ? ({
-            ...data,
-            results: Array.isArray(data.results) ? data.results : [],
-          } as unknown as AdverseMediaScreening)
-        : null,
-    );
+    try {
+      setScreening(await provider.adverseMedia.latest(customerId));
+    } catch (error) {
+      console.warn('adverse media load failed', error instanceof Error ? error.message : error);
+      setScreening(null);
+    }
     setLoading(false);
-  }, [customerId]);
+  }, [provider, customerId]);
 
   useEffect(() => {
     setLoading(true);
@@ -123,22 +93,19 @@ export function AdverseMediaPanel({
 }: Props) {
   const { screening, loading, reload } = useAdverseMediaScreening(customerId);
   const [running, setRunning] = useState(false);
+  const provider = useDataProvider();
 
   const runScreening = async () => {
     setRunning(true);
     try {
-      const { data, error } = await supabase.functions.invoke('screen-adverse-media', {
-        body: {
-          customer_id: customerId,
-          customer_name: customerName,
-          bvn: bvn ?? null,
-          institution_name: institutionName ?? null,
-        },
+      const result = await provider.adverseMedia.screen({
+        customer_id: customerId,
+        customer_name: customerName,
+        bvn: bvn ?? null,
+        institution_name: institutionName ?? null,
       });
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
       await reload();
-      const level = data?.screening?.overall_risk_level ?? 'None';
+      const level = result?.overall_risk_level ?? 'None';
       if (level === 'None') toast.success('Adverse media check complete — nothing found');
       else if (level === 'High') toast.error('High risk adverse media found');
       else toast.warning(`${level} risk adverse media found`);
