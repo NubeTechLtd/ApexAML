@@ -45,12 +45,12 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
-      <AuditLogProvider>
       <NotificationsProvider>
       <TooltipProvider>
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <AuditLogProvider>
           <MarketingZone>
           <Routes>
             {/* Marketing zone */}
@@ -115,10 +115,10 @@ const App = () => (
           <DemoGuide />
           <WhatsAppChat />
           </MarketingZone>
+          </AuditLogProvider>
         </BrowserRouter>
       </TooltipProvider>
       </NotificationsProvider>
-      </AuditLogProvider>
     </ThemeProvider>
   </QueryClientProvider>
 );
