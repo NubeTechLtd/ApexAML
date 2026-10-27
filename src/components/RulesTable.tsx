@@ -24,7 +24,7 @@ export interface Rule {
   enabled: boolean;
 }
 
-const mockRules: Rule[] = [
+export const mockRules: Rule[] = [
   { id: 'R-001', name: 'POS Round-Trip Detection', typology: 'POS Round-Trip', threshold: 5000000, alertsTriggered7d: 47, falsePositivePct: 12, validationStatus: 'Validated', lastValidated: '2026-02-15', enabled: true },
   { id: 'R-002', name: 'BDC Smurfing Pattern', typology: 'BDC Smurfing', threshold: 4900000, alertsTriggered7d: 124, falsePositivePct: 28, validationStatus: 'Overdue', lastValidated: '2025-01-20', enabled: true },
   { id: 'R-003', name: 'USSD Layering Monitor', typology: 'USSD Layering', threshold: 2000000, alertsTriggered7d: 31, falsePositivePct: 18, validationStatus: 'Validated', lastValidated: '2026-03-10', enabled: true },
