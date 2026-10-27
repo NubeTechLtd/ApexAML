@@ -6,11 +6,11 @@ import { Progress } from '@/components/ui/progress';
 import { CheckCircle2, Download, FileText, Loader2, RefreshCw, ShieldCheck, Upload } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useKycDocuments } from '@/hooks/useKycDocuments';
+import { useDataProvider } from '@/data-layer/hooks';
 import {
   ACCEPT_ATTR,
   DOCUMENT_LABELS,
   formatBytes,
-  getSignedUrl,
   isImagePath,
   normaliseTier,
   requiredDocsForTier,
@@ -26,13 +26,14 @@ function formatDate(iso: string) {
 
 function Thumbnail({ doc }: { doc: KycDocument }) {
   const [url, setUrl] = useState<string | null>(null);
+  const provider = useDataProvider();
   useEffect(() => {
     let active = true;
     if (isImagePath(doc.storage_path)) {
-      getSignedUrl(doc.storage_path).then(u => { if (active) setUrl(u); }).catch(() => undefined);
+      provider.kycDocuments.fileUrl(doc).then(u => { if (active) setUrl(u); }).catch(() => undefined);
     }
     return () => { active = false; };
-  }, [doc.storage_path]);
+  }, [provider, doc]);
 
   if (url) {
     return <img src={url} alt={`${doc.document_name} preview`} loading="lazy" className="h-14 w-14 rounded-md object-cover border" />;

@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo, useCallback } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import type { Database } from '@/integrations/supabase/types';
+import { useDataProvider } from '@/data-layer/hooks';
+import type { CtrRecord } from '@/data-layer/types';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AlertTriangle, FileCheck, Clock, TrendingUp, Percent } from 'lucide-react';
@@ -8,7 +8,7 @@ import { CTRPendingTable } from './CTRPendingTable';
 import { CTRFiledTable } from './CTRFiledTable';
 import { Skeleton } from '@/components/ui/skeleton';
 
-export type CTRRow = Database['public']['Tables']['ctr_queue']['Row'];
+export type CTRRow = CtrRecord;
 
 const formatNGN = (n: number) => '₦' + Math.round(n).toLocaleString('en-NG');
 
@@ -20,25 +20,21 @@ export function CTRManagement() {
   const [rows, setRows] = useState<CTRRow[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const provider = useDataProvider();
+
   const fetchRows = useCallback(async () => {
-    const { data, error } = await supabase
-      .from('ctr_queue')
-      .select('*')
-      .order('created_at', { ascending: false });
-    if (!error && data) setRows(data);
+    try {
+      setRows(await provider.ctr.list());
+    } catch {
+      // Keep the last loaded rows.
+    }
     setLoading(false);
-  }, []);
+  }, [provider]);
 
   useEffect(() => {
     fetchRows();
-    const channel = supabase
-      .channel('ctr-queue-feed')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'ctr_queue' }, fetchRows)
-      .subscribe();
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [fetchRows]);
+    return provider.ctr.subscribe(() => { void fetchRows(); });
+  }, [provider, fetchRows]);
 
   const now = new Date();
   const todayStr = now.toISOString().slice(0, 10);
