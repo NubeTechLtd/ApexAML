@@ -1,15 +1,40 @@
-import { useState } from 'react';
-import { useZoneNavigate } from '@/hooks/useZone';
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useZone, useZoneNavigate } from '@/hooks/useZone';
 import { BookDemoSheet } from '@/components/landing/BookDemoSheet';
 import { ChevronLeft, ChevronRight, Play, X, Minimize2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import {
-  isDemoMode,
-  useDemoStep,
-  exitDemoMode,
-  TOTAL_DEMO_STEPS,
-} from '@/hooks/useDemoMode';
+
+/*
+ * The guided tour runs only inside the /demo zone. It starts from `?tour=1`
+ * (or the older `?demo=true` link) and stays open while the visitor moves
+ * between demo pages, until they exit.
+ */
+const TOUR_KEY = 'apexaml-demo-tour';
+const TOTAL_DEMO_STEPS = 7;
+
+let currentStep = 0;
+const stepListeners = new Set<(n: number) => void>();
+function setCurrentStep(next: number) {
+  currentStep = Math.max(0, Math.min(TOTAL_DEMO_STEPS - 1, next));
+  stepListeners.forEach((l) => l(currentStep));
+}
+function useDemoStep(): [number, (n: number) => void] {
+  const [step, setStep] = useState(currentStep);
+  useEffect(() => {
+    stepListeners.add(setStep);
+    return () => { stepListeners.delete(setStep); };
+  }, []);
+  return [step, setCurrentStep];
+}
+
+function readTourFlag() {
+  try { return sessionStorage.getItem(TOUR_KEY) === '1'; } catch { return false; }
+}
+function writeTourFlag(open: boolean) {
+  try { if (open) sessionStorage.setItem(TOUR_KEY, '1'); else sessionStorage.removeItem(TOUR_KEY); } catch { /* storage blocked */ }
+}
 
 interface DemoStep {
   title: string;
@@ -67,8 +92,31 @@ export function DemoGuide() {
   const [minimized, setMinimized] = useState(false);
   const [demoSheetOpen, setDemoSheetOpen] = useState(false);
   const navigate = useZoneNavigate();
+  const routerNavigate = useNavigate();
+  const zone = useZone();
+  const { pathname, search, hash } = useLocation();
+  const [tourOpen, setTourOpen] = useState(readTourFlag);
 
-  if (!isDemoMode) return null;
+  useEffect(() => {
+    const params = new URLSearchParams(search);
+    if (zone === 'demo' && (params.get('tour') === '1' || params.get('demo') === 'true')) {
+      writeTourFlag(true);
+      setTourOpen(true);
+    }
+  }, [zone, search]);
+
+  const exitDemoMode = () => {
+    writeTourFlag(false);
+    setTourOpen(false);
+    setCurrentStep(0);
+    const params = new URLSearchParams(search);
+    params.delete('tour');
+    params.delete('demo');
+    const qs = params.toString();
+    routerNavigate(`${pathname}${qs ? `?${qs}` : ''}${hash}`, { replace: true });
+  };
+
+  if (zone !== 'demo' || !tourOpen) return null;
 
   const current = DEMO_STEPS[step];
   const progress = ((step + 1) / TOTAL_DEMO_STEPS) * 100;
