@@ -1,3 +1,4 @@
+import { useDataProvider } from '@/data-layer/hooks';
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
@@ -154,6 +155,7 @@ function csvEscape(v: unknown) {
 
 export default function AdminRoadmaps() {
   const { state, email: adminEmail } = useAdminAuth();
+  const provider = useDataProvider();
   const { signOut } = useAuth();
   const navigate = useNavigate();
   const chart = useChartTheme();
@@ -342,8 +344,8 @@ export default function AdminRoadmaps() {
     const email = newAdminEmail.trim().toLowerCase();
     if (!email || roleJustification.trim().length < 20) return;
     setGrantingAdmin(true);
-    const { data, error } = await supabase.functions.invoke('grant-platform-role', {
-      body: { email, action: roleAction, justification: roleJustification.trim() },
+    const { data, error } = await provider.platform.changeRole({
+      email, action: roleAction, justification: roleJustification.trim(),
     });
     setGrantingAdmin(false);
     if (error || (data && (data as { error?: string }).error)) {

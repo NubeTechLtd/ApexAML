@@ -167,7 +167,6 @@ export const mockLegacyAlerts: AlertData[] = [
 // Guided demo mode (?demo=true): the Adebayo Ogunlesi POS Round-Trip case is
 // pinned to the top of the alert inbox so the scripted walk-through lines up.
 // ---------------------------------------------------------------------------
-import { isDemoMode as __isDemoMode } from '@/hooks/useDemoMode';
 
 const adebayoLegacyDemoAlert: AlertData = {
   id: 'ALT-2026-DEMO-001',
@@ -204,6 +203,5 @@ const adebayoLegacyDemoAlert: AlertData = {
   })),
 };
 
-if (__isDemoMode) {
-  mockLegacyAlerts.unshift(adebayoLegacyDemoAlert);
-}
+// Sample data only appears in the demo zone, so the guided case is always pinned first.
+mockLegacyAlerts.unshift(adebayoLegacyDemoAlert);

@@ -1,16 +1,18 @@
 import { useEffect, useState } from 'react';
 import { Progress } from '@/components/ui/progress';
-import { listCustomerDocuments, normaliseTier, requiredDocsForTier } from '@/lib/kycDocuments';
+import { useDataProvider } from '@/data-layer/hooks';
+import { normaliseTier, requiredDocsForTier } from '@/lib/kycDocuments';
 
 export function DocumentCompleteness({ customerId, kycTier }: { customerId: string; kycTier: string }) {
   const tier = normaliseTier(kycTier);
   const required = requiredDocsForTier(tier);
   const [have, setHave] = useState<number | null>(null);
+  const provider = useDataProvider();
 
   useEffect(() => {
     let active = true;
     const req = requiredDocsForTier(tier);
-    listCustomerDocuments(customerId)
+    provider.kycDocuments.list(customerId)
       .then(docs => {
         if (!active) return;
         const currentTypes = new Set(docs.filter(d => d.is_current).map(d => d.document_type));
@@ -18,7 +20,7 @@ export function DocumentCompleteness({ customerId, kycTier }: { customerId: stri
       })
       .catch(() => active && setHave(null));
     return () => { active = false; };
-  }, [customerId, tier]);
+  }, [provider, customerId, tier]);
 
 
   if (have === null) return null;

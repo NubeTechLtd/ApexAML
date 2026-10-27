@@ -647,10 +647,9 @@ export const mockAlerts: Alert[] = [
 
 // ---------------------------------------------------------------------------
 // Guided demo mode: Adebayo Ogunlesi POS Round-Trip case.
-// When the URL contains ?demo=true, this alert is prepended so that the
+// Always prepended for the demo zone so that the
 // first Critical alert in every list matches the scripted walk-through.
 // ---------------------------------------------------------------------------
-import { isDemoMode as __isDemoMode } from '@/hooks/useDemoMode';
 
 const adebayoDemoAlert: Alert = {
   id: 'ALT-2026-DEMO-001',
@@ -699,7 +698,6 @@ const adebayoDemoAlert: Alert = {
     'The subject, Adebayo Ogunlesi (BVN 22198765432), executed 47 Point-of-Sale withdrawal transactions totalling ₦14.8M across 12 distinct agent terminals in Lagos State between 2026-04-10 and 2026-04-12. Each individual withdrawal was deliberately structured between ₦475,000 and ₦499,000 — a clear pattern of evasion designed to fall below the ₦500,000 single-transaction reporting threshold mandated under CBN Circular BSD/DIR/PUB/LAB/016/006. The dispersion of withdrawals across 6 Lagos Local Government Areas (Oshodi, Yaba, Surulere, Ikeja, Lekki, Apapa) and 12 unrelated agent terminals (Moniepoint, Opay, Palmpay, Baxi, Kuda, PocketApp) is consistent with the "POS Round-Trip" typology, in which agent-banking infrastructure is exploited to layer illicit proceeds through circular cash-in / cash-out cycles. 9 of the 12 cycles were closed within 4 hours by re-deposit to the same BVN via an unrelated terminal. The subject\'s declared occupation ("Phone Accessories Trader", Tier 3) cannot account for cash velocity of this magnitude. Account has been placed under restriction pending NFIU submission.',
 };
 
-if (__isDemoMode) {
-  mockAlerts.unshift(adebayoDemoAlert);
-}
+// Sample data only appears in the demo zone, so the guided case is always pinned first.
+mockAlerts.unshift(adebayoDemoAlert);
 

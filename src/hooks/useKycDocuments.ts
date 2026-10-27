@@ -2,15 +2,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import { useAuditLog } from '@/hooks/useAuditLog';
-import {
-  downloadKycDocument,
-  listCustomerDocuments,
-  uploadKycDocument,
-  validateFile,
-  verifyKycDocument,
-  type KycDocument,
-  type KycDocumentType,
-} from '@/lib/kycDocuments';
+import { useDataProvider } from '@/data-layer/hooks';
+import { openDocumentUrl, validateFile, type KycDocument, type KycDocumentType } from '@/lib/kycDocuments';
 
 export function useKycDocuments(customerId: string | null, kycTier?: string | null) {
   const [documents, setDocuments] = useState<KycDocument[]>([]);
@@ -19,6 +12,7 @@ export function useKycDocuments(customerId: string | null, kycTier?: string | nu
   const [progress, setProgress] = useState(0);
   const { user } = useAuth();
   const { append } = useAuditLog();
+  const provider = useDataProvider();
 
   const analyst = user?.email ?? 'Unauthenticated session';
 
@@ -29,13 +23,13 @@ export function useKycDocuments(customerId: string | null, kycTier?: string | nu
     }
     setLoading(true);
     try {
-      setDocuments(await listCustomerDocuments(customerId));
+      setDocuments(await provider.kycDocuments.list(customerId));
     } catch {
       setDocuments([]);
     } finally {
       setLoading(false);
     }
-  }, [customerId]);
+  }, [provider, customerId]);
 
   useEffect(() => {
     refresh();
@@ -53,7 +47,7 @@ export function useKycDocuments(customerId: string | null, kycTier?: string | nu
       setProgress(10);
       const tick = window.setInterval(() => setProgress(p => (p < 85 ? p + 12 : p)), 180);
       try {
-        await uploadKycDocument({
+        await provider.kycDocuments.upload({
           file,
           customerId,
           documentType,
@@ -78,13 +72,13 @@ export function useKycDocuments(customerId: string | null, kycTier?: string | nu
         setProgress(0);
       }
     },
-    [customerId, analyst, kycTier, append, refresh],
+    [provider, customerId, analyst, kycTier, append, refresh],
   );
 
   const verify = useCallback(
     async (doc: KycDocument) => {
       try {
-        await verifyKycDocument(doc.id, analyst);
+        await provider.kycDocuments.verify(doc.id, analyst);
         append({
           action: 'DOCUMENT_VERIFY',
           analyst,
@@ -97,13 +91,13 @@ export function useKycDocuments(customerId: string | null, kycTier?: string | nu
         toast.error(e instanceof Error ? e.message : 'Verification failed');
       }
     },
-    [analyst, append, refresh],
+    [provider, analyst, append, refresh],
   );
 
   const download = useCallback(
     async (doc: KycDocument) => {
       try {
-        await downloadKycDocument(doc);
+        openDocumentUrl(await provider.kycDocuments.fileUrl(doc), doc);
         append({
           action: 'DOCUMENT_DOWNLOAD',
           analyst,
@@ -114,7 +108,7 @@ export function useKycDocuments(customerId: string | null, kycTier?: string | nu
         toast.error(e instanceof Error ? e.message : 'Could not open document');
       }
     },
-    [analyst, append],
+    [provider, analyst, append],
   );
 
   return { documents, loading, uploadingType, progress, refresh, upload, verify, download, analyst };

@@ -3,7 +3,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { FileOutput, Loader2 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { useDataProvider } from '@/data-layer/hooks';
 import type { CTRRow } from './CTRManagement';
 
 interface TxRow {
@@ -29,6 +29,7 @@ interface Props {
 export function CTRReviewSheet({ row, open, onOpenChange, onApprove, filing }: Props) {
   const [txns, setTxns] = useState<TxRow[]>([]);
   const [loading, setLoading] = useState(false);
+  const provider = useDataProvider();
 
   useEffect(() => {
     if (!row || !open) return;
@@ -37,21 +38,11 @@ export function CTRReviewSheet({ row, open, onOpenChange, onApprove, filing }: P
       : [];
     if (ids.length === 0) return;
     setLoading(true);
-    supabase
-      .from('transaction_queue')
-      .select('transaction_id, amount, channel, transaction_datetime, counterparty_account, narration, direction')
-      .in('transaction_id', ids)
-      .order('transaction_datetime', { ascending: true })
-      .then(({ data }) => {
-        setTxns(
-          (data ?? []).map(t => ({
-            ...t,
-            amount: Number(t.amount),
-          })),
-        );
-        setLoading(false);
-      });
-  }, [row, open]);
+    provider.transactionQueue.listByIds(ids)
+      .then(setTxns)
+      .catch(() => setTxns([]))
+      .finally(() => setLoading(false));
+  }, [provider, row, open]);
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle, FileOutput, Eye } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { useDataProvider } from '@/data-layer/hooks';
 import { toast } from '@/hooks/use-toast';
 import { generateCtrXml, nextCtrReference } from '@/lib/generateCTRXml';
 import { CTRReviewSheet } from './CTRReviewSheet';
@@ -23,6 +23,7 @@ interface Props {
 export function CTRPendingTable({ rows, allRows, onRefresh }: Props) {
   const [reviewing, setReviewing] = useState<CTRRow | null>(null);
   const [filingId, setFilingId] = useState<string | null>(null);
+  const provider = useDataProvider();
 
   const handleApprove = async (row: CTRRow) => {
     setFilingId(row.id);
@@ -30,33 +31,13 @@ export function CTRPendingTable({ rows, allRows, onRefresh }: Props) {
       const ids = Array.isArray(row.transaction_ids)
         ? (row.transaction_ids as unknown as string[])
         : [];
-      const { data: txns, error: txErr } = await supabase
-        .from('transaction_queue')
-        .select('transaction_id, amount, channel, transaction_datetime, counterparty_account, narration, direction')
-        .in('transaction_id', ids);
-      if (txErr) throw txErr;
+      const txns = await provider.transactionQueue.listByIds(ids);
 
       const reference = nextCtrReference(
         allRows.map(r => r.ctr_reference).filter(Boolean) as string[],
       );
-      const xml = generateCtrXml(row, (txns ?? []).map(t => ({
-        ...t,
-        amount: Number(t.amount),
-      })), reference);
-
-      const { data: userData } = await supabase.auth.getUser();
-      const { error: upErr } = await supabase
-        .from('ctr_queue')
-        .update({
-          status: 'filed',
-          ctr_reference: reference,
-          filed_at: new Date().toISOString(),
-          goaml_xml: xml,
-          reviewed_by: userData.user?.id ?? null,
-          reviewed_at: new Date().toISOString(),
-        })
-        .eq('id', row.id);
-      if (upErr) throw upErr;
+      const xml = generateCtrXml(row, txns, reference);
+      await provider.ctr.file(row, { reference, xml });
 
       toast({
         title: 'CTR filed',

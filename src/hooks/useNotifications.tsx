@@ -13,7 +13,7 @@ export interface AppNotification {
   link: string;
 }
 
-function generateNotifications(): AppNotification[] {
+export function generateNotifications(): AppNotification[] {
   const notifications: AppNotification[] = [
     {
       id: 'notif-sla-001',

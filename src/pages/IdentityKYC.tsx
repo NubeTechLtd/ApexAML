@@ -8,7 +8,7 @@ import { NotificationBell } from '@/components/NotificationBell';
 import { AuditBell } from '@/components/AuditBell';
 import { Fingerprint } from 'lucide-react';
 import { mockKYCCustomers, type KYCCustomer } from '@/data/mockKYC';
-import { supabase } from '@/integrations/supabase/client';
+import { useDataProvider } from '@/data-layer/hooks';
 import type { AdverseMediaStatus } from '@/components/VerificationQueue';
 
 const IdentityKYC = () => {
@@ -17,26 +17,15 @@ const IdentityKYC = () => {
   const selected = customers.find(c => c.id === selectedId) ?? null;
   const [adverseMedia, setAdverseMedia] = useState<Record<string, AdverseMediaStatus>>({});
 
+  const provider = useDataProvider();
+
   useEffect(() => {
     let cancelled = false;
-    (async () => {
-      const bvns = mockKYCCustomers.map(c => c.bvn);
-      const { data, error } = await supabase
-        .from('adverse_media_results')
-        .select('customer_id, overall_risk_level, search_date')
-        .in('customer_id', bvns)
-        .order('search_date', { ascending: false });
-      if (cancelled || error || !data) return;
-      const map: Record<string, AdverseMediaStatus> = {};
-      for (const row of data) {
-        if (!(row.customer_id in map)) {
-          map[row.customer_id] = (row.overall_risk_level as AdverseMediaStatus) ?? 'None';
-        }
-      }
-      setAdverseMedia(map);
-    })();
+    provider.adverseMedia.latestLevels(mockKYCCustomers.map(c => c.bvn))
+      .then((map) => { if (!cancelled) setAdverseMedia(map as Record<string, AdverseMediaStatus>); })
+      .catch(() => undefined);
     return () => { cancelled = true; };
-  }, []);
+  }, [provider]);
 
   const handleSelect = (c: KYCCustomer) => setSelectedId(c.id);
 
