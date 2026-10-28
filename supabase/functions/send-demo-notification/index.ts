@@ -7,9 +7,10 @@ import { sendTemplateEmail } from '../_shared/transactional-email-templates/send
 import { TEMPLATES } from '../_shared/transactional-email-templates/registry.ts'
 import { DEMO_NOTIFICATIONS, demoSubject, type DemoNotificationType } from '../_shared/demo-notification-content.ts'
 const Schema = z.object({ sessionId: z.string().uuid(), eventId: z.string().uuid(), type: z.enum(Object.keys(DEMO_NOTIFICATIONS) as [DemoNotificationType, ...DemoNotificationType[]]) }).strict()
-const json = (data: unknown, status = 200) => new Response(JSON.stringify(data), { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+const demoCors = { ...corsHeaders, 'Access-Control-Allow-Headers': `${corsHeaders['Access-Control-Allow-Headers']}, x-demo-token` }
+const json = (data: unknown, status = 200) => new Response(JSON.stringify(data), { status, headers: { ...demoCors, 'Content-Type': 'application/json' } })
 Deno.serve(async req => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: demoCors });
   if (req.method !== 'POST') return json({ reason: 'method_not_allowed' }, 405);
   const parsed = Schema.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return json({ reason: 'invalid_payload' }, 400);
