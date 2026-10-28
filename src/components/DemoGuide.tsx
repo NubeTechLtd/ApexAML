@@ -53,7 +53,7 @@ const DEMO_STEPS: DemoStep[] = [
   {
     title: `${GUIDED_CASE.name} — ${GUIDED_CASE.withdrawals} POS transactions in 72 hours.`,
     description:
-      'ApexAML flagged this customer at 11:58pm Sunday after detecting a classic POS round-tripping pattern — ₦${(GUIDED_CASE.total / 1_000_000).toFixed(1)}M withdrawn across ${GUIDED_CASE.agents} agents, all transactions just below the ₦500,000 reporting threshold. Click on the alert to start your investigation.',
+      `ApexAML flagged this customer at 11:58pm Sunday after detecting a classic POS round-tripping pattern — ₦${(GUIDED_CASE.total / 1_000_000).toFixed(1)}M withdrawn across ${GUIDED_CASE.agents} agents, all transactions just below the ₦500,000 reporting threshold. Click on the alert to start your investigation.`,
     action: 'Click the first Critical alert in the list →',
   },
   {
