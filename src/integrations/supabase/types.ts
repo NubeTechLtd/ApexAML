@@ -420,6 +420,27 @@ export type Database = {
         }
         Relationships: []
       }
+      demo_sessions: {
+        Row: {
+          created_at: string
+          email: string
+          emails_sent: number
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          emails_sent?: number
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          emails_sent?: number
+          id?: string
+        }
+        Relationships: []
+      }
       demo_slots: {
         Row: {
           booked_by_request_id: string | null

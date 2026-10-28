@@ -21,7 +21,7 @@ function files(dir: string): string[] {
 
 // Lead capture, demo booking and admin/live-only screens may use the backend directly.
 const ALLOWED = [
-  'src/components/landing/', 'src/pages/Admin', 'src/pages/Login', 'src/pages/Contact', 'src/pages/LandingPage',
+  'src/components/landing/', 'src/pages/Admin', 'src/pages/Login', 'src/pages/Contact', 'src/pages/DemoEntry', 'src/pages/LandingPage',
   'src/pages/RoadmapGenerator', 'src/pages/Settings', 'src/components/ProtectedRoute', 'src/components/SupportAccessPanel',
   'src/components/PlatformRoleChanges',
 ];

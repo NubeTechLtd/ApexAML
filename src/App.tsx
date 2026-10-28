@@ -33,6 +33,7 @@ import NotFound from "./pages/NotFound.tsx";
 import Unsubscribe from "./pages/Unsubscribe.tsx";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { DemoGuide } from "./components/DemoGuide";
+import DemoEntry from "./pages/DemoEntry";
 import { WhatsAppChat } from "./components/WhatsAppChat";
 import { MarketingZone } from "./components/MarketingZone";
 import { AppLayout, DemoLayout, LegacyRedirect, MarketingLayout } from "./components/layouts/ZoneLayouts";
@@ -75,7 +76,7 @@ const App = () => (
 
             {/* Demo zone: sample data */}
             <Route path="/demo" element={<DemoLayout />}>
-              <Route index element={<LegacyRedirect to="/dashboard" />} />
+              <Route index element={<DemoEntry />} />
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="alerts" element={<Index />} />
               <Route path="workspace" element={<AlertWorkspace />} />
