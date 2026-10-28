@@ -340,3 +340,6 @@
   background-color: var(--primary-button-hover);
   color: hsl(var(--primary-foreground));
 }
+
+/* Demo banner sits above the fixed sidebar so the sidebar starts below it. */
+.demo-zone .group.peer > div.fixed { top: 2.5rem; height: calc(100svh - 2.5rem); }

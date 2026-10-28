@@ -37,7 +37,7 @@ export function DemoLayout() {
     navigate(`${pathname === '/demo' ? '/demo/dashboard' : pathname}?tour=1`);
   };
   return (
-    <>
+    <div className="demo-zone">
       <div role="status" className="sticky top-0 z-50 flex min-h-10 flex-wrap items-center justify-between gap-x-4 gap-y-1 border-b border-border bg-muted px-4 py-1 text-xs text-muted-foreground">
         <span className="font-medium">Demo environment: sample data only, no live connections.</span>
         <div className="flex flex-wrap items-center gap-1">
@@ -74,7 +74,7 @@ export function DemoLayout() {
       <ProductTourModal open={tourOpen} onClose={closeTour} onBookDemo={() => { setTourOpen(false); setBookOpen(true); }} />
       <BookDemoSheet open={bookOpen} onOpenChange={setBookOpen} />
       <Outlet key={generation} />
-    </>
+    </div>
   );
 }
 
