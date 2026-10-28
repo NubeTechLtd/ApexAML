@@ -190,12 +190,12 @@ export function Customer360Content({ customerId, onClose }: Props) {
         onOpenChange={setFreezeOpen}
         customerName={customer.name}
         caseId={customerRef}
-        bvn={customer.bvn || '22012345678'}
+        bvn={customer.bvn || 'Not on record'}
         kycTier={customer.kycTier}
         accountStatus={accountStatus}
         onConfirmed={() => {
           setAccountStatus('Frozen');
-          toast.warning('Account frozen — Ref: FRZ-2026-0089');
+          toast.warning(`Account frozen — ${customer.name}`);
         }}
       />
       <ConfirmEscalationDialog
