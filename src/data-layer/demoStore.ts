@@ -95,3 +95,11 @@ export function hasDemoEntry(): boolean {
 export function markDemoEntry(id: string) {
   try { storage()?.setItem(ENTRY_KEY, id); } catch { /* storage blocked */ }
 }
+
+const NOTIFICATION_CREDENTIALS = 'apexaml-demo-email-access';
+export function saveDemoNotificationCredentials(id: string, token: string) {
+  try { storage()?.setItem(NOTIFICATION_CREDENTIALS, JSON.stringify({ id, token })); } catch { /* local-only fallback */ }
+}
+export function getDemoNotificationCredentials(): { id: string; token: string } | null {
+  try { const raw = storage()?.getItem(NOTIFICATION_CREDENTIALS); return raw ? JSON.parse(raw) : null; } catch { return null; }
+}

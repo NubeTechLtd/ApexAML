@@ -77,3 +77,7 @@
 - [x] Session-persistent actions (freeze, escalate, dismiss, STR edit/export, rule toggle/delete, CTR file, sanctions decisions) add audit entries shown in /demo/audit; case files built from the same audit trail.
 - [x] "Reset demo" control in the demo layout.
 - [ ] ProductTourModal (marketing tour) still shows its own illustrative sample names — not part of the demo dataset.
+
+## Demo event notifications
+- [x] Seven sample-only templates, token-bound session delivery, atomic 10/session and 30/normalized-address/UTC-day reservations, NotificationBell and persistent demo inbox. Briefing runs once per UTC day while the demo is open, not as an unsolicited scheduled campaign.
+- [x] Twenty automated checks pass; browser escalation and persisted inbox verified; rollback-only live quota/deduplication checks passed. One email dispatch and matching template HTML verified; test session removed. Managed suppression handling retained, but no address was unsubscribed during testing. Inbox mirrors submitted template HTML; the provider-added unsubscribe footer is not part of that HTML.

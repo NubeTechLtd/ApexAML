@@ -9,6 +9,7 @@ import { useNotifications, type NotificationType } from '@/hooks/useNotification
 import { cn } from '@/lib/utils';
 
 const typeConfig: Record<NotificationType, { icon: typeof Bell; color: string }> = {
+  DEMO_EVENT: { icon: Bell, color: 'text-primary' },
   SLA_BREACH: { icon: AlertTriangle, color: 'text-destructive' },
   CBN_CIRCULAR: { icon: FileText, color: 'text-[hsl(var(--risk-medium))]' },
   HIGH_RISK_ALERT: { icon: ShieldAlert, color: 'text-destructive' },
@@ -21,14 +22,14 @@ export function NotificationBell() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <button className="relative flex h-8 w-8 items-center justify-center rounded-md hover:bg-muted transition-colors">
+        <Button variant="ghost" size="icon" aria-label="Notifications" className="relative h-8 w-8">
           <Bell className="h-4 w-4 text-muted-foreground" />
           {unreadCount > 0 && (
             <Badge className="absolute -top-1 -right-1 h-4 min-w-4 px-1 text-[9px] flex items-center justify-center bg-destructive text-destructive-foreground border-0">
               {unreadCount}
             </Badge>
           )}
-        </button>
+        </Button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-80 p-0">
         {/* Header */}

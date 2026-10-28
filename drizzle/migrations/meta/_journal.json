@@ -120,6 +120,13 @@
       "when": 1793181716896,
       "tag": "0016_create_demo_sessions",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1793221435212,
+      "tag": "0017_demo_notification_limits",
+      "breakpoints": true
     }
   ]
 }

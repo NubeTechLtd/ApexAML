@@ -33,6 +33,7 @@ import NotFound from "./pages/NotFound.tsx";
 import Unsubscribe from "./pages/Unsubscribe.tsx";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { DemoGuide } from "./components/DemoGuide";
+import DemoInbox from "./pages/DemoInbox";
 import DemoEntry from "./pages/DemoEntry";
 import { WhatsAppChat } from "./components/WhatsAppChat";
 import { MarketingZone } from "./components/MarketingZone";
@@ -46,11 +47,12 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
-      <NotificationsProvider>
+
       <TooltipProvider>
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <NotificationsProvider>
           <AuditLogProvider>
           <MarketingZone>
           <Routes>
@@ -78,6 +80,7 @@ const App = () => (
             <Route path="/demo" element={<DemoLayout />}>
               <Route index element={<DemoEntry />} />
               <Route path="dashboard" element={<Dashboard />} />
+              <Route path="inbox" element={<DemoInbox />} />
               <Route path="alerts" element={<Index />} />
               <Route path="workspace" element={<AlertWorkspace />} />
               <Route path="rules" element={<RulesEngine />} />
@@ -117,9 +120,9 @@ const App = () => (
           <WhatsAppChat />
           </MarketingZone>
           </AuditLogProvider>
+          </NotificationsProvider>
         </BrowserRouter>
       </TooltipProvider>
-      </NotificationsProvider>
     </ThemeProvider>
   </QueryClientProvider>
 );
