@@ -3,8 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { ShieldAlert, Snowflake, Download, ChevronDown, X, ExternalLink, StickyNote } from 'lucide-react';
-import { customer360Data } from '@/data/models/customer360';
-import { mockLegacyAlerts as mockAlerts } from '@/data/models/legacyAlerts';
+import { useDemoDataset, demoActions } from '@/data-layer/demoDataset';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { useZoneNavigate } from '@/hooks/useZone';
@@ -34,10 +33,13 @@ interface Props {
 
 export function Customer360Content({ customerId, onClose }: Props) {
   const navigate = useZoneNavigate();
+  const { customers360: customer360Data, legacyAlerts: mockAlerts } = useDemoDataset();
   const customer = customer360Data[customerId];
+  const customerRef = `CUS-${String(customerId).padStart(4, '0')}`;
   const [freezeOpen, setFreezeOpen] = useState(false);
   const [escalateOpen, setEscalateOpen] = useState(false);
-  const [accountStatus, setAccountStatus] = useState(customer?.accountStatus ?? 'Active');
+  const accountStatus = customer?.accountStatus ?? 'Active';
+  const setAccountStatus = (status: 'Active' | 'Frozen' | 'Restricted') => demoActions.setAccountStatus([customerId], status);
   const [noteSheetOpen, setNoteSheetOpen] = useState(false);
   const [notePrefill, setNotePrefill] = useState('');
   const [notes, setNotes] = useState<ComplianceNote[]>([]);
@@ -187,7 +189,7 @@ export function Customer360Content({ customerId, onClose }: Props) {
         open={freezeOpen}
         onOpenChange={setFreezeOpen}
         customerName={customer.name}
-        caseId={`ACCT-${customerId}`}
+        caseId={customerRef}
         bvn={customer.bvn || '22012345678'}
         kycTier={customer.kycTier}
         accountStatus={accountStatus}
@@ -200,9 +202,12 @@ export function Customer360Content({ customerId, onClose }: Props) {
         open={escalateOpen}
         onOpenChange={setEscalateOpen}
         customerName={customer.name}
-        caseId={`ACCT-${customerId}`}
+        caseId={customerRef}
         action="NFIU_ESCALATION"
-        onConfirmed={() => toast.error('Escalated to NFIU')}
+        onConfirmed={() => {
+            mockAlerts.filter(a => a.customer360Id === customer.id && (a.status === 'Open' || a.status === 'Under Review')).forEach(a => demoActions.setAlertStatus(a.id, 'Escalated'));
+            toast.error('Escalated to NFIU');
+          }}
       />
       <AddNoteSheet
         open={noteSheetOpen}
