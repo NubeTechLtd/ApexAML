@@ -27,11 +27,11 @@ export function DemoLayout() {
   };
   return (
     <>
-      <div className="sticky top-0 z-50 flex h-9 items-center justify-between gap-3 border-b border-border bg-muted px-4 text-xs text-muted-foreground">
-        <span>Demo workspace · fictional sample data · your changes stay in this browser</span>
+      <div className="fixed left-1/2 top-2 z-50 flex -translate-x-1/2 items-center gap-2 rounded-full border border-border bg-muted py-0.5 pl-3 pr-1 text-xs text-muted-foreground shadow-sm">
+        <span>Sample data · changes stay in this browser</span>
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button variant="ghost" size="sm" className="h-7 gap-1.5 text-xs">
+            <Button variant="ghost" size="sm" className="h-7 gap-1.5 rounded-full text-xs">
               <RotateCcw className="h-3.5 w-3.5" /> Reset demo
             </Button>
           </AlertDialogTrigger>
