@@ -17,7 +17,7 @@
 - Keep green-control foregrounds and roadmap-specific sidebar/warning roles in semantic tokens; scope roadmap sidebar overrides to its page so other app sidebars retain their own styling.
 
 - Keep subscription amounts and implementation fees in `src/lib/pricing.ts`, and derive calculators and price displays from them so pricing changes stay consistent across the site.
-- Register requested email templates in the shared transactional registry and invoke the shared queued sender from validated server paths; this keeps delivery, suppression and unsubscribe handling consistent.
+- Register requested email templates in the shared transactional registry and invoke the managed sendTemplateEmail helper from validated server paths; this keeps delivery, suppression and unsubscribe handling consistent without recreating the retired queue.
 - Use the shared LegalFooter in email templates; this keeps company and data-protection notices consistent.
 - Explicitly pass the server credential when invoking the queued sender and compare it against the configured credential; this supports current server keys without trusting decoded JWT role claims.- Every tenant table carries a NOT NULL institution_id with member-only RLS (private.is_institution_member), and tenant storage paths start with the institution_id; writers set it explicitly, with a fill trigger as a safety net, so rows and files can never be unscoped.
 - Core banking webhooks authenticate with per-institution encrypted keys, signed timestamps and event_id idempotency recorded atomically with the queued transaction; the key alone decides the institution so payloads cannot cross tenants.
