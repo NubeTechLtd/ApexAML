@@ -17,8 +17,8 @@ import {
   AlertTriangle, Clock, ChevronDown, CheckCircle2, Download, Globe, Wifi, StickyNote,
 } from 'lucide-react';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
-import { customer360Data } from '@/data/mockCustomer360';
-import { mockLegacyAlerts as mockAlerts } from '@/data/mockLegacyAlerts';
+import { customer360Data } from '@/data/models/customer360';
+import { mockLegacyAlerts as mockAlerts } from '@/data/models/legacyAlerts';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { Customer360IdentityCard } from '@/components/customer360/IdentityCard';

@@ -2,10 +2,10 @@
  * Demo provider: sample data held in memory and the visitor's localStorage.
  * It must never import the backend client or call edge functions.
  */
-import { mockAlerts } from '@/data/mockAlerts';
-import { mockCorporateEntities } from '@/data/mockKYB';
-import { mockSettlementAccounts } from '@/data/mockSettlementAccounts';
-import { mockSanctionsMatches } from '@/data/mockSanctions';
+import { mockAlerts } from '@/data/models/alerts';
+import { mockCorporateEntities } from '@/data/models/kyb';
+import { mockSettlementAccounts } from '@/data/models/settlement';
+import { mockSanctionsMatches } from '@/data/models/sanctions';
 import { mockRules } from '@/components/RulesTable';
 import { generateNotifications } from '@/hooks/useNotifications';
 import { demoId, onCollectionChange, readCollection, wait, writeCollection } from '../demoStore';

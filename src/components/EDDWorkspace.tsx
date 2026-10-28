@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
-import type { KYCCustomer } from '@/data/mockKYC';
+import type { KYCCustomer } from '@/data/models/kyc';
 import { TierManagement } from '@/components/kyc/TierManagement';
 import { KycDocumentsSection } from '@/components/kyc/KycDocumentsSection';
 

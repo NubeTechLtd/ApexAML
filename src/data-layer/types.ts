@@ -4,9 +4,9 @@
  * so pages never depend on where the data came from.
  */
 import type { Database } from '@/integrations/supabase/types';
-import type { Alert, Transaction } from '@/data/mockAlerts';
-import type { CorporateEntity } from '@/data/mockKYB';
-import type { ManagedAccount } from '@/data/mockSettlementAccounts';
+import type { Alert, Transaction } from '@/data/models/alerts';
+import type { CorporateEntity } from '@/data/models/kyb';
+import type { ManagedAccount } from '@/data/models/settlement';
 import type { Rule } from '@/components/RulesTable';
 import type { AppNotification } from '@/hooks/useNotifications';
 

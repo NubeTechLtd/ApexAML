@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import type { Customer360Data } from '@/data/mockCustomer360';
+import type { Customer360Data } from '@/data/models/customer360';
 
 interface NetworkNode {
   id: string;

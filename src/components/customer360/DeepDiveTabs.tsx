@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { CreditCard, Network, AlertTriangle, FileText, Download, ClipboardList, ShieldCheck, TrendingUp, Newspaper } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import type { Customer360Data } from '@/data/mockCustomer360';
+import type { Customer360Data } from '@/data/models/customer360';
 import type { ComplianceNote } from './AddNoteSheet';
 import { TransactionsTab } from './TransactionsTab';
 import { NetworkGraph } from './NetworkGraph';

@@ -28,7 +28,7 @@ import { toast } from 'sonner';
 import {
   mockSTRRecords, mockNFIUSubmissions,
   type STRRecord, type NFIUSubmission,
-} from '@/data/mockSTR';
+} from '@/data/models/str';
 
 /* ── helpers ──────────────────────────────────── */
 

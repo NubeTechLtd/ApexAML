@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Search, CheckCircle2, XCircle, Clock, Loader2, Newspaper } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { KYCCustomer, KYCStatus } from '@/data/mockKYC';
+import type { KYCCustomer, KYCStatus } from '@/data/models/kyc';
 
 export type AdverseMediaStatus = 'High' | 'Medium' | 'Low' | 'None';
 

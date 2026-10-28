@@ -9,7 +9,7 @@ import { NotificationBell } from '@/components/NotificationBell';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { mockLegacyAlerts as mockAlerts } from '@/data/mockLegacyAlerts';
+import { mockLegacyAlerts as mockAlerts } from '@/data/models/legacyAlerts';
 import { DailyBriefing } from '@/components/DailyBriefing';
 import { LiveActivityFeed } from '@/components/LiveActivityFeed';
 import {

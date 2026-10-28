@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Search, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { CorporateEntity, KybRisk, KybStatus } from '@/data/mockKYB';
+import type { CorporateEntity, KybRisk, KybStatus } from '@/data/models/kyb';
 
 interface Props {
   entities: CorporateEntity[];

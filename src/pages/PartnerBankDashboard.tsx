@@ -15,7 +15,7 @@ import {
   commingleScore,
   approvedVsUnapproved,
   type IMTOSettlementAccount,
-} from '@/data/mockSettlementAccounts';
+} from '@/data/models/settlement';
 import { CrossBorder24hTicker } from '@/components/imto/CrossBorder24hTicker';
 import { InboundSmurfingVisualizer } from '@/components/imto/InboundSmurfingVisualizer';
 

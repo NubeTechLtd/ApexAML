@@ -4,7 +4,7 @@
  */
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentInstitutionId } from '@/lib/institution';
-import type { Alert, AlertType, RiskLevel, Transaction, TxChannel } from '@/data/mockAlerts';
+import type { Alert, AlertType, RiskLevel, Transaction, TxChannel } from '@/data/models/alerts';
 import type {
   AdverseMediaOverall, AdverseMediaScreening, AuditChainResult, AuditEntry, CustomerRecord,
   DataProvider, KycDocument, RiskTriggerType, SanctionsListMeta, SanctionsScreenResult,

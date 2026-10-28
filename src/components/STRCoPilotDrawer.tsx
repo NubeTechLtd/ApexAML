@@ -9,7 +9,7 @@ import {
   Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription,
 } from '@/components/ui/sheet';
 import { useToast } from '@/hooks/use-toast';
-import type { AlertData } from '@/data/mockLegacyAlerts';
+import type { AlertData } from '@/data/models/legacyAlerts';
 import { generateGoAMLXmlFromLegacy, downloadXmlFile } from '@/lib/generateGoAMLXml';
 import { motion, AnimatePresence } from 'framer-motion';
 

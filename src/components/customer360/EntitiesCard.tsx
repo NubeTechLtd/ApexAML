@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Network, Fingerprint, ArrowRight, User, Wifi, Banknote, Shield } from 'lucide-react';
 import { EntityNetworkGraph, type GraphNode } from '@/components/graph/EntityNetworkGraph';
-import type { ConnectedEntity } from '@/data/mockCustomer360';
+import type { ConnectedEntity } from '@/data/models/customer360';
 
 const entityIcons: Record<ConnectedEntity['type'], typeof Network> = {
   'Shared Device ID': Fingerprint,

@@ -24,7 +24,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Label } from '@/components/ui/label';
-import { type Alert, type TxChannel } from '@/data/mockAlerts';
+import { type Alert, type TxChannel } from '@/data/models/alerts';
 import { useInstitutionAlerts } from '@/hooks/useInstitutionAlerts';
 import { useDataProvider, useRiskRecalculation } from '@/data-layer/hooks';
 import { useToast } from '@/hooks/use-toast';

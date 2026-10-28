@@ -23,7 +23,7 @@ import {
   isIMTOSettlement,
   type ManagedAccount,
   type IMTOSettlementAccount,
-} from '@/data/mockSettlementAccounts';
+} from '@/data/models/settlement';
 
 /** Distinct teal token used for the IMTO Settlement badge. */
 const tealBadge =

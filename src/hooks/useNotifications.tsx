@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useMemo, useCallback } from 'react';
-import { mockAlerts } from '@/data/mockAlerts';
+import { mockAlerts } from '@/data/models/alerts';
 
 export type NotificationType = 'SLA_BREACH' | 'CBN_CIRCULAR' | 'HIGH_RISK_ALERT';
 

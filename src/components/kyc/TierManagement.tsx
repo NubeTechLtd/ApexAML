@@ -9,7 +9,7 @@ import {
 import { CheckCircle2, Circle, ArrowRight, ShieldCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
-import type { KYCCustomer } from '@/data/mockKYC';
+import type { KYCCustomer } from '@/data/models/kyc';
 
 const TIERS = ['Tier 1', 'Tier 2', 'Tier 3'] as const;
 
