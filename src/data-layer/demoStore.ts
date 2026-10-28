@@ -78,3 +78,20 @@ export const demoId = (prefix: string) =>
   `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 
 export const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/** Adopts the server-issued demo session id (from the demo entry form) for local demo state. */
+export function setDemoSessionId(id: string) {
+  session = id;
+  memory.clear();
+  try { storage()?.setItem(SESSION_KEY, id); } catch { /* storage blocked */ }
+  listeners.forEach((set) => set.forEach((fn) => fn()));
+}
+
+// Kept outside the demo prefix so "Reset demo" does not send visitors back to the entry form.
+const ENTRY_KEY = 'apexaml-demo-entry';
+export function hasDemoEntry(): boolean {
+  try { return Boolean(storage()?.getItem(ENTRY_KEY)); } catch { return false; }
+}
+export function markDemoEntry(id: string) {
+  try { storage()?.setItem(ENTRY_KEY, id); } catch { /* storage blocked */ }
+}
