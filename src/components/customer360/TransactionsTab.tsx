@@ -5,53 +5,25 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { TrendingUp, Hash, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { Customer360Data } from '@/data/models/customer360';
+import { channelLabel, transactionsFor } from '@/data-layer/seed/views';
 
 function formatCurrency(amount: number) {
   return '₦' + amount.toLocaleString('en-NG');
 }
 
-const CHANNELS = ['POS', 'Mobile', 'USSD', 'ATM', 'Internet Banking', 'Branch'] as const;
-const COUNTERPARTIES = [
-  'Dangote Industries', 'MTN Nigeria', 'Shoprite Holdings', 'First Bank PLC',
-  'Jumia Technologies', 'Kuda Microfinance', 'Paystack Payments', 'Flutterwave Inc',
-  'Access Bank PLC', 'Zenith Bank PLC', 'GTBank PLC', 'UBA PLC',
-  'Oando Energy', 'Nestle Nigeria', 'BUA Cement', 'Interswitch Ltd',
-  'Opay Digital', 'PalmPay Ltd', 'Sterling Bank', 'Wema Bank',
-];
+const CHANNELS = ['POS', 'Mobile', 'USSD', 'ATM', 'Internet Banking', 'Branch', 'IMTO'] as const;
 
-const FLAG_REASONS = [
-  'Structuring', 'Velocity Spike', 'Round-Trip', 'PEP Link', 'Threshold Breach',
-  'Unusual Channel', 'Dormant Reactivation', null, null, null, null, null,
-];
-
-function generateTransactions(customer: Customer360Data) {
-  const txns = [];
-  let balance = 5000000 + customer.riskScore * 50000;
-  const now = Date.now();
-
-  for (let i = 0; i < 30; i++) {
-    const daysAgo = i;
-    const date = new Date(now - daysAgo * 24 * 60 * 60 * 1000);
-    const channel = CHANNELS[(customer.id * 7 + i * 3) % CHANNELS.length];
-    const isDebit = (i + customer.id) % 3 === 0;
-    const amount = (50000 + ((customer.id * 31 + i * 17) % 20) * 250000);
-    const counterparty = COUNTERPARTIES[(customer.id * 5 + i * 2) % COUNTERPARTIES.length];
-    const flag = FLAG_REASONS[(customer.id * 3 + i * 7) % FLAG_REASONS.length];
-
-    if (isDebit) balance -= amount; else balance += amount;
-    if (balance < 100000) balance = 500000;
-
-    txns.push({
-      id: `TXN-${80000 + customer.id * 100 + i}`,
-      date: date.toISOString(),
-      channel,
-      amount: isDebit ? -amount : amount,
-      counterparty,
-      balance,
-      flag,
-    });
-  }
-  return txns;
+/** The customer's own transactions from the shared sample dataset, newest first. */
+function customerTransactions(customer: Customer360Data) {
+  return transactionsFor(customer.id).map((t) => ({
+    id: t.id,
+    date: t.date,
+    channel: channelLabel(t.channel),
+    amount: t.type === 'Debit' ? -t.amountNGN : t.amountNGN,
+    counterparty: t.counterparty,
+    balance: t.balanceAfter,
+    flag: t.flagReason ?? null,
+  }));
 }
 
 interface Props {
@@ -59,12 +31,12 @@ interface Props {
 }
 
 export function TransactionsTab({ customer }: Props) {
-  const allTx = useMemo(() => generateTransactions(customer), [customer]);
+  const allTx = useMemo(() => customerTransactions(customer), [customer]);
   const [activeChannels, setActiveChannels] = useState<Set<string>>(new Set());
 
   const filtered = activeChannels.size === 0 ? allTx : allTx.filter(tx => activeChannels.has(tx.channel));
 
-  const volume30d = useMemo(() => allTx.reduce((s, tx) => s + Math.abs(tx.amount), 0), [allTx]);
+  const volume30d = useMemo(() => allTx.filter(tx => Date.now() - new Date(tx.date).getTime() <= 30 * 86_400_000).reduce((s, tx) => s + Math.abs(tx.amount), 0), [allTx]);
   const flaggedCount = useMemo(() => allTx.filter(tx => tx.flag).length, [allTx]);
   const flaggedPct = allTx.length > 0 ? Math.round((flaggedCount / allTx.length) * 100) : 0;
 

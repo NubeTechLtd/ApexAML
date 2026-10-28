@@ -5,6 +5,7 @@ import { BookDemoSheet } from '@/components/landing/BookDemoSheet';
 import { ChevronLeft, ChevronRight, Play, X, Minimize2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
+import { GUIDED_CASE } from '@/data-layer/seed/dataset';
 
 /*
  * The guided tour runs only inside the /demo zone. It starts from `?tour=1`
@@ -50,9 +51,9 @@ const DEMO_STEPS: DemoStep[] = [
     action: "Click 'Suspicious Activity Alerts' in the left navigation to investigate →",
   },
   {
-    title: 'Adebayo Ogunlesi — 47 POS transactions in 72 hours.',
+    title: `${GUIDED_CASE.name} — ${GUIDED_CASE.withdrawals} POS transactions in 72 hours.`,
     description:
-      'ApexAML flagged this customer at 11:58pm Sunday after detecting a classic POS round-tripping pattern — ₦14.8M withdrawn across 12 agents, all transactions just below the ₦500,000 reporting threshold. Click on the alert to start your investigation.',
+      `ApexAML flagged this customer at 11:58pm Sunday after detecting a classic POS round-tripping pattern — ₦${(GUIDED_CASE.total / 1_000_000).toFixed(1)}M withdrawn across ${GUIDED_CASE.agents} agents, all transactions just below the ₦500,000 reporting threshold. Click on the alert to start your investigation.`,
     action: 'Click the first Critical alert in the list →',
   },
   {

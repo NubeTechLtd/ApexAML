@@ -3,6 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Button } from '@/components/ui/button';
 import { AlertTriangle, FileOutput, Eye } from 'lucide-react';
 import { useDataProvider } from '@/data-layer/hooks';
+import { useAuditLog } from '@/hooks/useAuditLog';
 import { toast } from '@/hooks/use-toast';
 import { generateCtrXml, nextCtrReference } from '@/lib/generateCTRXml';
 import { CTRReviewSheet } from './CTRReviewSheet';
@@ -24,6 +25,7 @@ export function CTRPendingTable({ rows, allRows, onRefresh }: Props) {
   const [reviewing, setReviewing] = useState<CTRRow | null>(null);
   const [filingId, setFilingId] = useState<string | null>(null);
   const provider = useDataProvider();
+  const { append } = useAuditLog();
 
   const handleApprove = async (row: CTRRow) => {
     setFilingId(row.id);
@@ -38,6 +40,7 @@ export function CTRPendingTable({ rows, allRows, onRefresh }: Props) {
       );
       const xml = generateCtrXml(row, txns, reference);
       await provider.ctr.file(row, { reference, xml });
+      await append({ action: 'CTR_FILED', analyst: '', caseId: reference, justification: `CTR for ${row.customer_name ?? row.customer_id} (₦${Math.round(Number(row.total_cash_ngn)).toLocaleString('en-NG')}, ${row.transaction_count} cash transactions) filed in goAML format.` }).catch(() => undefined);
 
       toast({
         title: 'CTR filed',

@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useDemoCollection } from '@/data-layer/demoDataset';
+import { SEED_KYB } from '@/data-layer/seed/dataset';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -7,10 +9,10 @@ import { AuditBell } from '@/components/AuditBell';
 import { CorporateQueue } from '@/components/kyb/CorporateQueue';
 import { CorporateEDDWorkspace } from '@/components/kyb/CorporateEDDWorkspace';
 import { Building2 } from 'lucide-react';
-import { mockCorporateEntities, type CorporateEntity } from '@/data/models/kyb';
+import type { CorporateEntity } from '@/data/models/kyb';
 
 const CorporateKYB = () => {
-  const [entities, setEntities] = useState<CorporateEntity[]>(mockCorporateEntities);
+  const [entities, setEntities] = useDemoCollection<CorporateEntity[]>('kyb_cases', () => SEED_KYB);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const selected = entities.find(e => e.id === selectedId) ?? null;
 

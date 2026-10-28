@@ -11,6 +11,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { useDemoDataset, demoActions, useDemoCollection } from '@/data-layer/demoDataset';
+import { useAuditLog } from '@/hooks/useAuditLog';
 
 export interface Rule {
   id: string;
@@ -24,22 +26,6 @@ export interface Rule {
   enabled: boolean;
 }
 
-export const mockRules: Rule[] = [
-  { id: 'R-001', name: 'POS Round-Trip Detection', typology: 'POS Round-Trip', threshold: 5000000, alertsTriggered7d: 47, falsePositivePct: 12, validationStatus: 'Validated', lastValidated: '2026-02-15', enabled: true },
-  { id: 'R-002', name: 'BDC Smurfing Pattern', typology: 'BDC Smurfing', threshold: 4900000, alertsTriggered7d: 124, falsePositivePct: 28, validationStatus: 'Overdue', lastValidated: '2025-01-20', enabled: true },
-  { id: 'R-003', name: 'USSD Layering Monitor', typology: 'USSD Layering', threshold: 2000000, alertsTriggered7d: 31, falsePositivePct: 18, validationStatus: 'Validated', lastValidated: '2026-03-10', enabled: true },
-  { id: 'R-004', name: 'Dormant Account Activation', typology: 'Dormant Activation', threshold: 10000000, alertsTriggered7d: 8, falsePositivePct: 5, validationStatus: 'Pending', lastValidated: '2025-11-05', enabled: true },
-  { id: 'R-005', name: 'Crypto P2P Velocity', typology: 'Crypto P2P', threshold: 3000000, alertsTriggered7d: 56, falsePositivePct: 22, validationStatus: 'Validated', lastValidated: '2026-01-28', enabled: false },
-  { id: 'R-006', name: 'Salary Mule Detection', typology: 'Salary Mule', threshold: 1500000, alertsTriggered7d: 19, falsePositivePct: 35, validationStatus: 'Overdue', lastValidated: '2024-12-01', enabled: true },
-  { id: 'R-007', name: 'Real Estate Front Flows', typology: 'Real Estate Front', threshold: 50000000, alertsTriggered7d: 3, falsePositivePct: 8, validationStatus: 'Pending', lastValidated: '2025-09-15', enabled: true },
-  { id: 'R-008', name: 'PEP Spending Spike', typology: 'PEP Spending Spike', threshold: 20000000, alertsTriggered7d: 12, falsePositivePct: 15, validationStatus: 'Validated', lastValidated: '2026-03-22', enabled: true },
-  { id: 'R-009', name: 'Cash Limit Smurfing Detector — $200 CBN Threshold', typology: 'IMTO Cash Smurfing', threshold: 316000, alertsTriggered7d: 23, falsePositivePct: 9, validationStatus: 'Validated', lastValidated: '2026-04-01', enabled: true },
-  { id: 'R-010', name: 'IMTO Outbound Transfer Violation', typology: 'IMTO Direction Check', threshold: 1, alertsTriggered7d: 2, falsePositivePct: 0, validationStatus: 'Validated', lastValidated: '2026-04-05', enabled: true },
-  { id: 'R-011', name: 'IMTO Non-Naira Settlement Violation', typology: 'IMTO FX Settlement', threshold: 1, alertsTriggered7d: 1, falsePositivePct: 0, validationStatus: 'Validated', lastValidated: '2026-04-05', enabled: true },
-  { id: 'R-012', name: 'IMTO → BDC Round-Trip Detector (48h)', typology: 'BDC Round-Tripping', threshold: 1000000, alertsTriggered7d: 4, falsePositivePct: 11, validationStatus: 'Validated', lastValidated: '2026-04-02', enabled: true },
-  { id: 'R-013', name: 'B2P Phantom Payroll Pattern (Foreign Business Burst)', typology: 'Phantom Payroll', threshold: 50, alertsTriggered7d: 3, falsePositivePct: 7, validationStatus: 'Validated', lastValidated: '2026-04-08', enabled: true },
-  { id: 'R-014', name: 'IMTO Settlement Account Commingling (May 2026 Circular)', typology: 'IMTO Account Commingling', threshold: 1, alertsTriggered7d: 5, falsePositivePct: 4, validationStatus: 'Validated', lastValidated: '2026-04-09', enabled: true },
-];
 
 const validationBadgeClass: Record<string, string> = {
   Validated: 'bg-[hsl(var(--risk-low)/0.15)] text-[hsl(var(--risk-low))] border-0',
@@ -50,7 +36,10 @@ const validationBadgeClass: Record<string, string> = {
 const formatNaira = (v: number) => '₦' + v.toLocaleString('en-NG');
 
 export function RulesTable() {
-  const [rules, setRules] = useState<Rule[]>(mockRules);
+  const { rules: allRules } = useDemoDataset();
+  const [deletedIds, setDeletedIds] = useDemoCollection<string[]>('deleted_rules', () => []);
+  const rules = allRules.filter(r => !deletedIds.includes(r.id));
+  const { append } = useAuditLog();
   const [search, setSearch] = useState('');
   const { toast } = useToast();
 
@@ -61,14 +50,17 @@ export function RulesTable() {
   );
 
   const pauseRule = (id: string) => {
-    setRules(prev => prev.map(r => r.id === id ? { ...r, enabled: !r.enabled } : r));
     const rule = rules.find(r => r.id === id);
+    if (!rule) return;
+    demoActions.setRuleEnabled(id, !rule.enabled);
+    void append({ action: rule.enabled ? 'RULE_PAUSED' : 'RULE_RESUMED', analyst: '', caseId: id, justification: `"${rule.name}" ${rule.enabled ? 'paused' : 'resumed'} from the rules table.` }).catch(() => undefined);
     toast({ title: rule?.enabled ? 'Rule Paused' : 'Rule Resumed', description: `"${rule?.name}" updated.` });
   };
 
   const deleteRule = (id: string) => {
     const rule = rules.find(r => r.id === id);
-    setRules(prev => prev.filter(r => r.id !== id));
+    setDeletedIds(prev => [...prev, id]);
+    void append({ action: 'RULE_DELETED', analyst: '', caseId: id, justification: `"${rule?.name}" removed from the rules table.` }).catch(() => undefined);
     toast({ title: 'Rule Deleted', description: `"${rule?.name}" removed.` });
   };
 

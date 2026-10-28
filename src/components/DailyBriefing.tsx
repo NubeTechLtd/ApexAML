@@ -3,8 +3,7 @@ import { useZoneNavigate } from '@/hooks/useZone';
 import { AlertTriangle, Clock, Fingerprint, CheckCircle2, ArrowRight } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
-import { mockAlerts } from '@/data/models/alerts';
-import { mockKYCCustomers } from '@/data/models/kyc';
+import { useDemoDataset } from '@/data-layer/demoDataset';
 
 type Item = {
   count: number;
@@ -44,6 +43,7 @@ export function DailyBriefing() {
     timeZone: 'Africa/Lagos',
   });
 
+  const { alerts: mockAlerts, kycCustomers: mockKYCCustomers } = useDemoDataset();
   const criticalCount = mockAlerts.filter((a) => a.riskLevel === 'Critical' && a.status === 'Open').length;
   const strDueCount = mockAlerts.filter((a) => a.status === 'Escalated').length;
   const kycPendingCount = mockKYCCustomers.filter((c) => c.status === 'Pending' || c.status === 'In Review').length;

@@ -74,3 +74,13 @@ export function useDemoDataset() {
 }
 
 export { views, customerByNum };
+
+/** A persisted demo-session collection with a React setter (e.g. KYB cases, managed accounts). */
+export function useDemoCollection<T>(key: string, seed: () => T): [T, (next: T | ((prev: T) => T)) => void] {
+  const value = useSyncExternalStore((fn) => onCollectionChange(key, fn), () => readCollection(key, seed), () => readCollection(key, seed));
+  const set = (next: T | ((prev: T) => T)) => {
+    const prev = readCollection(key, seed);
+    writeCollection(key, typeof next === 'function' ? (next as (p: T) => T)(prev) : next);
+  };
+  return [value, set];
+}

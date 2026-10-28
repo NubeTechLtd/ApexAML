@@ -3,6 +3,8 @@ import { Badge } from '@/components/ui/badge';
 import { StickyNote } from 'lucide-react';
 import type { Customer360Data } from '@/data/models/customer360';
 import type { ComplianceNote } from './AddNoteSheet';
+import { useAuditLog, type AuditEntry as SharedAuditEntry } from '@/hooks/useAuditLog';
+import { auditKeysFor } from '@/data-layer/seed/views';
 
 interface AuditEntry {
   id: string;
@@ -14,18 +16,29 @@ interface AuditEntry {
   visibility?: string;
 }
 
-function generateAuditLog(customer: Customer360Data, notes: ComplianceNote[]): AuditEntry[] {
-  const staticEntries: AuditEntry[] = [
-    { id: 'AUD-001', timestamp: '2026-04-10 14:32', action: 'KYC Tier upgraded from Tier 1 to Tier 2', analyst: 'Amina Bello', justification: 'All Tier 2 requirements satisfied — utility bill and employer verified.', category: 'KYC' },
-    { id: 'AUD-002', timestamp: '2026-04-08 09:15', action: 'Risk tier changed to ' + customer.riskLevel, analyst: 'Olusegun Adeyemi', justification: 'Automated risk model recalculation based on 30-day transaction pattern.', category: 'Risk' },
-    { id: 'AUD-003', timestamp: '2026-04-05 16:48', action: 'EDD investigation triggered', analyst: 'Fatima Yusuf', justification: 'Unusual transaction velocity detected — 12 transfers in 4 hours exceeding normal baseline.', category: 'EDD' },
-    { id: 'AUD-004', timestamp: '2026-03-28 11:22', action: 'Account temporarily frozen', analyst: 'Chukwu Emeka', justification: 'Pending sanctions screening clearance — partial name match on OFAC SDN list.', category: 'Account' },
-    { id: 'AUD-005', timestamp: '2026-03-28 15:10', action: 'Account unfrozen — sanctions match cleared', analyst: 'Chukwu Emeka', justification: 'False positive confirmed — DOB and nationality mismatch with listed entity.', category: 'Account' },
-    { id: 'AUD-006', timestamp: '2026-03-20 10:05', action: 'Alert SAR-2026-0031 resolved as True Positive', analyst: 'Ngozi Okafor', justification: 'Structuring pattern confirmed — STR filed with NFIU ref: STR-2026-00038.', category: 'Alert' },
-    { id: 'AUD-007', timestamp: '2026-03-15 13:45', action: 'BVN re-verification completed', analyst: 'System', justification: 'Periodic BVN reverification — match confirmed with NIBSS records.', category: 'KYC' },
-    { id: 'AUD-008', timestamp: '2026-03-01 08:30', action: 'Risk score recalculated: ' + customer.riskScore + '/100', analyst: 'System', justification: 'Monthly automated risk model refresh — crypto exposure factor increased.', category: 'Risk' },
-  ];
+function categoryFor(action: string): AuditEntry['category'] {
+  if (/DOCUMENT|KYC|KYB/.test(action)) return 'KYC';
+  if (/FREEZE|UNFREEZE|RESTRICT|CUSTOMER_/.test(action)) return 'Account';
+  if (/EDD/.test(action)) return 'EDD';
+  if (/RISK/.test(action)) return 'Risk';
+  return 'Alert';
+}
 
+const readable = (action: string) => action.toLowerCase().replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase());
+
+/** Real audit entries for this customer (their reference, BVN, cases and screenings), plus session notes. */
+function buildAuditLog(customer: Customer360Data, entries: SharedAuditEntry[], notes: ComplianceNote[]): AuditEntry[] {
+  const keys = auditKeysFor(customer.id);
+  const logged: AuditEntry[] = entries
+    .filter((e) => keys.has(e.caseId))
+    .map((e) => ({
+      id: e.id ?? `${e.timestamp}-${e.action}`,
+      timestamp: new Date(e.timestamp).toLocaleString('en-NG', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }),
+      action: `${readable(e.action)} — ${e.caseId}`,
+      analyst: e.analyst,
+      justification: e.justification,
+      category: categoryFor(e.action),
+    }));
   const noteEntries: AuditEntry[] = notes.map(n => ({
     id: n.id,
     timestamp: n.timestamp,
@@ -35,8 +48,7 @@ function generateAuditLog(customer: Customer360Data, notes: ComplianceNote[]): A
     category: 'Note' as const,
     visibility: n.visibility,
   }));
-
-  return [...noteEntries, ...staticEntries];
+  return [...noteEntries, ...logged];
 }
 
 const categoryColors: Record<string, string> = {
@@ -55,7 +67,8 @@ interface Props {
 }
 
 export function AuditLogTab({ customer, notes = [], filterNotesOnly = false }: Props) {
-  const allEntries = generateAuditLog(customer, notes);
+  const { entries: auditEntries } = useAuditLog();
+  const allEntries = buildAuditLog(customer, auditEntries, notes);
   const entries = filterNotesOnly ? allEntries.filter(e => e.category === 'Note') : allEntries;
 
   return (

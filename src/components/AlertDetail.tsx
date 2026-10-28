@@ -8,6 +8,8 @@ import { Separator } from '@/components/ui/separator';
 import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
 import { STRCoPilotDrawer } from './STRCoPilotDrawer';
+import { useDataProvider } from '@/data-layer/hooks';
+import { useAuditLog } from '@/hooks/useAuditLog';
 
 function formatCurrency(amount: number) {
   return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', minimumFractionDigits: 0 }).format(amount);
@@ -16,12 +18,22 @@ function formatCurrency(amount: number) {
 export function AlertDetail({ alert }: { alert: AlertData }) {
   const { toast } = useToast();
   const [strDrawerOpen, setStrDrawerOpen] = useState(false);
+  const provider = useDataProvider();
+  const { append } = useAuditLog();
 
   const handleAction = (action: string) => {
     if (action === 'Escalate to STR') {
       setStrDrawerOpen(true);
       return;
     }
+    const status = action === 'Dismissed' ? 'Dismissed' : 'Under Review';
+    void provider.alerts.setStatus(alert.id, status).catch(() => undefined);
+    void append({
+      action: action === 'Dismissed' ? 'ALERT_DISMISSED' : 'CASE_INFO_REQUESTED',
+      analyst: '',
+      caseId: alert.id,
+      justification: action === 'Dismissed' ? `Alert dismissed from the inbox (${alert.customerName}).` : `Further information requested from ${alert.customerName}.`,
+    }).catch(() => undefined);
     toast({
       title: `${action} — ${alert.id}`,
       description: `Action "${action}" has been recorded for ${alert.customerName}.`,

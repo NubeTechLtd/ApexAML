@@ -235,12 +235,14 @@ export default function AlertWorkspace() {
   const { rate: cbnRate } = useCBNRate();
 
   const getStatus = useCallback((alertId: string, original: string): CaseStatus => {
-    return statusOverrides[alertId] ?? (original as CaseStatus);
+    return statusOverrides[alertId] ?? (original === 'Dismissed' ? 'Closed' : original as CaseStatus);
   }, [statusOverrides]);
 
+  // Status changes are saved through the zone's provider (sample session or live case).
   const setAlertStatus = useCallback((alertId: string, status: CaseStatus) => {
     setStatusOverrides(prev => ({ ...prev, [alertId]: status }));
-  }, []);
+    void provider.alerts.setStatus(alertId, status === 'Closed' ? 'Dismissed' : status).catch(() => undefined);
+  }, [provider]);
 
   const getAssignedAnalyst = useCallback((alertId: string) => {
     const aId = assignments[alertId];
@@ -278,6 +280,7 @@ export default function AlertWorkspace() {
   const [underReviewAtMap, setUnderReviewAtMap] = useState<Record<string, string>>({});
   const [exportedIds, setExportedIds] = useState<Record<string, boolean>>({});
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const strDraftAtFocus = useRef('');
 
   const filtered = useMemo(() => {
     return alerts.filter((a) => {
@@ -373,7 +376,10 @@ export default function AlertWorkspace() {
         ...prev,
         { id: Date.now(), role: 'assistant', content: result.confirmation },
       ]);
-      if (changed) setEditVersion((v) => v + 1);
+      if (changed) {
+        setEditVersion((v) => v + 1);
+        void addAuditEntry({ action: 'STR_EDIT', analyst: '', caseId: selected.caseId, justification: `STR draft edited by co-pilot: "${input.slice(0, 120)}"` }).catch(() => undefined);
+      }
     } catch {
       // Never claim the draft changed: the report text is untouched.
       setChatMessages((prev) => [
@@ -440,8 +446,9 @@ export default function AlertWorkspace() {
     if (!selected) return;
     setAlertStatus(selected.id, 'Under Review');
     setUnderReviewAtMap((prev) => prev[selected.id] ? prev : { ...prev, [selected.id]: new Date().toISOString() });
+    void addAuditEntry({ action: 'CASE_UNDER_REVIEW', analyst: '', caseId: selected.caseId, justification: `Case marked Under Review (${selected.customerProfile.fullName}).` }).catch(() => undefined);
     toast({ title: 'Status updated', description: `${selected.caseId} marked as Under Review.` });
-  }, [selected, setAlertStatus, toast]);
+  }, [selected, setAlertStatus, toast, addAuditEntry]);
 
   const handleCloseFP = useCallback(() => {
     if (!selected || !fpReason) return;
@@ -454,11 +461,12 @@ export default function AlertWorkspace() {
       customerName: selected.customerProfile.fullName,
     });
 
+    void addAuditEntry({ action: 'ALERT_DISMISSED', analyst: '', caseId: selected.caseId, justification: `Closed as false positive — ${fpReason}.` }).catch(() => undefined);
     toast({ title: 'Alert closed', description: `${selected.caseId} closed as False Positive — ${fpReason}.` });
     setFpDialogOpen(false);
     setFpReason('');
 
-  }, [selected, fpReason, setAlertStatus, toast, requestRiskRecalculation]);
+  }, [selected, fpReason, setAlertStatus, toast, requestRiskRecalculation, addAuditEntry]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -1001,6 +1009,12 @@ export default function AlertWorkspace() {
                           <textarea
                             value={strDraft}
                             onChange={(e) => setStrDraft(e.target.value)}
+                            onFocus={(e) => { strDraftAtFocus.current = e.target.value; }}
+                            onBlur={(e) => {
+                              if (selected && e.target.value !== strDraftAtFocus.current) {
+                                void addAuditEntry({ action: 'STR_EDIT', analyst: '', caseId: selected.caseId, justification: `Analyst edited the STR narrative (${e.target.value.length} characters).` }).catch(() => undefined);
+                              }
+                            }}
                             className="flex-1 w-full resize-none bg-background p-4 text-xs font-mono leading-relaxed text-foreground focus:outline-none min-h-[350px]"
                             spellCheck={false}
                           />

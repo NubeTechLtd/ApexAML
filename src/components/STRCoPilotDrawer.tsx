@@ -9,6 +9,8 @@ import {
   Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription,
 } from '@/components/ui/sheet';
 import { useToast } from '@/hooks/use-toast';
+import { useDataProvider } from '@/data-layer/hooks';
+import { useAuditLog } from '@/hooks/useAuditLog';
 import type { AlertData } from '@/data/models/legacyAlerts';
 import { generateGoAMLXmlFromLegacy, downloadXmlFile } from '@/lib/generateGoAMLXml';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -82,26 +84,6 @@ ${events}
    Status: DRAFT — Pending analyst review`;
 }
 
-const simulatedResponses: Record<string, string> = {
-  shorter: '✅ Done — I\'ve condensed the Suspicious Activity Description section to a single concise paragraph while preserving all key facts.',
-  bvn: '✅ Done — I\'ve added BVN mismatch history details under the Customer Profile section, including 2 prior BVN discrepancy flags from Jan and Mar 2025.',
-  fatf: '✅ Done — FATF Recommendation 20 on STR obligations referenced in section 2 of the narrative.',
-  circular: '✅ Done — CBN Circular BSD/DIR/PUB/LAB/019/002 cited in the regulatory basis paragraph.',
-  hausa: '✅ Done — Narrative section translated to Hausa for internal memo distribution. goAML field labels retained in English.',
-  formal: '✅ Done — Narrative reformatted to formal NFIU register: passive voice, institutional phrasing, and regulatory cross-references applied throughout.',
-  default: '✅ Understood — I\'ve updated the draft accordingly. The changes are highlighted in the editor.',
-};
-
-function getSimulatedResponse(input: string): string {
-  const lower = input.toLowerCase();
-  if (lower.includes('short') || lower.includes('concise') || lower.includes('brief')) return simulatedResponses.shorter;
-  if (lower.includes('bvn') || lower.includes('mismatch')) return simulatedResponses.bvn;
-  if (lower.includes('fatf') || lower.includes('recommendation')) return simulatedResponses.fatf;
-  if (lower.includes('circular') || lower.includes('bsd/dir')) return simulatedResponses.circular;
-  if (lower.includes('hausa')) return simulatedResponses.hausa;
-  if (lower.includes('formal') || lower.includes('nfiu language')) return simulatedResponses.formal;
-  return simulatedResponses.default;
-}
 
 interface STRCoPilotDrawerProps {
   open: boolean;
@@ -111,6 +93,8 @@ interface STRCoPilotDrawerProps {
 
 export function STRCoPilotDrawer({ open, onOpenChange, alert }: STRCoPilotDrawerProps) {
   const { toast } = useToast();
+  const provider = useDataProvider();
+  const { append } = useAuditLog();
   const [loading, setLoading] = useState(true);
   const [draft, setDraft] = useState('');
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
@@ -158,21 +142,37 @@ export function STRCoPilotDrawer({ open, onOpenChange, alert }: STRCoPilotDrawer
     setChatInput('');
     setIsTyping(true);
 
-    setTimeout(() => {
-      const response = getSimulatedResponse(input);
-      setChatMessages((prev) => [
-        ...prev,
-        { id: Date.now(), role: 'assistant', content: response, timestamp: new Date() },
-      ]);
-      setIsTyping(false);
-      setEditVersion((v) => v + 1);
-    }, 1500);
+    const before = draft;
+    provider.str.refine(alert.id, before, input)
+      .then((result) => {
+        const changed = result.narrative !== before;
+        setDraft(result.narrative);
+        setChatMessages((prev) => [...prev, { id: Date.now(), role: 'assistant', content: result.confirmation, timestamp: new Date() }]);
+        if (changed) {
+          setEditVersion((v) => v + 1);
+          void append({ action: 'STR_EDIT', analyst: '', caseId: alert.id, justification: `STR draft edited by co-pilot: "${input.slice(0, 120)}"` });
+        }
+      })
+      .catch(() => {
+        setChatMessages((prev) => [...prev, { id: Date.now(), role: 'assistant', content: '⚠️ I could not apply that change. The draft is unchanged; please try again.', timestamp: new Date() }]);
+      })
+      .finally(() => setIsTyping(false));
   };
 
   const handleExport = () => {
     const today = new Date().toISOString().split('T')[0];
     const filename = `STR_${alert.id}_${today}.xml`;
     const xml = generateGoAMLXmlFromLegacy(alert, draft);
+    void (async () => {
+      try {
+        const draftId = await provider.str.saveDraft(alert.id, draft);
+        if (draftId) await provider.str.recordExport({ alertId: alert.id, draftId, filename, xml });
+        await provider.alerts.setStatus(alert.id, 'Escalated');
+        await append({ action: 'STR_EXPORT', analyst: '', caseId: alert.id, justification: `Exported goAML STR as ${filename} for NFIU portal submission.` });
+      } catch {
+        // Non-fatal: the file must still reach the analyst.
+      }
+    })();
     downloadXmlFile(xml, filename);
     toast({
       title: 'STR exported',

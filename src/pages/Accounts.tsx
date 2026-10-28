@@ -1,3 +1,5 @@
+import { useDemoCollection } from '@/data-layer/demoDataset';
+import { SEED_SETTLEMENT } from '@/data-layer/seed/dataset';
 import { useState, useMemo } from 'react';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
@@ -19,7 +21,6 @@ import {
 import { Tag, Banknote, Building2, Search, ShieldCheck } from 'lucide-react';
 import { toast } from 'sonner';
 import {
-  mockSettlementAccounts,
   isIMTOSettlement,
   type ManagedAccount,
   type IMTOSettlementAccount,
@@ -156,7 +157,7 @@ function TagAsIMTODialog({ account, onTag }: TagDialogProps) {
 }
 
 function AccountsPage() {
-  const [accounts, setAccounts] = useState<ManagedAccount[]>(mockSettlementAccounts);
+  const [accounts, setAccounts] = useDemoCollection<ManagedAccount[]>('managed_accounts', () => SEED_SETTLEMENT);
   const [search, setSearch] = useState('');
 
   const filtered = useMemo(() => {

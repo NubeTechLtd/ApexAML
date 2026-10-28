@@ -4,7 +4,7 @@ import { ActiveFilterChip } from '@/components/ActiveFilterChip';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { Users, Search, Filter, ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown, Download, ShieldAlert, ShieldCheck, X, UserCheck, Clock, Snowflake, Building2, Globe2, Briefcase, Banknote } from 'lucide-react';
-import { customer360Data } from '@/data/models/customer360';
+import { useDemoDataset, demoActions } from '@/data-layer/demoDataset';
 import type { EntityType } from '@/data/models/customer360';
 import { NotificationBell } from '@/components/NotificationBell';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -28,26 +28,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 type SortKey = 'name' | 'riskLevel' | 'alerts';
 type SortDir = 'asc' | 'desc';
 
-const customers = [
-  { id: 1, name: 'Adebayo Ogunlesi', bvn: '22481039271', riskLevel: 'High', kycTier: 'Tier 3', alerts: 9 },
-  { id: 2, name: 'Chioma Adekunle', bvn: '22673018492', riskLevel: 'Medium', kycTier: 'Tier 2', alerts: 2 },
-  { id: 3, name: 'Emeka Obi', bvn: '22891204736', riskLevel: 'Low', kycTier: 'Tier 3', alerts: 0 },
-  { id: 4, name: 'Fatima Bello', bvn: '22104728395', riskLevel: 'High', kycTier: 'Tier 1', alerts: 8 },
-  { id: 5, name: 'Ibrahim Musa', bvn: '22537190846', riskLevel: 'Low', kycTier: 'Tier 3', alerts: 1 },
-  { id: 6, name: 'Ngozi Okafor', bvn: '22962481037', riskLevel: 'Medium', kycTier: 'Tier 2', alerts: 3 },
-  { id: 7, name: 'Olumide Adeyemi', bvn: '22348165029', riskLevel: 'Low', kycTier: 'Tier 3', alerts: 0 },
-  { id: 8, name: 'Aisha Yusuf', bvn: '22715390284', riskLevel: 'High', kycTier: 'Tier 2', alerts: 6 },
-  { id: 9, name: 'Chinedu Nwosu', bvn: '22086423571', riskLevel: 'Medium', kycTier: 'Tier 1', alerts: 1 },
-  { id: 10, name: 'Halima Abdullahi', bvn: '22459823710', riskLevel: 'Low', kycTier: 'Tier 3', alerts: 0 },
-  { id: 11, name: 'Tunde Bakare', bvn: '22892037461', riskLevel: 'High', kycTier: 'Tier 2', alerts: 4 },
-  { id: 12, name: 'Blessing Eze', bvn: '22138409652', riskLevel: 'Medium', kycTier: 'Tier 3', alerts: 2 },
-  { id: 13, name: 'Yemi Alade', bvn: '22671254893', riskLevel: 'Low', kycTier: 'Tier 2', alerts: 0 },
-  { id: 14, name: 'Obinna Okechukwu', bvn: '22047581923', riskLevel: 'High', kycTier: 'Tier 1', alerts: 7 },
-  { id: 15, name: 'Zainab Mohammed', bvn: '22582910473', riskLevel: 'Medium', kycTier: 'Tier 3', alerts: 1 },
-  { id: 16, name: 'Kunle Afolabi', bvn: '22916348275', riskLevel: 'Low', kycTier: 'Tier 2', alerts: 0 },
-  { id: 17, name: 'Amina Suleiman', bvn: '22304871596', riskLevel: 'High', kycTier: 'Tier 3', alerts: 3 },
-  { id: 18, name: 'Ifeanyi Agu', bvn: '22758193624', riskLevel: 'Medium', kycTier: 'Tier 1', alerts: 3 },
-];
 
 const riskColors: Record<string, string> = {
   High: 'bg-destructive/10 text-destructive border-destructive/20',
@@ -99,7 +79,11 @@ export default function Customers() {
   const [riskFilter, setRiskFilter] = useState<string>(riskParam || 'all');
   const [statusFilter, setStatusFilter] = useState<string>(statusParam || 'all');
   const [checkedIds, setCheckedIds] = useState<Set<number>>(new Set());
-  const [statuses, setStatuses] = useState<Record<number, CustomerStatus>>({});
+  const { customerRows: customers, customers360: customer360Data } = useDemoDataset();
+  const statuses = useMemo(
+    () => Object.fromEntries(customers.map(c => [c.id, (c.status === 'Restricted' ? 'Under Review' : c.status) as CustomerStatus])) as Record<number, CustomerStatus>,
+    [customers],
+  );
 
   const activeFilterLabel = riskParam ? `${riskParam} risk` : statusParam ? `${statusParam} customers` : null;
   const clearFilterParams = useCallback(() => {
@@ -113,7 +97,6 @@ export default function Customers() {
   const [bulkAuditEntries, setBulkAuditEntries] = useState<BulkAuditEntry[]>([]);
   const { append } = useAuditLog();
   const searchRef = useRef<HTMLInputElement>(null);
-  const undoRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const toggleSort = (key: SortKey) => {
     if (sortKey === key) {
@@ -142,7 +125,7 @@ export default function Customers() {
       });
     }
     return result;
-  }, [search, sortKey, sortDir, riskFilter, statusFilter, statuses]);
+  }, [customers, search, sortKey, sortDir, riskFilter, statusFilter, statuses]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const currentPage = Math.min(page, totalPages);
@@ -152,7 +135,7 @@ export default function Customers() {
     const counts = { Active: 0, 'Under Review': 0, Frozen: 0 };
     customers.forEach(c => { counts[statuses[c.id] || 'Active']++; });
     return counts;
-  }, [statuses]);
+  }, [customers, statuses]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -199,36 +182,41 @@ export default function Customers() {
     });
   };
 
-  const selectedNames = useMemo(() => customers.filter(c => checkedIds.has(c.id)).map(c => c.name), [checkedIds]);
+  const selectedNames = useMemo(() => customers.filter(c => checkedIds.has(c.id)).map(c => c.name), [customers, checkedIds]);
   const selectedIds = useMemo(() => Array.from(checkedIds), [checkedIds]);
 
   const applyBulkAction = useCallback((action: 'flag' | 'clear' | 'escalate', justification?: string) => {
     const ids = Array.from(checkedIds);
     const names = customers.filter(c => checkedIds.has(c.id)).map(c => c.name);
-    const prevStatuses = { ...statuses };
+    const prevStatuses = Object.fromEntries(ids.map(id => [id, statuses[id] || 'Active'])) as Record<number, CustomerStatus>;
     const newStatus: CustomerStatus = action === 'flag' ? 'Under Review' : action === 'clear' ? 'Active' : 'Frozen';
-    setStatuses(prev => { const next = { ...prev }; ids.forEach(id => next[id] = newStatus); return next; });
+    demoActions.setAccountStatus(ids, newStatus);
+    const refs = ids.map(id => `CUS-${String(id).padStart(4, '0')}`);
 
     const auditEntry: BulkAuditEntry = {
       id: crypto.randomUUID(), timestamp: new Date().toISOString(),
       type: action, analyst: analystId, customers: names, justification,
     };
+    setBulkAuditEntries(prev => [...prev, auditEntry]);
+    const auditAction = action === 'escalate' ? 'ACCOUNT_FREEZE' : action === 'flag' ? 'CUSTOMER_FLAGGED' : 'CUSTOMER_CLEARED';
+    refs.forEach((caseId, i) => {
+      void append({ action: auditAction, analyst: analystId, caseId, justification: justification || `${names[i]}: bulk ${action === 'flag' ? 'flag for review' : action === 'clear' ? 'clear' : 'freeze'}.` }).catch(() => undefined);
+    });
 
     if (action === 'escalate') {
       toast.error(`Froze ${names.length} customer account(s)`, {
         description: names.join(', '), duration: 5000,
-        action: { label: 'Undo', onClick: () => { setStatuses(prevStatuses); if (undoRef.current) clearTimeout(undoRef.current); toast.info('Freeze undone'); } },
+        action: { label: 'Undo', onClick: () => {
+          demoActions.restoreAccountStatus(prevStatuses);
+          refs.forEach((caseId, i) => { void append({ action: 'ACCOUNT_UNFREEZE', analyst: analystId, caseId, justification: `${names[i]}: freeze undone within the undo window.` }).catch(() => undefined); });
+          toast.info('Freeze undone');
+        } },
       });
-      undoRef.current = setTimeout(() => {
-        setBulkAuditEntries(prev => [...prev, auditEntry]);
-        append({ action: 'ACCOUNT_FREEZE', analyst: analystId, caseId: `BULK-${ids.join('-')}`, justification: justification || '' });
-      }, 5000);
     } else {
-      setBulkAuditEntries(prev => [...prev, auditEntry]);
       (action === 'flag' ? toast.warning : toast.success)(`${action === 'flag' ? 'Flagged' : 'Cleared'} ${names.length} customer(s)`, { description: names.join(', ') });
     }
     setCheckedIds(new Set());
-  }, [checkedIds, statuses, append, analystId]);
+  }, [customers, checkedIds, statuses, append, analystId]);
 
   const handleSearchChange = (val: string) => {
     setSearch(val);

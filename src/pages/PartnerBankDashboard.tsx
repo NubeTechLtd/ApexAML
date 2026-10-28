@@ -1,3 +1,6 @@
+import { useDemoCollection } from '@/data-layer/demoDataset';
+import { SEED_SETTLEMENT } from '@/data-layer/seed/dataset';
+import type { ManagedAccount } from '@/data/models/settlement';
 import { useState, useMemo } from 'react';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
@@ -10,7 +13,6 @@ import { ShieldCheck, Eye, Download, Building2, Banknote, AlertCircle } from 'lu
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import {
-  mockSettlementAccounts,
   isIMTOSettlement,
   commingleScore,
   approvedVsUnapproved,
@@ -131,9 +133,10 @@ function AccountCard({ acc, selected, onSelect }: {
 /* ── Page ─────────────────────────────────────────────────────────── */
 
 function PartnerBankDashboard() {
+  const [accounts] = useDemoCollection<ManagedAccount[]>('managed_accounts', () => SEED_SETTLEMENT);
   const settlementAccounts = useMemo(
-    () => mockSettlementAccounts.filter(isIMTOSettlement),
-    [],
+    () => accounts.filter(isIMTOSettlement),
+    [accounts],
   );
   const [selectedId, setSelectedId] = useState(settlementAccounts[0]?.id);
   const selected = settlementAccounts.find(a => a.id === selectedId)!;

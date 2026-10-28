@@ -71,3 +71,9 @@
 
 ## Zone-selected data layer
 - [x] Typed records and demo/live providers in src/data-layer; alerts, STR drafts/exports, CTRs, transaction queue, sanctions, adverse media, KYC documents, risk history, audit and platform roles routed by zone; guided tour now driven by the demo zone. Six isolation tests pass; demo pages browser-checked with zero backend requests.
+
+## Unified demo seed dataset
+- [x] One fictional bank (Harmattan Ridge MFB): 40 customers, 600+ transactions, 25 alerts, 6 KYB cases, 4 pending CTRs, sanctions/adverse-media hits, rules, settlement accounts — all ids linked; old mock files removed.
+- [x] Session-persistent actions (freeze, escalate, dismiss, STR edit/export, rule toggle/delete, CTR file, sanctions decisions) add audit entries shown in /demo/audit; case files built from the same audit trail.
+- [x] "Reset demo" control in the demo layout.
+- [ ] ProductTourModal (marketing tour) still shows its own illustrative sample names — not part of the demo dataset.

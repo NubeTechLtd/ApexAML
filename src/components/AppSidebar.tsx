@@ -2,6 +2,7 @@ import { LayoutDashboard, Inbox, Users, Settings2, FileText, Fingerprint, Shield
 import { NavLink } from '@/components/NavLink';
 import { useEffect, useState } from 'react';
 import { useDataProvider } from '@/data-layer/hooks';
+import { GUIDED_CASE } from '@/data-layer/seed/dataset';
 import { useAuth } from '@/hooks/useAuth';
 import { useZone, useZoneHref } from '@/hooks/useZone';
 import logo from '@/assets/logo.svg';
@@ -24,7 +25,7 @@ const todaysWork = [
   { title: "Compliance Overview", url: '/dashboard', icon: LayoutDashboard },
   { title: 'Suspicious Activity Alerts', url: '/alerts', icon: Inbox },
   { title: 'Alert Workspace', url: '/workspace', icon: Search },
-  { title: 'Case Files', url: '/case/ALT-2026-0891', icon: FolderOpen },
+  { title: 'Case Files', url: `/case/${GUIDED_CASE.alertId}`, icon: FolderOpen },
 ];
 
 const customerManagement = [
