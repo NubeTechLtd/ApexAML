@@ -2,7 +2,7 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Building2, Users, Network, ShieldAlert, ZoomIn, ZoomOut, Maximize2 } from 'lucide-react';
-import type { PhantomPayrollContext, PhantomPayrollRecipient } from '@/data/mockAlerts';
+import type { PhantomPayrollContext, PhantomPayrollRecipient } from '@/data/models/alerts';
 
 /** Distinct colour per Nigerian bank — used to colour the spokes/dots. */
 const BANK_COLOURS: Record<string, string> = {

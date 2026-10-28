@@ -1,7 +1,7 @@
 import { AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import type { Customer360Data } from '@/data/mockCustomer360';
+import type { Customer360Data } from '@/data/models/customer360';
 
 const hardcoded: Record<number, string> = {
   1: 'Adebayo Ogunlesi opened this account 7 months ago with Tier 3 documents. One of their KYC documents has been flagged — the employer letter lists a company whose CAC registration was suspended in 2024. Over the past 30 days they moved ₦14.8M through 47 POS transactions, all structured below the ₦500,000 reporting threshold, with funds round-tripped through Crown BDC Ltd within 1h 37m of an inbound IMTO remittance. They have 4 connected accounts and entities, including a shared device ID with two other Tier 3 accounts and a frequent transfer target receiving ₦9.5M in the same window. This pattern matches POS Round-Tripping combined with BDC layering — financial crime methodologies explicitly flagged in CBN Circular BSD/DIR/PUB/LAB/019/002.',

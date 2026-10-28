@@ -7,7 +7,7 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 import { NotificationBell } from '@/components/NotificationBell';
 import { AuditBell } from '@/components/AuditBell';
 import { Fingerprint } from 'lucide-react';
-import { mockKYCCustomers, type KYCCustomer } from '@/data/mockKYC';
+import { mockKYCCustomers, type KYCCustomer } from '@/data/models/kyc';
 import { useDataProvider } from '@/data-layer/hooks';
 import type { AdverseMediaStatus } from '@/components/VerificationQueue';
 

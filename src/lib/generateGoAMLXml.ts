@@ -1,5 +1,5 @@
-import type { Alert } from '@/data/mockAlerts';
-import type { AlertData } from '@/data/mockLegacyAlerts';
+import type { Alert } from '@/data/models/alerts';
+import type { AlertData } from '@/data/models/legacyAlerts';
 
 function escapeXml(str: string): string {
   return str

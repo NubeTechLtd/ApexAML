@@ -1,7 +1,8 @@
 import { useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Search, SlidersHorizontal, X } from 'lucide-react';
-import { mockLegacyAlerts as mockAlerts, type AlertData, type RiskLevel, type AlertStatus } from '@/data/mockLegacyAlerts';
+import type { AlertData, RiskLevel, AlertStatus } from '@/data/models/legacyAlerts';
+import { useDemoDataset } from '@/data-layer/demoDataset';
 import { AlertCard } from './AlertCard';
 import { AlertDetail } from './AlertDetail';
 import { Input } from '@/components/ui/input';
@@ -9,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 
 export function AlertInbox() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const { legacyAlerts: mockAlerts } = useDemoDataset();
   const [selectedId, setSelectedId] = useState<string>(mockAlerts[0].id);
   const [search, setSearch] = useState('');
 
@@ -28,7 +30,7 @@ export function AlertInbox() {
       const matchesType = !typeFilter || a.alertType === typeFilter;
       return matchesSearch && matchesStatus && matchesRisk && matchesType;
     });
-  }, [search, statusFilter, riskFilter, typeFilter]);
+  }, [mockAlerts, search, statusFilter, riskFilter, typeFilter]);
 
   const selected = filtered.find((a) => a.id === selectedId) || filtered[0] || mockAlerts[0];
 

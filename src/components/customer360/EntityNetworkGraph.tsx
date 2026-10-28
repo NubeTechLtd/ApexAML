@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Network } from 'lucide-react';
 import { toast } from 'sonner';
-import type { Customer360Data } from '@/data/mockCustomer360';
+import type { Customer360Data } from '@/data/models/customer360';
 
 type NodeKind = 'individual' | 'corporate' | 'account' | 'sanctioned' | 'pep';
 type EdgeKind = 'bvn' | 'director' | 'ubo' | 'address' | 'transaction';

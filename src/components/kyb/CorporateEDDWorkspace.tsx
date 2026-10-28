@@ -23,7 +23,7 @@ import { KybDocumentsSection } from '@/components/kyb/KybDocumentsSection';
 import {
   BUSINESS_TYPES, CBN_HIGH_RISK_INDUSTRIES, EMPLOYEE_RANGES, TURNOVER_RANGES,
   type BeneficialOwner, type BusinessType, type CorporateEntity,
-} from '@/data/mockKYB';
+} from '@/data/models/kyb';
 
 const AUTHORISED_CHECKERS = ['Ngozi Ibe (MLRO)', 'Chukwudi Obi (Head, Compliance)', 'Chioma Adeyemi (Reviewer)'];
 

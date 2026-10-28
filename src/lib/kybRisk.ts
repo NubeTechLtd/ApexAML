@@ -2,7 +2,7 @@ import {
   HIGH_RISK_SECTORS,
   type BusinessType,
   type CorporateEntity,
-} from '@/data/mockKYB';
+} from '@/data/models/kyb';
 import type { KycDocumentType } from '@/lib/kycDocuments';
 
 export interface KybRiskFactor {

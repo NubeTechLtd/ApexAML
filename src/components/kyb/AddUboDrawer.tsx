@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/sheet';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import type { BeneficialOwner, UboRole } from '@/data/mockKYB';
+import type { BeneficialOwner, UboRole } from '@/data/models/kyb';
 
 interface Props {
   open: boolean;

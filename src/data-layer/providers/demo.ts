@@ -1,24 +1,23 @@
 /**
- * Demo provider: sample data held in memory and the visitor's localStorage.
- * It must never import the backend client or call edge functions.
+ * Demo provider: the single seed dataset plus the visitor's session state in
+ * memory and localStorage. It must never import the backend client or call
+ * edge functions.
  */
-import { mockAlerts } from '@/data/mockAlerts';
-import { mockCorporateEntities } from '@/data/mockKYB';
-import { mockSettlementAccounts } from '@/data/mockSettlementAccounts';
-import { mockSanctionsMatches } from '@/data/mockSanctions';
-import { mockRules } from '@/components/RulesTable';
 import { generateNotifications } from '@/hooks/useNotifications';
 import { demoId, onCollectionChange, readCollection, wait, writeCollection } from '../demoStore';
+import { demoActions, readDemoOverlays } from '../demoDataset';
+import {
+  DEMO_INSTITUTION, DEMO_ANALYSTS, SEED_ADVERSE_MEDIA, SEED_ALERTS, SEED_AUDIT, SEED_CTRS, SEED_CUSTOMERS, SEED_DOCUMENTS,
+  SEED_KYB, SEED_QUEUE, SEED_RISK_HISTORY, SEED_SANCTIONS, SEED_SETTLEMENT, documentLabel,
+} from '../seed/dataset';
+import { rules as ruleView, transactionsFor, workspaceAlerts } from '../seed/views';
 import type {
-  AdverseMediaOverall, AdverseMediaScreening, AuditEntry, CtrRecord, CustomerRecord, DataProvider,
-  KycDocument, QueuedTransaction, RiskScoreEntry, RiskTriggerType, SanctionsListMeta,
-  SanctionsScreenResult, StrDraft, StrExport, TransactionRecord,
+  AdverseMediaOverall, AdverseMediaScreening, AuditEntry, CustomerRecord, DataProvider, KycDocument,
+  RiskScoreEntry, RiskTriggerType, SanctionsListMeta, SanctionsScreenResult, StrDraft, StrExport, TransactionRecord,
 } from '../types';
 
-export const DEMO_INSTITUTION_ID = 'demo-institution';
-const DEMO_ANALYST = 'Demo analyst';
-
-/* ── Seeds ───────────────────────────────────────────── */
+export const DEMO_INSTITUTION_ID = DEMO_INSTITUTION.id;
+const DEMO_ANALYST = DEMO_ANALYSTS[0];
 
 const daysAgo = (d: number, h = 10) => {
   const date = new Date();
@@ -26,58 +25,6 @@ const daysAgo = (d: number, h = 10) => {
   date.setHours(h, 0, 0, 0);
   return date.toISOString();
 };
-
-function seedQueue(): QueuedTransaction[] {
-  const rows: QueuedTransaction[] = [];
-  const add = (prefix: string, count: number, base: number, day: number) => {
-    for (let i = 0; i < count; i++) {
-      rows.push({
-        transaction_id: `${prefix}-${i + 1}`,
-        amount: base + i * 115_000,
-        channel: i % 2 ? 'Branch Cash' : 'Agent Cash',
-        transaction_datetime: daysAgo(day, 9 + i),
-        counterparty_account: null,
-        narration: 'Cash deposit',
-        direction: 'credit',
-      });
-    }
-  };
-  add('DEMO-TXQ-A', 4, 1_450_000, 0);
-  add('DEMO-TXQ-B', 3, 2_100_000, 2);
-  add('DEMO-TXQ-C', 2, 3_000_000, 6);
-  return rows;
-}
-
-function seedCtrs(): CtrRecord[] {
-  const queue = seedQueue();
-  const group = (p: string) => queue.filter((t) => t.transaction_id.startsWith(p));
-  const make = (id: string, p: string, customerId: string, name: string, day: number, filed?: string): CtrRecord => {
-    const txns = group(p);
-    return {
-      id,
-      institution_id: DEMO_INSTITUTION_ID,
-      customer_id: customerId,
-      customer_name: name,
-      report_date: daysAgo(day).slice(0, 10),
-      total_cash_ngn: txns.reduce((s, t) => s + t.amount, 0),
-      transaction_count: txns.length,
-      transaction_ids: txns.map((t) => t.transaction_id),
-      status: filed ? 'filed' : 'pending_review',
-      reviewed_by: null,
-      reviewed_at: filed ? daysAgo(day - 1) : null,
-      ctr_reference: filed ?? null,
-      filed_at: filed ? daysAgo(day - 1) : null,
-      goaml_xml: null,
-      created_at: daysAgo(day, 23),
-      updated_at: daysAgo(day, 23),
-    };
-  };
-  return [
-    make('demo-ctr-1', 'DEMO-TXQ-A', '22198765432', 'Adebayo Ogunlesi', 0),
-    make('demo-ctr-2', 'DEMO-TXQ-B', '22345678905', 'Ibrahim Musa', 2),
-    make('demo-ctr-3', 'DEMO-TXQ-C', '22456789013', 'Chinwe Eze', 6, 'CTR-DEMO-0001'),
-  ];
-}
 
 function seedSanctionsMeta(): SanctionsListMeta[] {
   return [
@@ -88,32 +35,10 @@ function seedSanctionsMeta(): SanctionsListMeta[] {
   ];
 }
 
-function seedAudit(): AuditEntry[] {
-  return [
-    { id: 'demo-audit-3', timestamp: daysAgo(0, 8), action: 'NFIU_ESCALATION', analyst: 'Chioma Adeyemi', caseId: 'CAS-2026-DEMO-001-NG', justification: 'Structured POS withdrawals below the reporting threshold across 12 agents; escalated for STR filing.', status: 'success', institutionId: DEMO_INSTITUTION_ID },
-    { id: 'demo-audit-2', timestamp: daysAgo(1, 15), action: 'DOCUMENT_VERIFY', analyst: 'Ibrahim Musa', caseId: '22345678905', justification: 'NIN_SLIP verified (nin-slip.pdf)', status: 'success', institutionId: DEMO_INSTITUTION_ID },
-    { id: 'demo-audit-1', timestamp: daysAgo(2, 11), action: 'ACCOUNT_FREEZE', analyst: 'Ngozi Okafor', caseId: 'CAS-2026-0412-NG', justification: 'Freeze pending EDD: inbound volume inconsistent with declared occupation and Tier 1 limits.', status: 'success', institutionId: DEMO_INSTITUTION_ID },
-  ];
-}
-
-/* ── Helpers ─────────────────────────────────────────── */
-
-const alertsById = () => new Map(mockAlerts.map((a) => [a.id, a]));
-
-function demoCustomers(): CustomerRecord[] {
-  const seen = new Map<string, CustomerRecord>();
-  for (const a of mockAlerts) {
-    const p = a.customerProfile;
-    const id = p.bvn && p.bvn !== '—' ? p.bvn : a.id;
-    if (seen.has(id)) continue;
-    seen.set(id, {
-      id, fullName: p.fullName, bvn: p.bvn, nin: p.nin, nuban: p.nuban, kycTier: p.kycTier,
-      riskLevel: a.riskLevel, riskScore: p.riskScore, accountStatus: 'Active',
-      bvnVerified: /^\d{11}$/.test(p.bvn), entityType: p.occupation,
-    });
-  }
-  return Array.from(seen.values());
-}
+const customerRecords = (): CustomerRecord[] => SEED_CUSTOMERS.map((c) => ({
+  id: c.ref, fullName: c.fullName, bvn: c.bvn, nin: c.nin, nuban: c.nuban, kycTier: c.kycTier, riskLevel: c.riskLevel,
+  riskScore: c.riskScore, accountStatus: readDemoOverlays().accountStatus[c.num] ?? c.accountStatus, bvnVerified: c.bvnVerified, entityType: c.entityType,
+}));
 
 function bigrams(s: string) {
   const t = ` ${s.toLowerCase().replace(/[^a-z0-9 ]/g, '')} `;
@@ -137,8 +62,7 @@ export function nameSimilarity(a: string, b: string) {
 }
 
 async function sha256(text: string) {
-  const bytes = new TextEncoder().encode(text);
-  const digest = await crypto.subtle.digest('SHA-256', bytes);
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
   return Array.from(new Uint8Array(digest)).map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
@@ -173,6 +97,26 @@ export function refineDemoDraft(draft: string, message: string, flags: string[])
   };
 }
 
+/** A one-page PDF stating the document is fictional sample data. */
+function samplePdfDataUrl(title: string) {
+  const text = `ApexAML sample workspace - fictional document: ${title}`.replace(/[()\\]/g, '');
+  const stream = `BT /F1 14 Tf 60 760 Td (${text}) Tj ET`;
+  const objects = [
+    '<< /Type /Catalog /Pages 2 0 R >>',
+    '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
+    '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>',
+    `<< /Length ${stream.length} >>\nstream\n${stream}\nendstream`,
+    '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>',
+  ];
+  let pdf = '%PDF-1.4\n';
+  const offsets: number[] = [];
+  objects.forEach((o, i) => { offsets.push(pdf.length); pdf += `${i + 1} 0 obj\n${o}\nendobj\n`; });
+  const xref = pdf.length;
+  pdf += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n${offsets.map((o) => `${String(o).padStart(10, '0')} 00000 n \n`).join('')}`;
+  pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;
+  return `data:application/pdf;base64,${btoa(pdf)}`;
+}
+
 /* ── In-session file contents for sample KYC uploads ─── */
 const fileUrls = new Map<string, string>();
 
@@ -185,25 +129,36 @@ function fileToDataUrl(file: File): Promise<string> {
   });
 }
 
+const docs = () => readCollection<KycDocument[]>('kyc_documents', () => SEED_DOCUMENTS);
+const auditLog = () => readCollection<AuditEntry[]>('audit_log', () => SEED_AUDIT);
+const riskHistory = () => readCollection<RiskScoreEntry[]>('risk_score_history', () => SEED_RISK_HISTORY);
+const mediaResults = () => readCollection<AdverseMediaScreening[]>('adverse_media_results', () => SEED_ADVERSE_MEDIA);
+const alertById = (id: string) => SEED_ALERTS.find((a) => a.id === id);
+
 /* ── Provider ────────────────────────────────────────── */
 
 export const demoProvider: DataProvider = {
   kind: 'demo',
 
-  alerts: { list: async () => mockAlerts },
+  alerts: {
+    list: async () => workspaceAlerts(readDemoOverlays()),
+    async setStatus(alertId, status) {
+      if (!alertById(alertId)) throw new Error('This sample case was not found.');
+      demoActions.setAlertStatus(alertId, status);
+    },
+  },
 
   customers: {
-    list: async () => demoCustomers(),
-    get: async (id) => demoCustomers().find((c) => c.id === id) ?? null,
+    list: async () => customerRecords(),
+    get: async (id) => customerRecords().find((c) => c.id === id || c.bvn === id) ?? null,
   },
 
   transactions: {
     async listForCustomers(ids) {
-      const wanted = new Set(ids);
       const out: TransactionRecord[] = [];
-      for (const c of demoCustomers()) {
-        if (!wanted.has(c.id)) continue;
-        for (const a of mockAlerts) if (a.customerProfile.bvn === c.bvn) out.push(...a.transactions.map((t) => ({ ...t, customerId: c.id })));
+      for (const c of SEED_CUSTOMERS) {
+        if (!ids.includes(c.ref) && !ids.includes(c.bvn)) continue;
+        out.push(...transactionsFor(c.num).map(({ customerNum: _n, alertId: _a, flagReason: _f, linkedNum: _l, ...t }) => ({ ...t, customerId: c.ref })));
       }
       return out;
     },
@@ -211,7 +166,7 @@ export const demoProvider: DataProvider = {
 
   str: {
     async generate(alertId) {
-      const alert = alertsById().get(alertId);
+      const alert = alertById(alertId);
       if (!alert) throw new Error('This sample case was not found.');
       await wait(900);
       const drafts = readCollection<StrDraft[]>('str_drafts', () => []);
@@ -221,7 +176,7 @@ export const demoProvider: DataProvider = {
       return { narrative: draft.narrative, draftId: draft.id };
     },
     async refine(alertId, currentDraft, message) {
-      const alert = alertsById().get(alertId);
+      const alert = alertById(alertId);
       await wait(600);
       const result = refineDemoDraft(currentDraft, message, alert?.behavioralRedFlags ?? []);
       if (!result.changed) return { narrative: currentDraft, confirmation: result.confirmation, draftId: null };
@@ -240,15 +195,22 @@ export const demoProvider: DataProvider = {
     async recordExport({ alertId, draftId, filename, xml }) {
       const exports = readCollection<StrExport[]>('str_exports', () => []);
       writeCollection('str_exports', [{ id: demoId('export'), alertId, strDraftId: draftId, filename, goamlXml: xml, exportedAt: new Date().toISOString() }, ...exports]);
+      const alert = alertById(alertId);
+      if (alert) {
+        demoActions.recordStrExport(alertId, {
+          customerName: alert.customerProfile.fullName, alertId,
+          typology: alert.ruleTriggered, amount: alert.transactions.reduce((s, t) => s + t.amountNGN, 0), analyst: DEMO_ANALYST,
+        });
+      }
     },
     listExports: async (alertId) => readCollection<StrExport[]>('str_exports', () => []).filter((e) => e.alertId === alertId),
   },
 
   ctr: {
-    list: async () => [...readCollection('ctr_queue', seedCtrs)].sort((a, b) => b.created_at.localeCompare(a.created_at)),
+    list: async () => [...readCollection('ctr_queue', () => SEED_CTRS)].sort((a, b) => b.created_at.localeCompare(a.created_at)),
     async file(row, { reference, xml }) {
       const now = new Date().toISOString();
-      const rows = readCollection('ctr_queue', seedCtrs);
+      const rows = readCollection('ctr_queue', () => SEED_CTRS);
       if (!rows.some((r) => r.id === row.id)) throw new Error('This sample CTR was not found.');
       writeCollection('ctr_queue', rows.map((r) => r.id === row.id
         ? { ...r, status: 'filed', ctr_reference: reference, filed_at: now, goaml_xml: xml, reviewed_by: null, reviewed_at: now, updated_at: now }
@@ -260,8 +222,7 @@ export const demoProvider: DataProvider = {
   transactionQueue: {
     async listByIds(ids) {
       const wanted = new Set(ids);
-      return readCollection('transaction_queue', seedQueue)
-        .filter((t) => wanted.has(t.transaction_id))
+      return SEED_QUEUE.filter((t) => wanted.has(t.transaction_id))
         .sort((a, b) => a.transaction_datetime.localeCompare(b.transaction_datetime));
     },
   },
@@ -271,13 +232,13 @@ export const demoProvider: DataProvider = {
     async screen(name, threshold) {
       await wait(300);
       const results: SanctionsScreenResult[] = [];
-      for (const m of mockSanctionsMatches) {
+      for (const m of SEED_SANCTIONS) {
         const s = m.sanctions;
         const score = Math.max(nameSimilarity(name, s.name), ...s.aliases.map((a) => nameSimilarity(name, a)));
         if (score >= threshold) {
           results.push({
             id: `${m.id}-${s.listId}`, entity_name: s.name, source: s.list, entity_type: 'individual',
-            reason: s.reason, list_date: null, aliases: s.aliases, nationality: s.nationality, score,
+            reason: s.reason, list_date: s.dateAdded, aliases: s.aliases, nationality: s.nationality, score,
           });
         }
       }
@@ -290,87 +251,75 @@ export const demoProvider: DataProvider = {
   },
 
   adverseMedia: {
-    async latest(customerId) {
-      const rows = readCollection<AdverseMediaScreening[]>('adverse_media_results', () => []);
-      return rows.filter((r) => r.customer_id === customerId).sort((a, b) => b.search_date.localeCompare(a.search_date))[0] ?? null;
-    },
+    latest: async (customerId) => [...mediaResults()].filter((r) => r.customer_id === customerId)
+      .sort((a, b) => b.search_date.localeCompare(a.search_date))[0] ?? null,
     async latestLevels(ids) {
       const map: Record<string, AdverseMediaOverall> = {};
-      const rows = [...readCollection<AdverseMediaScreening[]>('adverse_media_results', () => [])]
-        .sort((a, b) => b.search_date.localeCompare(a.search_date));
-      for (const r of rows) if (ids.includes(r.customer_id) && !(r.customer_id in map)) map[r.customer_id] = r.overall_risk_level;
+      for (const r of [...mediaResults()].sort((a, b) => b.search_date.localeCompare(a.search_date))) {
+        if (ids.includes(r.customer_id) && !(r.customer_id in map)) map[r.customer_id] = r.overall_risk_level;
+      }
       return map;
     },
     async screen(req) {
       await wait(1200);
+      const previous = mediaResults().find((r) => r.customer_id === req.customer_id);
       const next = new Date();
       next.setDate(next.getDate() + 90);
+      // Re-screening a sample customer returns the same fictional coverage, dated today.
       const screening: AdverseMediaScreening = {
-        id: demoId('am'),
-        customer_id: req.customer_id,
-        customer_name: req.customer_name,
-        search_date: new Date().toISOString(),
-        results: [],
-        overall_risk_level: 'None',
-        screened_by: DEMO_ANALYST,
-        next_review_date: next.toISOString().slice(0, 10),
+        id: demoId('am'), customer_id: req.customer_id, customer_name: req.customer_name, search_date: new Date().toISOString(),
+        results: previous?.results ?? [], overall_risk_level: previous?.overall_risk_level ?? 'None',
+        screened_by: DEMO_ANALYST, next_review_date: next.toISOString().slice(0, 10),
       };
-      const rows = readCollection<AdverseMediaScreening[]>('adverse_media_results', () => []);
-      writeCollection('adverse_media_results', [screening, ...rows]);
+      writeCollection('adverse_media_results', [screening, ...mediaResults()]);
       return screening;
     },
   },
 
   kycDocuments: {
-    list: async (customerId) => readCollection<KycDocument[]>('kyc_documents', () => [])
-      .filter((d) => d.customer_id === customerId)
-      .sort((a, b) => b.uploaded_at.localeCompare(a.uploaded_at)),
+    list: async (customerId) => docs().filter((d) => d.customer_id === customerId).sort((a, b) => b.uploaded_at.localeCompare(a.uploaded_at)),
     async upload({ file, customerId, documentType, uploadedBy, kycTier, replaceExisting }) {
-      const id = demoId('kyc');
       const path = `${DEMO_INSTITUTION_ID}/${customerId}/${documentType}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
       const url = await fileToDataUrl(file);
       fileUrls.set(path, url);
-      // Small files are kept across reloads; larger ones only for this session.
-      if (url.length < 1_000_000) {
-        const files = readCollection<Record<string, string>>('kyc_files', () => ({}));
-        writeCollection('kyc_files', { ...files, [path]: url });
-      }
-      const now = new Date().toISOString();
-      let docs = readCollection<KycDocument[]>('kyc_documents', () => []);
+      // Small files are kept across reloads; larger ones only for this browser session.
+      if (url.length < 1_000_000) writeCollection('kyc_files', { ...readCollection<Record<string, string>>('kyc_files', () => ({})), [path]: url });
+      let list = docs();
       if (replaceExisting) {
-        docs = docs.map((d) => d.customer_id === customerId && d.document_type === documentType && d.is_current ? { ...d, is_current: false } : d);
+        list = list.map((d) => d.customer_id === customerId && d.document_type === documentType && d.is_current ? { ...d, is_current: false } : d);
       }
       const doc: KycDocument = {
-        id, customer_id: customerId, document_type: documentType, document_name: file.name, storage_path: path,
-        file_size_bytes: file.size, uploaded_by: uploadedBy, uploaded_at: now, kyc_tier_at_upload: kycTier ?? null,
+        id: demoId('kyc'), customer_id: customerId, document_type: documentType, document_name: file.name, storage_path: path,
+        file_size_bytes: file.size, uploaded_by: uploadedBy, uploaded_at: new Date().toISOString(), kyc_tier_at_upload: kycTier ?? null,
         is_current: true, expiry_date: null, verified: false, verified_by: null, verified_at: null,
       };
-      writeCollection('kyc_documents', [doc, ...docs]);
+      writeCollection('kyc_documents', [doc, ...list]);
       return doc;
     },
     async verify(id, verifiedBy) {
-      const docs = readCollection<KycDocument[]>('kyc_documents', () => []);
-      const doc = docs.find((d) => d.id === id);
+      const list = docs();
+      const doc = list.find((d) => d.id === id);
       if (!doc) throw new Error('This sample document was not found.');
       const updated = { ...doc, verified: true, verified_by: verifiedBy, verified_at: new Date().toISOString() };
-      writeCollection('kyc_documents', docs.map((d) => (d.id === id ? updated : d)));
+      writeCollection('kyc_documents', list.map((d) => (d.id === id ? updated : d)));
       return updated;
     },
     async fileUrl(doc) {
       const url = fileUrls.get(doc.storage_path) ?? readCollection<Record<string, string>>('kyc_files', () => ({}))[doc.storage_path];
-      if (!url) throw new Error('This sample file was only kept for your previous browser session.');
-      return url;
+      if (url) return url;
+      if (doc.storage_path.includes('/sample-')) return samplePdfDataUrl(`${documentLabel(doc.document_type)} — ${doc.document_name}`);
+      throw new Error('This sample file was only kept for your previous browser session.');
     },
   },
 
   riskScores: {
-    history: async (customerId, since) => readCollection<RiskScoreEntry[]>('risk_score_history', () => [])
+    history: async (customerId, since) => riskHistory()
       .filter((r) => r.customerId === customerId && r.createdAt >= since.toISOString())
       .sort((a, b) => a.createdAt.localeCompare(b.createdAt)),
     async recalculate({ customerId, triggerType, triggerReference, fallbackScore }) {
-      const rows = readCollection<RiskScoreEntry[]>('risk_score_history', () => []);
-      const mine = rows.filter((r) => r.customerId === customerId);
-      const fromCustomer = demoCustomers().find((c) => c.id === customerId)?.riskScore;
+      const rows = riskHistory();
+      const mine = rows.filter((r) => r.customerId === customerId).sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+      const fromCustomer = SEED_CUSTOMERS.find((c) => c.bvn === customerId)?.riskScore;
       const previous = mine.length ? mine[mine.length - 1].newScore : (fallbackScore ?? fromCustomer ?? 50);
       const next = Math.max(0, Math.min(100, previous + RISK_DELTAS[triggerType]));
       writeCollection('risk_score_history', [...rows, {
@@ -381,14 +330,14 @@ export const demoProvider: DataProvider = {
     subscribe: (_customerId, fn) => onCollectionChange('risk_score_history', fn),
   },
 
-  kyb: { list: async () => mockCorporateEntities },
-  rules: { list: async () => mockRules },
-  settlementAccounts: { list: async () => mockSettlementAccounts },
+  kyb: { list: async () => SEED_KYB },
+  rules: { list: async () => ruleView(readDemoOverlays()) },
+  settlementAccounts: { list: async () => SEED_SETTLEMENT },
   notifications: { list: async () => generateNotifications() },
 
   audit: {
     async load() {
-      const entries = readCollection('audit_log', seedAudit);
+      const entries = auditLog();
       // Recompute the sample chain oldest-first so the indicator reflects these entries.
       let prev = '0'.repeat(64);
       for (const e of [...entries].reverse()) {
@@ -401,15 +350,14 @@ export const demoProvider: DataProvider = {
       };
     },
     async append(entry) {
-      const entries = readCollection('audit_log', seedAudit);
       writeCollection('audit_log', [{
         ...entry,
         id: demoId('audit'),
         timestamp: new Date().toISOString(),
-        analyst: entry.analyst || DEMO_ANALYST,
+        analyst: entry.analyst && !entry.analyst.startsWith('mock-') ? entry.analyst : DEMO_ANALYST,
         status: entry.status ?? 'success',
         institutionId: DEMO_INSTITUTION_ID,
-      }, ...entries]);
+      }, ...auditLog()]);
     },
     subscribe: (fn) => onCollectionChange('audit_log', fn),
   },

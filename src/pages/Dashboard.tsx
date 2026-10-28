@@ -9,7 +9,9 @@ import { NotificationBell } from '@/components/NotificationBell';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { mockLegacyAlerts as mockAlerts } from '@/data/mockLegacyAlerts';
+import type { AlertData } from '@/data/models/legacyAlerts';
+import { useDemoDataset } from '@/data-layer/demoDataset';
+import { SEED_TRANSACTIONS, SEED_NOW } from '@/data-layer/seed/dataset';
 import { DailyBriefing } from '@/components/DailyBriefing';
 import { LiveActivityFeed } from '@/components/LiveActivityFeed';
 import {
@@ -17,6 +19,7 @@ import {
   PieChart, Pie, Cell, AreaChart, Area
 } from 'recharts';
 
+function buildDashboard(mockAlerts: AlertData[]) {
 const alertsByRisk = [
   { level: 'Critical', count: mockAlerts.filter(a => a.riskLevel === 'Critical').length, color: 'hsl(0, 72%, 51%)' },
   { level: 'High', count: mockAlerts.filter(a => a.riskLevel === 'High').length, color: 'hsl(25, 95%, 53%)' },
@@ -24,23 +27,20 @@ const alertsByRisk = [
   { level: 'Low', count: mockAlerts.filter(a => a.riskLevel === 'Low').length, color: 'hsl(142, 71%, 45%)' },
 ];
 
-const weeklyTrend = [
-  { day: 'Mon', alerts: 12, resolved: 9 },
-  { day: 'Tue', alerts: 8, resolved: 7 },
-  { day: 'Wed', alerts: 15, resolved: 11 },
-  { day: 'Thu', alerts: 6, resolved: 5 },
-  { day: 'Fri', alerts: 10, resolved: 8 },
-  { day: 'Sat', alerts: 3, resolved: 3 },
-  { day: 'Sun', alerts: 2, resolved: 1 },
-];
+const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const weeklyTrend = Array.from({ length: 7 }, (_, i) => {
+  const day = new Date(SEED_NOW - (6 - i) * 86_400_000);
+  const key = day.toISOString().slice(0, 10);
+  const raised = mockAlerts.filter(a => a.timestamp.slice(0, 10) === key);
+  return { day: DAY_NAMES[day.getUTCDay()], alerts: raised.length, resolved: raised.filter(a => a.status === 'Escalated' || a.status === 'Dismissed').length };
+});
 
-const volumeTrend = [
-  { date: 'Mar 10', volume: 42 },
-  { date: 'Mar 17', volume: 38 },
-  { date: 'Mar 24', volume: 55 },
-  { date: 'Mar 31', volume: 47 },
-  { date: 'Apr 07', volume: 56 },
-];
+const volumeTrend = Array.from({ length: 5 }, (_, i) => {
+  const end = SEED_NOW - (4 - i) * 7 * 86_400_000;
+  const start = end - 7 * 86_400_000;
+  const volume = SEED_TRANSACTIONS.filter(t => { const ts = new Date(t.date).getTime(); return ts > start && ts <= end && !!t.flagReason; }).length;
+  return { date: new Date(end).toLocaleDateString('en-NG', { month: 'short', day: '2-digit' }), volume };
+});
 
 const openAlerts = mockAlerts.filter(a => a.status === 'Open').length;
 const criticalAlerts = mockAlerts.filter(a => a.riskLevel === 'Critical' && a.status === 'Open').length;
@@ -89,9 +89,12 @@ const kpiCards = [
   },
 ];
 
-const topFlagged = mockAlerts
+const topFlagged = [...mockAlerts]
   .sort((a, b) => b.riskScore - a.riskScore)
   .slice(0, 5);
+
+return { alertsByRisk, weeklyTrend, volumeTrend, kpiCards, topFlagged };
+}
 
 const riskBadgeClass: Record<string, string> = {
   Critical: 'bg-[hsl(var(--risk-critical))]/10 text-[hsl(var(--risk-critical))] border-[hsl(var(--risk-critical))]/20',
@@ -112,6 +115,8 @@ export default function Dashboard() {
   const [refreshing, setRefreshing] = useState(false);
   const [lastRefreshed, setLastRefreshed] = useState(() => new Date());
   const chart = useChartTheme();
+  const { legacyAlerts } = useDemoDataset();
+  const { alertsByRisk, weeklyTrend, volumeTrend, kpiCards, topFlagged } = useMemo(() => buildDashboard(legacyAlerts), [legacyAlerts]);
 
   const handleRefresh = useCallback(() => {
     setRefreshing(true);

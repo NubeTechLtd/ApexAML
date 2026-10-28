@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { AlertOctagon, Bell, Building2, Banknote } from 'lucide-react';
 import { toast } from 'sonner';
-import type { Alert } from '@/data/mockAlerts';
+import type { Alert } from '@/data/models/alerts';
 
 /**
  * Commingling alert card — shown when a non-approved entity credits a

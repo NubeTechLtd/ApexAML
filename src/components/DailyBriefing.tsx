@@ -3,8 +3,8 @@ import { useZoneNavigate } from '@/hooks/useZone';
 import { AlertTriangle, Clock, Fingerprint, CheckCircle2, ArrowRight } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
-import { mockAlerts } from '@/data/mockAlerts';
-import { mockKYCCustomers } from '@/data/mockKYC';
+import { mockAlerts } from '@/data/models/alerts';
+import { mockKYCCustomers } from '@/data/models/kyc';
 
 type Item = {
   count: number;

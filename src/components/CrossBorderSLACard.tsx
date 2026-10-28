@@ -3,7 +3,7 @@ import { AlertOctagon, Globe2, Clock } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import { countryFlagEmoji, type CrossBorderContext } from '@/data/mockAlerts';
+import { countryFlagEmoji, type CrossBorderContext } from '@/data/models/alerts';
 
 interface Props {
   context: CrossBorderContext;

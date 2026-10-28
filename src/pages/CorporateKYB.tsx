@@ -7,7 +7,7 @@ import { AuditBell } from '@/components/AuditBell';
 import { CorporateQueue } from '@/components/kyb/CorporateQueue';
 import { CorporateEDDWorkspace } from '@/components/kyb/CorporateEDDWorkspace';
 import { Building2 } from 'lucide-react';
-import { mockCorporateEntities, type CorporateEntity } from '@/data/mockKYB';
+import { mockCorporateEntities, type CorporateEntity } from '@/data/models/kyb';
 
 const CorporateKYB = () => {
   const [entities, setEntities] = useState<CorporateEntity[]>(mockCorporateEntities);

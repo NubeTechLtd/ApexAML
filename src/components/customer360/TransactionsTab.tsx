@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { TrendingUp, Hash, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { Customer360Data } from '@/data/mockCustomer360';
+import type { Customer360Data } from '@/data/models/customer360';
 
 function formatCurrency(amount: number) {
   return '₦' + amount.toLocaleString('en-NG');

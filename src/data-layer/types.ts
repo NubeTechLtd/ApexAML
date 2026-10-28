@@ -4,9 +4,9 @@
  * so pages never depend on where the data came from.
  */
 import type { Database } from '@/integrations/supabase/types';
-import type { Alert, Transaction } from '@/data/mockAlerts';
-import type { CorporateEntity } from '@/data/mockKYB';
-import type { ManagedAccount } from '@/data/mockSettlementAccounts';
+import type { Alert, Transaction } from '@/data/models/alerts';
+import type { CorporateEntity } from '@/data/models/kyb';
+import type { ManagedAccount } from '@/data/models/settlement';
 import type { Rule } from '@/components/RulesTable';
 import type { AppNotification } from '@/hooks/useNotifications';
 
@@ -230,7 +230,10 @@ type Unsubscribe = () => void;
 
 export interface DataProvider {
   kind: ProviderKind;
-  alerts: { list(): Promise<AlertRecord[]> };
+  alerts: {
+    list(): Promise<AlertRecord[]>;
+    setStatus(alertId: string, status: AlertRecord['status']): Promise<void>;
+  };
   customers: { list(): Promise<CustomerRecord[]>; get(id: string): Promise<CustomerRecord | null> };
   transactions: { listForCustomers(customerIds: string[]): Promise<TransactionRecord[]> };
   str: {

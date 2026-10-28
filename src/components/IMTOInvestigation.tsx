@@ -16,7 +16,7 @@ import {
 import { useCBNRate } from '@/hooks/useCBNRate';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
-import type { Alert, Transaction } from '@/data/mockAlerts';
+import type { Alert, Transaction } from '@/data/models/alerts';
 
 /**
  * Approximate relative coordinates (x%, y%) of key Nigerian cities on a

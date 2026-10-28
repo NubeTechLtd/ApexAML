@@ -12,7 +12,7 @@ import { Separator } from '@/components/ui/separator';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Slider } from '@/components/ui/slider';
 import { useToast } from '@/hooks/use-toast';
-import { mockSanctionsMatches, type SanctionsMatch } from '@/data/mockSanctions';
+import { mockSanctionsMatches, type SanctionsMatch } from '@/data/models/sanctions';
 import { SanctionsRefreshStatus } from '@/components/sanctions/SanctionsRefreshStatus';
 import { LiveScreenPanel } from '@/components/sanctions/LiveScreenPanel';
 import { BulkDismissDialog } from '@/components/sanctions/BulkDismissDialog';

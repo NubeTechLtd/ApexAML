@@ -4,7 +4,7 @@
  */
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentInstitutionId } from '@/lib/institution';
-import type { Alert, AlertType, RiskLevel, Transaction, TxChannel } from '@/data/mockAlerts';
+import type { Alert, AlertType, RiskLevel, Transaction, TxChannel } from '@/data/models/alerts';
 import type {
   AdverseMediaOverall, AdverseMediaScreening, AuditChainResult, AuditEntry, CustomerRecord,
   DataProvider, KycDocument, RiskTriggerType, SanctionsListMeta, SanctionsScreenResult,
@@ -144,6 +144,13 @@ export const liveProvider: DataProvider = {
           alertType: (r.alert_type as AlertType) ?? 'STANDARD',
         };
       });
+    },
+    async setStatus(alertId, status) {
+      const { error } = await supabase
+        .from('alerts')
+        .update({ status, closed_at: status === 'Dismissed' ? new Date().toISOString() : null })
+        .eq('id', alertId);
+      if (error) throw error;
     },
   },
 

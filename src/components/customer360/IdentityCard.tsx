@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import type {
   Customer360Data, EntityType, BeneficialOwner, ForeignBusinessKYB, RemittancePurpose,
-} from '@/data/mockCustomer360';
+} from '@/data/models/customer360';
 
 const livenessColors: Record<string, string> = {
   Pass: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20',
