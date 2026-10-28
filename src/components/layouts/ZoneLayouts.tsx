@@ -1,8 +1,10 @@
-import { Navigate, Outlet, useLocation, useParams } from 'react-router-dom';
+import { Link, Navigate, Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { toZonePath } from '@/lib/zones';
 import { useState } from 'react';
-import { RotateCcw } from 'lucide-react';
+import { CalendarCheck, Compass, Rocket, RotateCcw } from 'lucide-react';
+import { ProductTourModal } from '@/components/ProductTourModal';
+import { BookDemoSheet } from '@/components/landing/BookDemoSheet';
 import { Button } from '@/components/ui/button';
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription,
@@ -20,35 +22,57 @@ export function MarketingLayout() {
 export function DemoLayout() {
   // Bumped on reset so every page remounts from the fresh sample data.
   const [generation, setGeneration] = useState(0);
+  const [tourOpen, setTourOpen] = useState(false);
+  const [bookOpen, setBookOpen] = useState(false);
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
   const reset = () => {
     resetDemoStore();
     setGeneration((g) => g + 1);
     toast.success('Demo reset', { description: 'All sample data is back to its starting state.' });
   };
+  // Overview modal first, then the step-by-step guide on the real screens.
+  const closeTour = () => {
+    setTourOpen(false);
+    navigate(`${pathname === '/demo' ? '/demo/dashboard' : pathname}?tour=1`);
+  };
   return (
     <>
-      <div className="fixed bottom-4 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2 rounded-full border border-border bg-muted py-0.5 pl-3 pr-1 text-xs text-muted-foreground shadow-sm">
-        <span>Sample data · changes stay in this browser</span>
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button variant="ghost" size="sm" className="h-7 gap-1.5 rounded-full text-xs">
-              <RotateCcw className="h-3.5 w-3.5" /> Reset demo
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Reset the demo?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This clears every change in this demo session (case decisions, frozen accounts, report edits, rule changes, filed CTRs and audit entries) and restores the starting sample data.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={reset}>Reset demo</AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+      <div role="status" className="sticky top-0 z-50 flex min-h-10 flex-wrap items-center justify-between gap-x-4 gap-y-1 border-b border-border bg-muted px-4 py-1 text-xs text-muted-foreground">
+        <span className="font-medium">Demo environment: sample data only, no live connections.</span>
+        <div className="flex flex-wrap items-center gap-1">
+          <Button variant="ghost" size="sm" className="h-7 gap-1.5 text-xs" onClick={() => setTourOpen(true)}>
+            <Compass className="h-3.5 w-3.5" /> Guided tour
+          </Button>
+          <Button variant="ghost" size="sm" className="h-7 gap-1.5 text-xs" onClick={() => setBookOpen(true)}>
+            <CalendarCheck className="h-3.5 w-3.5" /> Book a walkthrough
+          </Button>
+          <Button asChild size="sm" className="h-7 gap-1.5 text-xs">
+            <Link to="/contact?topic=pilot"><Rocket className="h-3.5 w-3.5" /> Start a pilot</Link>
+          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="ghost" size="sm" className="h-7 gap-1.5 text-xs">
+                <RotateCcw className="h-3.5 w-3.5" /> Reset demo
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Reset the demo?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This clears every change in this demo session (case decisions, frozen accounts, report edits, rule changes, filed CTRs and audit entries) and restores the starting sample data.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={reset}>Reset demo</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
       </div>
+      <ProductTourModal open={tourOpen} onClose={closeTour} onBookDemo={() => { setTourOpen(false); setBookOpen(true); }} />
+      <BookDemoSheet open={bookOpen} onOpenChange={setBookOpen} />
       <Outlet key={generation} />
     </>
   );
