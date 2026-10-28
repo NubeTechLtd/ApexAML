@@ -30,6 +30,12 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
+import type { Alert } from '@/data/models/alerts';
+import { useDemoDataset } from '@/data-layer/demoDataset';
+import { useAuditLog, type AuditEntry } from '@/hooks/useAuditLog';
+import { SEED_ALERTS } from '@/data-layer/seed/dataset';
+
+const alertCustomerNum = (id: string) => SEED_ALERTS.find((a) => a.id === id)?.customerNum;
 
 type IconType = typeof AlertTriangle;
 
@@ -61,168 +67,68 @@ type CaseFile = {
   events: CaseEvent[];
 };
 
-const adebayoCase: CaseFile = {
-  caseId: 'ALT-2026-0891',
-  typology: 'POS Round-Trip Structuring',
-  customerName: 'Adebayo Ogunlesi',
-  customerId: '1',
-  status: 'Filed',
-  openedAt: 'Monday 28 Jun · 08:15',
-  closedAt: 'Monday 28 Jun · 10:46',
-  investigationMinutes: 123,
-  strFiledAt: 'Monday 28 Jun · 10:08',
-  strDeadlineHours: 24,
-  events: [
+const fmt = (iso: string) => {
+  const d = new Date(iso);
+  return `${d.toLocaleDateString('en-GB', { weekday: 'long', day: '2-digit', month: 'short', timeZone: 'Africa/Lagos' })} · ${d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Africa/Lagos' })}`;
+};
+
+const EVENT_STYLE: Record<string, { icon: IconType; color: string; title: string }> = {
+  CASE_UNDER_REVIEW: { icon: Eye, color: 'text-amber-500', title: 'Case taken into review' },
+  CASE_INFO_REQUESTED: { icon: Search, color: 'text-amber-500', title: 'Information requested' },
+  STR_EDIT: { icon: Edit3, color: 'text-primary', title: 'STR draft edited' },
+  STR_FILED: { icon: FileText, color: 'text-primary', title: 'STR prepared' },
+  STR_EXPORT: { icon: Send, color: 'text-emerald-500', title: 'STR exported in goAML format' },
+  NFIU_ESCALATION: { icon: ShieldAlert, color: 'text-destructive', title: 'Escalated to NFIU' },
+  ACCOUNT_FREEZE: { icon: Snowflake, color: 'text-destructive', title: 'Account frozen' },
+  ALERT_DISMISSED: { icon: CheckCircle2, color: 'text-muted-foreground', title: 'Closed as false positive' },
+};
+
+/** Builds the case file from the sample alert and every audit entry recorded against it. */
+function buildCaseFile(caseId: string, alerts: Alert[], audit: AuditEntry[]): CaseFile | null {
+  const alert = alerts.find((a) => a.caseId === caseId || a.id === caseId);
+  if (!alert) return null;
+  const keys = new Set([alert.caseId, alert.id]);
+  const logged = audit.filter((e) => keys.has(e.caseId)).sort((x, y) => x.timestamp.localeCompare(y.timestamp));
+  const total = alert.transactions.reduce((sum, t) => sum + t.amountNGN, 0);
+  const events: CaseEvent[] = [
     {
-      id: 'e1',
-      timestamp: 'Monday 28 Jun · 08:43',
+      id: 'opened',
+      timestamp: fmt(alert.timestamp),
       icon: AlertTriangle,
       iconColor: 'text-destructive',
-      title: 'Critical alert fired',
-      description: 'POS Round-Trip rule T-NG-204 triggered on customer activity',
+      title: `${alert.riskLevel} alert fired`,
+      description: alert.ruleTriggered,
       actor: 'System',
-      detail:
-        'Rule T-NG-204 detected ₦14.8M withdrawn across 47 POS transactions, each below the ₦500,000 reporting threshold, with mirrored deposits to a connected NUBAN within 6 hours.',
+      detail: alert.description,
       data: {
-        'Rule ID': 'T-NG-204',
-        'Risk Score': '92/100',
-        'Channel': 'POS Agent Network',
-        'Aggregate Value': '₦14,820,500',
-        'Transaction Count': '47',
+        'Alert ID': alert.id,
+        'Risk Score': `${alert.customerProfile.riskScore}/100`,
+        'Transactions': String(alert.transactions.length),
+        'Aggregate Value': `₦${total.toLocaleString('en-NG')}`,
       },
     },
-    {
-      id: 'e2',
-      timestamp: 'Monday 28 Jun · 08:15',
-      icon: Eye,
-      iconColor: 'text-blue-500',
-      title: 'Alert opened for investigation',
-      description: 'Chioma Adeyemi (CCO) claimed the alert from the inbox',
-      actor: 'Chioma Adeyemi',
-      detail: 'Analyst acknowledged the alert and moved it from Open to Under Review.',
-    },
-    {
-      id: 'e3',
-      timestamp: 'Monday 28 Jun · 09:02',
-      icon: User,
-      iconColor: 'text-primary',
-      title: 'Customer 360 profile reviewed',
-      description: 'Full customer context, KYC, and connected entities inspected',
-      actor: 'Chioma Adeyemi',
-      detail: 'Reviewed BVN, NIN, KYC tier (Tier 2), 6-axis risk radar, and 4 linked accounts.',
-      data: {
-        'BVN': '22156****891',
-        'KYC Tier': 'Tier 2',
-        'Connected Accounts': '4',
-        'Avg 30d Volume': '₦18.2M',
-      },
-    },
-    {
-      id: 'e4',
-      timestamp: 'Monday 28 Jun · 09:18',
-      icon: Search,
-      iconColor: 'text-blue-500',
-      title: 'Sanctions screen run',
-      description: 'No OFAC/UN match · NFIU domestic 78% name match found',
-      actor: 'System',
-      detail:
-        'Screened against OFAC SDN, UN consolidated, EU sanctions, and NFIU domestic watchlist. Domestic match at 78% similarity flagged for analyst review.',
-      data: {
-        'OFAC': 'No match',
-        'UN Consolidated': 'No match',
-        'EU': 'No match',
-        'NFIU Domestic': '78% match (manual review)',
-      },
-    },
-    {
-      id: 'e5',
-      timestamp: 'Monday 28 Jun · 09:31',
-      icon: Edit3,
-      iconColor: 'text-amber-500',
-      title: 'Case note added',
-      description: '"BDC company inactive on CAC since 2022"',
-      actor: 'Chioma Adeyemi',
-      detail: 'Adverse media confirmed: beneficiary BDC company shows no CAC filings since 2022.',
-      notes:
-        'Cross-checked beneficiary "GoldStar Exchange Ltd" against CAC public registry. No annual returns since 2022. RC number active but dormant. Flagged for EDD.',
-    },
-    {
-      id: 'e6',
-      timestamp: 'Monday 28 Jun · 09:44',
-      icon: Bot,
-      iconColor: 'text-emerald-500',
-      title: 'AI STR Co-Pilot activated',
-      description: 'Draft STR generated in 11 minutes',
-      actor: 'System',
-      detail:
-        'ApexAML AI Co-Pilot drafted a full goAML-compliant STR narrative covering subject, transaction pattern, typology, and recommendation.',
-      attachments: [{ name: 'STR_DRAFT_ALT2026891.docx', type: 'STR Draft' }],
-    },
-    {
-      id: 'e7',
-      timestamp: 'Monday 28 Jun · 09:55',
-      icon: Edit3,
-      iconColor: 'text-amber-500',
-      title: 'STR draft edited',
-      description: '1 paragraph updated by analyst',
-      actor: 'Chioma Adeyemi',
-      detail: 'Analyst refined the "Suspicious Indicators" paragraph to include the CAC dormancy finding.',
-      notes:
-        'Added: "Beneficiary entity GoldStar Exchange Ltd has filed no annual returns with CAC since 2022, indicating likely shell status."',
-    },
-    {
-      id: 'e8',
-      timestamp: 'Monday 28 Jun · 10:02',
-      icon: Download,
-      iconColor: 'text-blue-500',
-      title: 'STR exported in goAML XML',
-      description: 'File: STR_ALT2026891_28Jun.xml',
-      actor: 'Chioma Adeyemi',
-      detail: 'NFIU-schema-validated XML generated with zero errors.',
-      attachments: [{ name: 'STR_ALT2026891_28Jun.xml', type: 'goAML XML' }],
-    },
-    {
-      id: 'e9',
-      timestamp: 'Monday 28 Jun · 10:08',
-      icon: Send,
-      iconColor: 'text-emerald-500',
-      title: 'NFIU submission confirmed',
-      description: 'Reference: STR-2026-00041',
-      actor: 'Chioma Adeyemi',
-      detail: 'NFIU portal returned a successful submission receipt and immutable audit hash.',
-      data: {
-        'NFIU Ref': 'STR-2026-00041',
-        'Audit Hash': '0x8f3c…a921',
-        'Filed Within': '1h 50m of suspicion forming',
-      },
-    },
-    {
-      id: 'e10',
-      timestamp: 'Monday 28 Jun · 10:45',
-      icon: Snowflake,
-      iconColor: 'text-blue-500',
-      title: 'Account frozen',
-      description: 'Case ref FRZ-2026-0089',
-      actor: 'Ngozi Okafor (Head of Compliance)',
-      detail: 'Account frozen pending NFIU instruction. Customer notification suppressed under tipping-off rules.',
-      data: {
-        'Freeze Ref': 'FRZ-2026-0089',
-        'Approver': 'Ngozi Okafor',
-        'Justification': 'Confirmed STR filed; preserve funds pending NFIU direction.',
-      },
-    },
-    {
-      id: 'e11',
-      timestamp: 'Monday 28 Jun · 10:46',
-      icon: Lock,
-      iconColor: 'text-muted-foreground',
-      title: 'Case closed',
-      description: 'Total investigation time: 2h 3m',
-      actor: 'Chioma Adeyemi',
-      detail: 'Case marked Filed & Closed. All artefacts sealed in immutable audit trail.',
-    },
-  ],
-};
+    ...logged.map((e, i) => {
+      const style = EVENT_STYLE[e.action] ?? { icon: ClipboardList, color: 'text-muted-foreground', title: e.action.toLowerCase().replace(/_/g, ' ') };
+      return { id: `ev-${i}`, timestamp: fmt(e.timestamp), icon: style.icon, iconColor: style.color, title: style.title, description: e.justification, actor: e.analyst, detail: e.justification };
+    }),
+  ];
+  const last = logged[logged.length - 1]?.timestamp ?? alert.timestamp;
+  const filed = logged.find((e) => e.action === 'STR_EXPORT' || e.action === 'NFIU_ESCALATION');
+  const status: CaseFile['status'] = alert.status === 'Escalated' ? 'Filed' : alert.status === 'Dismissed' ? 'Closed' : alert.status;
+  return {
+    caseId: alert.caseId,
+    typology: alert.ruleTriggered,
+    customerName: alert.customerProfile.fullName,
+    customerId: String(alertCustomerNum(alert.id) ?? ''),
+    status,
+    openedAt: fmt(alert.timestamp),
+    closedAt: status === 'Closed' || status === 'Filed' ? fmt(last) : undefined,
+    investigationMinutes: Math.max(0, Math.round((new Date(last).getTime() - new Date(alert.timestamp).getTime()) / 60_000)),
+    strFiledAt: filed ? fmt(filed.timestamp) : undefined,
+    strDeadlineHours: 24,
+    events,
+  };
+}
 
 const fallbackCase = (caseId: string): CaseFile => ({
   caseId,
@@ -256,10 +162,12 @@ export default function CaseJourney() {
   const { caseId = '' } = useParams<{ caseId: string }>();
   const navigate = useZoneNavigate();
 
-  const caseFile = useMemo<CaseFile>(() => {
-    if (caseId === 'ALT-2026-0891' || caseId === '1') return adebayoCase;
-    return fallbackCase(caseId || 'NEW-CASE');
-  }, [caseId]);
+  const { alerts } = useDemoDataset();
+  const { entries: auditEntries } = useAuditLog();
+  const caseFile = useMemo<CaseFile>(
+    () => buildCaseFile(caseId, alerts, auditEntries) ?? fallbackCase(caseId || 'NEW-CASE'),
+    [caseId, alerts, auditEntries],
+  );
 
   const [selectedId, setSelectedId] = useState(caseFile.events[0].id);
   const selected = caseFile.events.find((e) => e.id === selectedId) ?? caseFile.events[0];
