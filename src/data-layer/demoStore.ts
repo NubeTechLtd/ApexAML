@@ -1,11 +1,13 @@
 /**
- * Demo persistence: an in-memory cache mirrored to localStorage so sample
- * work (filed CTRs, uploaded documents, audit entries) survives a reload in
- * the visitor's own browser and never leaves it.
+ * Demo persistence: an in-memory cache mirrored to localStorage under the
+ * visitor's demo session, so sample work (filed CTRs, freezes, audit entries)
+ * survives a reload in their own browser and never leaves it.
  */
-const PREFIX = 'apexaml-demo:v1:';
+const ROOT = 'apexaml-demo:v2:';
+const SESSION_KEY = `${ROOT}session`;
 const memory = new Map<string, unknown>();
 const listeners = new Map<string, Set<() => void>>();
+let session: string | null = null;
 
 function storage(): Storage | null {
   try {
@@ -15,10 +17,24 @@ function storage(): Storage | null {
   }
 }
 
+/** The current demo session id; created on first use. */
+export function demoSessionId(): string {
+  if (session) return session;
+  const s = storage();
+  session = s?.getItem(SESSION_KEY) ?? null;
+  if (!session) {
+    session = `ds-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+    try { s?.setItem(SESSION_KEY, session); } catch { /* storage blocked */ }
+  }
+  return session;
+}
+
+const keyFor = (key: string) => `${ROOT}${demoSessionId()}:${key}`;
+
 export function readCollection<T>(key: string, seed: () => T): T {
   if (memory.has(key)) return memory.get(key) as T;
   let value: T | undefined;
-  const raw = storage()?.getItem(PREFIX + key);
+  const raw = storage()?.getItem(keyFor(key));
   if (raw) {
     try { value = JSON.parse(raw) as T; } catch { value = undefined; }
   }
@@ -30,7 +46,7 @@ export function readCollection<T>(key: string, seed: () => T): T {
 export function writeCollection<T>(key: string, value: T) {
   memory.set(key, value);
   try {
-    storage()?.setItem(PREFIX + key, JSON.stringify(value));
+    storage()?.setItem(keyFor(key), JSON.stringify(value));
   } catch {
     // Storage full or blocked: keep the in-memory copy for this session.
   }
@@ -44,17 +60,18 @@ export function onCollectionChange(key: string, fn: () => void): () => void {
   return () => { set.delete(fn); };
 }
 
-/** Clears every demo collection (used by tests and "reset sample data"). */
+/** Discards every demo collection and starts a fresh demo session. */
 export function resetDemoStore() {
   const s = storage();
-  for (const key of Array.from(memory.keys())) s?.removeItem(PREFIX + key);
   if (s) {
     for (let i = s.length - 1; i >= 0; i--) {
       const k = s.key(i);
-      if (k?.startsWith(PREFIX)) s.removeItem(k);
+      if (k?.startsWith('apexaml-demo:')) s.removeItem(k);
     }
   }
+  session = null;
   memory.clear();
+  listeners.forEach((set) => set.forEach((fn) => fn()));
 }
 
 export const demoId = (prefix: string) =>
