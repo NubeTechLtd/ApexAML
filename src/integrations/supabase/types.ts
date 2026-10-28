@@ -372,6 +372,38 @@ export type Database = {
           },
         ]
       }
+      demo_notification_events: {
+        Row: {
+          created_at: string
+          id: string
+          notification_type: string
+          session_id: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          notification_type: string
+          session_id: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notification_type?: string
+          session_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "demo_notification_events_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "demo_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       demo_requests: {
         Row: {
           contact_name: string
@@ -426,18 +458,21 @@ export type Database = {
           email: string
           emails_sent: number
           id: string
+          notification_token_hash: string | null
         }
         Insert: {
           created_at?: string
           email: string
           emails_sent?: number
           id?: string
+          notification_token_hash?: string | null
         }
         Update: {
           created_at?: string
           email?: string
           emails_sent?: number
           id?: string
+          notification_token_hash?: string | null
         }
         Relationships: []
       }
@@ -1903,6 +1938,10 @@ export type Database = {
           _trigger_type: string
         }
         Returns: undefined
+      }
+      reserve_demo_notification: {
+        Args: { _event_id: string; _session_id: string; _type: string }
+        Returns: Json
       }
       screen_entity: {
         Args: { search_name: string; threshold?: number }
