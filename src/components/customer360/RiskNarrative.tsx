@@ -3,10 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import type { Customer360Data } from '@/data/models/customer360';
 
-const hardcoded: Record<number, string> = {
-  1: 'Adebayo Ogunlesi opened this account 7 months ago with Tier 3 documents. One of their KYC documents has been flagged — the employer letter lists a company whose CAC registration was suspended in 2024. Over the past 30 days they moved ₦14.8M through 47 POS transactions, all structured below the ₦500,000 reporting threshold, with funds round-tripped through Crown BDC Ltd within 1h 37m of an inbound IMTO remittance. They have 4 connected accounts and entities, including a shared device ID with two other Tier 3 accounts and a frequent transfer target receiving ₦9.5M in the same window. This pattern matches POS Round-Tripping combined with BDC layering — financial crime methodologies explicitly flagged in CBN Circular BSD/DIR/PUB/LAB/019/002.',
-  8: 'Aisha Yusuf opened this account 4 months ago with Tier 2 documents. Her declared occupation is "student" yet inbound transfers exceed ₦22M across the past 60 days, sourced from 11 distinct payers with no familial or employment relationship on record. Funds are withdrawn within 24 hours via USSD across 3 states, consistent with mule-account layering. She shares a registered address with two other recently onboarded accounts exhibiting identical transaction velocity. This pattern matches USSD Layering and Account-Mule typologies described in CBN Circular BSD/DIR/PUB/LAB/019/002 and NFIU Typology Bulletin 14.',
-};
 
 function monthsSince(_customer: Customer360Data): number {
   // Mock — derive a deterministic months value from the customer id
@@ -28,7 +24,7 @@ function genericNarrative(c: Customer360Data): string {
 }
 
 export function RiskNarrative({ customer }: { customer: Customer360Data }) {
-  const narrative = hardcoded[customer.id] ?? genericNarrative(customer);
+  const narrative = genericNarrative(customer);
   const borderColor =
     customer.riskLevel === 'High'
       ? 'border-l-destructive'

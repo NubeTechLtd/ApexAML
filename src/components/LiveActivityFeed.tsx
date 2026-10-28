@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useZoneNavigate } from '@/hooks/useZone';
 import { ArrowRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { SEED_ALERTS, SEED_CUSTOMERS, SEED_TRANSACTIONS } from '@/data-layer/seed/dataset';
 
 type Severity = 'red' | 'amber' | 'green' | 'blue';
 
@@ -19,29 +20,20 @@ const dotClass: Record<Severity, string> = {
   blue: 'bg-blue-500',
 };
 
-const INITIAL_ENTRIES: FeedEntry[] = [
-  { id: 'i1', time: '08:43', severity: 'red', message: 'Critical alert — POS Round-Trip detected — Adebayo Ogunlesi — ₦14,800,000' },
-  { id: 'i2', time: '08:31', severity: 'amber', message: 'STR draft completed — Case ALT-2026-0891 — Chioma Adeyemi' },
-  { id: 'i3', time: '08:15', severity: 'green', message: 'KYC Tier upgrade approved — Fatima Bello — BVN verified' },
-  { id: 'i4', time: '07:58', severity: 'blue', message: 'CTR submitted to CBN — 3 transactions above ₦5M threshold' },
-  { id: 'i5', time: '07:44', severity: 'red', message: 'High alert — USSD Layering — Chinedu Nwosu — ₦2,340,000' },
-  { id: 'i6', time: '07:30', severity: 'green', message: 'Sanctions screen clear — 14 new onboardings' },
-  { id: 'i7', time: '07:15', severity: 'amber', message: 'Rule triggered — Dormant Activation — Amina Suleiman — account inactive 14 months' },
-  { id: 'i8', time: '06:50', severity: 'red', message: 'Critical — BDC Smurfing pattern — Tunde Bakare — 8 BDC transactions' },
-  { id: 'i9', time: '06:30', severity: 'green', message: 'Case closed — STR filed with NFIU — Ref: STR-2026-00041' },
-  { id: 'i10', time: '23:58', severity: 'red', message: 'Overnight alert — POS Round-Trip — Adebayo Ogunlesi — IMTO link detected' },
-  { id: 'i11', time: '23:22', severity: 'blue', message: 'goAML XML batch transmitted — 7 STRs accepted by NFIU portal' },
-  { id: 'i12', time: '22:47', severity: 'amber', message: 'EDD escalation — Ngozi Okonkwo — source-of-funds review opened' },
-  { id: 'i13', time: '22:10', severity: 'green', message: 'Case closed — false positive — Yusuf Ibrahim — sanctions hit dismissed' },
-  { id: 'i14', time: '21:35', severity: 'red', message: 'Critical — Cross-border smurfing — Emeka Obi — 11 inbound IMTO legs' },
-  { id: 'i15', time: '20:58', severity: 'blue', message: 'CTR submitted to CBN — Lagos branch — ₦42,000,000 cash deposit' },
-];
+const hhmm = (iso: string) => new Date(iso).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Africa/Lagos' });
+const SEVERITY: Record<string, Severity> = { Critical: 'red', High: 'red', Medium: 'amber', Low: 'green' };
 
-const NAMES = [
-  'Adebayo Ogunlesi', 'Chioma Adeyemi', 'Fatima Bello', 'Chinedu Nwosu', 'Amina Suleiman',
-  'Tunde Bakare', 'Ngozi Okonkwo', 'Yusuf Ibrahim', 'Emeka Obi', 'Zainab Mohammed',
-  'Olusegun Adeleke', 'Halima Yakubu', 'Ifeanyi Eze', 'Bukola Adesanya', 'Sadiq Aliyu',
-];
+/** Opening feed: the most recent sample alerts, so names and amounts match the inbox. */
+const INITIAL_ENTRIES: FeedEntry[] = [...SEED_ALERTS]
+  .sort((x, y) => y.timestamp.localeCompare(x.timestamp))
+  .slice(0, 15)
+  .map((a) => {
+    const c = SEED_CUSTOMERS.find((x) => x.num === a.customerNum);
+    const total = SEED_TRANSACTIONS.filter((t) => t.alertId === a.id).reduce((sum, t) => sum + t.amountNGN, 0);
+    return { id: `seed-${a.id}`, time: hhmm(a.timestamp), severity: SEVERITY[a.riskLevel] ?? 'amber', message: `${a.riskLevel} alert — ${a.ruleTriggered} — ${c?.fullName ?? a.id} — ₦${total.toLocaleString('en-NG')}` };
+  });
+
+const NAMES = SEED_CUSTOMERS.map((c) => c.fullName);
 
 const TEMPLATES: { severity: Severity; build: (name: string) => string }[] = [
   { severity: 'red', build: (n) => `Critical alert — POS Structuring — ${n} — ₦${(Math.floor(Math.random() * 90) + 10) * 100_000}`.replace(/000000$/, '00,000') },
