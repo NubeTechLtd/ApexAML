@@ -97,7 +97,6 @@ export default function Customers() {
   const [bulkAuditEntries, setBulkAuditEntries] = useState<BulkAuditEntry[]>([]);
   const { append } = useAuditLog();
   const searchRef = useRef<HTMLInputElement>(null);
-  const undoRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const toggleSort = (key: SortKey) => {
     if (sortKey === key) {
