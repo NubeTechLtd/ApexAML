@@ -280,6 +280,7 @@ export default function AlertWorkspace() {
   const [underReviewAtMap, setUnderReviewAtMap] = useState<Record<string, string>>({});
   const [exportedIds, setExportedIds] = useState<Record<string, boolean>>({});
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const strDraftAtFocus = useRef('');
 
   const filtered = useMemo(() => {
     return alerts.filter((a) => {
@@ -1008,6 +1009,12 @@ export default function AlertWorkspace() {
                           <textarea
                             value={strDraft}
                             onChange={(e) => setStrDraft(e.target.value)}
+                            onFocus={(e) => { strDraftAtFocus.current = e.target.value; }}
+                            onBlur={(e) => {
+                              if (selected && e.target.value !== strDraftAtFocus.current) {
+                                void addAuditEntry({ action: 'STR_EDIT', analyst: '', caseId: selected.caseId, justification: `Analyst edited the STR narrative (${e.target.value.length} characters).` }).catch(() => undefined);
+                              }
+                            }}
                             className="flex-1 w-full resize-none bg-background p-4 text-xs font-mono leading-relaxed text-foreground focus:outline-none min-h-[350px]"
                             spellCheck={false}
                           />
