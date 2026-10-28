@@ -20,7 +20,8 @@ export function emitDailyBriefing() {
   if (!readDemoEmails().some(e => e.type === 'daily_briefing' && e.createdAt.startsWith(day))) emitDemoNotification('daily_briefing');
 }
 export function notifyDemoAudit(action: string, justification: string) {
+  const actionTypes: Record<string, DemoNotificationType> = { STR_FILED: 'str_submitted', STR_EXPORT: 'str_exported', CTR_FILED: 'ctr_filed', ACCOUNT_FREEZE: 'account_frozen' };
   const type = action === 'NFIU_ESCALATION' ? (justification.startsWith('Case reassigned to ') ? 'alert_assigned' : 'alert_escalated')
-    : ({ STR_FILED: 'str_submitted', STR_EXPORT: 'str_exported', CTR_FILED: 'ctr_filed', ACCOUNT_FREEZE: 'account_frozen' } as const)[action as 'STR_FILED'];
+    : actionTypes[action];
   if (type) emitDemoNotification(type);
 }
