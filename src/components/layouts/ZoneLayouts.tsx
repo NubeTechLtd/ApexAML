@@ -27,7 +27,7 @@ export function DemoLayout() {
   };
   return (
     <>
-      <div className="fixed left-1/2 top-2 z-50 flex -translate-x-1/2 items-center gap-2 rounded-full border border-border bg-muted py-0.5 pl-3 pr-1 text-xs text-muted-foreground shadow-sm">
+      <div className="fixed bottom-4 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2 rounded-full border border-border bg-muted py-0.5 pl-3 pr-1 text-xs text-muted-foreground shadow-sm">
         <span>Sample data · changes stay in this browser</span>
         <AlertDialog>
           <AlertDialogTrigger asChild>
