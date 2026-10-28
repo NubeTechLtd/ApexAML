@@ -61,16 +61,16 @@ const ackStyle: Record<string, string> = {
 function NewSTRSheet({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
   const { alerts } = useDemoDataset();
   const { append } = useAuditLog();
-  const MOCK_ALERTS = alerts
-    .filter(a => a.status === 'Open' || a.status === 'Under Review')
-    .map(a => ({ id: a.id, label: `${a.id} · ${a.ruleTriggered} · ${a.customerProfile.fullName}` }));
-  const linked = alerts.find(a => a.id === linkedAlert);
-  const AI_NARRATIVE = linked ? `SUSPICIOUS TRANSACTION REPORT — NFIU STRUCTURED NARRATIVE\n\nCase: ${linked.caseId}\n\n${linked.aiDraftedNarrative}` : '';
   const [step, setStep] = useState(1);
   const [linkedAlert, setLinkedAlert] = useState('');
   const [narrative, setNarrative] = useState('');
   const [generating, setGenerating] = useState(false);
   const [editedNarrative, setEditedNarrative] = useState('');
+  const MOCK_ALERTS = alerts
+    .filter(a => a.status === 'Open' || a.status === 'Under Review')
+    .map(a => ({ id: a.id, label: `${a.id} · ${a.ruleTriggered} · ${a.customerProfile.fullName}` }));
+  const linked = alerts.find(a => a.id === linkedAlert);
+  const AI_NARRATIVE = linked ? `SUSPICIOUS TRANSACTION REPORT — NFIU STRUCTURED NARRATIVE\n\nCase: ${linked.caseId}\n\n${linked.aiDraftedNarrative}` : '';
 
   // Reset on close
   useEffect(() => {
