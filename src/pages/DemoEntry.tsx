@@ -10,7 +10,7 @@ import { Seo } from "@/components/Seo";
 import { CompanyFooterLine } from "@/components/CompanyFooterLine";
 import { trackEvent } from "@/lib/analytics";
 import { supabase } from "@/integrations/supabase/client";
-import { hasDemoEntry, markDemoEntry, setDemoSessionId } from "@/data-layer/demoStore";
+import { hasDemoEntry, markDemoEntry, setDemoSessionId, saveDemoNotificationCredentials } from "@/data-layer/demoStore";
 
 const ORG_TYPES = ["PSP", "MFB", "IMTO", "Bank", "Other"] as const;
 
@@ -61,6 +61,7 @@ export default function DemoEntry() {
     }
     setDemoSessionId(data.sessionId);
     markDemoEntry(data.sessionId);
+    if (data.notificationToken) saveDemoNotificationCredentials(data.sessionId, data.notificationToken);
     void trackEvent("demo_entry_submitted", { source: "demo_entry", metadata: { organisation_type: parsed.data.organisationType } });
     navigate("/demo/dashboard");
   };
@@ -81,7 +82,7 @@ export default function DemoEntry() {
         <div className="w-full max-w-md rounded-xl border border-border bg-card p-8 shadow-sm">
           <h1 className="text-2xl font-bold tracking-tight">Try the ApexAML demo</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Tell us who you are and we'll open a demo workspace with a fictional microfinance bank. Everything you do stays in your browser.
+            Tell us who you are and we'll open a demo workspace with a fictional microfinance bank. Case data stays in your browser; sample notification emails go to your work email.
           </p>
           <form onSubmit={onSubmit} noValidate className="mt-6 space-y-4">
             {field("name", "Name", { autoComplete: "name", maxLength: 100 })}

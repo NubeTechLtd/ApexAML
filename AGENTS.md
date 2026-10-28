@@ -25,3 +25,5 @@
 - Routes are split into marketing, internal, /demo/* (sample data) and protected /app/* (live) zones in src/lib/zones.ts; operational links go through useZoneNavigate/useZoneHref so navigation never leaves the current zone, and old top-level URLs redirect to /demo.
 - Operational data goes through src/data-layer: hooks pick the demo provider (in-memory + localStorage) for /demo and marketing zones and the lazily loaded live provider for /app and internal zones; pages and components never import the backend client directly (enforced by demoIsolation.test.ts), so sample visitors can never read or write institution data.
 - Demo entry at /demo calls the start-demo-session edge function (validated, honeypot, rate-limited) which writes leads + demo_sessions and sends the fixed internal alert; its returned id becomes the local demo store session.
+
+- Demo event notifications are triggered from successful demo audit appends and delivered only through a scoped session-token bridge; the server selects fixed fictional templates and the session recipient, with atomic per-session/address reservations. This prevents arbitrary email and tenant-data access.

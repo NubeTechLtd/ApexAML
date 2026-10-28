@@ -3,6 +3,7 @@
  * memory and localStorage. It must never import the backend client or call
  * edge functions.
  */
+import { notifyDemoAudit } from '../demoNotifications';
 import { generateNotifications } from '@/hooks/useNotifications';
 import { demoId, onCollectionChange, readCollection, wait, writeCollection } from '../demoStore';
 import { demoActions, readDemoOverlays } from '../demoDataset';
@@ -358,6 +359,7 @@ export const demoProvider: DataProvider = {
         status: entry.status ?? 'success',
         institutionId: DEMO_INSTITUTION_ID,
       }, ...auditLog()]);
+      if (entry.status !== 'denied') notifyDemoAudit(entry.action, entry.justification);
     },
     subscribe: (fn) => onCollectionChange('audit_log', fn),
   },

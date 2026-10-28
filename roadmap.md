@@ -77,3 +77,7 @@
 - [x] Session-persistent actions (freeze, escalate, dismiss, STR edit/export, rule toggle/delete, CTR file, sanctions decisions) add audit entries shown in /demo/audit; case files built from the same audit trail.
 - [x] "Reset demo" control in the demo layout.
 - [ ] ProductTourModal (marketing tour) still shows its own illustrative sample names — not part of the demo dataset.
+
+## Demo event notifications
+- [ ] Add seven sample-only templates, session-addressed delivery with atomic 10/session and 30/address/day limits, NotificationBell and demo inbox.
+- [ ] Verify triggers, quotas, suppression outcomes and inbox rendering.
