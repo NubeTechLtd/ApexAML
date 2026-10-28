@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useMemo, useCallback } from 'react';
-import { mockAlerts } from '@/data/models/alerts';
+import { SEED_ALERTS as mockAlerts } from '@/data-layer/seed/dataset';
 
 export type NotificationType = 'SLA_BREACH' | 'CBN_CIRCULAR' | 'HIGH_RISK_ALERT';
 
@@ -19,7 +19,7 @@ export function generateNotifications(): AppNotification[] {
       id: 'notif-sla-001',
       type: 'SLA_BREACH',
       title: 'SLA Breach',
-      description: 'Alert ALT-2026-0891 has exceeded the 4-hour SLA resolution window.',
+      description: 'Alert ALT-2026-1003 has exceeded the 4-hour SLA resolution window.',
       relativeTime: '35m ago',
       read: false,
       link: '/workspace',
