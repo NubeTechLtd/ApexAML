@@ -25,10 +25,9 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
-import {
-  mockSTRRecords, mockNFIUSubmissions,
-  type STRRecord, type NFIUSubmission,
-} from '@/data/models/str';
+import type { STRRecord, NFIUSubmission } from '@/data/models/str';
+import { useDemoDataset, demoActions } from '@/data-layer/demoDataset';
+import { useAuditLog } from '@/hooks/useAuditLog';
 
 /* ── helpers ──────────────────────────────────── */
 
@@ -57,34 +56,16 @@ const ackStyle: Record<string, string> = {
   Rejected: 'bg-destructive/10 text-destructive',
 };
 
-/* ── Mock alert IDs for linking ───────────────── */
-const MOCK_ALERTS = [
-  { id: 'ALT-2026-0891', label: 'ALT-2026-0891 · POS Terminal Structuring · Chidinma Okafor' },
-  { id: 'ALT-2026-0892', label: 'ALT-2026-0892 · BDC Liquidation · Emeka Nwosu' },
-  { id: 'ALT-2026-0893', label: 'ALT-2026-0893 · Layered Transfers · Fatima Abdullahi' },
-  { id: 'ALT-2026-0894', label: 'ALT-2026-0894 · Rapid Movement of Funds · Oluwaseun Adeyemi' },
-  { id: 'ALT-2026-0895', label: 'ALT-2026-0895 · Unusual Cash Deposits · Amina Bello' },
-];
-
-const AI_NARRATIVE = `SUSPICIOUS TRANSACTION REPORT — NFIU STRUCTURED NARRATIVE
-
-1. CUSTOMER PROFILE
-The subject account holder maintains a Tier 2 individual savings account opened on 12 January 2024. The account was flagged following automated rule triggers on the AML monitoring platform.
-
-2. SUSPICIOUS ACTIVITY SUMMARY
-Between 15 March 2026 and 02 April 2026, the account exhibited patterns consistent with structured POS terminal deposits designed to circumvent the ₦5,000,000 CTR reporting threshold. A total of ₦14,500,000 was deposited across 28 POS transactions, none exceeding ₦520,000 individually.
-
-3. TRIGGERING EVENTS
-• Rule R-204 (POS Structuring) triggered on 28 March 2026 — 12 deposits within 48 hours totalling ₦6,100,000.
-• Manual review identified 3 linked POS terminals registered to the same beneficial owner.
-• No corresponding economic activity or declared income justifies the volume.
-
-4. NFIU FORMATTING
-This report is structured per goAML XML schema v4.2 and references CBN Circular BSD/DIR/PUB/LAB/019/002. The filing institution recommends immediate account restriction pending NFIU review.`;
-
 /* ── New STR Sheet ────────────────────────────── */
 
 function NewSTRSheet({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
+  const { alerts } = useDemoDataset();
+  const { append } = useAuditLog();
+  const MOCK_ALERTS = alerts
+    .filter(a => a.status === 'Open' || a.status === 'Under Review')
+    .map(a => ({ id: a.id, label: `${a.id} · ${a.ruleTriggered} · ${a.customerProfile.fullName}` }));
+  const linked = alerts.find(a => a.id === linkedAlert);
+  const AI_NARRATIVE = linked ? `SUSPICIOUS TRANSACTION REPORT — NFIU STRUCTURED NARRATIVE\n\nCase: ${linked.caseId}\n\n${linked.aiDraftedNarrative}` : '';
   const [step, setStep] = useState(1);
   const [linkedAlert, setLinkedAlert] = useState('');
   const [narrative, setNarrative] = useState('');
@@ -114,14 +95,19 @@ function NewSTRSheet({ open, onOpenChange }: { open: boolean; onOpenChange: (v: 
         setNarrative(AI_NARRATIVE.slice(0, i));
       }
     }, 2000 / (AI_NARRATIVE.length / 3));
-  }, []);
+  }, [AI_NARRATIVE]);
 
   useEffect(() => {
     if (step === 2 && !narrative && !generating) startGeneration();
   }, [step, narrative, generating, startGeneration]);
 
   const handleSubmit = () => {
-    toast.success('STR filed — Ref: STR-2026-00042');
+    if (linked) {
+      demoActions.recordStrExport(linked.id, { customerName: linked.customerProfile.fullName, alertId: linked.id, typology: linked.ruleTriggered, amount: linked.transactions.reduce((sum, t) => sum + t.amountNGN, 0), analyst: '' });
+      demoActions.setAlertStatus(linked.id, 'Escalated');
+      void append({ action: 'STR_FILED', analyst: '', caseId: linked.caseId, justification: `STR prepared for ${linked.customerProfile.fullName} and queued for review (${(editedNarrative || narrative).length} characters).` }).catch(() => undefined);
+    }
+    toast.success('STR saved — pending review');
     onOpenChange(false);
   };
 
@@ -220,6 +206,8 @@ export function STRManagement() {
   const navigate = useZoneNavigate();
   const [sheetOpen, setSheetOpen] = useState(false);
   const [resubmitting, setResubmitting] = useState<string | null>(null);
+  const { strRecords: mockSTRRecords, nfiuSubmissions: mockNFIUSubmissions } = useDemoDataset();
+  const { append } = useAuditLog();
 
   const counts = {
     Draft: mockSTRRecords.filter(r => r.status === 'Draft').length,
@@ -239,6 +227,8 @@ export function STRManagement() {
     setResubmitting(id);
     setTimeout(() => {
       setResubmitting(null);
+      const sub = mockNFIUSubmissions.find(x => x.id === id);
+      void append({ action: 'STR_RESUBMITTED', analyst: '', caseId: sub?.reference ?? id, justification: 'STR re-submitted to the NFIU goAML portal.' }).catch(() => undefined);
       toast.success('STR re-submitted to NFIU goAML portal');
     }, 1500);
   };
