@@ -1,3 +1,4 @@
+import { demoNotificationTemplates } from './demo-notifications.tsx'
 import type { ComponentType } from 'npm:react@18.3.1'
 import { template as demoBookingConfirmation } from './demo-booking-confirmation.tsx'
 import { template as demoBookingInternalAlert } from './demo-booking-internal-alert.tsx'
@@ -15,6 +16,7 @@ export interface TemplateEntry {
 }
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
+  ...demoNotificationTemplates,
   'contact-lead-internal-alert': contactLeadInternalAlert,
   'demo-entry-internal-alert': demoEntryInternalAlert,
   'demo-booking-confirmation': demoBookingConfirmation,

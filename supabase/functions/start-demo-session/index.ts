@@ -49,12 +49,14 @@ Deno.serve(async (req) => {
 
   const leadId = crypto.randomUUID()
   const sessionId = crypto.randomUUID()
+  const notificationToken = crypto.randomUUID()
+  const notificationTokenHash = await sha256(notificationToken)
   const lead = await admin.from('leads').insert({
     id: leadId, email, full_name: input.name, institution_type: input.organisationType,
     role: input.role, source: 'demo_entry', client_fingerprint: fingerprint,
   })
   if (lead.error) { console.error('Demo lead insert failed', lead.error.code); return json({ ok: false, reason: 'server_error' }, 500) }
-  const session = await admin.from('demo_sessions').insert({ id: sessionId, email })
+  const session = await admin.from('demo_sessions').insert({ id: sessionId, email, notification_token_hash: notificationTokenHash })
   if (session.error) { console.error('Demo session insert failed', session.error.code); return json({ ok: false, reason: 'server_error' }, 500) }
 
   try {
@@ -63,9 +65,10 @@ Deno.serve(async (req) => {
       replyTo: email,
       templateData: { name: input.name, email, organisationType: input.organisationType, role: input.role, sessionId },
     })
-    if (result?.sent) await admin.from('demo_sessions').update({ emails_sent: 1 }).eq('id', sessionId)
+    // Internal alerts do not consume the visitor's demo notification allowance.
+    void result
   } catch (e) {
     console.error('Demo entry alert failed', e instanceof Error ? e.message : 'Unknown error')
   }
-  return json({ ok: true, sessionId })
+  return json({ ok: true, sessionId, notificationToken })
 })
