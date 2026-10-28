@@ -230,7 +230,10 @@ type Unsubscribe = () => void;
 
 export interface DataProvider {
   kind: ProviderKind;
-  alerts: { list(): Promise<AlertRecord[]> };
+  alerts: {
+    list(): Promise<AlertRecord[]>;
+    setStatus(alertId: string, status: AlertRecord['status']): Promise<void>;
+  };
   customers: { list(): Promise<CustomerRecord[]>; get(id: string): Promise<CustomerRecord | null> };
   transactions: { listForCustomers(customerIds: string[]): Promise<TransactionRecord[]> };
   str: {

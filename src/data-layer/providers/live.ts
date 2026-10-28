@@ -145,6 +145,13 @@ export const liveProvider: DataProvider = {
         };
       });
     },
+    async setStatus(alertId, status) {
+      const { error } = await supabase
+        .from('alerts')
+        .update({ status, closed_at: status === 'Dismissed' ? new Date().toISOString() : null })
+        .eq('id', alertId);
+      if (error) throw error;
+    },
   },
 
   customers: {
