@@ -12,7 +12,9 @@ import { Separator } from '@/components/ui/separator';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Slider } from '@/components/ui/slider';
 import { useToast } from '@/hooks/use-toast';
-import { mockSanctionsMatches, type SanctionsMatch } from '@/data/models/sanctions';
+import type { SanctionsMatch } from '@/data/models/sanctions';
+import { useDemoDataset, demoActions } from '@/data-layer/demoDataset';
+import { SEED_CUSTOMERS } from '@/data-layer/seed/dataset';
 import { SanctionsRefreshStatus } from '@/components/sanctions/SanctionsRefreshStatus';
 import { LiveScreenPanel } from '@/components/sanctions/LiveScreenPanel';
 import { BulkDismissDialog } from '@/components/sanctions/BulkDismissDialog';
@@ -133,8 +135,12 @@ export default function SanctionsScreening() {
   const { append } = useAuditLog();
   const { user } = useAuth();
   const analystId = user?.email ?? 'System';
-  const [matches, setMatches] = useState(mockSanctionsMatches);
-  const [selectedId, setSelectedId] = useState(mockSanctionsMatches[0].id);
+  const { sanctionsMatches: matches } = useDemoDataset();
+  const [selectedId, setSelectedId] = useState(matches[0].id);
+  const freezeFor = (ids: string[]) => {
+    const nums = matches.filter((m) => ids.includes(m.id)).map((m) => SEED_CUSTOMERS.find((c) => c.bvn === m.internal.bvn)?.num).filter((n): n is number => !!n);
+    if (nums.length) demoActions.setAccountStatus(nums, 'Frozen');
+  };
   const [analystNotes, setAnalystNotes] = useState('');
   const [checkedIds, setCheckedIds] = useState<Set<string>>(new Set());
   const [bulkDismissOpen, setBulkDismissOpen] = useState(false);
@@ -164,8 +170,8 @@ export default function SanctionsScreening() {
   const handleThresholdCommit = (val: number[]) => {
     const v = val[0];
     append({
-      action: 'NFIU_ESCALATION',
-      analyst: 'mock-analyst-001',
+      action: 'SCREENING_THRESHOLD_CHANGED',
+      analyst: '',
       caseId: 'SCREENING_THRESHOLD',
       justification: `Fuzzy match tolerance updated to ${v}% by analyst`,
     });
@@ -194,18 +200,19 @@ export default function SanctionsScreening() {
   const checkedPendingIds = [...checkedIds].filter((id) => matches.find((m) => m.id === id)?.status === 'Pending');
 
   const handleBulkDismissConfirmed = (justification: string) => {
-    setMatches((prev) => prev.map((m) => checkedPendingIds.includes(m.id) ? { ...m, status: 'Dismissed' as const } : m));
+    demoActions.setSanctionsStatus(checkedPendingIds, 'Dismissed');
     checkedPendingIds.forEach((id) => {
-      append({ action: 'NFIU_ESCALATION', analyst: 'mock-analyst-001', caseId: id, justification: `[BULK DISMISS] ${justification}` });
+      append({ action: 'SANCTIONS_DISMISSED', analyst: '', caseId: id, justification: `[BULK DISMISS] ${justification}` });
     });
     toast({ title: 'Bulk Dismissed', description: `${checkedPendingIds.length} match(es) cleared as false positives. Justification recorded.` });
     setCheckedIds(new Set());
   };
 
   const handleBulkEscalateConfirmed = (justification: string) => {
-    setMatches((prev) => prev.map((m) => checkedPendingIds.includes(m.id) ? { ...m, status: 'Confirmed' as const } : m));
+    demoActions.setSanctionsStatus(checkedPendingIds, 'Confirmed');
+    freezeFor(checkedPendingIds);
     checkedPendingIds.forEach((id) => {
-      append({ action: 'ACCOUNT_FREEZE', analyst: 'mock-analyst-001', caseId: id, justification: `[BULK ESCALATE] ${justification}` });
+      append({ action: 'SANCTIONS_CONFIRMED', analyst: '', caseId: id, justification: `[BULK ESCALATE] ${justification}` });
     });
     toast({ title: 'Bulk Escalated', description: `${checkedPendingIds.length} match(es) confirmed. Accounts frozen & STRs queued.` });
     setCheckedIds(new Set());
@@ -221,7 +228,8 @@ export default function SanctionsScreening() {
       toast({ title: 'Justification Required', description: 'Analyst justification is mandatory before dismissing.', variant: 'destructive' });
       return;
     }
-    setMatches((prev) => prev.map((m) => m.id === selected.id ? { ...m, status: 'Dismissed' as const } : m));
+    demoActions.setSanctionsStatus([selected.id], 'Dismissed');
+    void append({ action: 'SANCTIONS_DISMISSED', analyst: '', caseId: selected.id, justification: analystNotes.trim() }).catch(() => undefined);
     toast({ title: 'False Positive — Dismissed', description: `${selected.id} cleared. Justification recorded for audit trail.` });
     setAnalystNotes('');
   };
@@ -231,7 +239,9 @@ export default function SanctionsScreening() {
       toast({ title: 'Justification Required', description: 'Analyst justification is mandatory before escalating.', variant: 'destructive' });
       return;
     }
-    setMatches((prev) => prev.map((m) => m.id === selected.id ? { ...m, status: 'Confirmed' as const } : m));
+    demoActions.setSanctionsStatus([selected.id], 'Confirmed');
+    freezeFor([selected.id]);
+    void append({ action: 'SANCTIONS_CONFIRMED', analyst: '', caseId: selected.id, justification: analystNotes.trim() }).catch(() => undefined);
     toast({ title: 'True Match — Account Frozen', description: `${selected.internal.name}'s account has been frozen. STR queued for NFIU submission.` });
     setAnalystNotes('');
   };
