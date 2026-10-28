@@ -7,13 +7,15 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 import { NotificationBell } from '@/components/NotificationBell';
 import { AuditBell } from '@/components/AuditBell';
 import { Fingerprint } from 'lucide-react';
-import { mockKYCCustomers, type KYCCustomer } from '@/data/models/kyc';
+import type { KYCCustomer } from '@/data/models/kyc';
+import { useDemoCollection } from '@/data-layer/demoDataset';
+import { SEED_KYC } from '@/data-layer/seed/dataset';
 import { useDataProvider } from '@/data-layer/hooks';
 import type { AdverseMediaStatus } from '@/components/VerificationQueue';
 
 const IdentityKYC = () => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [customers, setCustomers] = useState(mockKYCCustomers);
+  const [customers, setCustomers] = useDemoCollection<KYCCustomer[]>('kyc_queue', () => SEED_KYC);
   const selected = customers.find(c => c.id === selectedId) ?? null;
   const [adverseMedia, setAdverseMedia] = useState<Record<string, AdverseMediaStatus>>({});
 
@@ -21,7 +23,7 @@ const IdentityKYC = () => {
 
   useEffect(() => {
     let cancelled = false;
-    provider.adverseMedia.latestLevels(mockKYCCustomers.map(c => c.bvn))
+    provider.adverseMedia.latestLevels(SEED_KYC.map(c => c.bvn))
       .then((map) => { if (!cancelled) setAdverseMedia(map as Record<string, AdverseMediaStatus>); })
       .catch(() => undefined);
     return () => { cancelled = true; };
