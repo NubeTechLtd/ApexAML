@@ -68,3 +68,6 @@
 - [x] Pilot FAQ entry added (contents, who's involved, conversion to a paid plan) — pilot terms drafted by the agent, awaiting user confirmation.
 - [ ] StickyComplianceBar and ExitIntentModal have no callers, so their new wording is not visible on the live page until they are mounted — awaiting user go-ahead.
 - [ ] Header nav buttons still read "Book Demo" (desktop + mobile) — awaiting user go-ahead.
+
+## Zone-selected data layer
+- [x] Typed records and demo/live providers in src/data-layer; alerts, STR drafts/exports, CTRs, transaction queue, sanctions, adverse media, KYC documents, risk history, audit and platform roles routed by zone; guided tour now driven by the demo zone. Six isolation tests pass; demo pages browser-checked with zero backend requests.
