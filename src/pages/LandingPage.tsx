@@ -709,7 +709,7 @@ function LandingPageInner() {
       {/* ── How It Works ───────────────────────────────────────── */}
       <HowItWorksSection />
 
-      {/* ── Inside the Engine: 3-Second STR Pipeline ──────────── */}
+      {/* ── Inside the Engine: STR drafting workflow ──────────── */}
       <section className="relative py-24 px-6 overflow-hidden bg-[#0a0f1c] border-y border-white/5">
         <div className="mx-auto max-w-3xl text-center space-y-4 mb-14">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-primary">
