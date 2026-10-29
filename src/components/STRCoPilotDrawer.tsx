@@ -37,7 +37,7 @@ function generateDraft(alert: AlertData, isDemo = false): string {
     .join('\n');
 
   return `SUSPICIOUS TRANSACTION REPORT (STR)
-NFIU goAML Format — Draft
+goAML-style XML (draft)
 
 ═══════════════════════════════════════════
 
