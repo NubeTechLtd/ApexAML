@@ -83,6 +83,7 @@ const App = () => (
               <Route path="inbox" element={<DemoInbox />} />
               <Route path="alerts" element={<Index />} />
               <Route path="workspace" element={<AlertWorkspace />} />
+                <Route path="settings" element={<InstitutionProfileSettings />} />
               <Route path="rules" element={<RulesEngine />} />
               <Route path="reports/cbn" element={<RegulatoryReports />} />
               <Route path="reports/nfiu" element={<RegulatoryReports />} />
