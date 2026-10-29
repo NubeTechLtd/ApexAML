@@ -22,5 +22,5 @@ export async function resolveExportEntity(provider: DataProvider): Promise<Expor
 }
 
 export function missingFieldsMessage(missing: string[]): string {
-  return `Export blocked. Complete the institution profile in Settings first. Missing: ${missing.join(', ')}.`;
+  return `Export blocked. Complete the institution profile at /app/settings first. Missing: ${missing.join(', ')}.`;
 }
