@@ -21,7 +21,7 @@ const CAPABILITY_AREAS = [
   'PEP & sanctions screening (UN/OFAC/EU/NFIU domestic)',
   'Beneficial ownership identification',
   'Transaction monitoring (Nigerian typology rules)',
-  'Suspicious Transaction Reporting (NFIU goAML XML)',
+  'Suspicious Transaction Reporting (goAML-style XML)',
   'Currency Transaction Reporting (CTR)',
   'Independent audit & immutable trail',
   'AML/CFT training programme & board oversight',

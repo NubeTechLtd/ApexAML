@@ -28,7 +28,7 @@ SECTION 2 — TEN CBN CAPABILITY AREAS — GAP ASSESSMENT
 [ ] 3. PEP & sanctions screening (UN/OFAC/EU/NFIU domestic)
 [ ] 4. Beneficial ownership identification
 [ ] 5. Transaction monitoring (Nigerian typology rule library)
-[ ] 6. Suspicious Transaction Reporting (NFIU goAML XML)
+[ ] 6. Suspicious Transaction Reporting (goAML-style XML)
 [ ] 7. Currency Transaction Reporting (CTR)
 [ ] 8. Independent audit & immutable trail
 [ ] 9. AML/CFT training programme & board oversight
