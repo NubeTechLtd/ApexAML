@@ -1,6 +1,7 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useZoneNavigate } from '@/hooks/useZone';
+import { useZone, useZoneNavigate } from '@/hooks/useZone';
+import { DemoSampleLabel } from '@/components/DemoSampleLabel';
 import { ActiveFilterChip } from '@/components/ActiveFilterChip';
 import { NotificationBell } from '@/components/NotificationBell';
 import { SidebarProvider } from '@/components/ui/sidebar';
@@ -216,6 +217,7 @@ function MiniAlertCard({ alert, isSelected, onClick, status, assignedAnalyst }: 
 
 export default function AlertWorkspace() {
   const { toast } = useToast();
+  const isDemo = useZone() === 'demo';
   const navigate = useZoneNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState('');
@@ -925,7 +927,7 @@ export default function AlertWorkspace() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Sparkles className="h-5 w-5 text-primary" />
-                        <h2 className="text-base font-bold text-foreground">AI STR Co-Pilot</h2>
+                        <h2 className="text-base font-bold text-foreground">{isDemo ? 'STR Co-Pilot' : 'AI STR Co-Pilot'}</h2>
                       </div>
                       {strGenerated && (
                         <Badge variant="outline" className="text-[10px] gap-1">
@@ -944,11 +946,13 @@ export default function AlertWorkspace() {
                           <div className="text-center space-y-1.5">
                             <p className="text-sm font-medium text-foreground">Generate an NFIU-formatted STR</p>
                             <p className="text-xs text-muted-foreground max-w-md">
-                              AI will analyze the alert data, correlate transactions, and produce a draft Suspicious Transaction Report ready for NFIU goAML submission.
+                              {isDemo
+                                ? 'Shows a pre-written sample STR draft for this fictional case.'
+                                : 'AI will analyze the alert data, correlate transactions, and produce a draft Suspicious Transaction Report ready for NFIU goAML submission.'}
                             </p>
                           </div>
                           <Button size="lg" className="gap-2 mt-2" onClick={handleGenerateSTR}>
-                            <Sparkles className="h-4 w-4" /> Generate AI investigation report
+                            <Sparkles className="h-4 w-4" /> {isDemo ? 'Show sample investigation report' : 'Generate AI investigation report'}
                           </Button>
                         </CardContent>
                       </Card>
@@ -993,7 +997,8 @@ export default function AlertWorkspace() {
                           <div className="px-4 py-2 border-b bg-muted/30 flex items-center justify-between shrink-0">
                             <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">STR Draft Editor</span>
                             <div className="flex items-center gap-2">
-                              {strGenerated && (
+                              {strGenerated && isDemo && <DemoSampleLabel />}
+                              {strGenerated && !isDemo && (
                                 <Badge variant="outline" className="text-[9px] gap-1 bg-primary/5 text-primary border-primary/20">
                                   <Sparkles className="h-2.5 w-2.5" />
                                   AI Generated — Review Required
@@ -1024,7 +1029,7 @@ export default function AlertWorkspace() {
                         <div className="w-72 flex flex-col rounded-lg border overflow-hidden shrink-0">
                           <div className="px-3 py-2 border-b bg-muted/30 flex items-center gap-2 shrink-0">
                             <Bot className="h-3.5 w-3.5 text-primary" />
-                            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">AI Assistant</span>
+                            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{isDemo ? 'Co-Pilot (sample)' : 'AI Assistant'}</span>
                           </div>
 
                           <ScrollArea className="flex-1 p-3">
@@ -1062,7 +1067,7 @@ export default function AlertWorkspace() {
                           <div className="p-3 space-y-2 shrink-0">
                             <div className="flex gap-2">
                               <Input
-                                placeholder="Refine STR draft with AI…"
+                                placeholder={isDemo ? 'Ask for a sample refinement…' : 'Refine STR draft with AI…'}
                                 value={chatInput}
                                 onChange={(e) => setChatInput(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && handleSendChat()}
