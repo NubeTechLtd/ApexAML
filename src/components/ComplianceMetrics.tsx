@@ -128,7 +128,7 @@ export function ComplianceMetrics() {
             </AreaChart>
           </ChartContainer>
           <p className="text-[10px] text-muted-foreground mt-3">
-            CBN target: ≤20% by Sept 2027. Currently trending ahead of schedule.
+            Sample data for demonstration.
           </p>
         </CardContent>
       </Card>

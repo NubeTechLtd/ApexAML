@@ -349,7 +349,7 @@ function SlideVisual({ kind, draftingLabel, isDemo }: { kind: string; draftingLa
         { t: "08:11:47", who: "adaeze.o@bank", act: "Added note · POS cluster verified" },
         { t: "08:23:02", who: "system", act: isDemo ? "Sample STR narrative displayed" : "AI STR draft generated" },
         { t: "08:34:19", who: "kunle.a@bank (MLRO)", act: "Approved STR" },
-        { t: "08:35:00", who: "system", act: "goAML XML exported & filed" },
+        { t: "08:35:00", who: "system", act: "goAML-style XML draft exported for review" },
       ].map((row, idx) => (
         <div
           key={idx}

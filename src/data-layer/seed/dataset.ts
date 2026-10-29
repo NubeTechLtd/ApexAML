@@ -826,10 +826,10 @@ for (const d of SEED_DOCUMENTS.filter((x) => x.verified).slice(0, 12)) {
   audit(d.verified_at!, 'DOCUMENT_VERIFY', customerByNum(Number(d.customer_id)).ref, `${documentLabel(d.document_type)} verified (${d.document_name}).`, d.verified_by!);
 }
 for (const ctr of SEED_CTRS.filter((x) => x.status === 'filed')) {
-  audit(ctr.filed_at!, 'CTR_FILED', ctr.ctr_reference!, `CTR for ${ctr.customer_name} (${ngn(Number(ctr.total_cash_ngn))}) cash report exported as goAML-style XML (draft).`);
+  audit(ctr.filed_at!, 'CTR_FILED', ctr.ctr_reference!, `CTR for ${ctr.customer_name} (${ngn(Number(ctr.total_cash_ngn))}): cash report exported as goAML-style XML (draft).`);
 }
 for (const s of SEED_STRS.filter((x) => x.status === 'Submitted to NFIU')) {
   const a = alerts.find((x) => x.id === s.alertId)!;
-  audit(new Date(new Date(a.timestamp).getTime() + 8 * HOUR).toISOString(), 'STR_EXPORT', a.caseId, `Exported goAML STR ${s.reference} for NFIU portal submission.`, s.analyst);
+  audit(new Date(new Date(a.timestamp).getTime() + 8 * HOUR).toISOString(), 'STR_EXPORT', a.caseId, `STR ${s.reference} exported as goAML-style XML (draft) for analyst review.`, s.analyst);
 }
 export const SEED_AUDIT: AuditEntry[] = auditRows.sort((a, b) => b.timestamp.localeCompare(a.timestamp));
