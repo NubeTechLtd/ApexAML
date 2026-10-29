@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { calculateSTREstimate, DEFAULT_STR_ASSUMPTIONS, updateSTRAssumption, useSTRAssumptions } from './strEstimate';
+import { calculateSTREstimate, DEFAULT_STR_ASSUMPTIONS } from './strEstimate';
 
 describe('illustrative STR workload calculation', () => {
   it('uses the same conservative defaults for all estimates', () => {
