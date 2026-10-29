@@ -96,6 +96,7 @@ interface ChatMessage {
   id: number;
   role: 'user' | 'assistant';
   content: string;
+  source?: 'live_ai' | 'fallback';
 }
 
 const DISMISSAL_REASONS = [
@@ -278,6 +279,7 @@ export default function AlertWorkspace() {
   const [strGenerated, setStrGenerated] = useState(false);
   const [editVersion, setEditVersion] = useState(0);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [strSource, setStrSource] = useState<'live_ai' | 'fallback'>('fallback');
   const [chatInput, setChatInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [underReviewAtMap, setUnderReviewAtMap] = useState<Record<string, string>>({});
@@ -339,7 +341,8 @@ export default function AlertWorkspace() {
     setStrLoading(true);
     setStrDraft('');
     try {
-      const { narrative, draftId } = await provider.str.generate(selected.id);
+      const { narrative, draftId, source } = await provider.str.generate(selected.id);
+      setStrSource(source === 'live_ai' ? 'live_ai' : 'fallback');
       setStrDraft(narrative);
       setStrDraftId(draftId);
       setStrGenerated(true);
@@ -377,11 +380,12 @@ export default function AlertWorkspace() {
       if (result.draftId) setStrDraftId(result.draftId);
       setChatMessages((prev) => [
         ...prev,
-        { id: Date.now(), role: 'assistant', content: result.confirmation },
+        { id: Date.now(), role: 'assistant', content: result.confirmation, source: result.source === 'live_ai' ? 'live_ai' : 'fallback' },
       ]);
       if (changed) {
+        if (result.source === 'live_ai') setStrSource('live_ai');
         setEditVersion((v) => v + 1);
-        void addAuditEntry({ action: 'STR_EDIT', analyst: '', caseId: selected.caseId, justification: isDemo ? `STR draft edited (sample assistant): "${input.slice(0, 120)}"` : `STR draft edited by co-pilot: "${input.slice(0, 120)}"` }).catch(() => undefined);
+        void addAuditEntry({ action: 'STR_EDIT', analyst: '', caseId: selected.caseId, justification: isDemo ? `STR draft edited (${result.source === 'live_ai' ? 'live AI on synthetic data' : 'sample assistant'}): "${input.slice(0, 120)}"` : `STR draft edited by co-pilot: "${input.slice(0, 120)}"` }).catch(() => undefined);
       }
     } catch {
       // Never claim the draft changed: the report text is untouched.
@@ -1012,7 +1016,7 @@ export default function AlertWorkspace() {
                           <div className="px-4 py-2 border-b bg-muted/30 flex items-center justify-between shrink-0">
                             <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">STR Draft Editor</span>
                             <div className="flex items-center gap-2">
-                              {strGenerated && isDemo && <DemoSampleLabel />}
+                              {strGenerated && isDemo && <DemoSampleLabel source={strSource} />}
                               {strGenerated && !isDemo && (
                                 <Badge variant="outline" className="text-[9px] gap-1 bg-primary/5 text-primary border-primary/20">
                                   <Sparkles className="h-2.5 w-2.5" />
@@ -1064,7 +1068,7 @@ export default function AlertWorkspace() {
                                     }`}>
                                       {msg.content}
                                       {isDemo && msg.role === 'assistant' && (
-                                        <div className="mt-1.5"><DemoSampleLabel /></div>
+                                        <div className="mt-1.5"><DemoSampleLabel source={msg.source} /></div>
                                       )}
                                     </div>
                                   </motion.div>

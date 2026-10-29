@@ -57,8 +57,10 @@ export interface StrExport {
   exportedAt: string;
 }
 
-export interface StrGenerateResult { narrative: string; draftId: string | null }
-export interface StrRefineResult { narrative: string; confirmation: string; draftId: string | null }
+/** Demo only: 'live_ai' = model output on synthetic data, 'sample' = pre-written fallback. */
+export type StrOutputSource = 'live_ai' | 'sample';
+export interface StrGenerateResult { narrative: string; draftId: string | null; source?: StrOutputSource }
+export interface StrRefineResult { narrative: string; confirmation: string; draftId: string | null; source?: StrOutputSource }
 
 /* ── CTRs and transaction queue ──────────────────────── */
 export type CtrRecord = Database['public']['Tables']['ctr_queue']['Row'];

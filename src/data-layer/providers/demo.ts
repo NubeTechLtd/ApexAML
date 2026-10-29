@@ -4,6 +4,7 @@
  * edge functions.
  */
 import { DEMO_REPORTING_ENTITY } from '@/lib/reportingEntity';
+import { demoAiGenerate, demoAiRefine } from '../demoAi';
 import { notifyDemoAudit } from '../demoNotifications';
 import { generateNotifications } from '@/hooks/useNotifications';
 import { demoId, onCollectionChange, readCollection, wait, writeCollection } from '../demoStore';
@@ -170,23 +171,33 @@ export const demoProvider: DataProvider = {
     async generate(alertId) {
       const alert = alertById(alertId);
       if (!alert) throw new Error('This sample case was not found.');
-      await wait(900);
+      const ai = await demoAiGenerate(alert);
+      if (!ai) await wait(900);
+      const narrative = ai?.narrative ?? alert.aiDraftedNarrative;
       const drafts = readCollection<StrDraft[]>('str_drafts', () => []);
       const version = drafts.filter((d) => d.alertId === alertId).length + 1;
-      const draft: StrDraft = { id: demoId('draft'), alertId, version, narrative: alert.aiDraftedNarrative, generatedBy: 'sample', createdAt: new Date().toISOString() };
+      const draft: StrDraft = { id: demoId('draft'), alertId, version, narrative, generatedBy: ai ? 'live-ai-synthetic' : 'sample', createdAt: new Date().toISOString() };
       writeCollection('str_drafts', [...drafts, draft]);
-      return { narrative: draft.narrative, draftId: draft.id };
+      return { narrative, draftId: draft.id, source: ai ? 'live_ai' : 'sample' };
     },
     async refine(alertId, currentDraft, message) {
       const alert = alertById(alertId);
-      await wait(600);
-      const result = refineDemoDraft(currentDraft, message, alert?.behavioralRedFlags ?? []);
-      if (!result.changed) return { narrative: currentDraft, confirmation: result.confirmation, draftId: null };
+      const ai = alert ? await demoAiRefine(alert, currentDraft, message) : null;
+      let narrative: string; let confirmation: string; let changed: boolean;
+      if (ai?.confirmation) {
+        narrative = ai.narrative; confirmation = ai.confirmation; changed = narrative !== currentDraft;
+      } else {
+        await wait(600);
+        const result = refineDemoDraft(currentDraft, message, alert?.behavioralRedFlags ?? []);
+        narrative = result.narrative; confirmation = result.confirmation; changed = result.changed;
+      }
+      const source = ai?.confirmation ? 'live_ai' as const : 'sample' as const;
+      if (!changed) return { narrative: currentDraft, confirmation, draftId: null, source };
       const drafts = readCollection<StrDraft[]>('str_drafts', () => []);
       const version = drafts.filter((d) => d.alertId === alertId).length + 1;
-      const draft: StrDraft = { id: demoId('draft'), alertId, version, narrative: result.narrative, generatedBy: 'sample-refine', createdAt: new Date().toISOString() };
+      const draft: StrDraft = { id: demoId('draft'), alertId, version, narrative, generatedBy: source === 'live_ai' ? 'live-ai-synthetic-refine' : 'sample-refine', createdAt: new Date().toISOString() };
       writeCollection('str_drafts', [...drafts, draft]);
-      return { narrative: result.narrative, confirmation: result.confirmation, draftId: draft.id };
+      return { narrative, confirmation, draftId: draft.id, source };
     },
     async saveDraft(alertId, narrative) {
       const drafts = readCollection<StrDraft[]>('str_drafts', () => []);

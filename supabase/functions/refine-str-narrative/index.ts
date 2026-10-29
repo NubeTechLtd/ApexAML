@@ -2,6 +2,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { z } from 'npm:zod@3';
 import { authorizeCustomer } from '../_shared/tenant-access.ts';
+import { STR_REFINE_SYSTEM_PROMPT } from '../_shared/str-prompts.ts';
 
 const BodySchema = z.object({
   alert_id: z.string().uuid(),
@@ -9,13 +10,7 @@ const BodySchema = z.object({
   message: z.string().min(1).max(2000),
 });
 
-const SYSTEM_PROMPT = `You are an AI co-pilot assisting a Nigerian AML compliance analyst refining a Suspicious Transaction Report (STR) narrative for filing with the NFIU under the Money Laundering (Prevention and Prohibition) Act and CBN AML/CFT Regulations.
-
-You receive the current narrative draft and the analyst's instruction. You must return a JSON object with exactly two fields:
-- "narrative": the FULL revised narrative (complete replacement text, not a diff), in the same regulatory register: single dense paragraph, third person, naira figures with ₦, exact WAT timing windows, channels, counterparties and Lagos/Nigerian locations where present in the data. Apply the analyst's instruction faithfully. If the instruction is a question rather than an edit request, keep the narrative unchanged.
-- "confirmation": a short (1-2 sentence) plain-English confirmation to the analyst describing what changed, starting with a ✅. If the instruction was a question, answer it here instead.
-
-Return only the JSON object.`;
+const SYSTEM_PROMPT = STR_REFINE_SYSTEM_PROMPT;
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
