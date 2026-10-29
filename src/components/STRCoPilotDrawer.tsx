@@ -171,7 +171,7 @@ export function STRCoPilotDrawer({ open, onOpenChange, alert }: STRCoPilotDrawer
         const draftId = await provider.str.saveDraft(alert.id, draft);
         if (draftId) await provider.str.recordExport({ alertId: alert.id, draftId, filename, xml });
         await provider.alerts.setStatus(alert.id, 'Escalated');
-        await append({ action: 'STR_EXPORT', analyst: '', caseId: alert.id, justification: `Exported goAML STR as ${filename} for NFIU portal submission.` });
+        await append({ action: 'STR_EXPORT', analyst: '', caseId: alert.id, justification: `STR exported as goAML-style XML (draft): ${filename}.` });
       } catch {
         // Non-fatal: the file must still reach the analyst.
       }

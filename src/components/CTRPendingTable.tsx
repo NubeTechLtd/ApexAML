@@ -40,7 +40,7 @@ export function CTRPendingTable({ rows, allRows, onRefresh }: Props) {
       );
       const xml = generateCtrXml(row, txns, reference);
       await provider.ctr.file(row, { reference, xml });
-      await append({ action: 'CTR_FILED', analyst: '', caseId: reference, justification: `CTR for ${row.customer_name ?? row.customer_id} (₦${Math.round(Number(row.total_cash_ngn)).toLocaleString('en-NG')}, ${row.transaction_count} cash transactions) filed as goAML-style XML (draft).` }).catch(() => undefined);
+      await append({ action: 'CTR_FILED', analyst: '', caseId: reference, justification: `CTR for ${row.customer_name ?? row.customer_id} (₦${Math.round(Number(row.total_cash_ngn)).toLocaleString('en-NG')}, ${row.transaction_count} cash transactions): cash report exported as goAML-style XML (draft).` }).catch(() => undefined);
 
       toast({
         title: 'CTR filed',
