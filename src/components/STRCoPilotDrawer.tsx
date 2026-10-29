@@ -16,7 +16,8 @@ import { generateGoAMLXmlFromLegacy, downloadXmlFile } from '@/lib/generateGoAML
 import { resolveExportEntity, missingFieldsMessage } from '@/data-layer/exportEntity';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useZone } from '@/hooks/useZone';
-import { DemoSampleLabel, DEMO_SAMPLE_LABEL } from '@/components/DemoSampleLabel';
+import { DemoSampleLabel, DEMO_SAMPLE_LABEL, DEMO_LIVE_AI_LABEL, DEMO_FALLBACK_LABEL, DEMO_AI_LIMIT_MESSAGE } from '@/components/DemoSampleLabel';
+import { BookDemoSheet } from '@/components/landing/BookDemoSheet';
 
 interface ChatMessage {
   id: number;
@@ -30,13 +31,15 @@ function formatCurrency(amount: number) {
   return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', minimumFractionDigits: 0 }).format(amount);
 }
 
-function generateDraft(alert: AlertData, isDemo = false): string {
+function generateDraft(alert: AlertData, isDemo = false, opts: { narrative?: string; footer?: string } = {}): string {
+  const { narrative, footer } = opts;
   const events = alert.transactionTimeline
     .map(
       (e, i) =>
         `   ${i + 1}. ${new Date(e.date).toLocaleDateString('en-GB')} — ${e.type} of ${formatCurrency(e.amount)} via ${e.channel} to/from "${e.counterparty}"${e.flagReason ? ` [Flag: ${e.flagReason}]` : ''}`,
     )
     .join('\n');
+  const summary = narrative ? narrative.trim().split('\n').join('\n   ') : alert.summary;
 
   return `SUSPICIOUS TRANSACTION REPORT (STR)
 goAML-style XML (draft)
@@ -58,8 +61,8 @@ goAML-style XML (draft)
    Alert Type:       ${alert.alertType}
    Total Flagged:    ${formatCurrency(alert.totalFlagged)}
    
-   Summary:
-   ${alert.summary}
+   ${narrative ? 'Narrative' : 'Summary'}:
+   ${summary}
 
    The above activity deviates from the customer's established transaction
    profile and raises concerns under the Money Laundering (Prohibition)
@@ -84,10 +87,12 @@ ${events}
    Money Laundering (Prohibition) Act 2011 and NFIU Act 2018.
 
 ═══════════════════════════════════════════
-   ${isDemo ? DEMO_SAMPLE_LABEL : 'Drafted by STR Co-Pilot'} • ${new Date().toISOString().split('T')[0]}
+   ${footer ?? (isDemo ? DEMO_SAMPLE_LABEL : 'Drafted by STR Co-Pilot')} • ${new Date().toISOString().split('T')[0]}
    Status: DRAFT — Pending analyst review`;
 }
 
+const MIN_LOADING_MS = 1500;
+const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 interface STRCoPilotDrawerProps {
   open: boolean;
@@ -102,6 +107,9 @@ export function STRCoPilotDrawer({ open, onOpenChange, alert }: STRCoPilotDrawer
   const isDemo = useZone() === 'demo';
   const [loading, setLoading] = useState(true);
   const [draft, setDraft] = useState('');
+  const [draftSource, setDraftSource] = useState<'live_ai' | 'fallback'>('fallback');
+  const [limitReached, setLimitReached] = useState(false);
+  const [bookOpen, setBookOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [chatInput, setChatInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -109,26 +117,57 @@ export function STRCoPilotDrawer({ open, onOpenChange, alert }: STRCoPilotDrawer
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (open) {
-      setLoading(true);
-      setDraft('');
-      setChatMessages([]);
-      setEditVersion(0);
+    if (!open) return;
+    let cancelled = false;
+    setLoading(true);
+    setDraft('');
+    setChatMessages([]);
+    setEditVersion(0);
+    setLimitReached(false);
+    const intro = (source?: 'live_ai' | 'fallback') => [{
+      id: 1,
+      role: 'assistant' as const,
+      content: `I've drafted an STR for **${alert.customerName}** based on the ${alert.alertType} alert. The report is prepared as goAML-style XML (draft). You can edit the draft directly or ask me to make changes.`,
+      timestamp: new Date(),
+      source,
+    }];
+
+    if (!isDemo) {
       const timer = setTimeout(() => {
-        setDraft(generateDraft(alert, isDemo));
+        setDraft(generateDraft(alert, false));
         setLoading(false);
-        setChatMessages([
-          {
-            id: 1,
-            role: 'assistant',
-            content: `I've drafted an STR for **${alert.customerName}** based on the ${alert.alertType} alert. The report is prepared as goAML-style XML (draft). You can edit the draft directly or ask me to make changes.`,
-            timestamp: new Date(),
-          },
-        ]);
+        setChatMessages(intro());
       }, 2500);
       return () => clearTimeout(timer);
     }
-  }, [open, alert, isDemo]);
+
+    // Demo: first draft comes from the demo-str-narrative function (same caps as
+    // the workspace); the pre-written sample is used only if it fails, times out or is capped.
+    void (async () => {
+      let narrative: string | null = null;
+      let capped = false;
+      try {
+        const [result] = await Promise.all([provider.str.generate(alert.id), wait(MIN_LOADING_MS)]);
+        if (result.source === 'live_ai') narrative = result.narrative;
+        capped = !!result.limitReached;
+      } catch {
+        // Fall through to the labelled sample.
+      }
+      if (cancelled) return;
+      const source = narrative ? 'live_ai' : 'fallback';
+      setDraftSource(source);
+      setLimitReached(capped);
+      setDraft(narrative
+        ? generateDraft(alert, true, { narrative, footer: DEMO_LIVE_AI_LABEL })
+        : generateDraft(alert, true, { footer: DEMO_FALLBACK_LABEL }));
+      setChatMessages([
+        ...intro(source),
+        ...(capped ? [{ id: 2, role: 'assistant' as const, content: DEMO_AI_LIMIT_MESSAGE, timestamp: new Date(), source: 'fallback' as const }] : []),
+      ]);
+      setLoading(false);
+    })();
+    return () => { cancelled = true; };
+  }, [open, alert, isDemo, provider]);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -152,7 +191,13 @@ export function STRCoPilotDrawer({ open, onOpenChange, alert }: STRCoPilotDrawer
       .then((result) => {
         const changed = result.narrative !== before;
         setDraft(result.narrative);
-        setChatMessages((prev) => [...prev, { id: Date.now(), role: 'assistant', content: result.confirmation, timestamp: new Date(), source: result.source === 'live_ai' ? 'live_ai' : 'fallback' }]);
+        const capped = isDemo && !!result.limitReached;
+        if (capped) setLimitReached(true);
+        setChatMessages((prev) => [
+          ...prev,
+          { id: Date.now(), role: 'assistant', content: result.confirmation, timestamp: new Date(), source: result.source === 'live_ai' ? 'live_ai' : 'fallback' },
+          ...(capped ? [{ id: Date.now() + 1, role: 'assistant' as const, content: DEMO_AI_LIMIT_MESSAGE, timestamp: new Date(), source: 'fallback' as const }] : []),
+        ]);
         if (changed) {
           setEditVersion((v) => v + 1);
           void append({ action: 'STR_EDIT', analyst: '', caseId: alert.id, justification: isDemo ? `STR draft edited (${result.source === 'live_ai' ? 'live AI on synthetic data' : 'sample assistant'}): "${input.slice(0, 120)}"` : `STR draft edited by co-pilot: "${input.slice(0, 120)}"` });
@@ -202,6 +247,7 @@ export function STRCoPilotDrawer({ open, onOpenChange, alert }: STRCoPilotDrawer
   };
 
   return (
+    <>
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="w-full sm:max-w-4xl p-0 flex flex-col">
         <SheetHeader className="px-6 py-4 border-b bg-card shrink-0">
@@ -218,7 +264,7 @@ export function STRCoPilotDrawer({ open, onOpenChange, alert }: STRCoPilotDrawer
               </div>
             </div>
             <div className="flex items-center gap-2">
-              {!loading && isDemo && <DemoSampleLabel />}
+              {!loading && isDemo && <DemoSampleLabel source={draftSource} />}
               {!loading && (
                 <Badge variant="outline" className="text-[10px] gap-1">
                   <CheckCircle2 className="h-3 w-3 text-[hsl(var(--risk-low))]" />
@@ -272,6 +318,14 @@ export function STRCoPilotDrawer({ open, onOpenChange, alert }: STRCoPilotDrawer
                 </span>
                 <Badge variant="outline" className="text-[9px]">Editable</Badge>
               </div>
+              {isDemo && limitReached && (
+                <div role="status" className="px-4 py-2 border-b bg-muted/50 flex items-center justify-between gap-3 shrink-0">
+                  <span className="text-xs text-foreground">{DEMO_AI_LIMIT_MESSAGE}</span>
+                  <Button size="sm" variant="outline" className="h-7 text-xs shrink-0" onClick={() => setBookOpen(true)}>
+                    Book a walkthrough
+                  </Button>
+                </div>
+              )}
               <div className="flex-1 min-h-0">
                 <textarea
                   value={draft}
@@ -372,5 +426,7 @@ export function STRCoPilotDrawer({ open, onOpenChange, alert }: STRCoPilotDrawer
         )}
       </SheetContent>
     </Sheet>
+    {isDemo && <BookDemoSheet open={bookOpen} onOpenChange={setBookOpen} />}
+    </>
   );
 }

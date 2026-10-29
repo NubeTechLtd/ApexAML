@@ -171,18 +171,22 @@ export const demoProvider: DataProvider = {
     async generate(alertId) {
       const alert = alertById(alertId);
       if (!alert) throw new Error('This sample case was not found.');
-      const ai = await demoAiGenerate(alert);
+      const res = await demoAiGenerate(alert);
+      const ai = res.ok ? res : null;
+      const limitReached = 'limited' in res && res.limited;
       if (!ai) await wait(900);
       const narrative = ai?.narrative ?? alert.aiDraftedNarrative;
       const drafts = readCollection<StrDraft[]>('str_drafts', () => []);
       const version = drafts.filter((d) => d.alertId === alertId).length + 1;
       const draft: StrDraft = { id: demoId('draft'), alertId, version, narrative, generatedBy: ai ? 'live-ai-synthetic' : 'sample', createdAt: new Date().toISOString() };
       writeCollection('str_drafts', [...drafts, draft]);
-      return { narrative, draftId: draft.id, source: ai ? 'live_ai' : 'sample' };
+      return { narrative, draftId: draft.id, source: ai ? 'live_ai' : 'sample', limitReached };
     },
     async refine(alertId, currentDraft, message) {
       const alert = alertById(alertId);
-      const ai = alert ? await demoAiRefine(alert, currentDraft, message) : null;
+      const res = alert ? await demoAiRefine(alert, currentDraft, message) : null;
+      const ai = res?.ok ? res : null;
+      const limitReached = !!res && 'limited' in res && res.limited;
       let narrative: string; let confirmation: string; let changed: boolean;
       if (ai?.confirmation) {
         narrative = ai.narrative; confirmation = ai.confirmation; changed = narrative !== currentDraft;
@@ -192,12 +196,12 @@ export const demoProvider: DataProvider = {
         narrative = result.narrative; confirmation = result.confirmation; changed = result.changed;
       }
       const source = ai?.confirmation ? 'live_ai' as const : 'sample' as const;
-      if (!changed) return { narrative: currentDraft, confirmation, draftId: null, source };
+      if (!changed) return { narrative: currentDraft, confirmation, draftId: null, source, limitReached };
       const drafts = readCollection<StrDraft[]>('str_drafts', () => []);
       const version = drafts.filter((d) => d.alertId === alertId).length + 1;
       const draft: StrDraft = { id: demoId('draft'), alertId, version, narrative, generatedBy: source === 'live_ai' ? 'live-ai-synthetic-refine' : 'sample-refine', createdAt: new Date().toISOString() };
       writeCollection('str_drafts', [...drafts, draft]);
-      return { narrative, confirmation, draftId: draft.id, source };
+      return { narrative, confirmation, draftId: draft.id, source, limitReached };
     },
     async saveDraft(alertId, narrative) {
       const drafts = readCollection<StrDraft[]>('str_drafts', () => []);

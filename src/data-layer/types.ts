@@ -59,8 +59,9 @@ export interface StrExport {
 
 /** Demo only: 'live_ai' = model output on synthetic data, 'sample' = pre-written fallback. */
 export type StrOutputSource = 'live_ai' | 'sample';
-export interface StrGenerateResult { narrative: string; draftId: string | null; source?: StrOutputSource }
-export interface StrRefineResult { narrative: string; confirmation: string; draftId: string | null; source?: StrOutputSource }
+/** limitReached: demo only — the per-session or per-IP AI cap was hit and a sample was used instead. */
+export interface StrGenerateResult { narrative: string; draftId: string | null; source?: StrOutputSource; limitReached?: boolean }
+export interface StrRefineResult { narrative: string; confirmation: string; draftId: string | null; source?: StrOutputSource; limitReached?: boolean }
 
 /* ── CTRs and transaction queue ──────────────────────── */
 export type CtrRecord = Database['public']['Tables']['ctr_queue']['Row'];
