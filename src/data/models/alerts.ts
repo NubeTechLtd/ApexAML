@@ -47,7 +47,7 @@ export interface Transaction {
   imtoOperator?: string;
   /** Direction of IMTO flow. INBOUND is the only legal direction for Nigerian IMTO licences. */
   transferDirection?: TransferDirection;
-  /** Currency the payout/settlement was executed in. Must be NGN under CBN 2025 directives. */
+  /** Currency the payout/settlement was executed in. Must be NGN under CBN Circular BSD/DIR/PUB/LAB/019/002 (10 March 2026). */
   settlementCurrency?: SettlementCurrency;
   /** True if the debit is routed to a Bureau de Change (used for round-trip detection). */
   isBDCPayout?: boolean;

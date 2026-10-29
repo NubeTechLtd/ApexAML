@@ -108,8 +108,7 @@ export function CreateRuleModal({ open, onOpenChange }: CreateRuleModalProps) {
                     <SelectValue placeholder="Select regulatory framework…" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="banks">Bank — Sept 2027</SelectItem>
-                    <SelectItem value="fintechs">Fintech/MMO — March 2028</SelectItem>
+                    <SelectItem value="circular">Per the circular's implementation timeline for your institution type</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

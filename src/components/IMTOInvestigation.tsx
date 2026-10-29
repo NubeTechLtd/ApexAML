@@ -183,14 +183,14 @@ export function IMTOInvestigation({ alert, isResolved }: IMTOInvestigationProps)
       }
     : isFxSettlement
       ? {
-          title: 'Non-Naira settlement detected — licence-terminating offence under CBN 2025 directives.',
+          title: 'Non-Naira settlement detected — licence-terminating offence under CBN Circular BSD/DIR/PUB/LAB/019/002 (10 March 2026).',
           body: 'All IMTO payouts on Nigerian soil must be settled in NGN. Foreign-currency settlement requires immediate CBN Payments System Department notification.',
           cta: 'Cannot be dismissed without compliance officer justification and supervisor approval.',
         }
       : isRoundTrip
         ? {
             title: 'Suspected IMTO → BDC round-trip — parallel-market FX arbitrage.',
-            body: 'A debit to a Bureau de Change was observed within 48 hours of an inbound IMTO remittance credit. This pattern is prohibited under the CBN 2025 directives prohibiting FX-arbitrage use of remittance corridors.',
+            body: 'A debit to a Bureau de Change was observed within 48 hours of an inbound IMTO remittance credit. This pattern is prohibited under CBN Circular BSD/DIR/PUB/LAB/019/002 (10 March 2026), which prohibits FX-arbitrage use of remittance corridors.',
           }
         : null;
 
@@ -503,7 +503,7 @@ export function IMTOInvestigation({ alert, isResolved }: IMTOInvestigationProps)
               <Label htmlFor="supervisor-approved" className="text-xs leading-relaxed cursor-pointer">
                 I confirm that a named supervisor (Chief Compliance Officer or designated alternate)
                 has reviewed and approved this dismissal. I understand this decision will be
-                audited against CBN IMTO Guidelines and the 2025 directives.
+                audited against CBN IMTO Guidelines and CBN Circular BSD/DIR/PUB/LAB/019/002 (10 March 2026).
               </Label>
             </div>
           </div>
