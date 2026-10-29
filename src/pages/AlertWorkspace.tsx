@@ -380,7 +380,7 @@ export default function AlertWorkspace() {
       ]);
       if (changed) {
         setEditVersion((v) => v + 1);
-        void addAuditEntry({ action: 'STR_EDIT', analyst: '', caseId: selected.caseId, justification: `STR draft edited by co-pilot: "${input.slice(0, 120)}"` }).catch(() => undefined);
+        void addAuditEntry({ action: 'STR_EDIT', analyst: '', caseId: selected.caseId, justification: isDemo ? `STR draft edited (sample assistant): "${input.slice(0, 120)}"` : `STR draft edited by co-pilot: "${input.slice(0, 120)}"` }).catch(() => undefined);
       }
     } catch {
       // Never claim the draft changed: the report text is untouched.

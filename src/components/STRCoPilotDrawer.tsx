@@ -153,7 +153,7 @@ export function STRCoPilotDrawer({ open, onOpenChange, alert }: STRCoPilotDrawer
         setChatMessages((prev) => [...prev, { id: Date.now(), role: 'assistant', content: result.confirmation, timestamp: new Date() }]);
         if (changed) {
           setEditVersion((v) => v + 1);
-          void append({ action: 'STR_EDIT', analyst: '', caseId: alert.id, justification: `STR draft edited by co-pilot: "${input.slice(0, 120)}"` });
+          void append({ action: 'STR_EDIT', analyst: '', caseId: alert.id, justification: isDemo ? `STR draft edited (sample assistant): "${input.slice(0, 120)}"` : `STR draft edited by co-pilot: "${input.slice(0, 120)}"` });
         }
       })
       .catch(() => {
