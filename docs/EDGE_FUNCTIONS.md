@@ -13,3 +13,14 @@ Headers: `x-institution-key` (key_id), `x-webhook-timestamp` (Unix seconds), `x-
 - Secrets live per institution in `institution_webhook_secrets` as AES-256-GCM ciphertext under `WEBHOOK_SECRETS_KEY`; institution_id always comes from the key, never the payload.
 - Every rejection is written to `webhook_rejections` (reason, key, ip, user agent).
 - TODO: admin screen to issue/rotate keys (use `encryptSecret` from `verify.ts`).
+
+## demo-str-narrative
+
+Drafts and refines STR narratives for fictional demo cases only (`/demo`).
+
+- **Demo model:** `openai/chat-latest` for both drafting and refinement, called through the AI Gateway Responses API with `max_output_tokens` of **500** (drafts) and **400** (refinements).
+- **Live models (unchanged):** `generate-str-narrative` uses `google/gemini-3.8-flash`; `refine-str-narrative` uses `openai/gpt-6-astra`.
+- **Why they differ:** both live models always run a hidden reasoning step (about 350-480 tokens per call) that counts toward the output limit and cannot be turned off. Under the 500/400 caps that left no room for the narrative, so every demo call was cut off. `openai/chat-latest` does not reason, so the whole budget goes to the visible text.
+- **Output check:** drafts must be a single paragraph of 150-220 words that mentions the subject; refinements must have a 60-400 word narrative and a short confirmation. A truncated, empty, malformed or out-of-range response is discarded and the demo shows the labelled sample text.
+- **Limits:** enforced in `reserve_demo_ai_call` — kill switch and 150-call global UTC-day cap (`demo_ai_settings`), then 3 calls per session and 20 per client IP per UTC day. An email alert is sent once per UTC day when 80% of the cap is used.
+- **Client IP:** `cf-connecting-ip`, which the hosting edge sets and refuses from visitors; `x-forwarded-for` is not used.

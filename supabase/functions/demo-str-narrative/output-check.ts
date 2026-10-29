@@ -8,10 +8,9 @@ const FORBIDDEN = [
   /https?:\/\//i,
 ];
 
-export function isPlausibleNarrative(text: string, minWords = 100, maxWords = 320): boolean {
+export function isPlausibleNarrative(text: string, minWords: number, maxWords: number): boolean {
   if (typeof text !== 'string') return false;
   const t = text.trim();
-  if (t.length < 400 || t.length > 3000) return false;
   const n = words(t);
   if (n < minWords || n > maxWords) return false;
   if (t.split(/\n\s*\n/).length > 2) return false;
@@ -25,7 +24,8 @@ export function isPlausibleConfirmation(text: string): boolean {
   return t.length > 0 && t.length <= 400 && !t.includes('\n\n') && !/```|https?:\/\//i.test(t);
 }
 
-export const checkGenerate = (narrative: string) => isPlausibleNarrative(narrative);
+// Drafts must match the prompt's 150-220 word range.
+export const checkGenerate = (narrative: string) => isPlausibleNarrative(narrative, 150, 220);
 // Refinements may shorten or lengthen the draft, so allow a wider band.
 export const checkRefine = (narrative: string, confirmation: string) =>
   isPlausibleNarrative(narrative, 60, 400) && isPlausibleConfirmation(confirmation);
