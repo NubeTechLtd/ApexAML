@@ -34,24 +34,24 @@ function FadeIn({
 
 const MILESTONES = [
   {
-    date: "10 June 2026",
-    label: "Roadmap submission deadline",
-    badge: "Passed",
-    body: "All regulated institutions were required to submit an AML implementation roadmap to CBN.",
+    date: "10 March 2026",
+    label: "CBN Circular BSD/DIR/PUB/LAB/019/002 issued",
+    badge: "Issued",
+    body: "The circular asked every regulated institution to submit an AML implementation roadmap to CBN. The roadmap submission date has passed.",
     status: "past" as const,
   },
   {
-    date: "September 2027",
-    label: "Full compliance — Deposit Money Banks",
-    badge: "15 months away",
-    body: "All DMBs must achieve full automated AML compliance. Implementation typically takes 6–9 months. Starting now means arriving on time.",
+    date: "Now",
+    label: "Implementation phase",
+    badge: "In progress",
+    body: "Institutions are now implementing the commitments in their roadmaps. Implementation typically takes several months, so starting early helps.",
     status: "active" as const,
   },
   {
-    date: "March 2028",
-    label: "Full compliance — Fintechs, PSPs, MFBs, IMTOs",
-    badge: "21 months away",
-    body: "A March 2028 compliance date requires starting no later than September 2027. The window for unhurried implementation is now.",
+    date: "Phased",
+    label: "Full compliance — by institution type",
+    badge: "Set in the circular",
+    body: "Full compliance follows the phased implementation timelines set in the circular. Check the circular for the timeline that applies to your licence.",
     status: "upcoming" as const,
   },
 ];
@@ -68,7 +68,7 @@ export function ComplianceRoadmapSection({ onBookDemo, onSeePath }: Props) {
             </h2>
             <p className="text-sm md:text-base text-white/50 leading-relaxed">
               Institutions that submitted their roadmap are now in the
-              implementation phase. Full compliance deadlines are staged by institution type.
+              implementation phase. Full compliance follows the phased implementation timelines set in the circular.
             </p>
           </div>
         </FadeIn>
@@ -162,7 +162,7 @@ export function ComplianceRoadmapSection({ onBookDemo, onSeePath }: Props) {
                     A compliance platform takes 3–6 months to fully implement.
                   </p>
                   <p className="text-white/50 text-sm leading-relaxed">
-                    Institutions that wait until 2027 will not meet their deadline.
+                    Starting early leaves room to meet the phased implementation timelines set in the circular.
                   </p>
                 </div>
               </div>

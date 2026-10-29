@@ -13,7 +13,7 @@ interface FAQ {
 
 const FAQS: FAQ[] = [
   {
-    q: "Does ApexAML satisfy the June 2026 CBN circular requirements?",
+    q: "Does ApexAML satisfy the CBN Circular BSD/DIR/PUB/LAB/019/002 requirements?",
     a: (
       <div className="space-y-3">
         <p>
@@ -34,7 +34,7 @@ const FAQS: FAQ[] = [
         </ul>
         <p>
           Our real-time alerts, dynamic rule engine, NIN/BVN-linked onboarding and audit-ready reporting are also built
-          toward the CBN's 2025 draft standards for Automated AML Solutions — draft standards, not yet final.
+          toward CBN Circular BSD/DIR/PUB/LAB/019/002, issued 10 March 2026, within the phased implementation timelines set in the circular.
         </p>
       </div>
     ),
@@ -87,8 +87,8 @@ const FAQS: FAQ[] = [
       <p>
         Essential costs ₦{PLAN_PRICING.essential.toLocaleString("en-NG")}/month, Starter ₦{PLAN_PRICING.starter.toLocaleString("en-NG")}/month, and Growth ₦{PLAN_PRICING.growth.toLocaleString("en-NG")}/month. IMTO costs ₦{PLAN_PRICING.imtoPerTransaction} per transaction with a ₦{PLAN_PRICING.imtoMonthlyMinimum.toLocaleString("en-NG")} monthly minimum. Professional Implementation Programme: {IMPLEMENTATION_PRICE_RANGE.toLowerCase()}{" "}
         <span className="text-primary font-semibold">
-          Founding-client pricing is locked in while the CBN's 2025 draft standards for Automated AML Solutions are
-          being finalised.
+          Founding-client pricing is locked in for institutions working through the phased implementation timelines set in
+          the circular.
         </span>
       </p>
     ),

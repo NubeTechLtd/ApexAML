@@ -566,7 +566,7 @@ function LandingPageInner() {
 
           <AnimatedSection delay={0.2}>
             <p className="mx-auto max-w-2xl text-base text-white/50 leading-relaxed">
-              An AML compliance platform built around CBN Circular BSD/DIR/PUB/LAB/019/002 — with an AI STR co-pilot, a pre-configured IMTO regulatory pack, and NFIU goAML export built in from day one.
+              An AML compliance platform built around CBN Circular BSD/DIR/PUB/LAB/019/002 (10 March 2026), with an STR drafting assistant, IMTO monitoring scenarios you can explore in the demo, and STR export to a goAML-style XML file (validation against the NFIU schema in progress).
             </p>
           </AnimatedSection>
 
@@ -622,12 +622,12 @@ function LandingPageInner() {
                 <span className="hidden sm:inline text-muted-on-dark">·</span>
                 <span className="inline-flex items-center gap-1.5">
                   <CheckCircle2 className="h-3 w-3 text-risk-low" />
-                  NFIU goAML format
+                  goAML-style XML export
                 </span>
                 <span className="hidden sm:inline text-muted-on-dark">·</span>
                 <span className="inline-flex items-center gap-1.5">
                   <CheckCircle2 className="h-3 w-3 text-risk-low" />
-                  Aligned with the CBN&apos;s draft automated-AML standards
+                  Aligned with CBN Circular BSD/DIR/PUB/LAB/019/002, issued 10 March 2026
                 </span>
                 <span className="hidden sm:inline text-muted-on-dark">·</span>
                 <span className="inline-flex items-center gap-1.5">

@@ -62,7 +62,7 @@ const CARDS = [
     icon: FileText,
     title: "One-click STR export in goAML 3.x XML format.",
     body: "Every compliance platform claims goAML integration. We generate the exact XML schema the NFIU portal requires in one click from any alert in the case management workspace.",
-    badge: "NFIU goAML format",
+    badge: "goAML-style XML export",
     badgeColor:
       "bg-sky-500/10 border-sky-500/30 text-sky-400",
   },
@@ -85,7 +85,7 @@ export function InnovationStory({ onBookDemo }: Props) {
               CBN Circular BSD/DIR/PUB/LAB/019/002.
             </h2>
             <p className="text-sm md:text-base text-white/50 leading-relaxed">
-              The CBN&apos;s 2025 draft standards for Automated AML Solutions point to
+              CBN Circular BSD/DIR/PUB/LAB/019/002, issued 10 March 2026 points to
               real-time alerts, dynamic rules, NIN/BVN-linked onboarding and
               audit-ready reporting. Our focus is Nigerian compliance workflows, with
               NUBAN-linked customer records and analyst-reviewed reporting.
@@ -138,7 +138,7 @@ export function InnovationStory({ onBookDemo }: Props) {
                   layer for Nigerian finance.
                 </h3>
                 <p className="text-sm md:text-base text-white/50 leading-relaxed">
-                  The CBN&apos;s 2025 draft standards for Automated AML Solutions point
+                  CBN Circular BSD/DIR/PUB/LAB/019/002, issued 10 March 2026 points
                   to real-time alerts, dynamic rules, NIN/BVN-linked onboarding
                   and audit-ready reporting. CBN examinations will continue.
                   Transaction volumes will increase. ApexAML is the permanent
