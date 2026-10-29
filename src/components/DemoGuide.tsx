@@ -71,8 +71,8 @@ const DEMO_STEPS: DemoStep[] = [
   {
     title: 'The co-pilot drafts. You do the reviewing.',
     description:
-      "Click 'Show sample investigation report' to see a pre-written sample STR for this fictional case. In the live system, drafts are generated from the case's own data and reviewed by an analyst. Average time: 11 minutes. Manual STR writing: 3 hours.",
-    action: "Click 'Generate AI Investigation Report' →",
+      "Click 'Show sample investigation report' to see a pre-written sample STR for this fictional case. In the live system, drafts are generated from the case's own data and reviewed by an analyst.",
+    action: "Click 'Show sample investigation report' →",
   },
   {
     title: 'One click exports the STR in the exact format the NFIU portal requires.',
