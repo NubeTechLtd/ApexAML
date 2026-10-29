@@ -61,7 +61,7 @@ const Email = ({
             <strong>0–5 min</strong> · Compliance posture &amp; CBN Circular alignment for {institutionType}
           </Text>
           <Text style={listItem}>
-            <strong>30 min</strong> · Live walkthrough: STR drafting assistant, transaction monitoring, NFIU goAML export
+            <strong>5–20 min</strong> · Live walkthrough: STR drafting assistant, transaction monitoring, NFIU goAML export
           </Text>
           <Text style={listItem}>
             <strong>20–28 min</strong> ·{' '}
