@@ -49,9 +49,9 @@ const ROWS: Row[] = [
   },
   {
     feature: 'AI STR Drafting',
-    manual: { value: '3–5 hours per STR', tone: 'bad' },
+    manual: { value: 'Analyst-written narratives' },
     enterprise: { value: 'Partial', tone: 'mid' },
-    apexaml: '11 minutes average',
+    apexaml: 'AI-assisted drafting, reviewed by an analyst',
   },
 ];
 
@@ -77,7 +77,7 @@ export function ComparisonSection() {
         <div className="text-center space-y-4 max-w-2xl mx-auto">
           <p className="text-xs uppercase tracking-[0.2em] text-primary font-semibold">The Comparison</p>
           <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight">
-            Why Nigerian fintechs choose ApexAML
+            Compare compliance workflows
           </h2>
         </div>
 

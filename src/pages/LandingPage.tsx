@@ -14,16 +14,12 @@ import {
   Menu,
   X,
   RotateCcw,
-  ExternalLink,
   FileText,
   Globe,
   Briefcase,
   ShieldCheck,
   Twitter,
   Linkedin,
-  Clock,
-  Zap,
-  TrendingDown,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import logo from "@/assets/logo.svg";
@@ -292,10 +288,6 @@ function RoadmapGeneratorBand() {
                 </span>
               ))}
             </div>
-            <blockquote className="border-l-2 border-primary/40 pl-4 mt-6 text-sm text-white/50 italic">
-              "Took 90 seconds. Submitted to CBN the same afternoon."
-              <span className="block not-italic text-xs text-muted-on-dark mt-1">— CCO, Tier-3 Fintech, Abuja</span>
-            </blockquote>
           </AnimatedSection>
 
           {/* Right 40% */}
@@ -414,7 +406,7 @@ function LandingPageInner() {
   const navLinks = [
     { href: "features", label: "Platform" },
     { href: "ai", label: "AI Engine" },
-    { href: "trust", label: "Results" },
+    { href: "trust", label: "Pilot" },
   ];
 
   const scrollToSection = (href: string) => {
@@ -535,30 +527,6 @@ function LandingPageInner() {
         </AnimatePresence>
       </nav>
 
-      {/* ── Press Coverage Bar ─────────────────────────────────── */}
-      {/* TODO: Update opacity to 100% and add href when */}
-      {/* article is published. Current: credibility placeholder. */}
-      <div
-        className="w-full bg-secondary/40 border-b border-white/5 overflow-hidden"
-        style={{ height: 44 }}
-      >
-        <div className="mx-auto max-w-7xl h-full px-6 flex items-center gap-6">
-          <span className="shrink-0 text-white/50" style={{ fontSize: 11 }}>
-            Covering Nigeria&apos;s compliance transformation:
-          </span>
-          <div className="flex-1 overflow-hidden">
-            <div className="flex items-center gap-4 whitespace-nowrap opacity-50 text-white/70" style={{ fontSize: 13 }}>
-              {["TechCabal", "Techpoint.Africa", "Nairametrics", "BusinessDay Nigeria", "FinTechNG"].map((name, i, arr) => (
-                <span key={name} className="flex items-center gap-4">
-                  <span>{name}</span>
-                  {i < arr.length - 1 && <span className="h-3 w-px bg-white/20" />}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
       <QuickDemoBar open={quickBarOpen} onClose={() => setQuickBarOpen(false)} />
 
       <BookDemoSheet
@@ -603,19 +571,10 @@ function LandingPageInner() {
           </AnimatedSection>
 
           <AnimatedSection delay={0.25}>
-            <div className="flex flex-wrap items-center justify-center gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-red-600 text-white px-3 py-1" style={{ fontSize: 12, fontWeight: 600 }}>
-                <Clock className="h-3.5 w-3.5" />
-                3 hrs → 11 min — STR drafting time
-              </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-status-positive text-green-control-foreground px-3 py-1" style={{ fontSize: 12, fontWeight: 600 }}>
-                <Zap className="h-3.5 w-3.5" />
-                5 days — time to go live
-              </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-400 text-slate-900 px-3 py-1" style={{ fontSize: 12, fontWeight: 600 }}>
-                <TrendingDown className="h-3.5 w-3.5" />
-                45% cheaper in year one than the nearest competitor
-              </span>
+            <div className="flex flex-wrap justify-center gap-3 text-sm text-muted-on-dark">
+              <span>Analyst-reviewed STR drafts</span>
+              <span>Scope agreed during your pilot</span>
+              <span>Published subscription pricing</span>
             </div>
           </AnimatedSection>
 
@@ -705,15 +664,6 @@ function LandingPageInner() {
                 )}
               </div>
 
-              <blockquote className="mx-auto max-w-2xl border-l-2 border-primary pl-5 text-left">
-                <p className="italic text-white/60 leading-relaxed text-sm sm:text-base">
-                  "The AI STR co-pilot cut our investigation time from 3 hours to 12 minutes — and the CBN roadmap
-                  template passed first review."
-                </p>
-                <footer className="mt-3 text-[11px] uppercase tracking-wider text-muted-on-dark not-italic">
-                  — Head of Compliance, Licensed PSP, Lagos
-                </footer>
-              </blockquote>
             </div>
           </AnimatedSection>
         </div>
@@ -765,7 +715,7 @@ function LandingPageInner() {
           <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-primary">
             Inside the Engine
           </span>
-          <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight">The 3-Second STR Pipeline</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight">STR drafting workflow</h2>
           <p className="text-white/50 leading-relaxed max-w-2xl mx-auto">
             Legacy software relies on human analysts to manually query NIBSS, cross-reference watchlists, and type out
             goAML reports. Watch how the ApexAML engine automates the entire regulatory lifecycle.
@@ -781,8 +731,8 @@ function LandingPageInner() {
           <AnimatedSection className="space-y-6">
             <p className="text-xs uppercase tracking-[0.2em] text-primary font-semibold">The AI Advantage</p>
             <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight leading-tight">
-              45-minute investigations,
-              <br /> now in <span className="text-primary">3 minutes</span>.
+              AI-assisted STR drafting,
+              <br /> <span className="text-primary">reviewed by your analyst</span>.
             </h2>
             <p className="text-muted-on-dark leading-relaxed">
               AI-assisted STR drafting from the case's own data, reviewed and edited by an analyst. Every revision is saved in the edit history.
@@ -883,9 +833,9 @@ function LandingPageInner() {
           <div className="grid sm:grid-cols-3 gap-6">
             {[
               {
-                value: "From 3 hrs to 11 min",
-                label: "Average STR investigation time",
-                source: "Based on 47-transaction case study with Nigerian Tier-3 fintech",
+                value: "Analyst-reviewed drafts",
+                label: "STR drafting from the case’s own data",
+                source: "Your analyst reviews and edits the narrative before export. No measured turnaround claim.",
               },
               {
                 value: "30-45 days",
@@ -895,7 +845,7 @@ function LandingPageInner() {
               {
                 value: "goAML-ready XML",
                 label: "Every STR exported in NFIU-mandated format",
-                source: "No manual re-formatting. No rejected submissions.",
+                source: "Review the exported XML before submission through the NFIU portal.",
               },
             ].map((m, i) => (
               <AnimatedSection key={m.label} delay={i * 0.1}>
@@ -906,13 +856,6 @@ function LandingPageInner() {
                   <p className="mt-3 text-sm text-white/60 font-medium">{m.label}</p>
                   <div className="mt-auto pt-5 flex items-start justify-between gap-3 border-t border-white/[0.06] mt-6">
                     <p className="text-[10px] text-muted-on-dark leading-relaxed">{m.source}</p>
-                    <button
-                      type="button"
-                      aria-label="View methodology"
-                      className="shrink-0 text-muted-on-dark hover:text-primary transition-colors"
-                    >
-                      <ExternalLink className="h-3 w-3" />
-                    </button>
                   </div>
                 </div>
               </AnimatedSection>
@@ -926,7 +869,7 @@ function LandingPageInner() {
               <br /> Scale with confidence.
             </h2>
             <p className="text-muted-on-dark max-w-lg mx-auto">
-              Join Nigerian financial institutions modernising their compliance infrastructure with ApexAML.
+              Explore a pilot to modernise your institution’s compliance workflows with ApexAML.
             </p>
             <LeadCaptureForm />
             <div className="mt-4 flex items-center justify-center gap-2 text-[11px] text-muted-on-dark">

@@ -12,9 +12,9 @@ interface Row {
 const ROWS: Row[] = [
   { feature: "Year-one subscription + onboarding (Growth equivalent)", apex: { value: `₦${(PLAN_PRICING.growth * 12 + 350_000).toLocaleString("en-NG")} · excludes implementation`, marker: "check" }, autogon: { value: "₦61,600,000" } },
   { feature: "Setup / onboarding fee", apex: { value: "₦350,000", marker: "check" }, autogon: { value: "₦31,600,000" } },
-  { feature: "Time to go live", apex: { value: "5 business days", marker: "check" }, autogon: { value: "4–6 weeks" } },
+  { feature: "Time to go live", apex: { value: "Timeline agreed during scoping", marker: "check" }, autogon: { value: "4–6 weeks" } },
   { feature: "NFIU goAML XML export", apex: { value: "Confirmed", marker: "check" }, autogon: { value: "Not published" } },
-  { feature: "AI STR narrative drafting", apex: { value: "11 minutes", marker: "check" }, autogon: { value: "Not available" } },
+  { feature: "AI STR narrative drafting", apex: { value: "AI-assisted, analyst-reviewed", marker: "check" }, autogon: { value: "Not available" } },
   { feature: "IMTO Regulatory Pack (CBN IMTO §4.2)", apex: { value: "6 pre-built rules", marker: "check" }, autogon: { value: "Not available" } },
   { feature: "Case management workspace", apex: { value: "Full workspace", marker: "check" }, autogon: { value: "Not published" } },
   { feature: "Explainable alert UI", apex: { value: "Plain-English typology cards", marker: "check" }, autogon: { value: "Not published" } },

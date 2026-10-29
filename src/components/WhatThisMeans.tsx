@@ -183,9 +183,8 @@ export function WhatThisMeans({ alert }: { alert: Alert }) {
 
                 <div className="space-y-1 pt-1">
                   <p className="text-xs text-muted-foreground">
-                    <span className="font-medium text-foreground">Typical outcome:</span>{' '}
-                    {info.strRate}% of similar cases result in STR filing · Average
-                    investigation time with ApexAML: 11 minutes
+                    <span className="font-medium text-foreground">Analyst decision:</span>{' '}
+                    Review the case evidence before deciding whether an STR is required. No investigation-time estimate is provided.
                   </p>
                   <p className="text-xs text-muted-foreground">
                     <span className="font-medium text-foreground">Regulatory deadline:</span>{' '}

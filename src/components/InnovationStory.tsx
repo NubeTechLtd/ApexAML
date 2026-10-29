@@ -1,6 +1,8 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { Brain, Globe, ShieldCheck, FileText, ArrowRight } from "lucide-react";
+import { STREstimateInputs } from "@/components/STREstimateInputs";
+import { calculateSTREstimate, useSTRAssumptions } from "@/lib/strEstimate";
 import { Button } from "@/components/ui/button";
 
 interface Props {
@@ -34,8 +36,8 @@ function FadeIn({
 const CARDS = [
   {
     icon: Brain,
-    title: "11 minutes. Not 3 hours.",
-    body: "Our AI co-pilot generates a complete NFIU-compliant STR narrative from alert data in 11 minutes. At 50 STRs per month, that is 145 analyst hours saved.",
+    title: "AI-assisted STR drafting with analyst review.",
+    body: "Drafts use the case’s own data and are reviewed and edited by an analyst. The workload comparison below is illustrative, not measured performance.",
     badge: "AI-assisted drafting",
     badgeColor:
       "bg-primary/10 border-primary/30 text-primary",
@@ -67,6 +69,8 @@ const CARDS = [
 ];
 
 export function InnovationStory({ onBookDemo }: Props) {
+  const assumptions = useSTRAssumptions();
+  const estimate = calculateSTREstimate(assumptions);
   return (
     <section id="innovation-story" className="relative py-24 px-6 overflow-hidden">
       <div className="mx-auto max-w-6xl space-y-16">
@@ -77,15 +81,14 @@ export function InnovationStory({ onBookDemo }: Props) {
               Why we built ApexAML
             </span>
             <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight leading-snug">
-              Every global AML platform was built for the US or Europe. We built
-              the first one that speaks CBN.
+              AML workflows built around
+              CBN Circular BSD/DIR/PUB/LAB/019/002.
             </h2>
             <p className="text-sm md:text-base text-white/50 leading-relaxed">
               The CBN&apos;s 2025 draft standards for Automated AML Solutions point to
               real-time alerts, dynamic rules, NIN/BVN-linked onboarding and
-              audit-ready reporting. We saw the gap: powerful global platforms
-              that could not handle a NUBAN, could not verify a BVN, and had
-              never filed an NFIU goAML report.
+              audit-ready reporting. Our focus is Nigerian compliance workflows, with
+              NUBAN-linked customer records and analyst-reviewed reporting.
             </p>
           </div>
         </FadeIn>
@@ -113,6 +116,12 @@ export function InnovationStory({ onBookDemo }: Props) {
                     <p className="text-sm text-muted-on-dark leading-relaxed">
                       {card.body}
                     </p>
+                    {i === 0 && <div className="pt-4 space-y-4">
+                      <STREstimateInputs />
+                      <p className="text-sm text-muted-on-dark">
+                        At {assumptions.strsPerMonth} STRs/month: {estimate.manualHours.toLocaleString('en-NG', { maximumFractionDigits: 1 })} manual hours vs {estimate.assistedHours.toLocaleString('en-NG', { maximumFractionDigits: 1 })} assisted hours including review. Illustrative difference: {estimate.hoursDifference.toLocaleString('en-NG', { maximumFractionDigits: 1 })} hours/month. Not a performance guarantee.
+                      </p>
+                    </div>}
                   </div>
                 </div>
               </div>
