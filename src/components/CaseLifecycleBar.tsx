@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Check, ChevronRight, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useZone } from '@/hooks/useZone';
 
 export type LifecycleStageId =
   | 'received'
@@ -70,6 +71,7 @@ export function CaseLifecycleBar({
   requiresStr,
   strDeadline,
 }: CaseLifecycleBarProps) {
+  const isDemo = useZone() === 'demo';
   const done: Record<LifecycleStageId, boolean> = {
     received: true,
     under_review: !!underReviewAt || hasEvidence || strDrafted || strExported || caseClosed,
@@ -118,7 +120,15 @@ export function CaseLifecycleBar({
         ? 'text-[hsl(var(--risk-medium))] border-[hsl(var(--risk-medium))]/30 bg-[hsl(var(--risk-medium))]/10'
         : 'text-muted-foreground border-border bg-muted/40';
 
-  const guidance = GUIDANCE[currentStageId];
+  const guidance = isDemo
+    ? currentStageId === 'under_review'
+      ? 'Review the transaction timeline below. Click View Customer Profile to check their risk history. When ready, click Generate STR Draft to start the STR drafting assistant (sample output).'
+      : currentStageId === 'evidence'
+        ? 'Your case notes are saved. Click Generate STR Draft above — the STR drafting assistant (sample output) will display a pre-written sample NFIU narrative.'
+        : currentStageId === 'drafted'
+          ? 'Review the sample draft below. Edit any sections that need adjustment. When satisfied, click Export goAML XML to download the submission file.'
+          : GUIDANCE[currentStageId]
+    : GUIDANCE[currentStageId];
 
   return (
     <div className="rounded-lg border border-border bg-card px-4 py-3 space-y-2.5">
