@@ -141,6 +141,13 @@
       "when": 1793264110187,
       "tag": "0019_demo_ai_call_limits",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1793286883716,
+      "tag": "0020_demo_ai_global_cap_and_kill_switch",
+      "breakpoints": true
     }
   ]
 }

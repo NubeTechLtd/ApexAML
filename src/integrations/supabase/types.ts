@@ -404,6 +404,33 @@ export type Database = {
           },
         ]
       }
+      demo_ai_settings: {
+        Row: {
+          alert_threshold_pct: number
+          daily_cap: number
+          id: boolean
+          last_alert_day: string | null
+          live_ai_enabled: boolean
+          updated_at: string
+        }
+        Insert: {
+          alert_threshold_pct?: number
+          daily_cap?: number
+          id?: boolean
+          last_alert_day?: string | null
+          live_ai_enabled?: boolean
+          updated_at?: string
+        }
+        Update: {
+          alert_threshold_pct?: number
+          daily_cap?: number
+          id?: boolean
+          last_alert_day?: string | null
+          live_ai_enabled?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
       demo_notification_events: {
         Row: {
           created_at: string

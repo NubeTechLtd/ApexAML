@@ -16,7 +16,7 @@ import { generateGoAMLXmlFromLegacy, downloadXmlFile } from '@/lib/generateGoAML
 import { resolveExportEntity, missingFieldsMessage } from '@/data-layer/exportEntity';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useZone } from '@/hooks/useZone';
-import { DemoSampleLabel, DEMO_SAMPLE_LABEL, DEMO_LIVE_AI_LABEL, DEMO_FALLBACK_LABEL, DEMO_AI_LIMIT_MESSAGE } from '@/components/DemoSampleLabel';
+import { DemoSampleLabel, DEMO_SAMPLE_LABEL, DEMO_LIVE_AI_LABEL, DEMO_FALLBACK_LABEL, demoAiLimitMessage } from '@/components/DemoSampleLabel';
 import { BookDemoSheet } from '@/components/landing/BookDemoSheet';
 
 interface ChatMessage {
@@ -108,7 +108,7 @@ export function STRCoPilotDrawer({ open, onOpenChange, alert }: STRCoPilotDrawer
   const [loading, setLoading] = useState(true);
   const [draft, setDraft] = useState('');
   const [draftSource, setDraftSource] = useState<'live_ai' | 'fallback'>('fallback');
-  const [limitReached, setLimitReached] = useState(false);
+  const [limitMessage, setLimitMessage] = useState<string | null>(null);
   const [bookOpen, setBookOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [chatInput, setChatInput] = useState('');
@@ -123,7 +123,7 @@ export function STRCoPilotDrawer({ open, onOpenChange, alert }: STRCoPilotDrawer
     setDraft('');
     setChatMessages([]);
     setEditVersion(0);
-    setLimitReached(false);
+    setLimitMessage(null);
     const intro = (source?: 'live_ai' | 'fallback') => [{
       id: 1,
       role: 'assistant' as const,
@@ -145,24 +145,24 @@ export function STRCoPilotDrawer({ open, onOpenChange, alert }: STRCoPilotDrawer
     // the workspace); the pre-written sample is used only if it fails, times out or is capped.
     void (async () => {
       let narrative: string | null = null;
-      let capped = false;
+      let capped: string | null = null;
       try {
         const [result] = await Promise.all([provider.str.generate(alert.id), wait(MIN_LOADING_MS)]);
         if (result.source === 'live_ai') narrative = result.narrative;
-        capped = !!result.limitReached;
+        capped = demoAiLimitMessage(result.limitReached);
       } catch {
         // Fall through to the labelled sample.
       }
       if (cancelled) return;
       const source = narrative ? 'live_ai' : 'fallback';
       setDraftSource(source);
-      setLimitReached(capped);
+      setLimitMessage(capped);
       setDraft(narrative
         ? generateDraft(alert, true, { narrative, footer: DEMO_LIVE_AI_LABEL })
         : generateDraft(alert, true, { footer: DEMO_FALLBACK_LABEL }));
       setChatMessages([
         ...intro(source),
-        ...(capped ? [{ id: 2, role: 'assistant' as const, content: DEMO_AI_LIMIT_MESSAGE, timestamp: new Date(), source: 'fallback' as const }] : []),
+        ...(capped ? [{ id: 2, role: 'assistant' as const, content: capped, timestamp: new Date(), source: 'fallback' as const }] : []),
       ]);
       setLoading(false);
     })();
@@ -191,12 +191,12 @@ export function STRCoPilotDrawer({ open, onOpenChange, alert }: STRCoPilotDrawer
       .then((result) => {
         const changed = result.narrative !== before;
         setDraft(result.narrative);
-        const capped = isDemo && !!result.limitReached;
-        if (capped) setLimitReached(true);
+        const capped = isDemo ? demoAiLimitMessage(result.limitReached) : null;
+        if (capped) setLimitMessage(capped);
         setChatMessages((prev) => [
           ...prev,
           { id: Date.now(), role: 'assistant', content: result.confirmation, timestamp: new Date(), source: result.source === 'live_ai' ? 'live_ai' : 'fallback' },
-          ...(capped ? [{ id: Date.now() + 1, role: 'assistant' as const, content: DEMO_AI_LIMIT_MESSAGE, timestamp: new Date(), source: 'fallback' as const }] : []),
+          ...(capped ? [{ id: Date.now() + 1, role: 'assistant' as const, content: capped, timestamp: new Date(), source: 'fallback' as const }] : []),
         ]);
         if (changed) {
           setEditVersion((v) => v + 1);
@@ -318,9 +318,9 @@ export function STRCoPilotDrawer({ open, onOpenChange, alert }: STRCoPilotDrawer
                 </span>
                 <Badge variant="outline" className="text-[9px]">Editable</Badge>
               </div>
-              {isDemo && limitReached && (
+              {isDemo && limitMessage && (
                 <div role="status" className="px-4 py-2 border-b bg-muted/50 flex items-center justify-between gap-3 shrink-0">
-                  <span className="text-xs text-foreground">{DEMO_AI_LIMIT_MESSAGE}</span>
+                  <span className="text-xs text-foreground">{limitMessage}</span>
                   <Button size="sm" variant="outline" className="h-7 text-xs shrink-0" onClick={() => setBookOpen(true)}>
                     Book a walkthrough
                   </Button>

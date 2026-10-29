@@ -2,6 +2,7 @@
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors'
 import { ContactSchema, isHoneypotTripped, isRateLimited } from './validation.ts'
+import { trustedClientIp } from '../_shared/client-ip.ts'
 import { sendTemplateEmail } from '../_shared/transactional-email-templates/send-email.ts'
 
 function json(data: Record<string, unknown>, status = 200) {
@@ -27,7 +28,7 @@ Deno.serve(async (req) => {
   if (!url || !key) return json({ ok: false, reason: 'configuration_error' }, 500)
   const admin = createClient(url, key, { auth: { persistSession: false } })
 
-  const ip = (req.headers.get('x-forwarded-for') ?? '').split(',')[0].trim() || 'unknown'
+  const ip = trustedClientIp(req.headers)
   const fingerprint = await sha256(`contact:${ip}`)
   const email = input.email.toLowerCase()
   const tenMin = new Date(Date.now() - 10 * 60_000).toISOString()

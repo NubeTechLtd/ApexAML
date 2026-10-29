@@ -19,12 +19,27 @@ afterEach(() => vi.restoreAllMocks());
 describe('demo AI limits and fallback', () => {
   it('reports the per-session cap as a limit', async () => {
     respond(429, { reason: 'session_limit' });
-    expect(await demoAiGenerate(alert)).toEqual({ ok: false, limited: true });
+    expect(await demoAiGenerate(alert)).toEqual({ ok: false, limited: 'session' });
   });
 
   it('reports the per-IP daily cap as a limit', async () => {
     respond(429, { reason: 'ip_daily_limit' });
-    expect(await demoAiGenerate(alert)).toEqual({ ok: false, limited: true });
+    expect(await demoAiGenerate(alert)).toEqual({ ok: false, limited: 'session' });
+  });
+
+  it('reports the global daily cap of the demo as capacity', async () => {
+    respond(429, { reason: 'global_daily_limit' });
+    expect(await demoAiGenerate(alert)).toEqual({ ok: false, limited: 'capacity' });
+  });
+
+  it('reports the kill switch as capacity', async () => {
+    respond(429, { reason: 'demo_ai_disabled' });
+    expect(await demoAiGenerate(alert)).toEqual({ ok: false, limited: 'capacity' });
+  });
+
+  it('falls back when the server discards off-format output', async () => {
+    respond(502, { reason: 'invalid_output' });
+    expect(await demoAiGenerate(alert)).toEqual({ ok: false, limited: false });
   });
 
   it('treats an AI provider rate limit as a plain failure, not the demo cap', async () => {
