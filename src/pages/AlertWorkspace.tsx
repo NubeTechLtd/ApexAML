@@ -1048,6 +1048,9 @@ export default function AlertWorkspace() {
                                         : 'bg-muted text-foreground'
                                     }`}>
                                       {msg.content}
+                                      {isDemo && msg.role === 'assistant' && (
+                                        <div className="mt-1.5"><DemoSampleLabel /></div>
+                                      )}
                                     </div>
                                   </motion.div>
                                 ))}
