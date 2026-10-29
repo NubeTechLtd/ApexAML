@@ -121,6 +121,9 @@ export function ComplianceTimeline() {
                     <td className="px-3 py-2.5 font-medium text-foreground max-w-[200px]">{m.name}</td>
                     <td className="px-3 py-2.5 text-muted-foreground whitespace-nowrap">
                       {new Date(m.dueDate).toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric' })}
+                      {m.dueDate.startsWith('2027') && (
+                        <span className="block text-[10px]">Example milestones (demo data)</span>
+                      )}
                     </td>
                     <td className="px-3 py-2.5">
                       {/* Print: just badge */}

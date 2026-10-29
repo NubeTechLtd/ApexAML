@@ -315,7 +315,7 @@ addAlert({
   narrative: (c) => `${c.fullName} (NIN ${c.nin}) collected an IMTO remittance at a Lekki RemitNova agent recorded with settlement currency USD and a cash disbursement of $2,000. Naira-only settlement is mandatory; recommend suspension of the agent and escalation to the Chief Compliance Officer.`,
   extra: (c) => ({
     requiresSupervisorApproval: true,
-    imto: { senderCountry: 'US', beneficiaryName: c.fullName, beneficiaryPhone: c.phone, beneficiaryNIN: c.nin, cashPickupCount: 1, totalCashNGN: 3_160_000, usdEquivalent: 2000, agentLocations: ['Lagos — Lekki Phase 1'], triggerThreshold: 'Settlement currency ≠ NGN (CBN 2025 directives)' },
+    imto: { senderCountry: 'US', beneficiaryName: c.fullName, beneficiaryPhone: c.phone, beneficiaryNIN: c.nin, cashPickupCount: 1, totalCashNGN: 3_160_000, usdEquivalent: 2000, agentLocations: ['Lagos — Lekki Phase 1'], triggerThreshold: 'Settlement currency ≠ NGN (CBN Circular BSD/DIR/PUB/LAB/019/002)' },
   }),
 });
 
@@ -826,10 +826,10 @@ for (const d of SEED_DOCUMENTS.filter((x) => x.verified).slice(0, 12)) {
   audit(d.verified_at!, 'DOCUMENT_VERIFY', customerByNum(Number(d.customer_id)).ref, `${documentLabel(d.document_type)} verified (${d.document_name}).`, d.verified_by!);
 }
 for (const ctr of SEED_CTRS.filter((x) => x.status === 'filed')) {
-  audit(ctr.filed_at!, 'CTR_FILED', ctr.ctr_reference!, `CTR for ${ctr.customer_name} (${ngn(Number(ctr.total_cash_ngn))}) filed in goAML format.`);
+  audit(ctr.filed_at!, 'CTR_FILED', ctr.ctr_reference!, `CTR for ${ctr.customer_name} (${ngn(Number(ctr.total_cash_ngn))}): cash report exported as goAML-style XML (draft).`);
 }
 for (const s of SEED_STRS.filter((x) => x.status === 'Submitted to NFIU')) {
   const a = alerts.find((x) => x.id === s.alertId)!;
-  audit(new Date(new Date(a.timestamp).getTime() + 8 * HOUR).toISOString(), 'STR_EXPORT', a.caseId, `Exported goAML STR ${s.reference} for NFIU portal submission.`, s.analyst);
+  audit(new Date(new Date(a.timestamp).getTime() + 8 * HOUR).toISOString(), 'STR_EXPORT', a.caseId, `STR ${s.reference} exported as goAML-style XML (draft) for analyst review.`, s.analyst);
 }
 export const SEED_AUDIT: AuditEntry[] = auditRows.sort((a, b) => b.timestamp.localeCompare(a.timestamp));

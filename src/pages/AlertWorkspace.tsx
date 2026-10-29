@@ -426,7 +426,7 @@ export default function AlertWorkspace() {
         action: 'STR_EXPORT',
         analyst: '',
         caseId: selected.caseId,
-        justification: `Exported goAML STR as ${filename} for NFIU portal submission.`,
+        justification: `STR exported as goAML-style XML (draft): ${filename}.`,
       });
     } catch {
       // Non-fatal: the file must still reach the analyst even if the record fails.

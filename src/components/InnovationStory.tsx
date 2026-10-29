@@ -61,7 +61,7 @@ const CARDS = [
   {
     icon: FileText,
     title: "One-click STR export in goAML 3.x XML format.",
-    body: "Every compliance platform claims goAML integration. We generate the exact XML schema the NFIU portal requires in one click from any alert in the case management workspace.",
+    body: "Every compliance platform claims goAML integration. We generate a goAML-style XML draft for your analyst to review before filing.",
     badge: "goAML-style XML export",
     badgeColor:
       "bg-sky-500/10 border-sky-500/30 text-sky-400",
