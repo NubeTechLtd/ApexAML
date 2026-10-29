@@ -92,13 +92,6 @@ const WEEK_PHASES = [
 
 const TOTAL_WEEKS = 12;
 
-// Returns colour for the deadline pill — amber if within 90 days, green otherwise
-function deadlineTone(deadline: Date): { bg: string; fg: string; label: string } {
-  const days = Math.ceil((deadline.getTime() - Date.now()) / 86_400_000);
-  if (days <= 90) return { bg: '#fef3c7', fg: AMBER, label: `${days} days remaining` };
-  return { bg: '#dcfce7', fg: GREEN, label: `${days} days remaining` };
-}
-
 export const PrintableRoadmap = forwardRef<HTMLDivElement, PrintableRoadmapProps>(
   (props, ref) => {
     const {
@@ -117,7 +110,7 @@ export const PrintableRoadmap = forwardRef<HTMLDivElement, PrintableRoadmapProps
     const covered = getCoveredCapabilities(amlSetup);
     const coveredCount = CAPABILITY_AREAS.filter((c) => covered.has(c)).length;
     const gapCount = CAPABILITY_AREAS.length - coveredCount;
-    const deadline = deadlineTone(new Date('2026-06-10T00:00:00'));
+    const deadline = { bg: '#dcfce7', fg: GREEN, label: 'Issued 10 March 2026' };
 
     return (
       <div
@@ -285,7 +278,7 @@ export const PrintableRoadmap = forwardRef<HTMLDivElement, PrintableRoadmapProps
               [
                 { k: 'Monthly Volume', v: volume, highlight: false as const },
                 {
-                  k: 'CBN Target Deadline',
+                  k: 'CBN Circular',
                   v: 'Circular BSD/DIR/PUB/LAB/019/002',
                   highlight: true as const,
                   pill: deadline,
@@ -365,7 +358,7 @@ export const PrintableRoadmap = forwardRef<HTMLDivElement, PrintableRoadmapProps
               ['Compliance Officer', `${contactName}, ${contactTitle}`],
               ['Contact', email],
               ['Current AML Setup', amlSetup],
-              ['Full Compliance Deadline', fullDeadline],
+              ['Compliance Timeline', fullDeadline],
             ].map(([k, v]) => (
               <tr key={k} style={{ borderBottom: `1px solid ${BORDER}` }}>
                 <td
@@ -594,7 +587,7 @@ export const PrintableRoadmap = forwardRef<HTMLDivElement, PrintableRoadmapProps
             Remediation Timeline (24 months)
           </h2>
           <div style={{ fontSize: '10px', color: MUTED, marginBottom: '14px' }}>
-            From CBN roadmap submission to full compliance attestation ({fullDeadline}).
+            From CBN roadmap submission to full compliance attestation, within the phased implementation timelines set in the circular.
           </div>
 
           {/* Month axis */}
@@ -737,7 +730,7 @@ export const PrintableRoadmap = forwardRef<HTMLDivElement, PrintableRoadmapProps
                 'External audit attestation against CBN Circular BSD/DIR/PUB/LAB/019/002',
                 'Full coverage demonstrated across all 10 CBN capability areas',
                 '5-year record-retention archive validated',
-                `Board sign-off and certification submitted to CBN before ${fullDeadline}`,
+                'Board sign-off and certification submitted to CBN within the phased implementation timelines set in the circular',
               ],
             },
           ].map((phase) => (

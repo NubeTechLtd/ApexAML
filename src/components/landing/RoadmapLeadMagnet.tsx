@@ -63,12 +63,6 @@ export function RoadmapLeadMagnet() {
   const [consent, setConsent] = useState(false);
   const { toast } = useToast();
 
-  const urgencyDate = useMemo(() => {
-    const d = new Date();
-    d.setDate(d.getDate() + 30);
-    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-  }, []);
-
   const refNumber = useMemo(
     () => `ZUA-2026-${Math.floor(1000 + Math.random() * 9000)}`,
     [],
@@ -258,7 +252,7 @@ export function RoadmapLeadMagnet() {
 
               {/* Urgency */}
               <p className="text-[11px] text-muted-on-dark leading-relaxed pt-1 border-t border-white/[0.04] mt-3 pt-3">
-                Most valuable before <span className="text-primary/80 font-medium">{urgencyDate}</span> — deadline pressure increases after that.
+                Most useful early in your implementation — the circular sets phased implementation timelines.
               </p>
             </div>
           </div>

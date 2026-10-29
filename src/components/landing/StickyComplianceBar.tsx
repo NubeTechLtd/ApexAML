@@ -54,13 +54,12 @@ export function StickyComplianceBar({ onBookDemo, onVisibilityChange }: Props) {
           aria-label="Compliance standards notice"
         >
           <div className="mx-auto max-w-6xl h-full flex items-center justify-between gap-3 px-4 sm:px-6">
-            {/* LEFT — Draft standards */}
+            {/* LEFT — Circular reference */}
             <div className="flex items-center gap-2 shrink-0">
               <Zap className="h-4 w-4 text-primary" />
               <p className="text-xs sm:text-sm font-medium text-white">
-                <span className="text-white/70">The CBN's </span>
-                <span className="text-primary font-bold">2025 draft standards</span>
-                <span className="text-white/70"> for Automated AML Solutions</span>
+                <span className="text-primary font-bold">CBN Circular BSD/DIR/PUB/LAB/019/002</span>
+                <span className="text-white/70">, issued 10 March 2026</span>
               </p>
             </div>
 

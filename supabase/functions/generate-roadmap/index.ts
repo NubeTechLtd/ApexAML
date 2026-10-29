@@ -101,7 +101,7 @@ INSTITUTION DETAILS
 - Compliance Officer: ${d.contactName}, ${d.title}
 - Contact email: ${d.email}
 - Phone number: ${d.phone || "not provided"}
-- Full compliance deadline: ${d.deadline}
+- Compliance timeline: ${d.deadline}
 - Circular: BSD/DIR/PUB/LAB/019/002
 
 INSTITUTION-TYPE GUIDANCE
@@ -146,13 +146,13 @@ function fallbackRoadmap(d: Body): string {
 Prepared for: ${d.institutionName}
 Institution type: ${d.institutionType}
 Compliance Officer: ${d.contactName}, ${d.title}
-Full compliance deadline: ${d.deadline}
+Compliance timeline: ${d.deadline}
 
 EXECUTIVE SUMMARY
 ${d.institutionName} will implement a comprehensive AML/CFT control framework aligned to CBN Circular BSD/DIR/PUB/LAB/019/002 and the NFIU goAML reporting standard. The programme spans 24 months from initial submission and is sized for monthly transaction volume of ${d.volume}. Current state: ${d.amlSetup}. The roadmap closes all 10 mandated CBN capability areas and produces a documented evidence pack.
 
 REGULATORY CONTEXT
-The May 2026 CBN AML Circular requires every regulated institution to file an implementation roadmap and to reach full compliance by ${d.deadline}. ${d.institutionName} is regulated as a ${d.institutionType} and is therefore subject to the licence-specific obligations summarised below, in addition to the universal CDD/EDD, sanctions screening, transaction monitoring, STR/CTR, audit-trail, AI/ML governance, fraud monitoring, and entity-profiling controls.
+CBN Circular BSD/DIR/PUB/LAB/019/002, issued 10 March 2026, requires every regulated institution to file an implementation roadmap and to reach full compliance within the phased implementation timelines set in the circular. ${d.institutionName} is regulated as a ${d.institutionType} and is therefore subject to the licence-specific obligations summarised below, in addition to the universal CDD/EDD, sanctions screening, transaction monitoring, STR/CTR, audit-trail, AI/ML governance, fraud monitoring, and entity-profiling controls.
 
 PHASE 1 — FOUNDATION (Months 1-3)
 - Month 1: Board-approved AML/CFT policy refresh; appointment letter for ${d.contactName}.
@@ -179,7 +179,7 @@ PHASE 4 — FULL COMPLIANCE CERTIFICATION (Months 18-24)
 - Month 19: External audit attestation against CBN Circular BSD/DIR/PUB/LAB/019/002.
 - Month 21: Full coverage demonstrated across all 10 CBN capability areas.
 - Month 22: 5-year record-retention archive in place and documented.
-- Month 24: Board sign-off and submission of full compliance certification to CBN before ${d.deadline}.
+- Month 24: Board sign-off and submission of full compliance certification to CBN within the phased implementation timelines set in the circular.
 
 KEY RISKS AND MITIGATIONS
 - Data quality on legacy customer records — mitigated by a Phase 1 BVN/NIN remediation sprint.

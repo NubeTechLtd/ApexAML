@@ -117,9 +117,8 @@ export function ExitIntentModal({ onBookDemo }: { onBookDemo?: () => void } = {}
                 </h3>
                 <p className="text-sm text-white/55 leading-relaxed">
                   Real-time alerts, dynamic rule engines, NIN/BVN-linked onboarding and audit-ready reporting — mapped
-                  to the CBN's 2025{" "}
-                  <span className="text-white/75 font-semibold">draft standards</span> for Automated AML Solutions and
-                  Circular <span className="text-white/75 font-mono text-xs">BSD/DIR/PUB/LAB/019/002</span>.
+                  to CBN Circular <span className="text-white/75 font-mono text-xs">BSD/DIR/PUB/LAB/019/002</span>, issued
+                  10 March 2026.
                 </p>
               </div>
 
