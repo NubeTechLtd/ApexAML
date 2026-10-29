@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useZone, useZoneNavigate } from '@/hooks/useZone';
 import { DemoSampleLabel } from '@/components/DemoSampleLabel';
 import { ActiveFilterChip } from '@/components/ActiveFilterChip';
@@ -942,6 +942,7 @@ export default function AlertWorkspace() {
                       <div className="flex items-center gap-2">
                         <Sparkles className="h-5 w-5 text-primary" />
                         <h2 className="text-base font-bold text-foreground">{isDemo ? 'STR Co-Pilot' : 'AI STR Co-Pilot'}</h2>
+                        {!isDemo && <Link to="/app/settings" className="text-xs text-muted-foreground underline ml-2">Institution profile</Link>}
                       </div>
                       {strGenerated && (
                         <Badge variant="outline" className="text-[10px] gap-1">
