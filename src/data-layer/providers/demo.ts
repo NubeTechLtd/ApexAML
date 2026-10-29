@@ -173,7 +173,7 @@ export const demoProvider: DataProvider = {
       if (!alert) throw new Error('This sample case was not found.');
       const res = await demoAiGenerate(alert);
       const ai = res.ok ? res : null;
-      const limitReached = !res.ok && res.limited;
+      const limitReached = 'limited' in res && res.limited;
       if (!ai) await wait(900);
       const narrative = ai?.narrative ?? alert.aiDraftedNarrative;
       const drafts = readCollection<StrDraft[]>('str_drafts', () => []);
@@ -186,7 +186,7 @@ export const demoProvider: DataProvider = {
       const alert = alertById(alertId);
       const res = alert ? await demoAiRefine(alert, currentDraft, message) : null;
       const ai = res?.ok ? res : null;
-      const limitReached = !!res && !res.ok && res.limited;
+      const limitReached = !!res && 'limited' in res && res.limited;
       let narrative: string; let confirmation: string; let changed: boolean;
       if (ai?.confirmation) {
         narrative = ai.narrative; confirmation = ai.confirmation; changed = narrative !== currentDraft;
