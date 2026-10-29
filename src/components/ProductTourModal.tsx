@@ -45,7 +45,7 @@ const SLIDES = [
   {
     title: "One click. NFIU goAML XML. Filed.",
     caption:
-      "The goAML 3.x XML file the NFIU portal requires — generated automatically from the case data. No manual XML. No formatting errors. No missed deadlines.",
+      "A goAML-style XML draft your analyst reviews before filing. Validation against the current NFIU schema is in progress.",
     visual: "export",
   },
   {

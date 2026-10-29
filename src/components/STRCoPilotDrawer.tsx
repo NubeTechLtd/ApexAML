@@ -37,7 +37,7 @@ function generateDraft(alert: AlertData, isDemo = false): string {
     .join('\n');
 
   return `SUSPICIOUS TRANSACTION REPORT (STR)
-NFIU goAML Format — Draft
+goAML-style XML (draft)
 
 ═══════════════════════════════════════════
 
@@ -119,7 +119,7 @@ export function STRCoPilotDrawer({ open, onOpenChange, alert }: STRCoPilotDrawer
           {
             id: 1,
             role: 'assistant',
-            content: `I've drafted an STR for **${alert.customerName}** based on the ${alert.alertType} alert. The report follows NFIU goAML formatting. You can edit the draft directly or ask me to make changes.`,
+            content: `I've drafted an STR for **${alert.customerName}** based on the ${alert.alertType} alert. The report is prepared as goAML-style XML (draft). You can edit the draft directly or ask me to make changes.`,
             timestamp: new Date(),
           },
         ]);
@@ -209,7 +209,7 @@ export function STRCoPilotDrawer({ open, onOpenChange, alert }: STRCoPilotDrawer
               )}
               <Button size="sm" className="gap-1.5" onClick={handleExport} disabled={loading}>
                 <FileDown className="h-3.5 w-3.5" />
-                Export to NFIU goAML format
+                Export to goAML-style XML (draft)
               </Button>
             </div>
           </div>

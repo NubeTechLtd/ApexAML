@@ -56,7 +56,7 @@ const typologyTemplates: TypologyTemplate[] = [
   },
   {
     name: 'IMTO FX Settlement Violation',
-    desc: 'Fires Critical if settlementCurrency ≠ NGN. CBN 2025 directives require Naira-only settlement of IMTO payouts on Nigerian soil.',
+    desc: 'Fires Critical if settlementCurrency ≠ NGN. CBN Circular BSD/DIR/PUB/LAB/019/002 (10 March 2026) requires Naira-only settlement of IMTO payouts on Nigerian soil.',
     risk: 'Critical',
     category: 'IMTO',
     badge: 'Currency check',
