@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useZone } from "@/hooks/useZone";
 
 interface Props {
   open: boolean;
@@ -58,6 +59,13 @@ const SLIDES = [
 export function ProductTourModal({ open, onClose, onBookDemo }: Props) {
   const [i, setI] = useState(0);
   const navigate = useNavigate();
+  const zone = useZone();
+  const isDemo = zone === 'demo';
+  const draftingLabel = isDemo
+    ? 'STR drafting assistant · Sample narrative'
+    : zone === 'marketing'
+      ? 'AI-assisted STR drafting, reviewed by your analyst'
+      : 'AI STR Co-Pilot · Drafting narrative';
 
   useEffect(() => {
     if (!open) return;
@@ -111,15 +119,19 @@ export function ProductTourModal({ open, onClose, onBookDemo }: Props) {
         {/* Body */}
         <div className="px-6 md:px-10 pb-8">
           <h2 className="text-2xl md:text-3xl font-bold text-white mt-4 mb-6 leading-tight">
-            {slide.title}
+            {isDemo && slide.visual === 'copilot' ? 'Sample STR narrative for analyst review.' : slide.title}
           </h2>
 
           <div className="rounded-xl bg-slate-900 border border-white/10 p-5 md:p-6 mb-5 min-h-[280px]">
-            <SlideVisual kind={slide.visual} />
+            <SlideVisual kind={slide.visual} draftingLabel={draftingLabel} isDemo={isDemo} />
           </div>
 
           <p className="text-sm md:text-base text-white/70 leading-relaxed">
-            {slide.caption}
+            {isDemo && slide.visual === 'copilot'
+              ? 'The STR drafting assistant displays a pre-written sample narrative and canned refinement responses. In the live system, drafts are generated from the case\'s own data and reviewed by an analyst.'
+              : zone === 'marketing' && slide.visual === 'copilot'
+                ? "AI-assisted STR drafting from the case's own data, reviewed and edited by your analyst."
+                : slide.caption}
           </p>
 
           {isLast && (
@@ -186,7 +198,7 @@ export function ProductTourModal({ open, onClose, onBookDemo }: Props) {
   );
 }
 
-function SlideVisual({ kind }: { kind: string }) {
+function SlideVisual({ kind, draftingLabel, isDemo }: { kind: string; draftingLabel: string; isDemo: boolean }) {
   if (kind === "briefing") {
     return (
       <div className="space-y-3 text-left">
@@ -264,7 +276,7 @@ function SlideVisual({ kind }: { kind: string }) {
             <Sparkles className="h-3.5 w-3.5 text-[#D4A843]" />
           </div>
           <div className="text-white text-sm font-semibold">
-            AI STR Co-Pilot · Drafting narrative
+            {draftingLabel}
           </div>
           <span className="ml-auto text-[10px] text-emerald-400">11:24 elapsed</span>
         </div>
@@ -335,7 +347,7 @@ function SlideVisual({ kind }: { kind: string }) {
       {[
         { t: "08:04:12", who: "adaeze.o@bank", act: "Opened alert" },
         { t: "08:11:47", who: "adaeze.o@bank", act: "Added note · POS cluster verified" },
-        { t: "08:23:02", who: "system", act: "AI STR draft generated" },
+        { t: "08:23:02", who: "system", act: isDemo ? "Sample STR narrative displayed" : "AI STR draft generated" },
         { t: "08:34:19", who: "kunle.a@bank (MLRO)", act: "Approved STR" },
         { t: "08:35:00", who: "system", act: "goAML XML exported & filed" },
       ].map((row, idx) => (
