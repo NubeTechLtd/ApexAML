@@ -28,3 +28,4 @@
 - Demo entry at /demo calls the start-demo-session edge function (validated, honeypot, rate-limited) which writes leads + demo_sessions and sends the fixed internal alert; its returned id becomes the local demo store session.
 
 - Demo event notifications are triggered from successful demo audit appends and delivered only through a scoped session-token bridge; the server selects fixed fictional templates and the session recipient, with atomic per-session/address reservations. This prevents arbitrary email and tenant-data access.
+- STR/CTR XML exports take reporting-entity details from resolveExportEntity: live reads the versioned institution profile (saved only via the admin-gated save_institution_profile RPC) and blocks on missing required fields; demo uses fixed DEMO values. This keeps placeholders out of live files and ties each export audit entry to a profile version.
