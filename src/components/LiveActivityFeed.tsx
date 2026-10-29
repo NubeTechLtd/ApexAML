@@ -57,6 +57,7 @@ function nowTime(): string {
 
 export function LiveActivityFeed() {
   const navigate = useZoneNavigate();
+  const isDemo = useZone() === 'demo';
   const [entries, setEntries] = useState<FeedEntry[]>(INITIAL_ENTRIES);
   const pausedRef = useRef(false);
   const counterRef = useRef(0);
@@ -64,7 +65,8 @@ export function LiveActivityFeed() {
   useEffect(() => {
     const interval = setInterval(() => {
       if (pausedRef.current) return;
-      const tpl = TEMPLATES[Math.floor(Math.random() * TEMPLATES.length)];
+      const templates = TEMPLATES(isDemo);
+      const tpl = templates[Math.floor(Math.random() * templates.length)];
       const name = NAMES[Math.floor(Math.random() * NAMES.length)];
       counterRef.current += 1;
       const newEntry: FeedEntry = {
