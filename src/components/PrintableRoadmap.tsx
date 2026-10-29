@@ -707,7 +707,7 @@ export const PrintableRoadmap = forwardRef<HTMLDivElement, PrintableRoadmapProps
               items: [
                 'Transaction monitoring engine with Nigerian typology rule library',
                 'Case management with 4-eyes review and immutable audit trail',
-                'STR drafting + NFIU goAML XML export pipeline',
+                'STR drafting + goAML-style XML export pipeline',
                 'CTR aggregation and daily reporting automation',
                 'First independent internal-audit cycle',
               ],

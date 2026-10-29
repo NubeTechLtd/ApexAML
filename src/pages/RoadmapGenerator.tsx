@@ -187,7 +187,7 @@ PHASE 1 — FOUNDATION (Months 1-3)
 PHASE 2 — CORE IMPLEMENTATION (Months 4-9)
 - Transaction monitoring engine cut over with Nigerian typology rule library.
 - Case management workflow with 4-eyes review and immutable audit trail.
-- STR drafting and NFIU goAML XML export pipeline operational.
+- STR drafting and goAML-style XML export pipeline operational.
 - CTR aggregation and daily reporting automation.
 - First independent internal-audit cycle.${imtoBlock}
 
