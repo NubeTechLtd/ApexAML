@@ -40,7 +40,7 @@ const TIERS: Tier[] = [
       '100 BVN/NIN verification checks per month',
       'Sanctions screening — OFAC, UN, EU, NFIU domestic lists',
       'Transaction monitoring — 10 pre-built Nigerian typology rules',
-      'STR and CTR data generation in NFIU goAML format',
+      'STR and CTR data generation as goAML-style XML export',
       'Immutable audit trail — append-only, timestamped',
       'CBN roadmap template PDF — branded, submission-ready',
       'Email support — 48-hour response',
@@ -203,7 +203,7 @@ const PROGRAMMES: Programme[] = [
     idealFor: 'MFBs and small fintechs',
     deliverables: [
       'Historical customer BVN database import — up to 5,000 records',
-      'CBN roadmap alignment — platform configured to match your submitted June 2026 roadmap commitments',
+      'CBN roadmap alignment — platform configured to match your roadmap commitments and the phased implementation timelines set in the circular',
       '1-hour compliance team training session',
       'Signed CBN completion certificate on ApexAML letterhead',
     ],
@@ -241,7 +241,7 @@ const PROGRAMMES: Programme[] = [
     idealFor: 'IMTOs — WorldRemit, LemFi, Sendwave, Ria',
     deliverables: [
       'Everything in Growth Programme',
-      'Full IMTO Regulatory Pack configuration — all 6 CBN-specific rules calibrated to your transaction volumes',
+      'IMTO rule configuration for your transaction volumes during implementation',
       'Settlement account registry — populated with your full correspondent bank list',
       'Partner bank dashboard setup for up to 2 partner banks',
       'One full day onsite in Lagos or Abuja with your compliance, treasury, and IT teams',

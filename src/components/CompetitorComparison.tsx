@@ -15,7 +15,7 @@ const ROWS: Row[] = [
   { feature: "Time to go live", apex: { value: "Timeline agreed during scoping", marker: "check" }, autogon: { value: "4–6 weeks" } },
   { feature: "NFIU goAML XML export", apex: { value: "Confirmed", marker: "check" }, autogon: { value: "Not published" } },
   { feature: "AI STR narrative drafting", apex: { value: "AI-assisted, analyst-reviewed", marker: "check" }, autogon: { value: "Not available" } },
-  { feature: "IMTO Regulatory Pack (CBN IMTO §4.2)", apex: { value: "6 pre-built rules", marker: "check" }, autogon: { value: "Not available" } },
+  { feature: "IMTO Regulatory Pack (CBN IMTO §4.2)", apex: { value: "IMTO scenarios (demo); configured during the pilot", marker: "check" }, autogon: { value: "Not available" } },
   { feature: "Case management workspace", apex: { value: "Full workspace", marker: "check" }, autogon: { value: "Not published" } },
   { feature: "Explainable alert UI", apex: { value: "Plain-English typology cards", marker: "check" }, autogon: { value: "Not published" } },
   { feature: "Transparent public pricing", apex: { value: "Yes", marker: "check" }, autogon: { value: "Demo only" } },

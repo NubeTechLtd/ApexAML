@@ -173,7 +173,7 @@ export function ComparisonSection() {
         <p className="text-center text-[11px] text-muted-on-dark">
           All prices NGN.{" "}
           <span className="text-primary/80">
-            Founding-client pricing locked in while the CBN's 2025 draft standards for Automated AML Solutions are
+            Founding-client pricing locked in for institutions working through the phased implementation timelines set in
             finalised.
           </span>
         </p>

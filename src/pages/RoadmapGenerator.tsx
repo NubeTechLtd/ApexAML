@@ -73,14 +73,14 @@ const VOLUME_OPTIONS = ['Under 10,000', '10,000–100,000', '100,000–1,000,000
 function getDeadlineForType(type: string): { label: string; tone: 'amber' | 'green' } | null {
   if (!type) return null;
   if (type === 'Deposit Money Bank (DMB)') {
-    return { label: 'Your full compliance deadline: September 2027', tone: 'amber' };
+    return { label: 'Compliance timeline: phased implementation timelines set in the circular', tone: 'amber' };
   }
-  return { label: 'Your full compliance deadline: March 2028', tone: 'green' };
+  return { label: 'Compliance timeline: phased implementation timelines set in the circular', tone: 'green' };
 }
 
 function getDeadlinePlain(type: string): string {
-  if (type === 'Deposit Money Bank (DMB)') return 'September 2027';
-  return 'March 2028';
+  void type;
+  return 'Phased implementation timelines set in the circular';
 }
 
 const CAPABILITY_AREAS = [
@@ -132,7 +132,7 @@ const RoadmapGenerator = () => {
   const loadingStatuses = [
     `Analysing ${institutionName || 'your institution'}'s regulatory profile...`,
     `Mapping ${institutionType || 'your licence'} obligations to CBN Circular BSD/DIR/PUB/LAB/019/002...`,
-    'Calculating milestone schedule for your compliance deadline...',
+    'Calculating milestone schedule for your implementation timeline...',
     'Generating institution-specific implementation roadmap...',
     'Formatting for CBN submission standards...',
     `Preparing email dispatch to ${email || 'your inbox'}...`,
@@ -169,13 +169,13 @@ const RoadmapGenerator = () => {
 Prepared for: ${institutionName}
 Institution type: ${institutionType}
 Compliance Officer: ${contactName}, ${contactTitle}
-Full compliance deadline: ${deadline}
+Compliance timeline: ${deadline}
 
 EXECUTIVE SUMMARY
 ${institutionName} will implement a comprehensive AML/CFT control framework aligned to CBN Circular BSD/DIR/PUB/LAB/019/002 and the NFIU goAML reporting standard. Programme spans 24 months from initial submission and is sized for a monthly transaction volume of ${volume}. Current state: ${amlSetup}.
 
 REGULATORY CONTEXT
-The May 2026 CBN AML Circular requires every regulated institution to file an implementation roadmap and to reach full compliance by ${deadline}. ${institutionName} is regulated as a ${institutionType}.
+CBN Circular BSD/DIR/PUB/LAB/019/002, issued 10 March 2026, requires every regulated institution to file an implementation roadmap and to reach full compliance within the phased implementation timelines set in the circular. ${institutionName} is regulated as a ${institutionType}.
 
 PHASE 1 — FOUNDATION (Months 1-3)
 - Board-approved AML/CFT policy refresh; appointment letter for ${contactName}.
@@ -202,7 +202,7 @@ PHASE 4 — FULL COMPLIANCE CERTIFICATION (Months 18-24)
 - External audit attestation against CBN Circular BSD/DIR/PUB/LAB/019/002.
 - Full coverage demonstrated across all 10 CBN capability areas.
 - 5-year record-retention archive in place and documented.
-- Board sign-off and submission of full compliance certification to CBN before ${deadline}.
+- Board sign-off and submission of full compliance certification to CBN within the phased implementation timelines set in the circular.
 
 KEY RISKS AND MITIGATIONS
 - Data quality on legacy customer records — mitigated by a Phase 1 BVN/NIN remediation sprint.
@@ -350,7 +350,7 @@ Managing Director:                                    Signature: _______________
       }),
     [],
   );
-  const fullDeadline = institutionType ? getDeadlinePlain(institutionType) : 'March 2028';
+  const fullDeadline = institutionType ? getDeadlinePlain(institutionType) : 'Phased implementation timelines set in the circular';
   const isImto = /IMTO/i.test(institutionType);
   const fullDeadlineTone: 'amber' | 'green' =
     institutionType === 'Deposit Money Bank (DMB)' ? 'amber' : 'green';
@@ -511,7 +511,7 @@ Managing Director:                                    Signature: _______________
                       </span>
                       <p className="text-[13px] leading-relaxed text-foreground/90">
                         <span className="font-medium text-roadmap-warning">CBN Circular BSD/DIR/PUB/LAB/019/002</span> requires
-                        every regulated institution to submit an AML implementation roadmap and reach full compliance by its licence-specific deadline.
+                        every regulated institution to submit an AML implementation roadmap and reach full compliance within the phased implementation timelines set in the circular.
                       </p>
                     </div>
 
@@ -576,7 +576,7 @@ Managing Director:                                    Signature: _______________
                     <div className="flex flex-wrap gap-2">
                       {[
                         'CBN circular aligned',
-                        'NFIU goAML format',
+                        'goAML-style XML export',
                         'NDPR compliant',
                         'Hosted on Supabase (AWS Ireland, eu-west-1), encrypted in transit and at rest. Data residency in Nigeria is not currently offered. Contact us about your requirements.',
                         'Free — no account required',
@@ -923,7 +923,7 @@ Managing Director:                                    Signature: _______________
                           }
                         >
                           <CalendarClock className="h-3 w-3" />
-                          Full compliance deadline: {fullDeadline}
+                          Compliance timeline: {fullDeadline}
                         </span>
                       </div>
                     </Card>
@@ -942,7 +942,7 @@ Managing Director:                                    Signature: _______________
                         <Info className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                         <div className="space-y-1">
                           <p className="text-[13px] font-semibold text-foreground">
-                            IMTO Regulatory Pack included
+                            IMTO monitoring scenarios included in the walkthrough
                           </p>
                           <p className="text-[12px] text-foreground/80 leading-relaxed">
                             This roadmap covers the $200 cash-limit structuring rule, inbound-only and
