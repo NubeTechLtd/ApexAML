@@ -16,7 +16,8 @@ import { generateGoAMLXmlFromLegacy, downloadXmlFile } from '@/lib/generateGoAML
 import { resolveExportEntity, missingFieldsMessage } from '@/data-layer/exportEntity';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useZone } from '@/hooks/useZone';
-import { DemoSampleLabel, DEMO_SAMPLE_LABEL } from '@/components/DemoSampleLabel';
+import { DemoSampleLabel, DEMO_SAMPLE_LABEL, DEMO_LIVE_AI_LABEL, DEMO_FALLBACK_LABEL, DEMO_AI_LIMIT_MESSAGE } from '@/components/DemoSampleLabel';
+import { BookDemoSheet } from '@/components/landing/BookDemoSheet';
 
 interface ChatMessage {
   id: number;
@@ -246,6 +247,7 @@ export function STRCoPilotDrawer({ open, onOpenChange, alert }: STRCoPilotDrawer
   };
 
   return (
+    <>
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="w-full sm:max-w-4xl p-0 flex flex-col">
         <SheetHeader className="px-6 py-4 border-b bg-card shrink-0">
@@ -262,7 +264,7 @@ export function STRCoPilotDrawer({ open, onOpenChange, alert }: STRCoPilotDrawer
               </div>
             </div>
             <div className="flex items-center gap-2">
-              {!loading && isDemo && <DemoSampleLabel />}
+              {!loading && isDemo && <DemoSampleLabel source={draftSource} />}
               {!loading && (
                 <Badge variant="outline" className="text-[10px] gap-1">
                   <CheckCircle2 className="h-3 w-3 text-[hsl(var(--risk-low))]" />
@@ -316,6 +318,14 @@ export function STRCoPilotDrawer({ open, onOpenChange, alert }: STRCoPilotDrawer
                 </span>
                 <Badge variant="outline" className="text-[9px]">Editable</Badge>
               </div>
+              {isDemo && limitReached && (
+                <div role="status" className="px-4 py-2 border-b bg-muted/50 flex items-center justify-between gap-3 shrink-0">
+                  <span className="text-xs text-foreground">{DEMO_AI_LIMIT_MESSAGE}</span>
+                  <Button size="sm" variant="outline" className="h-7 text-xs shrink-0" onClick={() => setBookOpen(true)}>
+                    Book a walkthrough
+                  </Button>
+                </div>
+              )}
               <div className="flex-1 min-h-0">
                 <textarea
                   value={draft}
@@ -416,5 +426,7 @@ export function STRCoPilotDrawer({ open, onOpenChange, alert }: STRCoPilotDrawer
         )}
       </SheetContent>
     </Sheet>
+    {isDemo && <BookDemoSheet open={bookOpen} onOpenChange={setBookOpen} />}
+    </>
   );
 }
