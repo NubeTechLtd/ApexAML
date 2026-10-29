@@ -37,7 +37,7 @@ const SLIDES = [
     visual: "alert",
   },
   {
-    title: "STR drafted in 11 minutes. Not 3 hours.",
+    title: "AI-assisted STR drafting, reviewed by your analyst.",
     caption:
       "The AI co-pilot reads the transaction data, the customer history, and the typology context — then drafts the complete NFIU report. Your analyst reviews and approves.",
     visual: "copilot",

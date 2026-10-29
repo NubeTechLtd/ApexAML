@@ -1,5 +1,10 @@
 # Roadmap
 
+## Honest early-stage marketing
+- [x] Listed all five attributed public testimonials before removing them; no named identity/sanctions vendor verified live. Existing first-party sanctions screening distinguished from designed vendor integrations.
+- [x] Removed all five testimonials, initials/ratings and unverified press strip; replaced social proof with factual CBN/UK/integration content and /contact pilot CTA. Removed unsupported speed claims in landing, pricing, comparisons, roadmap, product tour and case hint.
+- [x] Shared editable illustrative STR assumptions across both calculators and InnovationStory (60 manual minutes, 45 assisted minutes including review, 20 STRs/month); removed assumed fine avoidance and payroll-savings promises. Thirteen tests passed; browser verified shared edits, calculation readback, tour wording and pilot link with no runtime errors; build OK. AIMockUI untouched.
+
 ## Live tenant isolation suite
 - [x] Created two temporary Auth users and rollback-only institutions A/B; 458 live attempts passed across all 18 directly/indirectly tenant-scoped tables, both cross-tenant directions, anon, own-tenant controls, and audit mutation roles including service_role and postgres. Three local regression checks passed. Fixtures rolled back, both accounts deleted, temporary provisioning endpoint removed; per-attempt CSV and Markdown delivered. Storage and HTTP/session flows are outside this database-only suite.
 
@@ -61,7 +66,7 @@
 - [x] "Generative AI" / "fine-tuned" / "ApexAML-trained" / "examiner-ready" / "examiner-defensible" rewritten to describe only what is built.
 - [x] Unbuilt audit claims removed: SHA-256 / cryptographic sealing wording, fabricated hash strings in SystemAudit and the product tour, "one-click sealed PDF examiner pack", "examiner-ready exports in two clicks", "cryptographic proof of compliance" in the engine timeline.
 - [ ] Flagged, not changed: InnovationStory "14 Nigerian typologies out of the box ... with CBN model validation documentation" (14 rules do ship; the validation-documentation claim is unverified).
-- [ ] Flagged, not changed: hero speed claims "45-minute investigations, now in 3 minutes", "5 days — time to go live", "45% cheaper in year one".
+- [x] Removed hero speed claims "45-minute investigations, now in 3 minutes", "5 days — time to go live", "45% cheaper in year one" during the honest early-stage marketing correction.
 
 ## CTA wording + pilot FAQ
 - [x] Hero, StickyComplianceBar, ExitIntentModal and BookDemoSheet use "Book a 30-minute walkthrough" with "Then run a 30-45 day pilot on your own data".

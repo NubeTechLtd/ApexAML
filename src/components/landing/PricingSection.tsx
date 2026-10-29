@@ -89,7 +89,7 @@ const TIERS: Tier[] = [
     features: ['Everything in Starter'],
     highlightFeatures: [
       '600 BVN/NIN verification checks per month',
-      'AI STR Co-Pilot — from 3 hours to 11 minutes per report',
+      'AI-assisted STR drafting — reviewed and edited by an analyst',
       'Adverse media scanner — Nigerian press sources included',
       'No-code rule sandbox — test before deploying',
       'CBN model validation KPI reporting',
@@ -176,7 +176,7 @@ const SERVICES = [
   {
     name: 'Onboarding & Integration',
     price: 'From ₦100,000 one-time',
-    desc: 'API setup, rule config, and team walkthrough in 5 business days.',
+    desc: 'API setup, rule configuration and team walkthrough — timeline agreed during scoping.',
     cta: 'Enquire',
   },
   {
@@ -318,7 +318,7 @@ export function PricingSection({ onBookDemo }: Props) {
             One plan for every regulated institution
           </h2>
           <p className="text-muted-on-dark text-sm">
-            Less than the cost of a single compliance analyst — without the hiring, training, or attrition risk.
+            Choose a subscription for your institution’s scope and review the implementation programme separately.
           </p>
         </div>
 
@@ -569,7 +569,7 @@ export function PricingSection({ onBookDemo }: Props) {
             <div className="max-w-3xl mx-auto flex items-start gap-3 rounded-lg border-l-2 border-l-primary border border-primary/20 bg-primary/[0.06] px-4 py-3">
               <Info className="h-4 w-4 text-primary shrink-0 mt-0.5" />
               <p className="text-[12.5px] text-white/75 leading-relaxed">
-                The onboarding fee gets the platform live in 5 days. The Implementation Programme configures it specifically to your institution, integrates it with your existing systems, and documents it for your CBN examination file.
+                The onboarding scope and timeline are agreed during your walkthrough. The Implementation Programme configures it specifically to your institution, integrates it with your existing systems, and documents it for your CBN examination file.
               </p>
             </div>
 
@@ -609,7 +609,7 @@ export function PricingSection({ onBookDemo }: Props) {
             </div>
 
             <p className="text-center text-[12px] text-muted-on-dark max-w-3xl mx-auto leading-relaxed pt-2">
-              For comparison: Autogon AI charges ₦31,600,000 for setup alone. Our IMTO Programme at ₦12,000,000 delivers faster implementation, more documentation, and a named onsite session.
+              For comparison: Autogon AI charges ₦31,600,000 for setup alone. Our IMTO Programme at ₦12,000,000 includes scoped implementation, documentation, and a named onsite session.
             </p>
 
             <div className="flex justify-center pt-2">
