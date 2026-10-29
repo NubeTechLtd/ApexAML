@@ -68,6 +68,7 @@ async function callGenerate(key: string, c: Case) {
   const data = await res.json();
   const narrative = data?.choices?.[0]?.message?.content?.trim() ?? '';
   if (!narrative) return { error: 'AI returned an empty narrative', status: 502 };
+  if (!checkGenerate(narrative)) console.warn('demo generate output rejected', JSON.stringify({ finish: data?.choices?.[0]?.finish_reason, words: narrative.split(/\s+/).length, chars: narrative.length, usage: data?.usage }));
   return checkGenerate(narrative) ? { narrative } : { error: 'AI output did not look like a narrative', status: 502, invalid: true };
 }
 
@@ -121,8 +122,9 @@ ${message}
     const r = JSON.parse(text);
     const narrative = String(r.narrative ?? '').trim(); const confirmation = String(r.confirmation ?? '').trim();
     if (!narrative || !confirmation) return { error: 'AI returned an incomplete refinement', status: 502 };
+    if (!checkRefine(narrative, confirmation)) console.warn('demo refine output rejected', JSON.stringify({ words: narrative.split(/\s+/).length, chars: narrative.length, confChars: confirmation.length }));
     return checkRefine(narrative, confirmation) ? { narrative, confirmation } : { error: 'AI output did not look like a narrative', status: 502, invalid: true };
-  } catch { return { error: 'AI returned malformed output', status: 502 }; }
+  } catch { console.warn('demo refine output unparseable', JSON.stringify({ chars: text.length })); return { error: 'AI returned malformed output', status: 502 }; }
 }
 
 Deno.serve(async (req) => {
