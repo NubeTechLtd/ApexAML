@@ -2,18 +2,11 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { z } from 'npm:zod@3';
 import { authorizeCustomer } from '../_shared/tenant-access.ts';
+import { STR_GENERATE_SYSTEM_PROMPT } from '../_shared/str-prompts.ts';
 
 const BodySchema = z.object({ alert_id: z.string().uuid() });
 
-const SYSTEM_PROMPT = `You are a Nigerian AML compliance analyst drafting Suspicious Transaction Report (STR) narratives for filing with the NFIU under the Money Laundering (Prevention and Prohibition) Act and CBN AML/CFT Regulations.
-
-Write a single dense paragraph (150-220 words), third person, formal regulatory register. Style rules:
-- Open with "The subject, <full name>, a <KYC tier> account holder, ...".
-- State the typology precisely (structuring, pass-through/layering, phantom payroll, round-tripping, cross-border commingling, ATO fraud, etc.).
-- Cite concrete figures with the naira symbol (e.g. ₦142,000), exact timing windows in WAT, channels (POS, USSD, IMTO cash payout, agent banking), counterparties and Lagos/Nigerian agent locations where present in the data.
-- Reference behavioural red flags as evidence, not as a list.
-- Close with the control action taken or recommended, pending NFIU guidance.
-Return only the narrative prose — no headings, bullet points, or preamble.`;
+const SYSTEM_PROMPT = STR_GENERATE_SYSTEM_PROMPT;
 
 function fmt(n: number) {
   return `₦${new Intl.NumberFormat('en-NG', { maximumFractionDigits: 0 }).format(n)}`;
