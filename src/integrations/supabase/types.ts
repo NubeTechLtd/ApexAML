@@ -372,6 +372,38 @@ export type Database = {
           },
         ]
       }
+      demo_ai_calls: {
+        Row: {
+          created_at: string
+          id: string
+          ip_hash: string
+          mode: string
+          session_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ip_hash: string
+          mode: string
+          session_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ip_hash?: string
+          mode?: string
+          session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "demo_ai_calls_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "demo_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       demo_notification_events: {
         Row: {
           created_at: string
@@ -2023,6 +2055,10 @@ export type Database = {
           _trigger_type: string
         }
         Returns: undefined
+      }
+      reserve_demo_ai_call: {
+        Args: { _ip_hash: string; _mode: string; _session_id: string }
+        Returns: Json
       }
       reserve_demo_notification: {
         Args: { _event_id: string; _session_id: string; _type: string }
