@@ -19,20 +19,37 @@ function casePayload(a: Alert) {
   };
 }
 
-async function call(body: Record<string, unknown>): Promise<{ narrative: string; confirmation?: string } | null> {
+/** Abort the request after this long so the demo falls back instead of stalling. */
+export const DEMO_AI_TIMEOUT_MS = 25_000;
+
+/** Reservation reasons returned when the per-session or per-IP daily cap is used up. */
+const LIMIT_REASONS = new Set(['session_limit', 'ip_daily_limit']);
+
+export type DemoAiResult =
+  | { ok: true; narrative: string; confirmation?: string }
+  | { ok: false; limited: boolean };
+
+async function call(body: Record<string, unknown>): Promise<DemoAiResult> {
   const credentials = getDemoNotificationCredentials();
-  if (!credentials) return null;
+  if (!credentials) return { ok: false, limited: false };
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), DEMO_AI_TIMEOUT_MS);
   try {
     const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/demo-str-narrative`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY, 'x-demo-token': credentials.token },
       body: JSON.stringify({ sessionId: credentials.id, ...body }),
+      signal: controller.signal,
     });
-    if (!res.ok) return null;
-    const data = await res.json();
-    return typeof data?.narrative === 'string' && data.narrative.trim() ? data : null;
+    const data = await res.json().catch(() => null);
+    if (!res.ok) return { ok: false, limited: res.status === 429 && LIMIT_REASONS.has(data?.reason) };
+    return typeof data?.narrative === 'string' && data.narrative.trim()
+      ? { ok: true, narrative: data.narrative, confirmation: data.confirmation }
+      : { ok: false, limited: false };
   } catch {
-    return null;
+    return { ok: false, limited: false };
+  } finally {
+    clearTimeout(timer);
   }
 }
 
