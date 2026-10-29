@@ -69,9 +69,9 @@ const DEMO_STEPS: DemoStep[] = [
     action: "Click 'View Customer Profile' in the alert panel →",
   },
   {
-    title: 'The co-pilot drafts. You do the reviewing.',
+    title: 'The assistant drafts. You do the reviewing.',
     description:
-      "Click 'Show sample investigation report' to see a pre-written sample STR for this fictional case. In the live system, drafts are generated from the case's own data and reviewed by an analyst.",
+      "Click 'Show sample investigation report' to see a pre-written sample STR for this fictional case (sample output in this demo). In the live system, drafts are generated from the case's own data and reviewed by an analyst.",
     action: "Click 'Show sample investigation report' →",
   },
   {
