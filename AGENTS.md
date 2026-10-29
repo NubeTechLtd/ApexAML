@@ -29,3 +29,4 @@
 
 - Demo event notifications are triggered from successful demo audit appends and delivered only through a scoped session-token bridge; the server selects fixed fictional templates and the session recipient, with atomic per-session/address reservations. This prevents arbitrary email and tenant-data access.
 - STR/CTR XML exports take reporting-entity details from resolveExportEntity: live reads the versioned institution profile (saved only via the admin-gated save_institution_profile RPC) and blocks on missing required fields; demo uses fixed DEMO values. This keeps placeholders out of live files and ties each export audit entry to a profile version.
+- Demo STR drafting calls demo-str-narrative with the fictional case and the demo session token; shared system prompts live in _shared/str-prompts.ts, a service-only reserve RPC enforces per-session and per-IP daily caps, and any failure falls back to labelled pre-written text so the demo never stalls.
