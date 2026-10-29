@@ -150,7 +150,7 @@ Deno.serve(async (req) => {
     if (reserved.notify_threshold) {
       const day = new Date().toISOString().slice(0, 10);
       sendTemplateEmail('demo-ai-capacity-alert', 'adetokunboogun@gmail.com', {
-        idempotencyKey: `demo-ai-capacity-alert-${day}`,
+        idempotencyKey: `demo-ai-capacity-alert-${day}-${reserved.daily_cap}`,
         templateData: { usedToday: reserved.used_today, dailyCap: reserved.daily_cap, day },
       }).catch((e) => console.error('demo AI capacity alert failed', e instanceof Error ? e.message : 'unknown'));
     }
