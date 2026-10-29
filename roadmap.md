@@ -83,4 +83,4 @@
 - [x] Twenty automated checks pass; browser escalation and persisted inbox verified; rollback-only live quota/deduplication checks passed. One email dispatch and matching template HTML verified; test session removed. Managed suppression handling retained, but no address was unsubscribed during testing. Inbox mirrors submitted template HTML; the provider-added unsubscribe footer is not part of that HTML.
 
 ## Zone-specific STR wording
-- [ ] Match case hints and tour wording to demo samples, marketing AI-assisted drafting, and unchanged live wording; verify demo implementation and inventory remaining AI terminology.
+- [x] Matched case hints and tour wording to demo samples, marketing AI-assisted drafting, and unchanged live wording; browser verified all three. Demo uses pre-written seed narratives and deterministic local refinements, not model calls. Ten routing/isolation checks passed; delivered the remaining-reference inventory.
