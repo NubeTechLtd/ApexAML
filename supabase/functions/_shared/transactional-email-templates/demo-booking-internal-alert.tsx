@@ -83,7 +83,7 @@ export const template = {
     role: 'Head of Compliance',
     email: 'ada@example.com',
     whatsapp: '+2348012345678',
-    focusAreas: 'STR co-pilot and NFIU goAML export',
+    focusAreas: 'STR drafting assistant and NFIU goAML export',
     slotLabel: 'Tuesday, 14 July 2026 at 2:00 PM WAT',
     requestId: '00000000-0000-0000-0000-000000000000',
   },
