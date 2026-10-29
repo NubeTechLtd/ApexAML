@@ -456,6 +456,7 @@ export const liveProvider: DataProvider = {
       const { error } = await supabase.from('audit_log').insert({
         user_id: user.id, institution_id: institutionId, user_name: analyst, action: entry.action,
         resource: entry.caseId, justification: entry.justification, status: entry.status ?? 'success',
+        ...(entry.metadata ? { metadata: entry.metadata as never } : {}),
       });
       if (error) throw error;
     },
@@ -469,6 +470,38 @@ export const liveProvider: DataProvider = {
         listener.subscription.unsubscribe();
         void supabase.removeChannel(channel);
       };
+    },
+  },
+
+  institutionProfile: {
+    async get() {
+      const { data: auth } = await supabase.auth.getUser();
+      if (!auth.user) return { institutionId: null, profile: null, canEdit: false };
+      const institutionId = await getCurrentInstitutionId();
+      const [{ data: membership }, { data: row, error }] = await Promise.all([
+        supabase.from('user_institutions').select('role').eq('user_id', auth.user.id).eq('institution_id', institutionId).maybeSingle(),
+        supabase.from('institution_profiles').select('*').eq('institution_id', institutionId).maybeSingle(),
+      ]);
+      if (error) throw error;
+      return {
+        institutionId,
+        canEdit: membership?.role === 'institution_admin',
+        profile: row ? {
+          legalName: row.legal_name, cbnLicenceNumber: row.cbn_licence_number, goamlEntityId: row.goaml_entity_id,
+          address: row.address, mlroName: row.mlro_name, contactEmail: row.contact_email, contactPhone: row.contact_phone,
+          version: row.version,
+        } : null,
+      };
+    },
+    async save(e) {
+      const institutionId = await getCurrentInstitutionId();
+      const { data, error } = await supabase.rpc('save_institution_profile', {
+        _institution_id: institutionId, _legal_name: e.legalName, _cbn_licence_number: e.cbnLicenceNumber,
+        _goaml_entity_id: e.goamlEntityId, _address: e.address, _mlro_name: e.mlroName,
+        _contact_email: e.contactEmail, _contact_phone: e.contactPhone,
+      });
+      if (error) throw error;
+      return data as number;
     },
   },
 

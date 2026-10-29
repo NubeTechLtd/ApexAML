@@ -3,6 +3,7 @@
  * memory and localStorage. It must never import the backend client or call
  * edge functions.
  */
+import { DEMO_REPORTING_ENTITY } from '@/lib/reportingEntity';
 import { notifyDemoAudit } from '../demoNotifications';
 import { generateNotifications } from '@/hooks/useNotifications';
 import { demoId, onCollectionChange, readCollection, wait, writeCollection } from '../demoStore';
@@ -362,6 +363,11 @@ export const demoProvider: DataProvider = {
       if (entry.status !== 'denied') notifyDemoAudit(entry.action, entry.justification);
     },
     subscribe: (fn) => onCollectionChange('audit_log', fn),
+  },
+
+  institutionProfile: {
+    get: async () => ({ institutionId: DEMO_INSTITUTION_ID, profile: DEMO_REPORTING_ENTITY, canEdit: false }),
+    save: async () => { throw new Error('The institution profile cannot be edited in the sample workspace.'); },
   },
 
   platform: {
