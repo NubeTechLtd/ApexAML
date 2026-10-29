@@ -1,5 +1,7 @@
 import type { Database } from '@/integrations/supabase/types';
 
+import { draftStatusXml, reportingEntityXml, type ReportingEntity } from './reportingEntity';
+
 type CTRRow = Database['public']['Tables']['ctr_queue']['Row'];
 
 function escapeXml(str: string): string {
@@ -40,7 +42,7 @@ interface TxnLine {
 /**
  * Generate a CBN/NFIU goAML 3.x compliant Currency Transaction Report XML.
  */
-export function generateCtrXml(row: CTRRow, transactions: TxnLine[], reference: string): string {
+export function generateCtrXml(row: CTRRow, transactions: TxnLine[], reference: string, entity: ReportingEntity, label: string): string {
   const today = new Date().toISOString().split('T')[0];
   const txLines = transactions.map(tx => `      <Transaction>
         <TransactionID>${escapeXml(tx.transaction_id)}</TransactionID>
@@ -54,7 +56,7 @@ export function generateCtrXml(row: CTRRow, transactions: TxnLine[], reference: 
       </Transaction>`).join('\n');
 
   return `<?xml version="1.0" encoding="UTF-8"?>
-<CTRReport xmlns="urn:nfiu:goaml:3.0" version="3.0">
+${draftStatusXml(label)}<CTRReport xmlns="urn:nfiu:goaml:3.0" version="3.0">
   <ReportHeader>
     <ReportType>CTR</ReportType>
     <ReportCode>${escapeXml(reference)}</ReportCode>
@@ -64,11 +66,7 @@ export function generateCtrXml(row: CTRRow, transactions: TxnLine[], reference: 
     <ThresholdNGN>5000000</ThresholdNGN>
     <CBNCircularReference>BSD/DIR/PUB/LAB/019/002</CBNCircularReference>
   </ReportHeader>
-  <ReportingEntity>
-    <EntityType>BANK</EntityType>
-    <EntityName>ApexAML Financial Institution</EntityName>
-    <RCNumber>RC-123456</RCNumber>
-  </ReportingEntity>
+${reportingEntityXml(entity, label)}
   <SubjectInformation>
     <FullName>${escapeXml(row.customer_name ?? row.customer_id)}</FullName>
     <NUBAN>${escapeXml(row.customer_id)}</NUBAN>

@@ -1,5 +1,6 @@
 import type { Alert } from '@/data/models/alerts';
 import type { AlertData } from '@/data/models/legacyAlerts';
+import { draftStatusXml, reportingEntityXml, type ReportingEntity } from './reportingEntity';
 
 function escapeXml(str: string): string {
   return str
@@ -17,7 +18,7 @@ function formatDate(date: Date): string {
 /**
  * Generate goAML 3.x compliant XML for an Alert (AlertWorkspace alerts).
  */
-export function generateGoAMLXml(alert: Alert, strDraft: string): string {
+export function generateGoAMLXml(alert: Alert, strDraft: string, entity: ReportingEntity, label: string): string {
   const today = formatDate(new Date());
   const p = alert.customerProfile;
 
@@ -44,17 +45,13 @@ export function generateGoAMLXml(alert: Alert, strDraft: string): string {
     : '  <CrossBorderFlag>false</CrossBorderFlag>\n';
 
   return `<?xml version="1.0" encoding="UTF-8"?>
-<STRReport xmlns="urn:nfiu:goaml:3.0" version="3.0">
+${draftStatusXml(label)}<STRReport xmlns="urn:nfiu:goaml:3.0" version="3.0">
   <ReportHeader>
     <ReportCode>${escapeXml(alert.caseId)}</ReportCode>
     <ReportingDate>${today}</ReportingDate>
     <Currency>NGN</Currency>
   </ReportHeader>
-${crossBorderBlock}  <ReportingEntity>
-    <EntityType>BANK</EntityType>
-    <EntityName>ApexAML Financial Institution</EntityName>
-    <RCNumber>RC-123456</RCNumber>
-  </ReportingEntity>
+${crossBorderBlock}${reportingEntityXml(entity, label)}
   <SubjectInformation>
     <FullName>${escapeXml(p.fullName)}</FullName>
     <BVN>${escapeXml(p.bvn)}</BVN>
@@ -72,7 +69,7 @@ ${txLines}
 /**
  * Generate goAML 3.x compliant XML for a legacy AlertData (STR Co-Pilot).
  */
-export function generateGoAMLXmlFromLegacy(alert: AlertData, strDraft: string): string {
+export function generateGoAMLXmlFromLegacy(alert: AlertData, strDraft: string, entity: ReportingEntity, label: string): string {
   const today = formatDate(new Date());
 
   const txLines = alert.transactionTimeline.map(tx =>
@@ -86,17 +83,13 @@ export function generateGoAMLXmlFromLegacy(alert: AlertData, strDraft: string): 
   ).join('\n');
 
   return `<?xml version="1.0" encoding="UTF-8"?>
-<STRReport xmlns="urn:nfiu:goaml:3.0" version="3.0">
+${draftStatusXml(label)}<STRReport xmlns="urn:nfiu:goaml:3.0" version="3.0">
   <ReportHeader>
     <ReportCode>${escapeXml(alert.id)}</ReportCode>
     <ReportingDate>${today}</ReportingDate>
     <Currency>NGN</Currency>
   </ReportHeader>
-  <ReportingEntity>
-    <EntityType>BANK</EntityType>
-    <EntityName>ApexAML Financial Institution</EntityName>
-    <RCNumber>RC-123456</RCNumber>
-  </ReportingEntity>
+${reportingEntityXml(entity, label)}
   <SubjectInformation>
     <FullName>${escapeXml(alert.customerName)}</FullName>
     <BVN>${escapeXml(alert.bvn)}</BVN>
