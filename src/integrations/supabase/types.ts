@@ -714,6 +714,91 @@ export type Database = {
         }
         Relationships: []
       }
+      institution_profile_versions: {
+        Row: {
+          changed_by: string
+          created_at: string
+          id: string
+          institution_id: string
+          snapshot: Json
+          version: number
+        }
+        Insert: {
+          changed_by: string
+          created_at?: string
+          id?: string
+          institution_id: string
+          snapshot: Json
+          version: number
+        }
+        Update: {
+          changed_by?: string
+          created_at?: string
+          id?: string
+          institution_id?: string
+          snapshot?: Json
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "institution_profile_versions_institution_id_fkey"
+            columns: ["institution_id"]
+            isOneToOne: false
+            referencedRelation: "institutions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      institution_profiles: {
+        Row: {
+          address: string
+          cbn_licence_number: string
+          contact_email: string
+          contact_phone: string
+          goaml_entity_id: string
+          institution_id: string
+          legal_name: string
+          mlro_name: string
+          updated_at: string
+          updated_by: string | null
+          version: number
+        }
+        Insert: {
+          address?: string
+          cbn_licence_number?: string
+          contact_email?: string
+          contact_phone?: string
+          goaml_entity_id?: string
+          institution_id: string
+          legal_name?: string
+          mlro_name?: string
+          updated_at?: string
+          updated_by?: string | null
+          version?: number
+        }
+        Update: {
+          address?: string
+          cbn_licence_number?: string
+          contact_email?: string
+          contact_phone?: string
+          goaml_entity_id?: string
+          institution_id?: string
+          legal_name?: string
+          mlro_name?: string
+          updated_at?: string
+          updated_by?: string | null
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "institution_profiles_institution_id_fkey"
+            columns: ["institution_id"]
+            isOneToOne: true
+            referencedRelation: "institutions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       institution_webhook_secrets: {
         Row: {
           active: boolean
@@ -1942,6 +2027,19 @@ export type Database = {
       reserve_demo_notification: {
         Args: { _event_id: string; _session_id: string; _type: string }
         Returns: Json
+      }
+      save_institution_profile: {
+        Args: {
+          _address: string
+          _cbn_licence_number: string
+          _contact_email: string
+          _contact_phone: string
+          _goaml_entity_id: string
+          _institution_id: string
+          _legal_name: string
+          _mlro_name: string
+        }
+        Returns: number
       }
       screen_entity: {
         Args: { search_name: string; threshold?: number }
