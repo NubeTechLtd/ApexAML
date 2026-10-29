@@ -10,6 +10,14 @@ import type { ManagedAccount } from '@/data/models/settlement';
 import type { Rule } from '@/components/RulesTable';
 import type { AppNotification } from '@/hooks/useNotifications';
 
+import type { ReportingEntity } from '@/lib/reportingEntity';
+
+export interface InstitutionProfileSnapshot {
+  institutionId: string | null;
+  profile: ReportingEntity | null;
+  canEdit: boolean;
+}
+
 export type ProviderKind = 'demo' | 'live';
 
 /* ── Alerts, customers, transactions ─────────────────── */
@@ -202,6 +210,7 @@ export interface AuditEntry {
   status?: 'success' | 'denied';
   userId?: string | null;
   institutionId?: string;
+  metadata?: Record<string, unknown>;
 }
 
 export interface AuditChainResult {
@@ -278,6 +287,11 @@ export interface DataProvider {
     load(): Promise<AuditSnapshot>;
     append(entry: Omit<AuditEntry, 'timestamp'>): Promise<void>;
     subscribe(onChange: () => void): Unsubscribe;
+  };
+  institutionProfile: {
+    /** Profile for the caller's institution, plus whether the caller may edit it. */
+    get(): Promise<InstitutionProfileSnapshot>;
+    save(entity: Omit<ReportingEntity, 'version'>): Promise<number>;
   };
   platform: {
     isPlatformStaff(): Promise<boolean>;

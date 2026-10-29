@@ -16,6 +16,7 @@ import SystemAudit from "./pages/SystemAudit.tsx";
 import Customers from "./pages/Customers.tsx";
 import Customer360 from "./pages/Customer360.tsx";
 import AlertWorkspace from "./pages/AlertWorkspace.tsx";
+import InstitutionProfileSettings from "./pages/InstitutionProfileSettings.tsx";
 import SanctionsScreening from "./pages/SanctionsScreening.tsx";
 import LandingPage from "./pages/LandingPage.tsx";
 import Privacy from "./pages/Privacy.tsx";
@@ -83,6 +84,7 @@ const App = () => (
               <Route path="inbox" element={<DemoInbox />} />
               <Route path="alerts" element={<Index />} />
               <Route path="workspace" element={<AlertWorkspace />} />
+                <Route path="settings" element={<InstitutionProfileSettings />} />
               <Route path="rules" element={<RulesEngine />} />
               <Route path="reports/cbn" element={<RegulatoryReports />} />
               <Route path="reports/nfiu" element={<RegulatoryReports />} />

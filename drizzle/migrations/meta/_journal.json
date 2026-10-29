@@ -127,6 +127,13 @@
       "when": 1793221435212,
       "tag": "0017_demo_notification_limits",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1793263678105,
+      "tag": "0018_institution_reporting_profiles",
+      "breakpoints": true
     }
   ]
 }
