@@ -23,6 +23,7 @@ interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
+  source?: 'live_ai' | 'fallback';
 }
 
 function formatCurrency(amount: number) {
@@ -151,10 +152,10 @@ export function STRCoPilotDrawer({ open, onOpenChange, alert }: STRCoPilotDrawer
       .then((result) => {
         const changed = result.narrative !== before;
         setDraft(result.narrative);
-        setChatMessages((prev) => [...prev, { id: Date.now(), role: 'assistant', content: result.confirmation, timestamp: new Date() }]);
+        setChatMessages((prev) => [...prev, { id: Date.now(), role: 'assistant', content: result.confirmation, timestamp: new Date(), source: result.source === 'live_ai' ? 'live_ai' : 'fallback' }]);
         if (changed) {
           setEditVersion((v) => v + 1);
-          void append({ action: 'STR_EDIT', analyst: '', caseId: alert.id, justification: isDemo ? `STR draft edited (sample assistant): "${input.slice(0, 120)}"` : `STR draft edited by co-pilot: "${input.slice(0, 120)}"` });
+          void append({ action: 'STR_EDIT', analyst: '', caseId: alert.id, justification: isDemo ? `STR draft edited (${result.source === 'live_ai' ? 'live AI on synthetic data' : 'sample assistant'}): "${input.slice(0, 120)}"` : `STR draft edited by co-pilot: "${input.slice(0, 120)}"` });
         }
       })
       .catch(() => {
@@ -309,7 +310,7 @@ export function STRCoPilotDrawer({ open, onOpenChange, alert }: STRCoPilotDrawer
                         >
                           {msg.content}
                           {isDemo && msg.role === 'assistant' && (
-                            <div className="mt-1.5"><DemoSampleLabel /></div>
+                            <div className="mt-1.5"><DemoSampleLabel source={msg.source} /></div>
                           )}
                         </div>
                       </motion.div>
