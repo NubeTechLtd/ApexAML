@@ -22,12 +22,15 @@ function casePayload(a: Alert) {
 /** Abort the request after this long so the demo falls back instead of stalling. */
 export const DEMO_AI_TIMEOUT_MS = 25_000;
 
-/** Reservation reasons returned when the per-session or per-IP daily cap is used up. */
-const LIMIT_REASONS = new Set(['session_limit', 'ip_daily_limit']);
+/** Reservation reasons: per-session/per-IP caps vs. the global daily cap or kill switch. */
+const SESSION_LIMIT_REASONS = new Set(['session_limit', 'ip_daily_limit']);
+const CAPACITY_REASONS = new Set(['global_daily_limit', 'demo_ai_disabled']);
+
+export type DemoAiLimit = false | 'session' | 'capacity';
 
 export type DemoAiResult =
   | { ok: true; narrative: string; confirmation?: string }
-  | { ok: false; limited: boolean };
+  | { ok: false; limited: DemoAiLimit };
 
 async function call(body: Record<string, unknown>): Promise<DemoAiResult> {
   const credentials = getDemoNotificationCredentials();
@@ -42,7 +45,10 @@ async function call(body: Record<string, unknown>): Promise<DemoAiResult> {
       signal: controller.signal,
     });
     const data = await res.json().catch(() => null);
-    if (!res.ok) return { ok: false, limited: res.status === 429 && LIMIT_REASONS.has(data?.reason) };
+    if (!res.ok) {
+      if (res.status !== 429) return { ok: false, limited: false };
+      return { ok: false, limited: SESSION_LIMIT_REASONS.has(data?.reason) ? 'session' : CAPACITY_REASONS.has(data?.reason) ? 'capacity' : false };
+    }
     return typeof data?.narrative === 'string' && data.narrative.trim()
       ? { ok: true, narrative: data.narrative, confirmation: data.confirmation }
       : { ok: false, limited: false };

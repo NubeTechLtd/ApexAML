@@ -13,6 +13,9 @@ export const DEMO_FALLBACK_LABEL = 'Sample output (fallback)';
 export const DEMO_FALLBACK_TOOLTIP =
   "The demo AI was unavailable, timed out or reached its limit, so this is pre-written sample text. In the live system, drafts are generated from the case's own data and reviewed by an analyst.";
 export const DEMO_AI_LIMIT_MESSAGE = 'Demo AI limit reached for this session. Book a walkthrough to see it live';
+export const DEMO_AI_CAPACITY_MESSAGE = 'Live AI demo is at capacity today. Book a walkthrough to see it live';
+export const demoAiLimitMessage = (limit: false | 'session' | 'capacity' | undefined) =>
+  limit === 'capacity' ? DEMO_AI_CAPACITY_MESSAGE : limit === 'session' ? DEMO_AI_LIMIT_MESSAGE : null;
 
 export function DemoSampleLabel({ className = '', source }: { className?: string; source?: 'live_ai' | 'sample' | 'fallback' }) {
   const label = source === 'live_ai' ? DEMO_LIVE_AI_LABEL : source === 'fallback' ? DEMO_FALLBACK_LABEL : DEMO_SAMPLE_LABEL;
