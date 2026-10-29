@@ -1,5 +1,10 @@
 # Roadmap
 
+## Honest early-stage marketing
+- [ ] Inventory every public testimonial with its attribution before removal; verify identity/sanctions integration evidence.
+- [ ] Replace invented social proof and unsupported performance claims with factual early-stage content and /contact pilot CTA.
+- [ ] Share editable illustrative STR assumptions across both calculators and InnovationStory; test calculations and browser readback.
+
 ## Live tenant isolation suite
 - [x] Created two temporary Auth users and rollback-only institutions A/B; 458 live attempts passed across all 18 directly/indirectly tenant-scoped tables, both cross-tenant directions, anon, own-tenant controls, and audit mutation roles including service_role and postgres. Three local regression checks passed. Fixtures rolled back, both accounts deleted, temporary provisioning endpoint removed; per-attempt CSV and Markdown delivered. Storage and HTTP/session flows are outside this database-only suite.
 
