@@ -13,6 +13,7 @@ import { useDataProvider } from '@/data-layer/hooks';
 import { useAuditLog } from '@/hooks/useAuditLog';
 import type { AlertData } from '@/data/models/legacyAlerts';
 import { generateGoAMLXmlFromLegacy, downloadXmlFile } from '@/lib/generateGoAMLXml';
+import { resolveExportEntity, missingFieldsMessage } from '@/data-layer/exportEntity';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useZone } from '@/hooks/useZone';
 import { DemoSampleLabel, DEMO_SAMPLE_LABEL } from '@/components/DemoSampleLabel';
@@ -162,16 +163,32 @@ export function STRCoPilotDrawer({ open, onOpenChange, alert }: STRCoPilotDrawer
       .finally(() => setIsTyping(false));
   };
 
-  const handleExport = () => {
+  const handleExport = async () => {
     const today = new Date().toISOString().split('T')[0];
     const filename = `STR_${alert.id}_${today}.xml`;
-    const xml = generateGoAMLXmlFromLegacy(alert, draft);
+    let resolved;
+    try {
+      resolved = await resolveExportEntity(provider);
+    } catch {
+      toast({ title: 'Export blocked', description: 'Could not load the institution profile. Try again.', variant: 'destructive' });
+      return;
+    }
+    if (!resolved.ok) {
+      toast({ title: 'Export blocked', description: missingFieldsMessage(resolved.missing), variant: 'destructive' });
+      return;
+    }
+    const profileVersion = resolved.entity.version;
+    const xml = generateGoAMLXmlFromLegacy(alert, draft, resolved.entity, resolved.label);
     void (async () => {
       try {
         const draftId = await provider.str.saveDraft(alert.id, draft);
         if (draftId) await provider.str.recordExport({ alertId: alert.id, draftId, filename, xml });
         await provider.alerts.setStatus(alert.id, 'Escalated');
-        await append({ action: 'STR_EXPORT', analyst: '', caseId: alert.id, justification: `STR exported as goAML-style XML (draft): ${filename}.` });
+        await append({
+          action: 'STR_EXPORT', analyst: '', caseId: alert.id,
+          justification: `STR exported as goAML-style XML (draft): ${filename}.${profileVersion != null ? ` Institution profile v${profileVersion}.` : ''}`,
+          metadata: { filename, profile_version: profileVersion, export_type: 'STR', draft_id: draftId ?? null },
+        });
       } catch {
         // Non-fatal: the file must still reach the analyst.
       }
@@ -179,7 +196,7 @@ export function STRCoPilotDrawer({ open, onOpenChange, alert }: STRCoPilotDrawer
     downloadXmlFile(xml, filename);
     toast({
       title: 'STR exported',
-      description: `${filename} ready for NFIU goAML portal upload.`,
+      description: `${filename}: ${resolved.label}.`,
     });
   };
 

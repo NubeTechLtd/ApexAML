@@ -34,6 +34,7 @@ import { useCBNRate } from '@/hooks/useCBNRate';
 import { riskScoreKey } from '@/lib/riskScore';
 
 import { generateGoAMLXml, downloadXmlFile } from '@/lib/generateGoAMLXml';
+import { resolveExportEntity, missingFieldsMessage } from '@/data-layer/exportEntity';
 import { IMTOInvestigation } from '@/components/IMTOInvestigation';
 import { CrossBorderSLACard } from '@/components/CrossBorderSLACard';
 import { PhantomPayrollNetwork } from '@/components/PhantomPayrollNetwork';
@@ -408,7 +409,19 @@ export default function AlertWorkspace() {
     if (!selected) return;
     const today = new Date().toISOString().split('T')[0];
     const filename = `STR_${selected.caseId}_${today}.xml`;
-    const xml = generateGoAMLXml(selected, strDraft);
+    let resolved;
+    try {
+      resolved = await resolveExportEntity(provider);
+    } catch {
+      toast({ title: 'Export blocked', description: 'Could not load the institution profile. Try again.', variant: 'destructive' });
+      return;
+    }
+    if (!resolved.ok) {
+      toast({ title: 'Export blocked', description: missingFieldsMessage(resolved.missing), variant: 'destructive' });
+      return;
+    }
+    const xml = generateGoAMLXml(selected, strDraft, resolved.entity, resolved.label);
+    const profileVersion = resolved.entity.version;
 
     // Record the export before downloading so every goAML file leaving the
     // platform is traceable (CBN examination requirement). Demo alerts are not
@@ -426,7 +439,8 @@ export default function AlertWorkspace() {
         action: 'STR_EXPORT',
         analyst: '',
         caseId: selected.caseId,
-        justification: `STR exported as goAML-style XML (draft): ${filename}.`,
+        justification: `STR exported as goAML-style XML (draft): ${filename}.${profileVersion != null ? ` Institution profile v${profileVersion}.` : ''}`,
+        metadata: { filename, profile_version: profileVersion, export_type: 'STR', draft_id: draftId ?? null },
       });
     } catch {
       // Non-fatal: the file must still reach the analyst even if the record fails.
@@ -436,7 +450,7 @@ export default function AlertWorkspace() {
     setExportedIds((prev) => ({ ...prev, [selected.id]: true }));
     toast({
       title: 'STR exported',
-      description: `${filename} ready for NFIU goAML portal upload.`,
+      description: `${filename}: ${resolved.label}.`,
     });
   }, [selected, strDraft, strDraftId, addAuditEntry, toast, provider]);
 
