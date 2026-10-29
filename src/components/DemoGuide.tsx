@@ -69,9 +69,9 @@ const DEMO_STEPS: DemoStep[] = [
     action: "Click 'View Customer Profile' in the alert panel →",
   },
   {
-    title: 'The AI co-pilot does the writing. You do the reviewing.',
+    title: 'The co-pilot drafts. You do the reviewing.',
     description:
-      "Click 'Generate AI Investigation Report' and watch the AI co-pilot draft a complete NFIU-compliant Suspicious Transaction Report using the transaction data, your case notes, and the typology context. Average time: 11 minutes. Manual STR writing: 3 hours.",
+      "Click 'Show sample investigation report' to see a pre-written sample STR for this fictional case. In the live system, drafts are generated from the case's own data and reviewed by an analyst. Average time: 11 minutes. Manual STR writing: 3 hours.",
     action: "Click 'Generate AI Investigation Report' →",
   },
   {
