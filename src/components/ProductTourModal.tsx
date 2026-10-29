@@ -43,7 +43,7 @@ const SLIDES = [
     visual: "copilot",
   },
   {
-    title: "One click. NFIU goAML XML. Filed.",
+    title: "One click. goAML-style XML draft. Ready for review.",
     caption:
       "A goAML-style XML draft your analyst reviews before filing. Validation against the current NFIU schema is in progress.",
     visual: "export",

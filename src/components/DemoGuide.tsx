@@ -75,7 +75,7 @@ const DEMO_STEPS: DemoStep[] = [
     action: "Click 'Show sample investigation report' →",
   },
   {
-    title: 'One click exports the STR in the exact format the NFIU portal requires.',
+    title: 'One click exports a goAML-style XML draft for review.',
     description:
       "The 'Export to NFIU goAML portal' button generates the complete goAML 3.x XML file — subject information, transaction records, narrative text — ready for upload. The case lifecycle bar automatically advances to 'Filed with NFIU.'",
     action: "Click 'Export to NFIU goAML portal' →",
