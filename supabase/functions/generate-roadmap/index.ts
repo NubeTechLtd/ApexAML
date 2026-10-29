@@ -59,7 +59,7 @@ type Body = z.infer<typeof BodySchema>;
 function institutionTypeBlock(type: string): string {
   const t = type.toLowerCase();
   if (/dmb|deposit money/.test(t)) {
-    return "This is a Deposit Money Bank. Emphasise correspondent banking due diligence, cross-border transaction monitoring, and the 18-month full compliance timeline to September 2027. Include NIBSS integration milestones.";
+    return "This is a Deposit Money Bank. Emphasise correspondent banking due diligence, cross-border transaction monitoring, and the phased implementation timelines set in the circular (do not state a specific final compliance date). Include NIBSS integration milestones.";
   }
   if (/imto/.test(t)) {
     return "This is an IMTO. Include specific milestones for: (1) the $200 USD equivalent cash-payout threshold structuring rule with cumulative 24-hour beneficiary tracking, (2) inbound-only and naira-only settlement validation, (3) the 24-hour cross-border STR mandate with overseas compliance API webhook, (4) B2B/B2P phantom payroll detection for the newly permitted business remittance channels, (5) May 2026 settlement account segregation monitoring. These are IMTO-specific CBN obligations.";
@@ -68,7 +68,7 @@ function institutionTypeBlock(type: string): string {
     return "This is a Microfinance Bank. Emphasise agent banking network monitoring, Tier 1/2/3 KYC upgrade workflows, and rural transaction pattern analysis.";
   }
   if (/psp|fintech|payment/.test(t)) {
-    return "This is a payment service provider. Emphasise API-first integration, POS terminal network monitoring, real-time transaction velocity checks, and the 24-month compliance timeline to March 2028.";
+    return "This is a payment service provider. Emphasise API-first integration, POS terminal network monitoring, real-time transaction velocity checks, and the phased implementation timelines set in the circular (do not state a specific final compliance date).";
   }
   return `This institution is regulated as a ${type}. Tailor every milestone to its licence-specific CBN obligations.`;
 }
