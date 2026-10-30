@@ -19,6 +19,7 @@ import type { AdverseMediaScreening, AuditEntry, CtrRecord, KycDocument, QueuedT
 import { requiredDocsForTier, DOCUMENT_LABELS, type KycDocumentType } from '@/lib/kycDocuments';
 import { SEED_CUSTOMERS, customerByNum, IMTO_OPERATORS, type SeedCustomer } from './customers';
 import { createRandom, pad } from './random';
+import { DAY, HOUR, seedAt, seedHoursAgo, seedNow, type DateRecipe } from '../../../supabase/functions/_shared/demo-seed-time.ts';
 
 export { SEED_CUSTOMERS, customerByNum, type SeedCustomer } from './customers';
 
@@ -31,18 +32,21 @@ export const DEMO_INSTITUTION = {
 
 export const DEMO_ANALYSTS = ['Amaka Sampleyi (MLRO)', 'Bello Testimehin', 'Ronke Placeholdu', 'Uche Demoyinka'] as const;
 
-const HOUR = 3_600_000;
-const DAY = 24 * HOUR;
 /** Anchor rounded to the hour so a page load and its reload share one timeline. */
-export const SEED_NOW = Math.floor(Date.now() / HOUR) * HOUR;
+export const SEED_NOW = seedNow(Date.now());
 
-const hoursAgo = (h: number, minute = 0) => new Date(SEED_NOW - h * HOUR + minute * 60_000).toISOString();
+/**
+ * How each case transaction and alert timestamp was built (keyed by tx/alert
+ * id), so the demo AI function can rebuild the same dates server-side for any
+ * hour (see scripts/generate-demo-seed-cases.ts).
+ */
+export const SEED_DATE_RECIPES = new Map<string, DateRecipe>();
+let lastRecipe: { iso: string; r: DateRecipe } | null = null;
+const remember = (iso: string, r: DateRecipe) => { lastRecipe = { iso, r }; return iso; };
+const recordRecipe = (id: string, iso: string) => { if (lastRecipe?.iso === iso) SEED_DATE_RECIPES.set(id, lastRecipe.r); };
+const hoursAgo = (h: number, minute = 0) => remember(seedHoursAgo(SEED_NOW, h, minute), ['h', h, minute]);
 /** Day offset at a WAT clock hour (WAT = UTC+1); never in the future. */
-const at = (daysAgo: number, hourWAT = 10, minute = 0) => {
-  const d = new Date(SEED_NOW - daysAgo * DAY);
-  d.setUTCHours(hourWAT - 1, minute, 0, 0);
-  return d.getTime() > SEED_NOW ? new Date(d.getTime() - DAY).toISOString() : d.toISOString();
-};
+const at = (daysAgo: number, hourWAT = 10, minute = 0) => remember(seedAt(SEED_NOW, daysAgo, hourWAT, minute), ['d', daysAgo, hourWAT, minute]);
 const dateOnly = (iso: string) => iso.slice(0, 10);
 export const ngn = (n: number) => '₦' + Math.round(n).toLocaleString('en-NG');
 
@@ -91,6 +95,7 @@ const txns: SeedTx[] = [];
 let txSeq = 0;
 function addTx(customerNum: number, date: string, type: 'Credit' | 'Debit', amountNGN: number, counterparty: string, channel: TxChannel, extra: Partial<SeedTx> = {}): SeedTx {
   const t: SeedTx = { id: `TXN-${pad(++txSeq, 5)}`, customerNum, date, type, amountNGN: Math.round(amountNGN), counterparty, balanceAfter: 0, channel, ...extra };
+  recordRecipe(t.id, date);
   txns.push(t);
   return t;
 }
@@ -144,6 +149,7 @@ function addAlert(spec: AlertSpec) {
   const t = spec.txs(id, c).map((x) => Object.assign(x, { alertId: id }));
   const rule = RULE_SPECS.find((r) => r[0] === spec.ruleId)!;
   const timestamp = hoursAgo(spec.hours);
+  recordRecipe(id, timestamp);
   alerts.push({
     id,
     caseId: `CAS-2026-${alertSeq}-NG`,
@@ -571,13 +577,13 @@ SEED_CUSTOMERS.forEach((c, idx) => {
 });
 
 // Running balances per customer, with an opening balance that never lets the account go negative.
+export const openingBase = (c: SeedCustomer) => (c.entityType === 'IMTO Agent' ? 8_000_000 : c.kycTier === 'Tier 1' ? 15_000 : c.kycTier === 'Tier 2' ? 250_000 : 1_500_000);
 for (const c of SEED_CUSTOMERS) {
   const mine = txns.filter((t) => t.customerNum === c.num).sort((a, b) => a.date.localeCompare(b.date));
   let running = 0;
   let lowest = 0;
   for (const t of mine) { running += t.type === 'Credit' ? t.amountNGN : -t.amountNGN; lowest = Math.min(lowest, running); }
-  const base = c.entityType === 'IMTO Agent' ? 8_000_000 : c.kycTier === 'Tier 1' ? 15_000 : c.kycTier === 'Tier 2' ? 250_000 : 1_500_000;
-  let balance = base - lowest;
+  let balance = openingBase(c) - lowest;
   for (const t of mine) { balance += t.type === 'Credit' ? t.amountNGN : -t.amountNGN; t.balanceAfter = balance; }
 }
 

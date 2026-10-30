@@ -1,23 +1,11 @@
 import type { Alert } from '@/data/models/alerts';
 import { getDemoNotificationCredentials } from './demoStore';
 
-/**
- * Demo-only bridge to the demo-str-narrative function. Sends the fictional
- * case and the session token; returns null on any failure so callers can fall
- * back to the pre-written sample.
- */
-function casePayload(a: Alert) {
-  const p = a.customerProfile;
-  return {
-    caseId: a.caseId, ruleTriggered: a.ruleTriggered, alertType: a.alertType, riskLevel: a.riskLevel, openedAt: a.timestamp,
-    description: a.description.slice(0, 2000), redFlags: a.behavioralRedFlags.slice(0, 20).map((f) => f.slice(0, 300)),
-    customer: { fullName: p.fullName, bvn: p.bvn, nin: p.nin, nuban: p.nuban, kycTier: p.kycTier, occupation: p.occupation, riskScore: p.riskScore },
-    transactions: a.transactions.slice(0, 60).map((t) => ({
-      date: t.date, type: t.type, amountNGN: t.amountNGN, channel: t.channel, counterparty: t.counterparty.slice(0, 200),
-      balanceAfter: t.balanceAfter, ...(t.agentLocation ? { agentLocation: t.agentLocation } : {}),
-    })),
-  };
-}
+// Demo-only bridge to the demo-str-narrative function. Sends only the case id
+// (the server loads the fictional case from its own copy of the demo seed),
+// plus the current draft and instruction when refining, and the session token.
+// Returns a non-ok result on any failure so callers can fall back to the
+// pre-written sample.
 
 /** Abort the request after this long so the demo falls back instead of stalling. */
 export const DEMO_AI_TIMEOUT_MS = 25_000;
@@ -59,6 +47,6 @@ async function call(body: Record<string, unknown>): Promise<DemoAiResult> {
   }
 }
 
-export const demoAiGenerate = (alert: Alert) => call({ mode: 'generate', case: casePayload(alert) });
+export const demoAiGenerate = (alert: Alert) => call({ mode: 'generate', caseId: alert.caseId });
 export const demoAiRefine = (alert: Alert, currentDraft: string, message: string) =>
-  call({ mode: 'refine', case: casePayload(alert), currentDraft: currentDraft.slice(0, 20000), message: message.slice(0, 2000) });
+  call({ mode: 'refine', caseId: alert.caseId, currentDraft: currentDraft.slice(0, 20000), message: message.slice(0, 2000) });
