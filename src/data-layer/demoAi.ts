@@ -1,13 +1,12 @@
 import type { Alert } from '@/data/models/alerts';
 import { getDemoNotificationCredentials } from './demoStore';
 
-/**
- * Demo-only bridge to the demo-str-narrative function. Sends only the case id
- * (the server loads the fictional case from its own copy of the demo seed),
- * plus the current draft and instruction when refining, and the session token.
- * Returns a non-ok result on any failure so callers can fall back to the
- * pre-written sample.
- */
+// Demo-only bridge to the demo-str-narrative function. Sends only the case id
+// (the server loads the fictional case from its own copy of the demo seed),
+// plus the current draft and instruction when refining, and the session token.
+// Returns a non-ok result on any failure so callers can fall back to the
+// pre-written sample.
+
 /** Abort the request after this long so the demo falls back instead of stalling. */
 export const DEMO_AI_TIMEOUT_MS = 25_000;
 
