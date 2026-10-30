@@ -56,4 +56,16 @@ describe('demo AI limits and fallback', () => {
     respond(200, { narrative: 'Live text' });
     expect(await demoAiGenerate(alert)).toMatchObject({ ok: true, narrative: 'Live text' });
   });
+
+  it('sends only the case id, never case content', async () => {
+    const spy = respond(200, { narrative: 'Live text' });
+    await demoAiGenerate(alert);
+    const body = JSON.parse(String(spy.mock.calls[0][1]?.body));
+    expect(body).toEqual({ sessionId: 'session-1', mode: 'generate', caseId: 'C-1' });
+  });
+
+  it('falls back when the server refuses a case outside the demo seed', async () => {
+    respond(404, { reason: 'unknown_case' });
+    expect(await demoAiGenerate(alert)).toEqual({ ok: false, limited: false });
+  });
 });
