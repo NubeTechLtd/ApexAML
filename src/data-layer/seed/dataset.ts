@@ -42,7 +42,9 @@ export const SEED_NOW = seedNow(Date.now());
 export const SEED_DATE_RECIPES = new Map<string, DateRecipe | 'conflict'>();
 const remember = (iso: string, r: DateRecipe) => {
   const prev = SEED_DATE_RECIPES.get(iso);
-  SEED_DATE_RECIPES.set(iso, prev && JSON.stringify(prev) !== JSON.stringify(r) ? 'conflict' : r);
+  // Two hour-offset recipes that land on the same instant are always equivalent.
+  const same = !prev || JSON.stringify(prev) === JSON.stringify(r) || (prev !== 'conflict' && prev[0] === 'h' && r[0] === 'h');
+  SEED_DATE_RECIPES.set(iso, same ? prev ?? r : 'conflict');
   return iso;
 };
 const hoursAgo = (h: number, minute = 0) => remember(seedHoursAgo(SEED_NOW, h, minute), ['h', h, minute]);
