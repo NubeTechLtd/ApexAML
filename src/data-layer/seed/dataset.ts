@@ -19,6 +19,7 @@ import type { AdverseMediaScreening, AuditEntry, CtrRecord, KycDocument, QueuedT
 import { requiredDocsForTier, DOCUMENT_LABELS, type KycDocumentType } from '@/lib/kycDocuments';
 import { SEED_CUSTOMERS, customerByNum, IMTO_OPERATORS, type SeedCustomer } from './customers';
 import { createRandom, pad } from './random';
+import { DAY, HOUR, seedAt, seedHoursAgo, seedNow, type DateRecipe } from '../../../supabase/functions/_shared/demo-seed-time.ts';
 
 export { SEED_CUSTOMERS, customerByNum, type SeedCustomer } from './customers';
 
@@ -31,18 +32,22 @@ export const DEMO_INSTITUTION = {
 
 export const DEMO_ANALYSTS = ['Amaka Sampleyi (MLRO)', 'Bello Testimehin', 'Ronke Placeholdu', 'Uche Demoyinka'] as const;
 
-const HOUR = 3_600_000;
-const DAY = 24 * HOUR;
 /** Anchor rounded to the hour so a page load and its reload share one timeline. */
-export const SEED_NOW = Math.floor(Date.now() / HOUR) * HOUR;
+export const SEED_NOW = seedNow(Date.now());
 
-const hoursAgo = (h: number, minute = 0) => new Date(SEED_NOW - h * HOUR + minute * 60_000).toISOString();
-/** Day offset at a WAT clock hour (WAT = UTC+1); never in the future. */
-const at = (daysAgo: number, hourWAT = 10, minute = 0) => {
-  const d = new Date(SEED_NOW - daysAgo * DAY);
-  d.setUTCHours(hourWAT - 1, minute, 0, 0);
-  return d.getTime() > SEED_NOW ? new Date(d.getTime() - DAY).toISOString() : d.toISOString();
+/**
+ * How each generated timestamp was built, so the demo AI function can rebuild
+ * the same case dates server-side (see scripts/generate-demo-seed-cases.ts).
+ */
+export const SEED_DATE_RECIPES = new Map<string, DateRecipe | 'conflict'>();
+const remember = (iso: string, r: DateRecipe) => {
+  const prev = SEED_DATE_RECIPES.get(iso);
+  SEED_DATE_RECIPES.set(iso, prev && JSON.stringify(prev) !== JSON.stringify(r) ? 'conflict' : r);
+  return iso;
 };
+const hoursAgo = (h: number, minute = 0) => remember(seedHoursAgo(SEED_NOW, h, minute), ['h', h, minute]);
+/** Day offset at a WAT clock hour (WAT = UTC+1); never in the future. */
+const at = (daysAgo: number, hourWAT = 10, minute = 0) => remember(seedAt(SEED_NOW, daysAgo, hourWAT, minute), ['d', daysAgo, hourWAT, minute]);
 const dateOnly = (iso: string) => iso.slice(0, 10);
 export const ngn = (n: number) => '₦' + Math.round(n).toLocaleString('en-NG');
 
