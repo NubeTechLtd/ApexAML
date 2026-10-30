@@ -36,17 +36,14 @@ export const DEMO_ANALYSTS = ['Amaka Sampleyi (MLRO)', 'Bello Testimehin', 'Ronk
 export const SEED_NOW = seedNow(Date.now());
 
 /**
- * How each generated timestamp was built, so the demo AI function can rebuild
- * the same case dates server-side (see scripts/generate-demo-seed-cases.ts).
+ * How each case transaction and alert timestamp was built (keyed by tx/alert
+ * id), so the demo AI function can rebuild the same dates server-side for any
+ * hour (see scripts/generate-demo-seed-cases.ts).
  */
-export const SEED_DATE_RECIPES = new Map<string, DateRecipe | 'conflict'>();
-const remember = (iso: string, r: DateRecipe) => {
-  const prev = SEED_DATE_RECIPES.get(iso);
-  // Two hour-offset recipes that land on the same instant are always equivalent.
-  const same = !prev || JSON.stringify(prev) === JSON.stringify(r) || (prev !== 'conflict' && prev[0] === 'h' && r[0] === 'h');
-  SEED_DATE_RECIPES.set(iso, same ? prev ?? r : 'conflict');
-  return iso;
-};
+export const SEED_DATE_RECIPES = new Map<string, DateRecipe>();
+let lastRecipe: { iso: string; r: DateRecipe } | null = null;
+const remember = (iso: string, r: DateRecipe) => { lastRecipe = { iso, r }; return iso; };
+const recordRecipe = (id: string, iso: string) => { if (lastRecipe?.iso === iso) SEED_DATE_RECIPES.set(id, lastRecipe.r); };
 const hoursAgo = (h: number, minute = 0) => remember(seedHoursAgo(SEED_NOW, h, minute), ['h', h, minute]);
 /** Day offset at a WAT clock hour (WAT = UTC+1); never in the future. */
 const at = (daysAgo: number, hourWAT = 10, minute = 0) => remember(seedAt(SEED_NOW, daysAgo, hourWAT, minute), ['d', daysAgo, hourWAT, minute]);
@@ -98,6 +95,7 @@ const txns: SeedTx[] = [];
 let txSeq = 0;
 function addTx(customerNum: number, date: string, type: 'Credit' | 'Debit', amountNGN: number, counterparty: string, channel: TxChannel, extra: Partial<SeedTx> = {}): SeedTx {
   const t: SeedTx = { id: `TXN-${pad(++txSeq, 5)}`, customerNum, date, type, amountNGN: Math.round(amountNGN), counterparty, balanceAfter: 0, channel, ...extra };
+  recordRecipe(t.id, date);
   txns.push(t);
   return t;
 }
@@ -151,6 +149,7 @@ function addAlert(spec: AlertSpec) {
   const t = spec.txs(id, c).map((x) => Object.assign(x, { alertId: id }));
   const rule = RULE_SPECS.find((r) => r[0] === spec.ruleId)!;
   const timestamp = hoursAgo(spec.hours);
+  recordRecipe(id, timestamp);
   alerts.push({
     id,
     caseId: `CAS-2026-${alertSeq}-NG`,

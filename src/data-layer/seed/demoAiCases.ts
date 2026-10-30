@@ -7,9 +7,9 @@ import { SEED_ALERTS, SEED_CUSTOMERS, SEED_DATE_RECIPES, SEED_TRANSACTIONS, open
 import type { DemoSeedData, SeedCaseTx } from '../../../supabase/functions/_shared/demo-seed-cases.ts';
 import type { DateRecipe } from '../../../supabase/functions/_shared/demo-seed-time.ts';
 
-const recipe = (iso: string, what: string): DateRecipe => {
-  const r = SEED_DATE_RECIPES.get(iso);
-  if (!r || r === 'conflict') throw new Error(`No unambiguous date recipe for ${what} (${iso})`);
+const recipe = (id: string): DateRecipe => {
+  const r = SEED_DATE_RECIPES.get(id);
+  if (!r) throw new Error(`No date recipe recorded for ${id}`);
   return r;
 };
 
@@ -19,14 +19,14 @@ export function buildDemoSeedData(): DemoSeedData {
   const txs: SeedCaseTx[] = SEED_TRANSACTIONS
     .filter((t) => owners.has(t.customerNum))
     .map((t): SeedCaseTx => [
-      Number(t.id.replace('TXN-', '')), t.customerNum, recipe(t.date, t.id), t.type === 'Credit' ? 'C' : 'D', t.amountNGN,
+      Number(t.id.replace('TXN-', '')), t.customerNum, recipe(t.id), t.type === 'Credit' ? 'C' : 'D', t.amountNGN,
       t.alertId ? caseOf.get(t.alertId) ?? '' : '', t.channel, t.counterparty, t.agentLocation ?? '',
     ])
     .sort((a, b) => a[0] - b[0]);
   const bases: Record<string, number> = {};
   for (const c of SEED_CUSTOMERS) if (owners.has(c.num)) bases[String(c.num)] = openingBase(c);
   const cases = SEED_ALERTS.map((a) => ({
-    caseId: a.caseId, opened: recipe(a.timestamp, a.caseId), ruleTriggered: a.ruleTriggered, alertType: a.alertType ?? 'STANDARD',
+    caseId: a.caseId, opened: recipe(a.id), ruleTriggered: a.ruleTriggered, alertType: a.alertType ?? 'STANDARD',
     riskLevel: a.riskLevel, description: a.description, redFlags: a.behavioralRedFlags,
     customer: {
       fullName: a.customerProfile.fullName, bvn: a.customerProfile.bvn, nin: a.customerProfile.nin, nuban: a.customerProfile.nuban,
