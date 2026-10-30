@@ -576,13 +576,13 @@ SEED_CUSTOMERS.forEach((c, idx) => {
 });
 
 // Running balances per customer, with an opening balance that never lets the account go negative.
+export const openingBase = (c: SeedCustomer) => (c.entityType === 'IMTO Agent' ? 8_000_000 : c.kycTier === 'Tier 1' ? 15_000 : c.kycTier === 'Tier 2' ? 250_000 : 1_500_000);
 for (const c of SEED_CUSTOMERS) {
   const mine = txns.filter((t) => t.customerNum === c.num).sort((a, b) => a.date.localeCompare(b.date));
   let running = 0;
   let lowest = 0;
   for (const t of mine) { running += t.type === 'Credit' ? t.amountNGN : -t.amountNGN; lowest = Math.min(lowest, running); }
-  const base = c.entityType === 'IMTO Agent' ? 8_000_000 : c.kycTier === 'Tier 1' ? 15_000 : c.kycTier === 'Tier 2' ? 250_000 : 1_500_000;
-  let balance = base - lowest;
+  let balance = openingBase(c) - lowest;
   for (const t of mine) { balance += t.type === 'Credit' ? t.amountNGN : -t.amountNGN; t.balanceAfter = balance; }
 }
 
