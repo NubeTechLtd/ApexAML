@@ -5,27 +5,21 @@ import { DEMO_STR_GENERATE_SYSTEM_PROMPT, DEMO_STR_REFINE_SYSTEM_PROMPT } from '
 import { trustedClientIp } from '../_shared/client-ip.ts';
 import { sendTemplateEmail } from '../_shared/transactional-email-templates/send-email.ts';
 import { checkGenerate, checkRefine } from './output-check.ts';
+import { loadDemoCase, type DemoCase } from '../_shared/demo-seed-cases.ts';
 
 const MAX_DRAFT_TOKENS = 500;
 const MAX_REFINE_TOKENS = 400;
 
-// Drafts STR narratives for the fictional demo case only. The browser sends the
-// synthetic case; nothing is read from or written to institution data.
-const s = (max: number) => z.string().max(max);
-const CaseSchema = z.object({
-  caseId: s(60), ruleTriggered: s(300), alertType: s(60).optional(), riskLevel: s(30), openedAt: s(60),
-  description: s(2000), redFlags: z.array(s(300)).max(20),
-  customer: z.object({
-    fullName: s(150), bvn: s(30), nin: s(30), nuban: s(30), kycTier: s(30), occupation: s(150).optional(), riskScore: z.number().min(0).max(100),
-  }).strict(),
-  transactions: z.array(z.object({
-    date: s(40), type: s(20), amountNGN: z.number().min(0).max(1e12), channel: s(40), counterparty: s(200),
-    balanceAfter: z.number().min(-1e12).max(1e12), agentLocation: s(150).optional(),
-  }).strict()).max(60),
-}).strict();
+// Drafts STR narratives for the fictional demo cases only. The browser sends
+// just the case id (plus the current draft and the visitor's instruction when
+// refining); the case itself is loaded server-side from the fixed demo seed
+// allowlist. Any other case content in the request body is stripped and ignored.
+const MAX_DRAFT_CHARS = 20_000;
+const MAX_MESSAGE_CHARS = 2_000;
+const CaseIdSchema = z.string().regex(/^CAS-\d{4}-\d{4}-NG$/);
 const BodySchema = z.discriminatedUnion('mode', [
-  z.object({ mode: z.literal('generate'), sessionId: z.string().uuid(), case: CaseSchema }).strict(),
-  z.object({ mode: z.literal('refine'), sessionId: z.string().uuid(), case: CaseSchema, currentDraft: z.string().min(1).max(20000), message: z.string().min(1).max(2000) }).strict(),
+  z.object({ mode: z.literal('generate'), sessionId: z.string().uuid(), caseId: CaseIdSchema }),
+  z.object({ mode: z.literal('refine'), sessionId: z.string().uuid(), caseId: CaseIdSchema, currentDraft: z.string().min(1), message: z.string().trim().min(1) }),
 ]);
 
 const cors = { ...corsHeaders, 'Access-Control-Allow-Headers': `${corsHeaders['Access-Control-Allow-Headers']}, x-demo-token` };
@@ -33,7 +27,7 @@ const json = (body: unknown, status = 200) => new Response(JSON.stringify(body),
 const sha256 = async (v: string) => Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(v)))).map((b) => b.toString(16).padStart(2, '0')).join('');
 const fmt = (n: number) => `₦${new Intl.NumberFormat('en-NG', { maximumFractionDigits: 0 }).format(n)}`;
 
-type Case = z.infer<typeof CaseSchema>;
+type Case = DemoCase;
 
 function generatePrompt(c: Case) {
   const tx = c.transactions.map((t) => `- ${t.date} | ${t.type} ${fmt(t.amountNGN)} | ${t.channel} | counterparty: ${t.counterparty || 'unknown'}${t.agentLocation ? ` | location: ${t.agentLocation}` : ''} | balance after: ${fmt(t.balanceAfter)}`).join('\n');
@@ -152,6 +146,12 @@ Deno.serve(async (req) => {
     const parsed = BodySchema.safeParse(raw);
     if (!parsed.success) return json({ error: 'Invalid request', details: parsed.error.flatten().fieldErrors }, 400);
     const body = parsed.data;
+    // Explicit size limits on visitor-supplied text, checked before any lookup or AI call.
+    if (body.mode === 'refine' && body.currentDraft.length > MAX_DRAFT_CHARS) return json({ reason: 'draft_too_long', max: MAX_DRAFT_CHARS }, 413);
+    if (body.mode === 'refine' && body.message.length > MAX_MESSAGE_CHARS) return json({ reason: 'message_too_long', max: MAX_MESSAGE_CHARS }, 413);
+    // Only the fixed demo seed cases are allowed; refuse anything else before a call is reserved.
+    const demoCase = loadDemoCase(body.caseId);
+    if (!demoCase) return json({ reason: 'unknown_case' }, 404);
 
     const admin = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
     const { data: session } = await admin.from('demo_sessions').select('notification_token_hash').eq('id', body.sessionId).maybeSingle();
@@ -173,8 +173,8 @@ Deno.serve(async (req) => {
     }
 
     const result = body.mode === 'generate'
-      ? await callGenerate(key, body.case)
-      : await callRefine(key, body.case, body.currentDraft, body.message);
+      ? await callGenerate(key, demoCase)
+      : await callRefine(key, demoCase, body.currentDraft, body.message);
     if ('error' in result) {
       console.error('demo-str-narrative AI failure', result.status, result.error);
       if ('invalid' in result) return json({ reason: 'invalid_output' }, 502);
