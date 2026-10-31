@@ -5,7 +5,8 @@ import { AppSidebar } from '@/components/AppSidebar';
 import { NotificationBell } from '@/components/NotificationBell';
 import { Button } from '@/components/ui/button';
 import { useDemoEmails, markDemoEmailsRead } from '@/data-layer/demoNotifications';
-const statusLabels: Record<string,string> = { pending: 'Sending', sent: 'Sent', recipient_suppressed: 'Email suppressed · inbox copy', failed: 'Email unavailable · inbox copy', inbox_only: 'Inbox only', session_limit: 'Session email limit · inbox copy', daily_address_limit: 'Daily email limit · inbox copy', reserved: 'Send already requested', briefing_already_sent: 'Briefing already requested today' };
+import { DemoEmailConfirmCard } from '@/components/DemoEmailConfirmCard';
+const statusLabels: Record<string,string> = { pending: 'Sending', not_confirmed: 'Inbox only · email not confirmed', sent: 'Sent', recipient_suppressed: 'Email suppressed · inbox copy', failed: 'Email unavailable · inbox copy', inbox_only: 'Inbox only', session_limit: 'Session email limit · inbox copy', daily_address_limit: 'Daily email limit · inbox copy', reserved: 'Send already requested', briefing_already_sent: 'Briefing already requested today' };
 export default function DemoInbox() {
   const emails = useDemoEmails();
   const [params, setParams] = useSearchParams();
