@@ -20,14 +20,17 @@ Deno.serve(async req => {
   if (!url || !key) return json({ reason: 'configuration_error' }, 500);
   const admin = createClient(url, key, { auth: { persistSession: false } });
   const { sessionId, eventId, type } = parsed.data;
-  const { data: session, error } = await admin.from('demo_sessions').select('email,notification_token_hash').eq('id', sessionId).maybeSingle();
+  const { data: session, error } = await admin.from('demo_sessions').select('email,notification_token_hash,email_confirmed_at').eq('id', sessionId).maybeSingle();
   const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(token));
   const hash = Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2,'0')).join('');
   if (error || !session || session.notification_token_hash !== hash) return json({ reason: 'invalid_session' }, 403);
+  // Unconfirmed addresses get the inbox copy only; reserve_demo_notification enforces this too.
+  const unconfirmed = !session.email_confirmed_at;
   const templateName = `demo-${type.replaceAll('_','-')}`;
   const template = TEMPLATES[templateName];
   const html = await renderAsync(React.createElement(template.component, {}));
   const content = { html, subject: demoSubject(type), from: 'ApexAML <noreply@apexaml.com>' };
+  if (unconfirmed) return json({ ...content, status: 'not_confirmed' });
   const reserved = await admin.rpc('reserve_demo_notification', { _session_id: sessionId, _event_id: eventId, _type: type });
   if (reserved.error) return json({ ...content, status: 'failed' }, 500);
   if (!reserved.data.allowed) return json({ ...content, status: reserved.data.status ?? reserved.data.reason }, 200);

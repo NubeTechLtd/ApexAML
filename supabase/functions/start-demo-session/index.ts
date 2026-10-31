@@ -3,6 +3,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2'
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors'
 import { z } from 'npm:zod@3.25.76'
 import { trustedClientIp } from '../_shared/client-ip.ts'
+import { issueDemoConfirmation } from '../_shared/demo-email-confirmation.ts'
 import { sendTemplateEmail } from '../_shared/transactional-email-templates/send-email.ts'
 
 const Schema = z.object({
@@ -29,7 +30,7 @@ Deno.serve(async (req) => {
   if (!parsed.success) return json({ ok: false, reason: 'invalid_payload' }, 400)
   const input = parsed.data
   // Bots get a normal-looking response but nothing is stored or sent.
-  if (input.website && input.website.trim()) return json({ ok: true, sessionId: crypto.randomUUID() })
+  if (input.website && input.website.trim()) return json({ ok: true, sessionId: crypto.randomUUID(), confirmation: { status: 'sent' } })
 
   const url = Deno.env.get('SUPABASE_URL')
   const key = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
@@ -60,6 +61,9 @@ Deno.serve(async (req) => {
   const session = await admin.from('demo_sessions').insert({ id: sessionId, email, notification_token_hash: notificationTokenHash })
   if (session.error) { console.error('Demo session insert failed', session.error.code); return json({ ok: false, reason: 'server_error' }, 500) }
 
+  // Demo notifications are emailed only after this address is confirmed with the code sent here.
+  const confirmation = await issueDemoConfirmation(admin, sessionId, email, ip)
+
   try {
     const result = await sendTemplateEmail('demo-entry-internal-alert', 'adetokunboogun@gmail.com', {
       idempotencyKey: `demo-entry-internal-alert-${sessionId}`,
@@ -71,5 +75,5 @@ Deno.serve(async (req) => {
   } catch (e) {
     console.error('Demo entry alert failed', e instanceof Error ? e.message : 'Unknown error')
   }
-  return json({ ok: true, sessionId, notificationToken })
+  return json({ ok: true, sessionId, notificationToken, confirmation })
 })

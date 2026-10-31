@@ -4,6 +4,7 @@ import { toZonePath } from '@/lib/zones';
 import { useState } from 'react';
 import { CalendarCheck, Compass, Rocket, RotateCcw } from 'lucide-react';
 import { DemoNotificationDelivery } from '@/components/DemoNotificationDelivery';
+import { DemoEmailConfirmLink } from '@/components/DemoEmailConfirmCard';
 import { ProductTourModal } from '@/components/ProductTourModal';
 import { BookDemoSheet } from '@/components/landing/BookDemoSheet';
 import { Button } from '@/components/ui/button';
@@ -43,6 +44,7 @@ export function DemoLayout() {
       <div role="status" className="sticky top-0 z-50 flex min-h-10 flex-wrap items-center justify-between gap-x-4 gap-y-1 border-b border-border bg-muted px-4 py-1 text-xs text-muted-foreground">
         <span className="font-medium">Demo environment: sample data only, no live connections.</span>
         <div className="flex flex-wrap items-center gap-1">
+          <DemoEmailConfirmLink />
           <Button asChild variant="ghost" size="sm" className="h-7 text-xs"><Link to="/demo/inbox">Inbox</Link></Button>
           <Button variant="ghost" size="sm" className="h-7 gap-1.5 text-xs" onClick={() => setTourOpen(true)}>
             <Compass className="h-3.5 w-3.5" /> Guided tour
