@@ -7,6 +7,7 @@ import { template as roadmapDelivery } from './roadmap-delivery.tsx'
 import { template as contactLeadInternalAlert } from './contact-lead-internal-alert.tsx'
 import { template as demoEntryInternalAlert } from './demo-entry-internal-alert.tsx'
 import { template as demoAiCapacityAlert } from './demo-ai-capacity-alert.tsx'
+import { template as demoEmailConfirmation } from './demo-email-confirmation.tsx'
 
 export interface TemplateEntry {
   component: ComponentType<any>
@@ -21,6 +22,7 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'contact-lead-internal-alert': contactLeadInternalAlert,
   'demo-entry-internal-alert': demoEntryInternalAlert,
   'demo-ai-capacity-alert': demoAiCapacityAlert,
+  'demo-email-confirmation': demoEmailConfirmation,
   'demo-booking-confirmation': demoBookingConfirmation,
   'demo-booking-internal-alert': demoBookingInternalAlert,
   'roadmap-delivery': roadmapDelivery,
