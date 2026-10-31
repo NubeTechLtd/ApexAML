@@ -12,6 +12,7 @@ export default function DemoInbox() {
   const selected = emails.find(e => e.id === params.get('message')) ?? emails[0];
   return <SidebarProvider><div className="flex min-h-screen w-full bg-background"><AppSidebar /><main className="min-w-0 flex-1">
     <header className="flex h-14 items-center justify-between border-b border-border px-6"><div className="flex items-center gap-3"><SidebarTrigger /><h1 className="text-lg font-semibold">Demo inbox</h1></div><NotificationBell /></header>
+    <div className="border-b border-border p-4"><DemoEmailConfirmCard /></div>
     <div className="grid min-h-[600px] md:grid-cols-[320px_minmax(0,1fr)]">
       <section className="border-b border-border md:border-b-0 md:border-r"><div className="flex items-center justify-between p-4"><span className="text-sm text-muted-foreground">{emails.length} messages</span><Button variant="ghost" size="sm" onClick={() => markDemoEmailsRead()}>Mark all read</Button></div>
       {emails.map(e => <Button key={e.id} variant="ghost" className="h-auto w-full justify-start whitespace-normal rounded-none border-b border-border px-4 py-4 text-left" onClick={() => { markDemoEmailsRead(e.id); setParams({ message: e.id }); }}><div className="min-w-0"><p className={e.read ? 'text-sm text-muted-foreground' : 'text-sm font-semibold text-foreground'}>{e.subject}</p><p className="mt-1 text-xs text-muted-foreground">{statusLabels[e.status] ?? e.status}</p></div></Button>)}
