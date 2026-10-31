@@ -431,6 +431,41 @@ export type Database = {
         }
         Relationships: []
       }
+      demo_confirmation_sends: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          ip_hash: string
+          session_id: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          ip_hash: string
+          session_id: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          ip_hash?: string
+          session_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "demo_confirmation_sends_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "demo_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       demo_notification_events: {
         Row: {
           created_at: string
@@ -513,22 +548,34 @@ export type Database = {
       }
       demo_sessions: {
         Row: {
+          confirmation_attempts: number
+          confirmation_code_hash: string | null
+          confirmation_expires_at: string | null
           created_at: string
           email: string
+          email_confirmed_at: string | null
           emails_sent: number
           id: string
           notification_token_hash: string | null
         }
         Insert: {
+          confirmation_attempts?: number
+          confirmation_code_hash?: string | null
+          confirmation_expires_at?: string | null
           created_at?: string
           email: string
+          email_confirmed_at?: string | null
           emails_sent?: number
           id?: string
           notification_token_hash?: string | null
         }
         Update: {
+          confirmation_attempts?: number
+          confirmation_code_hash?: string | null
+          confirmation_expires_at?: string | null
           created_at?: string
           email?: string
+          email_confirmed_at?: string | null
           emails_sent?: number
           id?: string
           notification_token_hash?: string | null
@@ -2061,6 +2108,10 @@ export type Database = {
         Args: { _action: string; _email: string; _justification: string }
         Returns: Json
       }
+      confirm_demo_email: {
+        Args: { _code_hash: string; _session_id: string }
+        Returns: Json
+      }
       end_support_access: { Args: never; Returns: undefined }
       mark_platform_notification_read: {
         Args: { _id: string }
@@ -2085,6 +2136,10 @@ export type Database = {
       }
       reserve_demo_ai_call: {
         Args: { _ip_hash: string; _mode: string; _session_id: string }
+        Returns: Json
+      }
+      reserve_demo_confirmation: {
+        Args: { _code_hash: string; _ip_hash: string; _session_id: string }
         Returns: Json
       }
       reserve_demo_notification: {
