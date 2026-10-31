@@ -68,7 +68,7 @@ async function call(body: Record<string, unknown>) {
   }
 }
 
-export type VerifyResult = { confirmed: true } | { confirmed: false; reason: 'invalid_code' | 'expired' | 'too_many_attempts' | 'failed'; attemptsLeft?: number };
+export interface VerifyResult { confirmed: boolean; reason?: 'invalid_code' | 'expired' | 'too_many_attempts' | 'failed'; attemptsLeft?: number }
 
 export async function verifyDemoEmailCode(code: string): Promise<VerifyResult> {
   if (!/^\d{6}$/.test(code)) return { confirmed: false, reason: 'invalid_code' };
