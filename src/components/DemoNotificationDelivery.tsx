@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { emitDailyBriefing, readDemoEmails, subscribeDemoEmails, updateDemoEmail } from '@/data-layer/demoNotifications';
 import { getDemoNotificationCredentials } from '@/data-layer/demoStore';
+import { canEmailDemoNotifications, refreshDemoConfirmationStatus } from '@/data-layer/demoEmailConfirmation';
 
 /** The only operational demo network request: fixed, session-addressed sample emails. */
 export function DemoNotificationDelivery() {
@@ -11,7 +12,9 @@ export function DemoNotificationDelivery() {
       const credentials = getDemoNotificationCredentials();
       for (const email of readDemoEmails().filter(e => e.status === 'pending')) {
         if (inFlight.has(email.id)) continue;
+        // Until the address is confirmed, notifications stay in the Demo Inbox only.
         if (!credentials) { updateDemoEmail(email.id, { status: 'inbox_only' }); continue; }
+        if (!canEmailDemoNotifications()) { updateDemoEmail(email.id, { status: 'not_confirmed' }); continue; }
         inFlight.add(email.id);
         void fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-demo-notification`, {
           method: 'POST', headers: { 'Content-Type': 'application/json', apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY, 'x-demo-token': credentials.token },
@@ -23,6 +26,7 @@ export function DemoNotificationDelivery() {
       }
     };
     const unsubscribe = subscribeDemoEmails(deliver);
+    void refreshDemoConfirmationStatus();
     emitDailyBriefing(); deliver();
     const timer = window.setInterval(emitDailyBriefing, 60_000);
     return () => { stopped = true; unsubscribe(); window.clearInterval(timer); };
