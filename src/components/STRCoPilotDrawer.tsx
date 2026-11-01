@@ -16,7 +16,7 @@ import { generateGoAMLXmlFromLegacy, downloadXmlFile } from '@/lib/generateGoAML
 import { resolveExportEntity, missingFieldsMessage } from '@/data-layer/exportEntity';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useZone } from '@/hooks/useZone';
-import { DemoSampleLabel, DEMO_SAMPLE_LABEL, DEMO_LIVE_AI_LABEL, DEMO_FALLBACK_LABEL, demoAiLimitMessage } from '@/components/DemoSampleLabel';
+import { DemoSampleLabel, DEMO_SAMPLE_LABEL, DEMO_LIVE_AI_LABEL, DEMO_LIVE_AI_NOTICE, DEMO_FALLBACK_LABEL, demoAiLimitMessage, demoStrAuditJustification } from '@/components/DemoSampleLabel';
 import { BookDemoSheet } from '@/components/landing/BookDemoSheet';
 
 interface ChatMessage {
@@ -158,16 +158,17 @@ export function STRCoPilotDrawer({ open, onOpenChange, alert }: STRCoPilotDrawer
       setDraftSource(source);
       setLimitMessage(capped);
       setDraft(narrative
-        ? generateDraft(alert, true, { narrative, footer: DEMO_LIVE_AI_LABEL })
+        ? generateDraft(alert, true, { narrative, footer: `${DEMO_LIVE_AI_LABEL}. ${DEMO_LIVE_AI_NOTICE}` })
         : generateDraft(alert, true, { footer: DEMO_FALLBACK_LABEL }));
       setChatMessages([
         ...intro(source),
-        ...(capped ? [{ id: 2, role: 'assistant' as const, content: capped, timestamp: new Date(), source: 'fallback' as const }] : []),
+        ...(capped ? [{ id: 2, role: 'assistant' as const, content: capped, timestamp: new Date() }] : []),
       ]);
       setLoading(false);
+      void append({ action: 'STR_DRAFT_GENERATED', analyst: '', caseId: alert.id, justification: demoStrAuditJustification(source) }).catch(() => undefined);
     })();
     return () => { cancelled = true; };
-  }, [open, alert, isDemo, provider]);
+  }, [open, alert, isDemo, provider, append]);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -196,11 +197,11 @@ export function STRCoPilotDrawer({ open, onOpenChange, alert }: STRCoPilotDrawer
         setChatMessages((prev) => [
           ...prev,
           { id: Date.now(), role: 'assistant', content: result.confirmation, timestamp: new Date(), source: result.source === 'live_ai' ? 'live_ai' : 'fallback' },
-          ...(capped ? [{ id: Date.now() + 1, role: 'assistant' as const, content: capped, timestamp: new Date(), source: 'fallback' as const }] : []),
+          ...(capped ? [{ id: Date.now() + 1, role: 'assistant' as const, content: capped, timestamp: new Date() }] : []),
         ]);
         if (changed) {
           setEditVersion((v) => v + 1);
-          void append({ action: 'STR_EDIT', analyst: '', caseId: alert.id, justification: isDemo ? `STR draft edited (${result.source === 'live_ai' ? 'live AI on synthetic data' : 'sample assistant'}): "${input.slice(0, 120)}"` : `STR draft edited by co-pilot: "${input.slice(0, 120)}"` });
+          void append({ action: 'STR_EDIT', analyst: '', caseId: alert.id, justification: isDemo ? demoStrAuditJustification(result.source === 'live_ai' ? 'live_ai' : 'sample', input) : `STR draft edited by co-pilot: "${input.slice(0, 120)}"` });
         }
       })
       .catch(() => {
@@ -341,7 +342,7 @@ export function STRCoPilotDrawer({ open, onOpenChange, alert }: STRCoPilotDrawer
               <div className="px-4 py-2.5 border-b bg-muted/30 flex items-center gap-2 shrink-0">
                 <Bot className="h-3.5 w-3.5 text-primary" />
                 <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                  AI Assistant
+                  {isDemo ? 'STR drafting assistant' : 'AI Assistant'}
                 </span>
               </div>
 
@@ -363,7 +364,7 @@ export function STRCoPilotDrawer({ open, onOpenChange, alert }: STRCoPilotDrawer
                           }`}
                         >
                           {msg.content}
-                          {isDemo && msg.role === 'assistant' && (
+                          {isDemo && msg.role === 'assistant' && msg.source && (
                             <div className="mt-1.5"><DemoSampleLabel source={msg.source} /></div>
                           )}
                         </div>
