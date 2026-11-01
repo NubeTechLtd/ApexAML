@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useZoneNavigate } from '@/hooks/useZone';
+import { useZone, useZoneNavigate } from '@/hooks/useZone';
+import { DemoSampleLabel } from '@/components/DemoSampleLabel';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -63,6 +64,7 @@ function NewSTRSheet({ open, onOpenChange }: { open: boolean; onOpenChange: (v: 
   const { append } = useAuditLog();
   const [step, setStep] = useState(1);
   const [linkedAlert, setLinkedAlert] = useState('');
+  const isDemo = useZone() === 'demo';
   const [narrative, setNarrative] = useState('');
   const [generating, setGenerating] = useState(false);
   const [editedNarrative, setEditedNarrative] = useState('');
@@ -148,7 +150,8 @@ function NewSTRSheet({ open, onOpenChange }: { open: boolean; onOpenChange: (v: 
             <div className="space-y-3 pr-2">
               <div className="flex items-center gap-2">
                 <PenLine className="h-3.5 w-3.5 text-primary" />
-                <p className="text-xs font-medium text-foreground">AI-Generated Narrative</p>
+                <p className="text-xs font-medium text-foreground">{isDemo ? 'STR narrative' : 'AI-Generated Narrative'}</p>
+                {isDemo && !generating && narrative && <DemoSampleLabel source="sample" />}
                 {generating && <Loader2 className="h-3 w-3 animate-spin text-primary" />}
               </div>
               <div className="rounded-lg border bg-muted/30 p-3 min-h-[200px]">
