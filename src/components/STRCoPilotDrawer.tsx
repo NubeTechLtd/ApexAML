@@ -104,6 +104,9 @@ export function STRCoPilotDrawer({ open, onOpenChange, alert }: STRCoPilotDrawer
   const { toast } = useToast();
   const provider = useDataProvider();
   const { append } = useAuditLog();
+  // Ref so a new audit callback never re-runs the draft effect (each run uses a demo AI call).
+  const appendRef = useRef(append);
+  appendRef.current = append;
   const isDemo = useZone() === 'demo';
   const [loading, setLoading] = useState(true);
   const [draft, setDraft] = useState('');
@@ -165,10 +168,10 @@ export function STRCoPilotDrawer({ open, onOpenChange, alert }: STRCoPilotDrawer
         ...(capped ? [{ id: 2, role: 'assistant' as const, content: capped, timestamp: new Date() }] : []),
       ]);
       setLoading(false);
-      void append({ action: 'STR_DRAFT_GENERATED', analyst: '', caseId: alert.id, justification: demoStrAuditJustification(source) }).catch(() => undefined);
+      void appendRef.current({ action: 'STR_DRAFT_GENERATED', analyst: '', caseId: alert.id, justification: demoStrAuditJustification(source) }).catch(() => undefined);
     })();
     return () => { cancelled = true; };
-  }, [open, alert, isDemo, provider, append]);
+  }, [open, alert, isDemo, provider]);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
