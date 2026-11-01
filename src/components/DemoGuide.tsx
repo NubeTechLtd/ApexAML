@@ -77,8 +77,8 @@ const DEMO_STEPS: DemoStep[] = [
   {
     title: 'One click exports a goAML-style XML draft for review.',
     description:
-      "The 'Export to NFIU goAML portal' button generates the complete goAML 3.x XML file — subject information, transaction records, narrative text — ready for upload. The case lifecycle bar automatically advances to 'Filed with NFIU.'",
-    action: "Click 'Export to NFIU goAML portal' →",
+      "The 'Export goAML XML (draft)' button downloads a draft XML file with the subject information, transaction records and narrative. Nothing is sent to the NFIU: the analyst reviews the draft and uploads it via the goAML portal. The case lifecycle bar advances to 'Exported for filing'.",
+    action: "Click 'Export goAML XML (draft)' →",
   },
   {
     title: 'Every action your team took is permanently recorded.',

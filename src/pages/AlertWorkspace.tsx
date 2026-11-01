@@ -1027,7 +1027,7 @@ export default function AlertWorkspace() {
                               )}
                               <Badge variant="outline" className="text-[9px]">Editable</Badge>
                               <Button size="sm" className="h-7 gap-1.5 text-xs" onClick={handleExport}>
-                                <FileDown className="h-3 w-3" /> Export to NFIU goAML portal
+                                <FileDown className="h-3 w-3" /> Export goAML XML (draft)
                                 <Badge variant="outline" className="text-[8px] px-1 py-0 ml-0.5 bg-primary-foreground/10 border-primary-foreground/20">⇧D</Badge>
                               </Button>
                             </div>

@@ -58,7 +58,7 @@ type CaseFile = {
   typology: string;
   customerName: string;
   customerId?: string;
-  status: 'Open' | 'Under Review' | 'Filed' | 'Closed';
+  status: 'Open' | 'Under Review' | 'Filed (simulated)' | 'Closed';
   openedAt: string;
   closedAt?: string;
   investigationMinutes: number;
@@ -115,7 +115,7 @@ function buildCaseFile(caseId: string, alerts: Alert[], audit: AuditEntry[]): Ca
   ];
   const last = logged[logged.length - 1]?.timestamp ?? alert.timestamp;
   const filed = logged.find((e) => e.action === 'STR_EXPORT' || e.action === 'NFIU_ESCALATION');
-  const status: CaseFile['status'] = alert.status === 'Escalated' ? 'Filed' : alert.status === 'Dismissed' ? 'Closed' : alert.status;
+  const status: CaseFile['status'] = alert.status === 'Escalated' ? 'Filed (simulated)' : alert.status === 'Dismissed' ? 'Closed' : alert.status;
   return {
     caseId: alert.caseId,
     typology: alert.ruleTriggered,
@@ -123,7 +123,7 @@ function buildCaseFile(caseId: string, alerts: Alert[], audit: AuditEntry[]): Ca
     customerId: String(alertCustomerNum(alert.id) ?? ''),
     status,
     openedAt: fmt(alert.timestamp),
-    closedAt: status === 'Closed' || status === 'Filed' ? fmt(last) : undefined,
+    closedAt: status === 'Closed' || status === 'Filed (simulated)' ? fmt(last) : undefined,
     investigationMinutes: Math.max(0, Math.round((new Date(last).getTime() - new Date(alert.timestamp).getTime()) / 60_000)),
     strFiledAt: filed ? fmt(filed.timestamp) : undefined,
     strDeadlineHours: 24,
@@ -155,7 +155,7 @@ const fallbackCase = (caseId: string): CaseFile => ({
 const statusStyles: Record<CaseFile['status'], string> = {
   Open: 'bg-destructive/10 text-destructive border-destructive/20',
   'Under Review': 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20',
-  Filed: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20',
+  'Filed (simulated)': 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20',
   Closed: 'bg-muted text-muted-foreground border-border',
 };
 
@@ -382,10 +382,10 @@ export default function CaseJourney() {
                   <p className="font-semibold text-foreground">
                     {filedWithinDeadline ? (
                       <span className="text-emerald-600 dark:text-emerald-400">
-                        Filed within 24h ✅
+                        Exported within 24h ✅
                       </span>
                     ) : (
-                      <span className="text-muted-foreground">Not yet filed</span>
+                      <span className="text-muted-foreground">Not yet exported</span>
                     )}
                   </p>
                 </div>
@@ -393,7 +393,7 @@ export default function CaseJourney() {
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-emerald-500" />
                 <div>
-                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground">STR filed at</p>
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground">STR XML exported at</p>
                   <p className="font-semibold text-foreground">
                     {caseFile.strFiledAt ?? '—'}
                     {filedWithinDeadline && (

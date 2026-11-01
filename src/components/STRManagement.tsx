@@ -161,7 +161,7 @@ function NewSTRSheet({ open, onOpenChange }: { open: boolean; onOpenChange: (v: 
                 </pre>
               </div>
               {!generating && narrative && (
-                <p className="text-[10px] text-muted-foreground">You can edit the narrative in the next step before submitting.</p>
+                <p className="text-[10px] text-muted-foreground">You can edit the narrative in the next step before saving it for review.</p>
               )}
             </div>
           )}
@@ -194,7 +194,7 @@ function NewSTRSheet({ open, onOpenChange }: { open: boolean; onOpenChange: (v: 
             </Button>
           ) : (
             <Button size="sm" className="text-xs gap-1" onClick={handleSubmit}>
-              <Send className="h-3 w-3" /> Submit to NFIU
+              <Send className="h-3 w-3" /> Save for review
             </Button>
           )}
         </div>
@@ -222,7 +222,7 @@ export function STRManagement() {
   const summaryCards: { label: string; count: number; icon: React.ReactNode; color: string }[] = [
     { label: 'Draft', count: counts.Draft, icon: <PenLine className="h-4 w-4" />, color: 'text-muted-foreground' },
     { label: 'Pending Review', count: counts['Pending Review'], icon: <Clock className="h-4 w-4" />, color: 'text-[hsl(var(--risk-medium))]' },
-    { label: 'Submitted to NFIU', count: counts['Submitted to NFIU'], icon: <Send className="h-4 w-4" />, color: 'text-[hsl(var(--risk-low))]' },
+    { label: 'Filed (simulated)', count: counts['Submitted to NFIU'], icon: <Send className="h-4 w-4" />, color: 'text-[hsl(var(--risk-low))]' },
     { label: 'Rejected', count: counts.Rejected, icon: <XCircle className="h-4 w-4" />, color: 'text-destructive' },
   ];
 
@@ -231,8 +231,8 @@ export function STRManagement() {
     setTimeout(() => {
       setResubmitting(null);
       const sub = mockNFIUSubmissions.find(x => x.id === id);
-      void append({ action: 'STR_RESUBMITTED', analyst: '', caseId: sub?.reference ?? id, justification: 'STR re-submitted to the NFIU goAML portal.' }).catch(() => undefined);
-      toast.success('STR re-submitted to NFIU goAML portal');
+      void append({ action: 'STR_RESUBMITTED', analyst: '', caseId: sub?.reference ?? id, justification: 'Simulated re-filing recorded in the demo. Nothing was sent to the NFIU; in the live system the analyst re-uploads the corrected draft XML via the goAML portal.' }).catch(() => undefined);
+      toast.success('Re-filing simulated', { description: 'Nothing was sent to the NFIU. In the live system the analyst uploads the corrected XML via the goAML portal.' });
     }, 1500);
   };
 
@@ -293,7 +293,7 @@ export function STRManagement() {
                   <TableCell className="text-xs">{r.analyst}</TableCell>
                   <TableCell>
                     <Badge variant="outline" className={cn('text-[9px] border-0 px-1.5 py-0', statusStyle[r.status])}>
-                      {r.status}
+                      {r.status === 'Submitted to NFIU' ? 'Filed (simulated)' : r.status}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-xs text-muted-foreground">{formatDate(r.filedDate)}</TableCell>
@@ -308,8 +308,8 @@ export function STRManagement() {
                         <DropdownMenuItem className="text-xs gap-2" onClick={() => toast.info(`Viewing ${r.reference}`)}>
                           <Eye className="h-3.5 w-3.5" /> View
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="text-xs gap-2" onClick={() => toast.info(`Re-submitting ${r.reference}`)}>
-                          <RefreshCw className="h-3.5 w-3.5" /> Re-submit
+                        <DropdownMenuItem className="text-xs gap-2" onClick={() => toast.info(`Re-filing ${r.reference} (simulated)`, { description: 'Nothing is sent to the NFIU from the demo.' })}>
+                          <RefreshCw className="h-3.5 w-3.5" /> Re-file (simulated)
                         </DropdownMenuItem>
                         <DropdownMenuItem className="text-xs gap-2" onClick={() => toast.info(`Downloading ${r.reference}.xml`)}>
                           <Download className="h-3.5 w-3.5" /> Download XML
@@ -328,7 +328,7 @@ export function STRManagement() {
       <div className="space-y-2">
         <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
           <FileText className="h-3.5 w-3.5" />
-          NFIU Submission Log (Last 5)
+          Filing log (simulated, last 5)
         </h3>
         <Card>
           <CardContent className="p-0">
@@ -367,7 +367,7 @@ export function STRManagement() {
                           onClick={() => handleResubmit(s.id)}
                         >
                           {resubmitting === s.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <RefreshCw className="h-3 w-3" />}
-                          Resubmit
+                          Re-file (simulated)
                         </Button>
                       )}
                     </TableCell>
