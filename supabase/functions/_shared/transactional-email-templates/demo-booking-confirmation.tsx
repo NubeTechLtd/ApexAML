@@ -61,7 +61,7 @@ const Email = ({
             <strong>0–5 min</strong> · Compliance posture &amp; CBN Circular alignment for {institutionType}
           </Text>
           <Text style={listItem}>
-            <strong>5–20 min</strong> · Live walkthrough: STR drafting assistant, transaction monitoring, NFIU goAML export
+            <strong>5–20 min</strong> · Live walkthrough: STR drafting assistant, transaction monitoring, goAML XML export (draft)
           </Text>
           <Text style={listItem}>
             <strong>20–28 min</strong> ·{' '}
@@ -100,7 +100,7 @@ export const template = {
     firstName: 'Ada',
     institutionName: 'Sterling Microfinance',
     institutionType: 'Microfinance Bank',
-    focusAreas: 'STR drafting assistant and NFIU goAML export',
+    focusAreas: 'STR drafting assistant and goAML XML export (draft)',
     slotLabel: 'Tuesday, 14 July 2026 at 2:00 PM WAT',
     zoomLink: 'https://zoom.us/j/0000000000?pwd=apexaml',
   },

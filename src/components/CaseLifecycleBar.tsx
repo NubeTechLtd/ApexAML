@@ -29,7 +29,7 @@ const STAGES: { id: LifecycleStageId; label: string }[] = [
   { id: 'under_review', label: 'Under Review' },
   { id: 'evidence', label: 'Evidence Gathered' },
   { id: 'drafted', label: 'STR Drafted' },
-  { id: 'filed', label: 'Filed with NFIU' },
+  { id: 'filed', label: 'Exported for filing' },
   { id: 'closed', label: 'Case Closed' },
 ];
 
@@ -39,8 +39,8 @@ const GUIDANCE: Partial<Record<LifecycleStageId, string>> = {
   evidence:
     'Your case notes are saved. Click Generate STR Draft above — the AI co-pilot will use your notes and the transaction data to draft the NFIU report.',
   drafted:
-    'Review the AI draft below. Edit any sections that need adjustment. When satisfied, click Export goAML XML to download the submission file.',
-  filed: 'Submission file generated. Close the case once the NFIU portal acknowledges receipt.',
+    'Review the AI draft below. Edit any sections that need adjustment. When satisfied, click Export goAML XML (draft) to download the draft file for review.',
+  filed: 'Draft goAML XML exported. Review it, upload it via the goAML portal, and close the case once the NFIU acknowledges receipt.',
   closed: 'This case is resolved. All actions are recorded in the immutable audit log.',
   received: 'Click Mark Under Review above to take ownership of this case and start the investigation.',
 };
@@ -126,7 +126,7 @@ export function CaseLifecycleBar({
       : currentStageId === 'evidence'
         ? 'Your case notes are saved. Click Generate STR draft. The STR drafting assistant uses AI drafting on synthetic data, or shows Sample output (pre-written for demo) if the AI is unavailable.'
         : currentStageId === 'drafted'
-          ? 'Review the draft below. Edit any sections that need adjustment. When satisfied, click Export goAML XML to download the submission file.'
+          ? 'Review the draft below. Edit any sections that need adjustment. When satisfied, click Export goAML XML (draft) to download the draft file for review.'
           : GUIDANCE[currentStageId]
     : GUIDANCE[currentStageId];
 

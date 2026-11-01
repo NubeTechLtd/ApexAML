@@ -969,7 +969,7 @@ export default function AlertWorkspace() {
                             <p className="text-xs text-muted-foreground max-w-md">
                               {isDemo
                                 ? 'Drafts an STR for this fictional case with AI drafting on synthetic data. If the AI is unavailable, Sample output (pre-written for demo) is shown instead.'
-                                : 'AI will analyze the alert data, correlate transactions, and produce a draft Suspicious Transaction Report ready for NFIU goAML submission.'}
+                                : 'AI will analyze the alert data, correlate transactions, and produce a draft Suspicious Transaction Report for analyst review and goAML XML export.'}
                             </p>
                           </div>
                           <Button size="lg" className="gap-2 mt-2" onClick={handleGenerateSTR}>
@@ -1027,7 +1027,7 @@ export default function AlertWorkspace() {
                               )}
                               <Badge variant="outline" className="text-[9px]">Editable</Badge>
                               <Button size="sm" className="h-7 gap-1.5 text-xs" onClick={handleExport}>
-                                <FileDown className="h-3 w-3" /> Export to NFIU goAML portal
+                                <FileDown className="h-3 w-3" /> Export goAML XML (draft)
                                 <Badge variant="outline" className="text-[8px] px-1 py-0 ml-0.5 bg-primary-foreground/10 border-primary-foreground/20">⇧D</Badge>
                               </Button>
                             </div>
