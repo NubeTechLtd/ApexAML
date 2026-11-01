@@ -969,7 +969,7 @@ export default function AlertWorkspace() {
                             <p className="text-xs text-muted-foreground max-w-md">
                               {isDemo
                                 ? 'Drafts an STR for this fictional case with AI drafting on synthetic data. If the AI is unavailable, Sample output (pre-written for demo) is shown instead.'
-                                : 'AI will analyze the alert data, correlate transactions, and produce a draft Suspicious Transaction Report ready for NFIU goAML submission.'}
+                                : 'AI will analyze the alert data, correlate transactions, and produce a draft Suspicious Transaction Report for analyst review and goAML XML export.'}
                             </p>
                           </div>
                           <Button size="lg" className="gap-2 mt-2" onClick={handleGenerateSTR}>
