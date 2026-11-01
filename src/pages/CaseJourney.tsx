@@ -75,6 +75,7 @@ const fmt = (iso: string) => {
 const EVENT_STYLE: Record<string, { icon: IconType; color: string; title: string }> = {
   CASE_UNDER_REVIEW: { icon: Eye, color: 'text-amber-500', title: 'Case taken into review' },
   CASE_INFO_REQUESTED: { icon: Search, color: 'text-amber-500', title: 'Information requested' },
+  STR_DRAFT_GENERATED: { icon: FileText, color: 'text-primary', title: 'STR draft created' },
   STR_EDIT: { icon: Edit3, color: 'text-primary', title: 'STR draft edited' },
   STR_FILED: { icon: FileText, color: 'text-primary', title: 'STR prepared' },
   STR_EXPORT: { icon: Send, color: 'text-emerald-500', title: 'STR exported as goAML-style XML (draft)' },

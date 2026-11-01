@@ -1,7 +1,7 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useZone, useZoneNavigate } from '@/hooks/useZone';
-import { DemoSampleLabel } from '@/components/DemoSampleLabel';
+import { DemoSampleLabel, demoStrAuditJustification } from '@/components/DemoSampleLabel';
 import { ActiveFilterChip } from '@/components/ActiveFilterChip';
 import { NotificationBell } from '@/components/NotificationBell';
 import { SidebarProvider } from '@/components/ui/sidebar';
@@ -96,7 +96,7 @@ interface ChatMessage {
   id: number;
   role: 'user' | 'assistant';
   content: string;
-  source?: 'live_ai' | 'fallback';
+  source?: 'live_ai' | 'fallback' | 'sample';
 }
 
 const DISMISSAL_REASONS = [
@@ -279,7 +279,7 @@ export default function AlertWorkspace() {
   const [strGenerated, setStrGenerated] = useState(false);
   const [editVersion, setEditVersion] = useState(0);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
-  const [strSource, setStrSource] = useState<'live_ai' | 'fallback'>('fallback');
+  const [strSource, setStrSource] = useState<'live_ai' | 'fallback' | 'sample'>('sample');
   const [chatInput, setChatInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [underReviewAtMap, setUnderReviewAtMap] = useState<Record<string, string>>({});
@@ -322,6 +322,7 @@ export default function AlertWorkspace() {
     setStrDraftId(null);
     setStrLoading(false);
     setStrGenerated(isCrossBorder);
+    setStrSource('sample');
     setChatMessages([]);
     setEditVersion(0);
     setChannelFilter('All');
@@ -346,6 +347,7 @@ export default function AlertWorkspace() {
       setStrDraft(narrative);
       setStrDraftId(draftId);
       setStrGenerated(true);
+      if (isDemo) void addAuditEntry({ action: 'STR_DRAFT_GENERATED', analyst: '', caseId: selected.caseId, justification: demoStrAuditJustification(source === 'live_ai' ? 'live_ai' : 'fallback') }).catch(() => undefined);
     } catch (e) {
       toast({
         title: 'Could not draft the report',
@@ -383,9 +385,9 @@ export default function AlertWorkspace() {
         { id: Date.now(), role: 'assistant', content: result.confirmation, source: result.source === 'live_ai' ? 'live_ai' : 'fallback' },
       ]);
       if (changed) {
-        if (result.source === 'live_ai') setStrSource('live_ai');
+        setStrSource(result.source === 'live_ai' ? 'live_ai' : 'sample');
         setEditVersion((v) => v + 1);
-        void addAuditEntry({ action: 'STR_EDIT', analyst: '', caseId: selected.caseId, justification: isDemo ? `STR draft edited (${result.source === 'live_ai' ? 'live AI on synthetic data' : 'sample assistant'}): "${input.slice(0, 120)}"` : `STR draft edited by co-pilot: "${input.slice(0, 120)}"` }).catch(() => undefined);
+        void addAuditEntry({ action: 'STR_EDIT', analyst: '', caseId: selected.caseId, justification: isDemo ? demoStrAuditJustification(result.source === 'live_ai' ? 'live_ai' : 'sample', input) : `STR draft edited by co-pilot: "${input.slice(0, 120)}"` }).catch(() => undefined);
       }
     } catch {
       // Never claim the draft changed: the report text is untouched.
@@ -966,12 +968,12 @@ export default function AlertWorkspace() {
                             <p className="text-sm font-medium text-foreground">Generate an NFIU-formatted STR</p>
                             <p className="text-xs text-muted-foreground max-w-md">
                               {isDemo
-                                ? 'Shows a pre-written sample STR draft for this fictional case.'
+                                ? 'Drafts an STR for this fictional case with AI drafting on synthetic data. If the AI is unavailable, Sample output (pre-written for demo) is shown instead.'
                                 : 'AI will analyze the alert data, correlate transactions, and produce a draft Suspicious Transaction Report ready for NFIU goAML submission.'}
                             </p>
                           </div>
                           <Button size="lg" className="gap-2 mt-2" onClick={handleGenerateSTR}>
-                            <Sparkles className="h-4 w-4" /> {isDemo ? 'Show sample investigation report' : 'Generate AI investigation report'}
+                            <Sparkles className="h-4 w-4" /> {isDemo ? 'Generate STR draft' : 'Generate AI investigation report'}
                           </Button>
                         </CardContent>
                       </Card>
@@ -1048,7 +1050,7 @@ export default function AlertWorkspace() {
                         <div className="w-72 flex flex-col rounded-lg border overflow-hidden shrink-0">
                           <div className="px-3 py-2 border-b bg-muted/30 flex items-center gap-2 shrink-0">
                             <Bot className="h-3.5 w-3.5 text-primary" />
-                            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{isDemo ? 'Co-Pilot (sample)' : 'AI Assistant'}</span>
+                            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{isDemo ? 'STR drafting assistant' : 'AI Assistant'}</span>
                           </div>
 
                           <ScrollArea className="flex-1 p-3">
@@ -1067,7 +1069,7 @@ export default function AlertWorkspace() {
                                         : 'bg-muted text-foreground'
                                     }`}>
                                       {msg.content}
-                                      {isDemo && msg.role === 'assistant' && (
+                                      {isDemo && msg.role === 'assistant' && msg.source && (
                                         <div className="mt-1.5"><DemoSampleLabel source={msg.source} /></div>
                                       )}
                                     </div>
@@ -1089,7 +1091,7 @@ export default function AlertWorkspace() {
                           <div className="p-3 space-y-2 shrink-0">
                             <div className="flex gap-2">
                               <Input
-                                placeholder={isDemo ? 'Ask for a sample refinement…' : 'Refine STR draft with AI…'}
+                                placeholder={isDemo ? 'Ask for a refinement…' : 'Refine STR draft with AI…'}
                                 value={chatInput}
                                 onChange={(e) => setChatInput(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && handleSendChat()}

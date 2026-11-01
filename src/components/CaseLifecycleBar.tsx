@@ -122,11 +122,11 @@ export function CaseLifecycleBar({
 
   const guidance = isDemo
     ? currentStageId === 'under_review'
-      ? 'Review the transaction timeline below. Click View Customer Profile to check their risk history. When ready, click Generate STR Draft to start the STR drafting assistant (sample output).'
+      ? 'Review the transaction timeline below. Click View Customer Profile to check their risk history. When ready, click Generate STR draft to start the STR drafting assistant (AI drafting on synthetic data).'
       : currentStageId === 'evidence'
-        ? 'Your case notes are saved. Click Generate STR Draft above — the STR drafting assistant (sample output) will display a pre-written sample NFIU narrative.'
+        ? 'Your case notes are saved. Click Generate STR draft. The STR drafting assistant uses AI drafting on synthetic data, or shows Sample output (pre-written for demo) if the AI is unavailable.'
         : currentStageId === 'drafted'
-          ? 'Review the sample draft below. Edit any sections that need adjustment. When satisfied, click Export goAML XML to download the submission file.'
+          ? 'Review the draft below. Edit any sections that need adjustment. When satisfied, click Export goAML XML to download the submission file.'
           : GUIDANCE[currentStageId]
     : GUIDANCE[currentStageId];
 

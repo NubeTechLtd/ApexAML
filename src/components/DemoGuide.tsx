@@ -71,8 +71,8 @@ const DEMO_STEPS: DemoStep[] = [
   {
     title: 'The assistant drafts. You do the reviewing.',
     description:
-      "Click 'Show sample investigation report' to see a pre-written sample STR for this fictional case (sample output in this demo). In the live system, drafts are generated from the case's own data and reviewed by an analyst.",
-    action: "Click 'Show sample investigation report' →",
+      "Click 'Generate STR draft'. When the AI writes the draft from this fictional case it is labelled 'AI drafting on synthetic data' and marked 'Generated on synthetic data. Not for filing.' If the AI is unavailable you see 'Sample output (pre-written for demo)'. In the live system, drafts are generated from the case's own data and reviewed by an analyst.",
+    action: "Click 'Generate STR draft' →",
   },
   {
     title: 'One click exports a goAML-style XML draft for review.',
