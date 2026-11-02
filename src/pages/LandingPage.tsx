@@ -340,7 +340,7 @@ const FAQ_FOR_SCHEMA: Array<{ q: string; a: string }> = [
   },
   {
     q: "Can ApexAML submit STRs directly to the NFIU goAML portal?",
-    a: "Today, ApexAML exports each STR as a goAML XML file ready for one-click upload via the NFIU portal — no manual reformatting, no rejected submissions. Direct API submission to NFIU is on our Q3 2026 roadmap, pending NFIU API access.",
+    a: "No. ApexAML prepares each STR as a goAML-format XML file. Your institution's authorised person reviews it and uploads it via the NFIU goAML portal. Validation against the current NFIU schema is in progress, and ApexAML does not submit reports to the NFIU.",
   },
   {
     q: "Is ApexAML CBN-approved?",

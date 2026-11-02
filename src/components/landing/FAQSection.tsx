@@ -97,10 +97,10 @@ const FAQS: FAQ[] = [
     q: "Can ApexAML submit STRs directly to the NFIU goAML portal?",
     a: (
       <p>
-        Today, ApexAML exports each STR as a fully-validated{" "}
-        <span className="text-white/80 font-mono text-[12px]">goAML XML</span> file ready for one-click upload via the
-        NFIU portal — no manual reformatting, no rejected submissions. Direct API submission to NFIU is on our{" "}
-        <span className="text-primary font-semibold">Q3 2026</span> roadmap, pending NFIU API access.
+        No. ApexAML prepares each STR as a{" "}
+        <span className="text-white/80 font-mono text-[12px]">goAML-format XML</span> file. Your institution's
+        authorised person reviews it and uploads it via the NFIU goAML portal. Validation against the current NFIU
+        schema is in progress, and ApexAML does not submit reports to the NFIU.
       </p>
     ),
   },
