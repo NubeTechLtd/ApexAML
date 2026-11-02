@@ -79,7 +79,7 @@ const EVENT_STYLE: Record<string, { icon: IconType; color: string; title: string
   STR_EDIT: { icon: Edit3, color: 'text-primary', title: 'STR draft edited' },
   STR_FILED: { icon: FileText, color: 'text-primary', title: 'STR prepared' },
   STR_EXPORT: { icon: Send, color: 'text-emerald-500', title: 'STR exported as goAML-style XML (draft)' },
-  NFIU_ESCALATION: { icon: ShieldAlert, color: 'text-destructive', title: 'Escalated to NFIU' },
+  NFIU_ESCALATION: { icon: ShieldAlert, color: 'text-destructive', title: 'Escalated to MLRO' },
   ACCOUNT_FREEZE: { icon: Snowflake, color: 'text-destructive', title: 'Account frozen' },
   ALERT_DISMISSED: { icon: CheckCircle2, color: 'text-muted-foreground', title: 'Closed as false positive' },
 };

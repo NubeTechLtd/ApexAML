@@ -112,7 +112,7 @@ const DISMISSAL_REASONS = [
 const STEPS: { key: CaseStatus; label: string }[] = [
   { key: 'Open', label: 'Under Investigation' },
   { key: 'Under Review', label: 'Under Review' },
-  { key: 'Escalated', label: 'Escalated to NFIU' },
+  { key: 'Escalated', label: 'Escalated to MLRO' },
   { key: 'Closed', label: 'Investigation Complete' },
 ];
 
@@ -1139,7 +1139,7 @@ export default function AlertWorkspace() {
             kycTier: selected.customerProfile.kycTier,
             customerName: selected.customerProfile.fullName,
           });
-          toast({ title: 'Escalated to NFIU', description: `Case ${selected.caseId} escalated.` });
+          toast({ title: 'Escalated to MLRO', description: `Case ${selected.caseId} escalated.` });
         }}
 
       />

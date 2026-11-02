@@ -24,7 +24,7 @@ interface AuditRow {
 }
 
 const ACTION_LABELS: Record<string, string> = {
-  NFIU_ESCALATION: 'Escalated to NFIU',
+  NFIU_ESCALATION: 'Escalated to MLRO',
   ACCOUNT_FREEZE: 'Froze Account',
   DOCUMENT_UPLOAD: 'Uploaded KYC Document',
   DOCUMENT_VERIFY: 'Verified KYC Document',

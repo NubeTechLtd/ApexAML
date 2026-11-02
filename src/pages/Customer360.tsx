@@ -243,7 +243,7 @@ export default function Customer360() {
           action="NFIU_ESCALATION"
           onConfirmed={() => {
             mockAlerts.filter(a => a.customer360Id === customer.id && (a.status === 'Open' || a.status === 'Under Review')).forEach(a => demoActions.setAlertStatus(a.id, 'Escalated'));
-            toast.error('Escalated to NFIU');
+            toast.error('Escalated to MLRO');
           }}
         />
         <AddNoteSheet
