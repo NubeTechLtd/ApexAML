@@ -34,7 +34,7 @@ export function BulkEscalateDialog({ open, onOpenChange, count, onConfirmed }: B
             Bulk Escalate — {count} match{count > 1 ? 'es' : ''}
           </AlertDialogTitle>
           <AlertDialogDescription>
-            You are confirming {count} sanctions match{count > 1 ? 'es' : ''} as true positives. This will freeze associated accounts and queue STRs for NFIU submission.
+            You are confirming {count} sanctions match{count > 1 ? 'es' : ''} as true positives. This will freeze associated accounts and queue STR drafts for review.
           </AlertDialogDescription>
         </AlertDialogHeader>
 

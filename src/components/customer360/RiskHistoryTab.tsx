@@ -69,7 +69,7 @@ export function RiskHistoryTab({ customerId, fallbackScore, kycTier, customerNam
               <History className="h-4 w-4 text-primary" /> Risk score over the last 12 months
             </CardTitle>
             <p className="text-xs text-muted-foreground mt-1">
-              Each marker is a recalculation event — alerts raised, reports filed to the NFIU, KYC
+              Each marker is a recalculation event — alerts raised, reports recorded as filed, KYC
               upgrades or clean periods.
               {!isLive && !loading && ' Showing modelled trail until the engine records live events.'}
             </p>

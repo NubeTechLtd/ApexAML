@@ -28,7 +28,7 @@ export function ConfirmEscalationDialog({
   const [confirmed, setConfirmed] = useState(false);
 
   const isFreeze = action === 'ACCOUNT_FREEZE';
-  const title = isFreeze ? 'Account Freeze — Regulatory Action' : 'NFIU Escalation — Regulatory Action';
+  const title = isFreeze ? 'Account Freeze — Regulatory Action' : 'MLRO Escalation — Regulatory Action';
   const valid = justification.trim().length >= 30 && confirmed;
 
   const handleConfirm = () => {
@@ -61,7 +61,7 @@ export function ConfirmEscalationDialog({
         <div className="space-y-4 py-2">
           <div className="space-y-2">
             <Label htmlFor="justification" className="text-xs font-medium">
-              Analyst justification — this will be submitted to NFIU alongside the STR
+              Analyst justification — recorded in the audit trail and attached to the STR draft
             </Label>
             <Textarea
               id="justification"
@@ -83,7 +83,7 @@ export function ConfirmEscalationDialog({
               className="mt-0.5"
             />
             <Label htmlFor="confirm-checkbox" className="text-xs leading-relaxed cursor-pointer">
-              I confirm this is a genuine AML/CFT risk and understand this action will freeze the customer's account and file an STR with the NFIU
+              I confirm this is a genuine AML/CFT risk and understand this action will freeze the customer's account and open an STR draft for review
             </Label>
           </div>
         </div>

@@ -67,7 +67,7 @@ const TIERS: Tier[] = [
       'PEP registry screening — domestic and international',
       'Transaction monitoring — 20 pre-built rules',
       'Full case management workspace',
-      'One-click goAML XML export to NFIU portal',
+      'One-click goAML-format XML export for analyst review and upload',
       'Priority email and WhatsApp support — 24-hour response',
       '10 user accounts included',
     ],

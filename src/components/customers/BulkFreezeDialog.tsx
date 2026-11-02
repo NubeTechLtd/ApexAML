@@ -37,7 +37,7 @@ export function BulkFreezeDialog({ open, onOpenChange, customerNames, onConfirme
           <AlertDialogDescription asChild>
             <div className="space-y-3">
               <p className="text-sm text-muted-foreground">
-                This action will freeze all accounts, file STRs with the NFIU, and cannot be easily reversed.
+                This action will freeze all accounts, open STR drafts for review, and cannot be easily reversed.
               </p>
               <div className="rounded-md border border-destructive/20 bg-destructive/5 p-3 max-h-32 overflow-y-auto">
                 <p className="text-xs font-medium text-muted-foreground mb-1.5">Affected customers:</p>
@@ -54,7 +54,7 @@ export function BulkFreezeDialog({ open, onOpenChange, customerNames, onConfirme
         <div className="space-y-3 pt-2">
           <div>
             <label className="text-xs font-medium text-muted-foreground">
-              Analyst justification — this will be submitted to NFIU alongside the STR
+              Analyst justification — recorded in the audit trail and attached to the STR drafts
             </label>
             <Textarea
               className="mt-1.5"

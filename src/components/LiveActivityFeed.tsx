@@ -42,8 +42,8 @@ const TEMPLATES = (isDemo: boolean): { severity: Severity; build: (name: string)
   { severity: 'amber', build: (n) => `Rule triggered — Dormant Activation — ${n} — account inactive ${Math.floor(Math.random() * 18) + 6} months` },
   { severity: 'green', build: (n) => `KYC verification approved — ${n} — BVN + NIN match` },
   { severity: 'green', build: () => `Sanctions screen clear — ${Math.floor(Math.random() * 20) + 3} new onboardings` },
-  { severity: 'blue', build: () => `CTR submitted to CBN — ${Math.floor(Math.random() * 5) + 1} transactions above ₦5M threshold` },
-  { severity: 'blue', build: () => `goAML XML transmitted — ${Math.floor(Math.random() * 6) + 1} STRs accepted by NFIU portal` },
+  { severity: 'blue', build: () => `CTR draft prepared — ${Math.floor(Math.random() * 5) + 1} transactions above ₦5M threshold` },
+  { severity: 'blue', build: () => `goAML XML exported — ${Math.floor(Math.random() * 6) + 1} STR drafts ready for analyst upload` },
 ];
 
 function nowTime(): string {

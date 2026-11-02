@@ -418,7 +418,7 @@ addAlert({
   txs: (_id, c) => [4_900_000, 4_800_000, 4_850_000, 4_700_000].map((a, i) => addTx(c.num, at(6 - i, 10 + i), 'Credit', a, 'Self — Branch Cash Deposit', 'Cash Deposit', { flagReason: 'Just below ₦5M' })),
   description: () => 'Four cash deposits in four days, each just below the ₦5,000,000 CTR threshold.',
   flags: () => ['Threshold avoidance: every deposit between ₦4.7M and ₦4.9M.', 'Repetition: same branch, same teller window, consecutive days.'],
-  narrative: (c, t) => `${c.fullName} made four branch cash deposits totalling ${ngn(sum(t))} over four consecutive days, each between ₦4,700,000 and ₦4,900,000 — just below the ₦5,000,000 CTR threshold. The account was frozen and an STR filed with the NFIU.`,
+  narrative: (c, t) => `${c.fullName} made four branch cash deposits totalling ${ngn(sum(t))} over four consecutive days, each between ₦4,700,000 and ₦4,900,000 — just below the ₦5,000,000 CTR threshold. The account was frozen and an STR draft was opened for MLRO review.`,
 });
 addAlert({
   num: 11, ruleId: 'R-008', status: 'Under Review', risk: 'High', hours: 30, legacyType: 'PEP Match',

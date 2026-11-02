@@ -9,7 +9,7 @@ export type { RiskScoreEntry, RiskTriggerType } from '@/data-layer/types';
 export const TRIGGER_LABELS: Record<RiskTriggerType, string> = {
   ALERT_FIRED: 'a new alert was raised on this customer',
   ALERT_DISMISSED: 'an alert was reviewed and dismissed',
-  STR_FILED: 'a suspicious transaction report was filed with the NFIU',
+  STR_FILED: 'the institution recorded a suspicious transaction report as filed',
   KYC_UPGRADE: 'the customer completed a KYC tier upgrade',
   SANCTIONS_MATCH: 'a sanctions or watchlist match was detected',
   CLEAN_PERIOD_30D: '30 consecutive days with no alerts',
