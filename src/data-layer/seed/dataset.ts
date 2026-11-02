@@ -481,7 +481,7 @@ addAlert({
   ],
   description: () => 'Repeated P2P inflows from unrelated individuals followed by a single transfer to a crypto exchange wallet.',
   flags: () => ['Counterparty novelty: six first-time senders.', 'Off-ramp: aggregated funds sent to a crypto exchange.'],
-  narrative: (c, t) => `${c.fullName} received ${ngn(sum(t, 'Credit'))} from six unrelated P2P buyers and sent ${ngn(sum(t, 'Debit'))} to a crypto exchange wallet. Escalated to the NFIU.`,
+  narrative: (c, t) => `${c.fullName} received ${ngn(sum(t, 'Credit'))} from six unrelated P2P buyers and sent ${ngn(sum(t, 'Debit'))} to a crypto exchange wallet. Escalated to the MLRO.`,
 });
 addAlert({
   num: 18, ruleId: 'R-022', status: 'Under Review', risk: 'Medium', hours: 44, legacyType: 'Round-Tripping',
@@ -822,7 +822,7 @@ const audit = (timestamp: string, action: string, caseId: string, justification:
 for (const a of alerts) {
   const t = new Date(a.timestamp).getTime();
   if (a.status === 'Under Review') audit(new Date(t + 2 * HOUR).toISOString(), 'CASE_UNDER_REVIEW', a.caseId, `Case opened for review: ${a.ruleTriggered}.`);
-  if (a.status === 'Escalated') audit(new Date(t + 6 * HOUR).toISOString(), 'NFIU_ESCALATION', a.caseId, `Escalated to NFIU after review of ${a.transactions.length} transactions (${a.customerProfile.fullName}).`);
+  if (a.status === 'Escalated') audit(new Date(t + 6 * HOUR).toISOString(), 'NFIU_ESCALATION', a.caseId, `Escalated to MLRO after review of ${a.transactions.length} transactions (${a.customerProfile.fullName}).`);
   if (a.status === 'Dismissed') audit(new Date(t + 5 * HOUR).toISOString(), 'ALERT_DISMISSED', a.caseId, `Closed as false positive — ${a.aiDraftedNarrative.split('Dismissed')[1]?.replace(/^[:\s]+/, '') ?? 'verified as legitimate.'}`);
 }
 for (const c of SEED_CUSTOMERS.filter((x) => x.accountStatus !== 'Active')) {

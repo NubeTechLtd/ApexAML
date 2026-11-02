@@ -26,7 +26,7 @@ const FAQS: FAQ[] = [
           <li>PEP &amp; sanctions screening</li>
           <li>Beneficial-owner identification</li>
           <li>Transaction monitoring (Nigerian typologies)</li>
-          <li>STR submission via NFIU goAML</li>
+          <li>goAML-format STR/CTR export for analyst review and upload</li>
           <li>Currency Transaction Reporting (CTR)</li>
           <li>Independent immutable audit trail</li>
           <li>AML/CFT training &amp; board oversight</li>
@@ -131,7 +131,7 @@ const FAQS: FAQ[] = [
             with no edit or delete path available to any user
           </li>
           <li>Per-customer case file with full investigator notes, reviewer sign-off, and STR linkage</li>
-          <li>STRs exported as validated goAML XML, ready for upload to the NFIU portal</li>
+          <li>STRs exported as goAML XML for review and upload to the NFIU portal</li>
           <li>Live dashboard your compliance officer can present directly to the examiner</li>
         </ul>
       </div>

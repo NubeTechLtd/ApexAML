@@ -988,7 +988,7 @@ Managing Director:                                    Signature: _______________
                         <p className="text-[13px] text-muted-foreground leading-relaxed">
                           Your roadmap is the plan. ApexAML is the platform that executes it — covering all 10
                           CBN capability areas with AI-powered STR drafting, real-time transaction
-                          monitoring, and a pre-built NFIU goAML export. Milestones and implementation timelines are agreed
+                          monitoring, and a pre-built goAML-format export. Milestones and implementation timelines are agreed
                           during your walkthrough and reviewed in the pilot.
                         </p>
                       </div>

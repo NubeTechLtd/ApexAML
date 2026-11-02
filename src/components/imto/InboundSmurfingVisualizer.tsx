@@ -194,7 +194,7 @@ export function InboundSmurfingVisualizer() {
           ) : (
             <>
               <Send className="h-4 w-4" />
-              Auto-file network to NFIU goAML
+              Prepare network STR bundle for goAML export
             </>
           )}
         </Button>

@@ -224,8 +224,8 @@ function AIMockUI() {
           <CheckCircle2 className="h-4 w-4 text-risk-low shrink-0 mt-0.5" />
           <div className="space-y-0.5">
             <p className="text-[11px] text-white">
-              <span className="text-white/75">Filing to NFIU goAML portal…</span>{" "}
-              <span className="text-risk-low font-semibold">Submitted.</span>
+              <span className="text-white/75">goAML-format STR/CTR export for analyst review and upload…</span>{" "}
+              <span className="text-risk-low font-semibold">Draft XML ready.</span>
             </p>
             <p className="text-[10px] text-white/70">
               Reference: <span className="text-white font-semibold">STR-2026-00041</span> ✓
@@ -324,7 +324,7 @@ function RoadmapGeneratorBand() {
 const FAQ_FOR_SCHEMA: Array<{ q: string; a: string }> = [
   {
     q: "Does ApexAML satisfy the CBN circular requirements?",
-    a: "Yes. ApexAML covers all 10 capability areas mandated by Circular BSD/DIR/PUB/LAB/019/002, including tiered CDD with BVN/NIN, EDD, PEP and sanctions screening, beneficial-owner identification, transaction monitoring with Nigerian typologies, NFIU goAML STR/CTR submission, an append-only audit trail, AML/CFT training and 5-year record retention.",
+    a: "Yes. ApexAML covers all 10 capability areas mandated by Circular BSD/DIR/PUB/LAB/019/002, including tiered CDD with BVN/NIN, EDD, PEP and sanctions screening, beneficial-owner identification, transaction monitoring with Nigerian typologies, goAML-format STR/CTR export for analyst review and upload, an append-only audit trail, AML/CFT training and 5-year record retention.",
   },
   {
     q: "Where is our data stored — is it in Nigeria?",
@@ -340,7 +340,7 @@ const FAQ_FOR_SCHEMA: Array<{ q: string; a: string }> = [
   },
   {
     q: "Can ApexAML submit STRs directly to the NFIU goAML portal?",
-    a: "Today, ApexAML exports each STR as a fully-validated goAML XML file ready for one-click upload via the NFIU portal — no manual reformatting, no rejected submissions. Direct API submission to NFIU is on our Q3 2026 roadmap, pending NFIU API access.",
+    a: "Today, ApexAML exports each STR as a goAML XML file ready for one-click upload via the NFIU portal — no manual reformatting, no rejected submissions. Direct API submission to NFIU is on our Q3 2026 roadmap, pending NFIU API access.",
   },
   {
     q: "Is ApexAML CBN-approved?",
@@ -348,7 +348,7 @@ const FAQ_FOR_SCHEMA: Array<{ q: string; a: string }> = [
   },
   {
     q: "What happens during a CBN examiner visit?",
-    a: "Examiners typically request the AML policy, sample STRs, the case-management trail for flagged customers, and evidence of independent review. ApexAML keeps all four on hand: an append-only audit trail that cannot be edited or deleted, per-customer case files with investigator notes, reviewer sign-off and STR linkage, STRs exported as validated goAML XML, and a live dashboard your compliance officer can present directly.",
+    a: "Examiners typically request the AML policy, sample STRs, the case-management trail for flagged customers, and evidence of independent review. ApexAML keeps all four on hand: an append-only audit trail that cannot be edited or deleted, per-customer case files with investigator notes, reviewer sign-off and STR linkage, STRs exported as goAML XML for review and upload, and a live dashboard your compliance officer can present directly.",
   },
   {
     q: "Is ApexAML SOC 2 or ISO 27001 certified?",
