@@ -242,7 +242,7 @@ export default function SanctionsScreening() {
     demoActions.setSanctionsStatus([selected.id], 'Confirmed');
     freezeFor([selected.id]);
     void append({ action: 'SANCTIONS_CONFIRMED', analyst: '', caseId: selected.id, justification: analystNotes.trim() }).catch(() => undefined);
-    toast({ title: 'True Match — Account Frozen', description: `${selected.internal.name}'s account has been frozen. STR queued for NFIU submission.` });
+    toast({ title: 'True Match — Account Frozen', description: `${selected.internal.name}'s account has been frozen. STR draft queued for review.` });
     setAnalystNotes('');
   };
 

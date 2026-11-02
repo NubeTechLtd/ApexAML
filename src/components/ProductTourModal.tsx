@@ -313,10 +313,10 @@ function SlideVisual({ kind, draftingLabel, isDemo }: { kind: string; draftingLa
           <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0 mt-0.5" />
           <div>
             <div className="text-white font-semibold text-sm">
-              STR filed with NFIU
+              Draft goAML XML exported
             </div>
             <div className="text-white/60 text-xs mt-0.5">
-              Ref NFIU/STR/2026/00417 · Confirmation received
+              Ref STR-2026-00417 · Ready for analyst review and upload via goAML
             </div>
           </div>
         </div>

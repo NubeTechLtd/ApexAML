@@ -45,17 +45,17 @@ const STEPS = [
   {
     label: 'goAML XML Formatting',
     time: 0.4,
-    action: 'Converting data to the required NFIU schema.',
+    action: 'Converting the report to goAML-style XML.',
     reason:
-      'To guarantee zero-error machine readability and prevent NFIU portal rejection.',
+      'So the analyst can review the draft file before uploading it via the goAML portal.',
     icon: FileCode2,
   },
   {
-    label: 'NFIU Secure Submission',
+    label: 'Export for Analyst Upload',
     time: 0.5,
     action: 'Recording the export in an append-only audit trail.',
     reason:
-      'To satisfy the reporting mandate and keep a timestamped, attributable record of exactly what was filed.',
+      'To satisfy the reporting mandate and keep a timestamped, attributable record of exactly what was exported.',
     icon: ShieldCheck,
   },
 ];

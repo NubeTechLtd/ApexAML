@@ -157,7 +157,7 @@ export default function Customer360() {
                       <Snowflake className="h-4 w-4 mr-2" /> Freeze Account
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => setEscalateOpen(true)}>
-                      <ShieldAlert className="h-4 w-4 mr-2" /> Escalate to NFIU — Financial Intelligence Unit
+                      <ShieldAlert className="h-4 w-4 mr-2" /> Escalate to MLRO
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => {
                       toast.info('Generating NFIU profile PDF…');
