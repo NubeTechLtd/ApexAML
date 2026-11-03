@@ -6,7 +6,8 @@ import { useDataProvider } from '@/data-layer/hooks';
 import { useAuditLog } from '@/hooks/useAuditLog';
 import { toast } from '@/hooks/use-toast';
 import { generateCtrXml, nextCtrReference } from '@/lib/generateCTRXml';
-import { resolveExportEntity, missingFieldsMessage } from '@/data-layer/exportEntity';
+import { resolveExportEntity } from '@/data-layer/exportEntity';
+import { MissingProfileFields } from './MissingProfileFields';
 import { CTRReviewSheet } from './CTRReviewSheet';
 import type { CTRRow } from './CTRManagement';
 
@@ -41,13 +42,15 @@ export function CTRPendingTable({ rows, allRows, onRefresh }: Props) {
       );
       const resolved = await resolveExportEntity(provider);
       if (!resolved.ok) {
-        toast({ title: 'Export blocked', description: missingFieldsMessage(resolved.missing), variant: 'destructive' });
+        toast({ title: 'Export blocked', description: <MissingProfileFields missing={resolved.missing} />, variant: 'destructive' });
         return;
       }
       const profileVersion = resolved.entity.version;
       const xml = generateCtrXml(row, txns, reference, resolved.entity, resolved.label);
       await provider.ctr.file(row, { reference, xml });
-      await append({ action: 'CTR_FILED', analyst: '', caseId: reference, justification: `CTR for ${row.customer_name ?? row.customer_id} (₦${Math.round(Number(row.total_cash_ngn)).toLocaleString('en-NG')}, ${row.transaction_count} cash transactions): cash report exported as goAML-style XML (draft).${profileVersion != null ? ` Institution profile v${profileVersion}.` : ''}`, metadata: { reference, profile_version: profileVersion, export_type: 'CTR' } }).catch(() => undefined);
+      await append({ action: 'CTR_FILED', analyst: '', caseId: reference, justification: `CTR for ${row.customer_name ?? row.customer_id} (₦${Math.round(Number(row.total_cash_ngn)).toLocaleString('en-NG')}, ${row.transaction_count} cash transactions): cash report exported as goAML-style XML (draft).${profileVersion != null ? ` Institution profile v${profileVersion}.` : ''}`, metadata: { reference, profile_version: profileVersion, export_type: 'CTR' } }).catch(() => {
+        if (provider.kind !== 'demo') toast({ title: 'Audit entry not recorded', description: `${reference} was filed, but its audit entry failed. Downloading it from the Filed tab will record the export.`, variant: 'destructive' });
+      });
 
       toast({
         title: 'CTR filed',

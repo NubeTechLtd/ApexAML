@@ -3,11 +3,15 @@ import { Button } from '@/components/ui/button';
 import { Download } from 'lucide-react';
 import { downloadXmlFile } from '@/lib/generateGoAMLXml';
 import { toast } from '@/hooks/use-toast';
+import { useDataProvider } from '@/data-layer/hooks';
+import { useAuditLog } from '@/hooks/useAuditLog';
 import type { CTRRow } from './CTRManagement';
 
 const formatNGN = (n: number) => '₦' + Math.round(Number(n)).toLocaleString('en-NG');
 
 export function CTRFiledTable({ rows }: { rows: CTRRow[] }) {
+  const provider = useDataProvider();
+  const { append } = useAuditLog();
   if (rows.length === 0) {
     return (
       <div className="rounded-lg border p-8 text-center">
@@ -16,12 +20,28 @@ export function CTRFiledTable({ rows }: { rows: CTRRow[] }) {
     );
   }
 
-  const handleDownload = (r: CTRRow) => {
+  const handleDownload = async (r: CTRRow) => {
     if (!r.goaml_xml || !r.ctr_reference) {
       toast({ title: 'XML unavailable', variant: 'destructive' });
       return;
     }
-    downloadXmlFile(r.goaml_xml, `${r.ctr_reference}.xml`);
+    const filename = `${r.ctr_reference}.xml`;
+    if (provider.kind !== 'demo') {
+      // Live: every download of a filed CTR is an export and must be audited first.
+      const match = r.goaml_xml.match(/<ProfileVersion>(\d+)<\/ProfileVersion>/);
+      const profileVersion = match ? Number(match[1]) : null;
+      try {
+        await append({
+          action: 'CTR_EXPORT', analyst: '', caseId: r.ctr_reference,
+          justification: `Filed CTR downloaded as goAML-style XML (draft): ${filename}.${profileVersion != null ? ` Institution profile v${profileVersion}.` : ''}`,
+          metadata: { filename, reference: r.ctr_reference, profile_version: profileVersion, export_type: 'CTR' },
+        });
+      } catch {
+        toast({ title: 'Export not completed', description: 'The download could not be recorded in the audit log, so the file was not downloaded. Try again.', variant: 'destructive' });
+        return;
+      }
+    }
+    downloadXmlFile(r.goaml_xml, filename);
   };
 
   return (

@@ -13,7 +13,8 @@ import { useDataProvider } from '@/data-layer/hooks';
 import { useAuditLog } from '@/hooks/useAuditLog';
 import type { AlertData } from '@/data/models/legacyAlerts';
 import { generateGoAMLXmlFromLegacy, downloadXmlFile } from '@/lib/generateGoAMLXml';
-import { resolveExportEntity, missingFieldsMessage } from '@/data-layer/exportEntity';
+import { resolveExportEntity } from '@/data-layer/exportEntity';
+import { MissingProfileFields } from '@/components/MissingProfileFields';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useZone } from '@/hooks/useZone';
 import { DemoSampleLabel, DEMO_SAMPLE_LABEL, DEMO_LIVE_AI_LABEL, DEMO_LIVE_AI_NOTICE, DEMO_FALLBACK_LABEL, demoAiLimitMessage, demoStrAuditJustification } from '@/components/DemoSampleLabel';
@@ -224,25 +225,38 @@ export function STRCoPilotDrawer({ open, onOpenChange, alert }: STRCoPilotDrawer
       return;
     }
     if (!resolved.ok) {
-      toast({ title: 'Export blocked', description: missingFieldsMessage(resolved.missing), variant: 'destructive' });
+      toast({ title: 'Export blocked', description: <MissingProfileFields missing={resolved.missing} />, variant: 'destructive' });
       return;
     }
     const profileVersion = resolved.entity.version;
     const xml = generateGoAMLXmlFromLegacy(alert, draft, resolved.entity, resolved.label);
-    void (async () => {
+    const isLive = provider.kind !== 'demo';
+    const record = async () => {
+      let draftId: string | null = null;
       try {
-        const draftId = await provider.str.saveDraft(alert.id, draft);
+        draftId = await provider.str.saveDraft(alert.id, draft);
         if (draftId) await provider.str.recordExport({ alertId: alert.id, draftId, filename, xml });
         await provider.alerts.setStatus(alert.id, 'Escalated');
-        await append({
-          action: 'STR_EXPORT', analyst: '', caseId: alert.id,
-          justification: `STR exported as goAML-style XML (draft): ${filename}.${profileVersion != null ? ` Institution profile v${profileVersion}.` : ''}`,
-          metadata: { filename, profile_version: profileVersion, export_type: 'STR', draft_id: draftId ?? null },
-        });
       } catch {
-        // Non-fatal: the file must still reach the analyst.
+        // Draft/export records are best effort; the audit entry below is the authority.
       }
-    })();
+      await append({
+        action: 'STR_EXPORT', analyst: '', caseId: alert.id,
+        justification: `STR exported as goAML-style XML (draft): ${filename}.${profileVersion != null ? ` Institution profile v${profileVersion}.` : ''}`,
+        metadata: { filename, profile_version: profileVersion, export_type: 'STR', draft_id: draftId ?? null },
+      });
+    };
+    if (isLive) {
+      // Live: no file leaves the platform without its audit entry.
+      try {
+        await record();
+      } catch {
+        toast({ title: 'Export not completed', description: 'The export could not be recorded in the audit log, so the file was not downloaded. Try again.', variant: 'destructive' });
+        return;
+      }
+    } else {
+      void record().catch(() => undefined);
+    }
     downloadXmlFile(xml, filename);
     toast({
       title: 'STR exported',
