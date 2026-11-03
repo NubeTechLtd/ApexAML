@@ -3,12 +3,16 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { STR_ESTIMATE_LABEL, useSTRAssumptions, updateSTRAssumption, type STRAssumptions } from '@/lib/strEstimate';
 
+export function STREstimateLabel() {
+  return <p className="text-sm font-medium text-muted-on-dark">{STR_ESTIMATE_LABEL}</p>;
+}
+
 export function STREstimateInputs({ includeCosts = false }: { includeCosts?: boolean }) {
   const values = useSTRAssumptions();
   const id = useId();
   const fields: { key: keyof STRAssumptions; label: string; min: number }[] = [
-    { key: 'manualMinutes', label: 'Manual minutes per STR', min: 0 },
-    { key: 'assistedMinutes', label: 'Assisted minutes per STR (including review)', min: 0 },
+    { key: 'manualMinutes', label: 'Minutes per STR done manually', min: 0 },
+    { key: 'assistedMinutes', label: 'Minutes per STR with AI-assisted drafting (including review)', min: 0 },
     { key: 'strsPerMonth', label: 'STRs per month', min: 0 },
     ...(includeCosts ? [
       { key: 'monthlySalary' as const, label: 'Monthly analyst salary (NGN)', min: 0 },
@@ -16,7 +20,6 @@ export function STREstimateInputs({ includeCosts = false }: { includeCosts?: boo
     ] : []),
   ];
   return <div className="space-y-4">
-    <p className="text-sm text-muted-on-dark">{STR_ESTIMATE_LABEL}</p>
     <div className="grid sm:grid-cols-2 gap-4">
       {fields.map(field => <div key={field.key} className="space-y-2 min-w-0">
         <Label htmlFor={`${id}-${field.key}`} className="text-foreground leading-relaxed block">{field.label}</Label>

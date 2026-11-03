@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { Brain, Globe, ShieldCheck, FileText, ArrowRight } from "lucide-react";
-import { STREstimateInputs } from "@/components/STREstimateInputs";
+import { STREstimateInputs, STREstimateLabel } from "@/components/STREstimateInputs";
 import { calculateSTREstimate, useSTRAssumptions } from "@/lib/strEstimate";
 import { Button } from "@/components/ui/button";
 
@@ -118,6 +118,7 @@ export function InnovationStory({ onBookDemo }: Props) {
                     </p>
                     {i === 0 && <div className="pt-4 space-y-4">
                       <STREstimateInputs />
+                      <STREstimateLabel />
                       <p className="text-sm text-muted-on-dark">
                         At {assumptions.strsPerMonth} STRs/month: {estimate.manualHours.toLocaleString('en-NG', { maximumFractionDigits: 1 })} manual hours vs {estimate.assistedHours.toLocaleString('en-NG', { maximumFractionDigits: 1 })} assisted hours including review. Illustrative difference: {estimate.hoursDifference.toLocaleString('en-NG', { maximumFractionDigits: 1 })} hours/month. Not a performance guarantee.
                       </p>

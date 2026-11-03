@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BookDemoSheet } from "@/components/landing/BookDemoSheet";
-import { STREstimateInputs } from "@/components/STREstimateInputs";
+import { STREstimateInputs, STREstimateLabel } from "@/components/STREstimateInputs";
 import { calculateSTREstimate, useSTRAssumptions } from "@/lib/strEstimate";
 import { PLAN_PRICING, IMPLEMENTATION_PRICE_RANGE } from "@/lib/pricing";
 
@@ -20,6 +20,7 @@ export function ROICalculator() {
         <h2 className="text-3xl font-bold text-foreground">STR writing workload estimate</h2>
       </div>
       <STREstimateInputs includeCosts />
+      <STREstimateLabel />
       <div className="grid md:grid-cols-2 gap-8 border-y border-border py-8">
         <div className="space-y-2">
           <h3 className="text-muted-on-dark">Illustrative manual writing cost</h3>
