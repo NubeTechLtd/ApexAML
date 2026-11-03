@@ -21,6 +21,3 @@ export async function resolveExportEntity(provider: DataProvider): Promise<Expor
   return { ok: true, entity: profile, label: LIVE_EXPORT_LABEL, institutionId, missing: [] };
 }
 
-export function missingFieldsMessage(missing: string[]): string {
-  return `Export blocked. Complete the institution profile at /app/settings first. Missing: ${missing.join(', ')}.`;
-}
