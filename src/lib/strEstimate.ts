@@ -2,8 +2,8 @@ import { useSyncExternalStore } from 'react';
 
 export const STR_ESTIMATE_LABEL = 'Illustrative estimate based on assumptions you can change';
 export const DEFAULT_STR_ASSUMPTIONS = {
-  manualMinutes: 60,
-  assistedMinutes: 45,
+  manualMinutes: 90,
+  assistedMinutes: 60,
   strsPerMonth: 20,
   monthlySalary: 400_000,
   workingHours: 160,

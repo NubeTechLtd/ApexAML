@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { STREstimateInputs } from '@/components/STREstimateInputs';
+import { STREstimateInputs, STREstimateLabel } from '@/components/STREstimateInputs';
 import { calculateSTREstimate, useSTRAssumptions } from '@/lib/strEstimate';
 import { PLAN_PRICING, IMPLEMENTATION_PRICE_RANGE, imtoMonthlyCost } from '@/lib/pricing';
 
@@ -36,6 +36,7 @@ export function ROICalculator() {
           </div>}
         </div>
         <div className="space-y-5 border-t lg:border-t-0 lg:border-l border-border pt-6 lg:pt-0 lg:pl-10">
+          <STREstimateLabel />
           <h3 className="text-xl font-semibold text-foreground">Illustrative annual comparison</h3>
           <dl className="space-y-5 text-foreground">
             <div><dt className="text-muted-on-dark">Writing-time value difference (before subscription)</dt><dd className="text-2xl font-bold tabular-nums">{naira(estimate.costDifference * 12)}/year</dd></div>
