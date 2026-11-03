@@ -34,7 +34,8 @@ import { useCBNRate } from '@/hooks/useCBNRate';
 import { riskScoreKey } from '@/lib/riskScore';
 
 import { generateGoAMLXml, downloadXmlFile } from '@/lib/generateGoAMLXml';
-import { resolveExportEntity, missingFieldsMessage } from '@/data-layer/exportEntity';
+import { resolveExportEntity } from '@/data-layer/exportEntity';
+import { MissingProfileFields } from '@/components/MissingProfileFields';
 import { IMTOInvestigation } from '@/components/IMTOInvestigation';
 import { CrossBorderSLACard } from '@/components/CrossBorderSLACard';
 import { PhantomPayrollNetwork } from '@/components/PhantomPayrollNetwork';
@@ -423,17 +424,17 @@ export default function AlertWorkspace() {
       return;
     }
     if (!resolved.ok) {
-      toast({ title: 'Export blocked', description: missingFieldsMessage(resolved.missing), variant: 'destructive' });
+      toast({ title: 'Export blocked', description: <MissingProfileFields missing={resolved.missing} />, variant: 'destructive' });
       return;
     }
     const xml = generateGoAMLXml(selected, strDraft, resolved.entity, resolved.label);
     const profileVersion = resolved.entity.version;
 
     // Record the export before downloading so every goAML file leaving the
-    // platform is traceable (CBN examination requirement). Demo alerts are not
-    // backed by database rows, so failures there are non-fatal.
+    // platform is traceable. Demo alerts are not backed by database rows, so
+    // failures there are non-fatal.
+    let draftId = strDraftId;
     try {
-      let draftId = strDraftId;
       if (!draftId && strDraft.trim()) {
         draftId = await provider.str.saveDraft(selected.id, strDraft);
         if (draftId) setStrDraftId(draftId);
@@ -441,6 +442,10 @@ export default function AlertWorkspace() {
       if (draftId) {
         await provider.str.recordExport({ alertId: selected.id, draftId, filename, xml });
       }
+    } catch {
+      // Draft/export records are best effort; the audit entry below is the authority.
+    }
+    try {
       await addAuditEntry({
         action: 'STR_EXPORT',
         analyst: '',
@@ -449,7 +454,11 @@ export default function AlertWorkspace() {
         metadata: { filename, profile_version: profileVersion, export_type: 'STR', draft_id: draftId ?? null },
       });
     } catch {
-      // Non-fatal: the file must still reach the analyst even if the record fails.
+      if (provider.kind !== 'demo') {
+        // Live: no file leaves the platform without its audit entry.
+        toast({ title: 'Export not completed', description: 'The export could not be recorded in the audit log, so the file was not downloaded. Try again.', variant: 'destructive' });
+        return;
+      }
     }
 
     downloadXmlFile(xml, filename);
