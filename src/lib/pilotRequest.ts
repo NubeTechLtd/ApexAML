@@ -12,7 +12,7 @@ export interface PilotRequestForm {
   website: string; // honeypot
 }
 
-export type PilotRequestResult = { ok: true } | { ok: false; reason: 'rate_limited' | 'unauthorized' | 'failed' };
+export interface PilotRequestResult { ok: boolean; reason?: 'rate_limited' | 'unauthorized' | 'failed' }
 
 /** Sends a pilot request through its validated server function; the server uses the signed-in account's email. */
 export async function submitPilotRequest(form: PilotRequestForm): Promise<PilotRequestResult> {
