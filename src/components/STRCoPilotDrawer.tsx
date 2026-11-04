@@ -1,3 +1,4 @@
+import { extractNarrative, replaceNarrative } from '@/lib/strDraftNarrative';
 import { useState, useEffect, useRef } from 'react';
 import { Bot, Send, FileDown, Loader2, Sparkles, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
