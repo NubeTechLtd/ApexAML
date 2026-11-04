@@ -17,3 +17,6 @@ verify_jwt = false
 
 [functions.confirm-demo-email]
 verify_jwt = false
+
+[functions.submit-pilot-request]
+verify_jwt = false
