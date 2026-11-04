@@ -55,9 +55,11 @@ function toTransaction(t: {
 
 async function listTransactions(customerIds: string[]): Promise<TransactionRecord[]> {
   if (customerIds.length === 0) return [];
+  const institutionId = await getCurrentInstitutionId();
   const { data, error } = await supabase
     .from('transactions')
     .select('id, customer_id, tx_type, channel, amount_ngn, balance_after, counterparty, agent_location, occurred_at')
+    .eq('institution_id', institutionId)
     .in('customer_id', customerIds)
     .order('occurred_at', { ascending: false });
   if (error) throw error;
@@ -91,6 +93,8 @@ export const liveProvider: DataProvider = {
 
   alerts: {
     async list() {
+      // Explicitly scoped to the signed-in user's institution, on top of tenant access rules.
+      const institutionId = await getCurrentInstitutionId();
       const { data, error } = await supabase
         .from('alerts')
         .select(
@@ -98,6 +102,7 @@ export const liveProvider: DataProvider = {
            behavioral_red_flags, opened_at, customer_id,
            customers ( id, full_name, bvn, nin, nuban, kyc_tier, risk_score, entity_type )`,
         )
+        .eq('institution_id', institutionId)
         .order('opened_at', { ascending: false });
       if (error) throw error;
       const rows = data ?? [];
@@ -146,9 +151,11 @@ export const liveProvider: DataProvider = {
       });
     },
     async setStatus(alertId, status) {
+      const institutionId = await getCurrentInstitutionId();
       const { error } = await supabase
         .from('alerts')
         .update({ status, closed_at: status === 'Dismissed' ? new Date().toISOString() : null })
+        .eq('institution_id', institutionId)
         .eq('id', alertId);
       if (error) throw error;
     },
