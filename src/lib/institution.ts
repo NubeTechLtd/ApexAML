@@ -20,3 +20,21 @@ export async function getCurrentInstitutionId(): Promise<string> {
   cached = { userId, institutionId: data.institution_id };
   return data.institution_id;
 }
+
+export interface InstitutionMembership { institutionId: string; role: string }
+
+/**
+ * The signed-in user's first institution membership, or null when none exists.
+ * Platform roles never count: only a user_institutions row opens the live zone.
+ */
+export async function getInstitutionMembership(userId: string): Promise<InstitutionMembership | null> {
+  const { data, error } = await supabase
+    .from('user_institutions')
+    .select('institution_id, role')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: true })
+    .limit(1)
+    .maybeSingle();
+  if (error) throw error;
+  return data ? { institutionId: data.institution_id, role: data.role } : null;
+}

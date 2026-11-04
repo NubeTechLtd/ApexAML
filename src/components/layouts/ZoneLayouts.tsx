@@ -1,5 +1,6 @@
 import { Link, Navigate, Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
+import { InstitutionGate } from '@/components/InstitutionGate';
 import { toZonePath } from '@/lib/zones';
 import { useState } from 'react';
 import { CalendarCheck, Compass, Rocket, RotateCcw } from 'lucide-react';
@@ -83,11 +84,13 @@ export function DemoLayout() {
   );
 }
 
-/** Live institution workspace. Requires a signed-in user. */
+/** Live institution workspace. Requires a signed-in user with an institution membership. */
 export function AppLayout() {
   return (
     <ProtectedRoute requireAdmin={false}>
-      <Outlet />
+      <InstitutionGate>
+        <Outlet />
+      </InstitutionGate>
     </ProtectedRoute>
   );
 }

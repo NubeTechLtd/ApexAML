@@ -5,6 +5,7 @@ import { template as demoBookingInternalAlert } from './demo-booking-internal-al
 import { template as roadmapLeadInternalAlert } from './roadmap-lead-internal-alert.tsx'
 import { template as roadmapDelivery } from './roadmap-delivery.tsx'
 import { template as contactLeadInternalAlert } from './contact-lead-internal-alert.tsx'
+import { template as pilotRequestInternalAlert } from './pilot-request-internal-alert.tsx'
 import { template as demoEntryInternalAlert } from './demo-entry-internal-alert.tsx'
 import { template as demoAiCapacityAlert } from './demo-ai-capacity-alert.tsx'
 import { template as demoEmailConfirmation } from './demo-email-confirmation.tsx'
@@ -20,6 +21,7 @@ export interface TemplateEntry {
 export const TEMPLATES: Record<string, TemplateEntry> = {
   ...demoNotificationTemplates,
   'contact-lead-internal-alert': contactLeadInternalAlert,
+  'pilot-request-internal-alert': pilotRequestInternalAlert,
   'demo-entry-internal-alert': demoEntryInternalAlert,
   'demo-ai-capacity-alert': demoAiCapacityAlert,
   'demo-email-confirmation': demoEmailConfirmation,

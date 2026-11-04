@@ -67,7 +67,8 @@ const NotificationsContext = createContext<NotificationsContextValue | null>(nul
 export function NotificationsProvider({ children }: { children: React.ReactNode }) {
   const { pathname } = useLocation();
   const demoEmails = useDemoEmails();
-  const [legacyNotifications, setNotifications] = useState<AppNotification[]>(generateNotifications);
+  // Sample notifications belong to the demo only; the live zone never shows seed data.
+  const [legacyNotifications, setNotifications] = useState<AppNotification[]>([]);
 
   const isDemo = pathname.startsWith('/demo');
   const notifications: AppNotification[] = isDemo ? demoEmails.map(e => ({ id: e.id, type: 'DEMO_EVENT', title: e.subject.replace('[ApexAML Demo] ', ''), description: e.body, relativeTime: new Date(e.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), read: e.read, link: `/demo/inbox?message=${e.id}` })) : legacyNotifications;

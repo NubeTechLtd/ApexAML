@@ -84,7 +84,6 @@ const App = () => (
               <Route path="inbox" element={<DemoInbox />} />
               <Route path="alerts" element={<Index />} />
               <Route path="workspace" element={<AlertWorkspace />} />
-                <Route path="settings" element={<InstitutionProfileSettings />} />
               <Route path="rules" element={<RulesEngine />} />
               <Route path="reports/cbn" element={<RegulatoryReports />} />
               <Route path="reports/nfiu" element={<RegulatoryReports />} />
@@ -101,13 +100,11 @@ const App = () => (
             </Route>
 
             {/* Live zone: signed-in institution data */}
-            <Route path="/app">
-              {/* Old /app opened the dashboard; keep that link working in the demo */}
-              <Route index element={<LegacyRedirect to="/dashboard" />} />
-              <Route element={<AppLayout />}>
-                <Route path="workspace" element={<AlertWorkspace />} />
-                <Route path="*" element={<Navigate to={APP_HOME} replace />} />
-              </Route>
+            <Route path="/app" element={<AppLayout />}>
+              <Route index element={<Navigate to={APP_HOME} replace />} />
+              <Route path="workspace" element={<AlertWorkspace />} />
+              <Route path="settings" element={<InstitutionProfileSettings />} />
+              <Route path="*" element={<Navigate to={APP_HOME} replace />} />
             </Route>
 
             {/* Old top-level operational URLs → /demo */}
