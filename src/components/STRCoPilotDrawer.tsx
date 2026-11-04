@@ -1,3 +1,4 @@
+import { extractNarrative, replaceNarrative } from '@/lib/strDraftNarrative';
 import { useState, useEffect, useRef } from 'react';
 import { Bot, Send, FileDown, Loader2, Sparkles, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -192,10 +193,13 @@ export function STRCoPilotDrawer({ open, onOpenChange, alert }: STRCoPilotDrawer
     setIsTyping(true);
 
     const before = draft;
-    provider.str.refine(alert.id, before, input)
+    // Demo AI edits only the narrative, so send that section and splice the result back in.
+    const narrativeOnly = isDemo ? extractNarrative(before) : null;
+    provider.str.refine(alert.id, narrativeOnly ?? before, input)
       .then((result) => {
-        const changed = result.narrative !== before;
-        setDraft(result.narrative);
+        const next = narrativeOnly !== null ? (replaceNarrative(before, result.narrative) ?? before) : result.narrative;
+        const changed = next !== before;
+        setDraft(next);
         const capped = isDemo ? demoAiLimitMessage(result.limitReached) : null;
         if (capped) setLimitMessage(capped);
         setChatMessages((prev) => [
