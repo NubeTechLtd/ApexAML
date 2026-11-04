@@ -221,6 +221,8 @@ function MiniAlertCard({ alert, isSelected, onClick, status, assignedAnalyst }: 
 export default function AlertWorkspace() {
   const { toast } = useToast();
   const isDemo = useZone() === 'demo';
+  // The sample analyst roster is demo-only; the live zone has no fictional analysts.
+  const roster = isDemo ? ANALYSTS : [];
   const navigate = useZoneNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState('');
@@ -251,16 +253,16 @@ export default function AlertWorkspace() {
 
   const getAssignedAnalyst = useCallback((alertId: string) => {
     const aId = assignments[alertId];
-    return aId ? ANALYSTS.find(a => a.id === aId) : undefined;
-  }, [assignments]);
+    return aId ? roster.find(a => a.id === aId) : undefined;
+  }, [assignments, roster]);
 
   const handleReassign = useCallback((alertId: string, caseId: string, analystId: string) => {
-    const analyst = ANALYSTS.find(a => a.id === analystId);
+    const analyst = roster.find(a => a.id === analystId);
     if (!analyst) return;
     setAssignments(prev => ({ ...prev, [alertId]: analystId }));
     addAuditEntry({ action: 'NFIU_ESCALATION', analyst: analyst.name, caseId, justification: `Case reassigned to ${analyst.name}` });
     toast({ title: 'Case reassigned', description: `${caseId} assigned to ${analyst.name}.` });
-  }, [addAuditEntry, toast]);
+  }, [addAuditEntry, toast, roster]);
 
   const riskParam = searchParams.get('risk');
   const statusParam = searchParams.get('status');
@@ -736,7 +738,10 @@ export default function AlertWorkspace() {
                                 </PopoverTrigger>
                                 <PopoverContent className="w-48 p-1" align="start">
                                   <p className="text-[10px] uppercase text-muted-foreground tracking-wider px-2 py-1.5">Reassign to</p>
-                                  {ANALYSTS.map((a) => (
+                                  {roster.length === 0 && (
+                                    <p className="px-2 py-1.5 text-xs text-muted-foreground">No analysts on your team roster yet.</p>
+                                  )}
+                                  {roster.map((a) => (
                                     <button
                                       key={a.id}
                                       onClick={() => handleReassign(selected.id, selected.caseId, a.id)}
