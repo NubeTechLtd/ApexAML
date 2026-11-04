@@ -1,5 +1,6 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { LiveWorkspaceEmptyState } from '@/components/LiveWorkspaceEmptyState';
 import { useZone, useZoneNavigate } from '@/hooks/useZone';
 import { DemoSampleLabel, demoStrAuditJustification } from '@/components/DemoSampleLabel';
 import { ActiveFilterChip } from '@/components/ActiveFilterChip';
@@ -61,6 +62,7 @@ const ANALYSTS = [
 ];
 
 // Analyst assignments are held locally until an alert is reassigned.
+const NO_ANALYSTS: typeof ANALYSTS = [];
 const DEFAULT_ASSIGNMENTS: Record<string, string> = {};
 
 /* ── Helpers ─────────────────────────────────────────── */
@@ -222,7 +224,7 @@ export default function AlertWorkspace() {
   const { toast } = useToast();
   const isDemo = useZone() === 'demo';
   // The sample analyst roster is demo-only; the live zone has no fictional analysts.
-  const roster = isDemo ? ANALYSTS : [];
+  const roster = isDemo ? ANALYSTS : NO_ANALYSTS;
   const navigate = useZoneNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState('');
@@ -538,6 +540,8 @@ export default function AlertWorkspace() {
                   <Skeleton className="h-20 w-full" />
                   <Skeleton className="h-20 w-full" />
                 </div>
+              ) : !isDemo && !alertsError && alerts.length === 0 ? (
+                <LiveWorkspaceEmptyState />
               ) : (
                 <div className="text-center max-w-md space-y-2">
                   <Shield className="h-8 w-8 text-muted-foreground mx-auto" />
@@ -759,11 +763,15 @@ export default function AlertWorkspace() {
                                 </PopoverContent>
                               </Popover>
                             </div>
-                            <Separator orientation="vertical" className="h-4" />
-                            <div className="flex items-center gap-1.5">
-                              <Users className="h-3 w-3 text-muted-foreground" />
-                              <span className="text-[11px] text-muted-foreground">Watched by <span className="font-medium text-foreground">2</span></span>
-                            </div>
+                            {isDemo && (
+                              <>
+                                <Separator orientation="vertical" className="h-4" />
+                                <div className="flex items-center gap-1.5">
+                                  <Users className="h-3 w-3 text-muted-foreground" />
+                                  <span className="text-[11px] text-muted-foreground">Watched by <span className="font-medium text-foreground">2</span></span>
+                                </div>
+                              </>
+                            )}
                           </div>
                         </div>
 
