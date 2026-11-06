@@ -242,17 +242,14 @@ function AIMockUI() {
 function RoadmapGeneratorBand() {
   const handleClick = () => {
     // Fire-and-forget analytics. Failures must never block the navigation.
-    supabase
-      .from("landing_page_clicks")
-      .insert({
-        source: "landing_hero_roadmap",
-        event: "roadmap_cta_click",
-        page_path: typeof window !== "undefined" ? window.location.pathname : null,
-        referrer: typeof document !== "undefined" ? document.referrer || null : null,
-      })
-      .then(({ error }) => {
-        if (error) console.warn("landing_page_clicks insert failed", error);
-      });
+    void sendPublicEvent("landing_click", {
+      source: "landing_hero_roadmap",
+      event: "roadmap_cta_click",
+      page_path: typeof window !== "undefined" ? window.location.pathname : null,
+      referrer: typeof document !== "undefined" ? document.referrer || null : null,
+    }).then((r) => {
+      if (!r.ok) console.warn("landing click tracking failed", r.reason);
+    });
   };
 
   const trustChips = ["No credit card", "Instant download", "Covers all 10 CBN capability areas"];
