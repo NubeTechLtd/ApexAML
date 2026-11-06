@@ -1,10 +1,13 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
+import type { TurnstileInstance } from '@marsidev/react-turnstile';
 import { motion } from 'framer-motion';
 import { FileText, ArrowRight, Loader2, CheckCircle2, Download, CreditCard, Layers } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { publicSubmitErrorMessage, submitPublicForm } from '@/lib/publicSubmit';
+import { TurnstileWidget } from '@/components/TurnstileWidget';
+import { HoneypotField } from '@/components/HoneypotField';
 import { WhatsAppIcon } from './WhatsAppIcon';
 import { WHATSAPP_URL } from '@/lib/whatsapp';
 import { NDPRConsent } from './NDPRConsent';
@@ -61,6 +64,8 @@ export function RoadmapLeadMagnet() {
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [consent, setConsent] = useState(false);
+  const [website, setWebsite] = useState(''); // honeypot
+  const turnstile = useRef<TurnstileInstance>();
   const { toast } = useToast();
 
   const refNumber = useMemo(
@@ -98,17 +103,16 @@ export function RoadmapLeadMagnet() {
     setSubmitting(true);
 
     // 1) Persist the lead so MT can follow up from /admin/roadmaps
-    const { error } = await supabase.from('leads').insert({
+    const result = await submitPublicForm('lead_roadmap_magnet', {
       email: trimmedEmail,
       full_name: trimmedName,
       institution_name: trimmedInst,
       phone: trimmedPhone || null,
-      source: 'roadmap_magnet',
       ndpr_consent: consent,
-    });
-    if (error) {
+    }, { turnstile, website });
+    if (!result.ok) {
       setSubmitting(false);
-      toast({ title: 'Submission failed', description: 'Please try again.', variant: 'destructive' });
+      toast({ title: 'Submission failed', description: publicSubmitErrorMessage(result), variant: 'destructive' });
       return;
     }
 
@@ -217,6 +221,8 @@ export function RoadmapLeadMagnet() {
                     maxLength={32}
                     className="bg-white/[0.04] border-white/10 text-white placeholder:text-muted-on-dark h-11 rounded-lg"
                   />
+                  <HoneypotField id="rm-website" value={website} onChange={setWebsite} />
+                  <TurnstileWidget ref={turnstile} action="lead_roadmap_magnet" />
                   <Button
                     type="submit"
                     disabled={submitting || !consent}

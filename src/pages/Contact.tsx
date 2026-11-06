@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import type { TurnstileInstance } from "@marsidev/react-turnstile";
 import { Link } from "react-router-dom";
 import { z } from "zod";
 import { ArrowLeft, CalendarCheck, CheckCircle2, Clock, FileText, Loader2, Mail, ShieldCheck, Building2 } from "lucide-react";
@@ -13,7 +14,9 @@ import { BookDemoSheet } from "@/components/landing/BookDemoSheet";
 import { WhatsAppIcon } from "@/components/landing/WhatsAppIcon";
 import { WHATSAPP_URL } from "@/lib/whatsapp";
 import { trackEvent } from "@/lib/analytics";
-import { supabase } from "@/integrations/supabase/client";
+import { publicSubmitErrorMessage, submitPublicForm } from "@/lib/publicSubmit";
+import { TurnstileWidget } from "@/components/TurnstileWidget";
+import { HoneypotField } from "@/components/HoneypotField";
 import logo from "@/assets/logo.svg";
 
 const ORG_TYPES = ["PSP", "MFB", "IMTO", "Bank", "Other"] as const;
@@ -42,6 +45,7 @@ export default function Contact() {
   const [done, setDone] = useState(false);
   const [serverError, setServerError] = useState("");
   const [demoOpen, setDemoOpen] = useState(false);
+  const turnstile = useRef<TurnstileInstance>();
 
   useEffect(() => { void trackEvent("contact_page_view", { source: "contact_page" }); }, []);
 
@@ -60,13 +64,17 @@ export default function Contact() {
     }
     setErrors({});
     setSubmitting(true);
-    const { data, error } = await supabase.functions.invoke("submit-contact", { body: { ...parsed.data, website } });
+    const { name, organisation, organisationType, ...rest } = parsed.data;
+    const result = await submitPublicForm("contact", {
+      ...rest, full_name: name, institution_name: organisation, institution_type: organisationType,
+    }, { turnstile, website });
     setSubmitting(false);
-    if (error || !data?.ok) {
-      const status = (error as { context?: Response } | null)?.context?.status;
-      setServerError(status === 429
-        ? "You've sent several messages in a short time. Please wait a few minutes and try again, or chat with us on WhatsApp."
-        : "We couldn't send your message. Please try again, or email hello@apexaml.com.");
+    if (!result.ok) {
+      setServerError(result.reason === "rate_limited"
+        ? "You've sent several messages in a short time. Please try again later, or chat with us on WhatsApp."
+        : result.reason?.startsWith("verification")
+          ? publicSubmitErrorMessage(result)
+          : "We couldn't send your message. Please try again, or email hello@apexaml.com.");
       return;
     }
     void trackEvent("contact_form_submitted", { source: "contact_page", metadata: { organisation_type: parsed.data.organisationType } });
@@ -144,10 +152,8 @@ export default function Contact() {
                   {errors.message && <p className="text-xs text-roadmap-warning">{errors.message}</p>}
                 </div>
                 {/* Honeypot: hidden from people, filled by bots */}
-                <div aria-hidden="true" className="absolute -left-[10000px] h-px w-px overflow-hidden">
-                  <label htmlFor="ct-website">Website</label>
-                  <input id="ct-website" tabIndex={-1} autoComplete="off" value={website} onChange={(e) => setWebsite(e.target.value)} />
-                </div>
+                <HoneypotField id="ct-website" value={website} onChange={setWebsite} />
+                <TurnstileWidget ref={turnstile} action="contact" />
                 {serverError && <p role="alert" className="text-sm text-roadmap-warning">{serverError}</p>}
                 <Button type="submit" disabled={submitting} className="w-full h-11 bg-primary text-primary-foreground font-semibold rounded-lg">
                   {submitting ? <><Loader2 className="h-4 w-4 animate-spin" />Sending…</> : "Send message"}

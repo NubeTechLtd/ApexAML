@@ -89,3 +89,8 @@
 
 ## Zone-specific STR wording
 - [x] Matched case hints and tour wording to demo samples, marketing AI-assisted drafting, and unchanged live wording; browser verified all three. Demo uses pre-written seed narratives and deterministic local refinements, not model calls. Ten routing/isolation checks passed; delivered the remaining-reference inventory.
+
+## Single public submission endpoint
+- [x] Add public-submit (security check, "website" spam trap, 10/IP/hour hashed-IP limit, 10 KB cap, per-form table/column allowlist, service-role insert) and switch every public form plus click/page tracking to it; anon INSERT policies kept. Live checks: honeypot, unknown form/column, forged token, 413 and 429 verified; test rows removed.
+- [ ] Real end-to-end form submission with a passing security check — needs the owner's Cloudflare widget hostnames to include the preview/published domains (sandbox localhost is refused with 110200).
+- [ ] Remove anon INSERT policies and retire submit-contact, start-demo-session and send-demo-confirmation — waits on publishing and the owner's go-ahead.

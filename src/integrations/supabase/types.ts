@@ -1331,6 +1331,27 @@ export type Database = {
           },
         ]
       }
+      rate_limits: {
+        Row: {
+          bucket: string
+          created_at: string
+          id: string
+          ip_hash: string
+        }
+        Insert: {
+          bucket: string
+          created_at?: string
+          id?: string
+          ip_hash: string
+        }
+        Update: {
+          bucket?: string
+          created_at?: string
+          id?: string
+          ip_hash?: string
+        }
+        Relationships: []
+      }
       regulatory_jurisdictions: {
         Row: {
           base_currency: string
@@ -2111,6 +2132,15 @@ export type Database = {
       confirm_demo_email: {
         Args: { _code_hash: string; _session_id: string }
         Returns: Json
+      }
+      consume_rate_limit: {
+        Args: {
+          _bucket: string
+          _ip_hash: string
+          _limit: number
+          _window_seconds: number
+        }
+        Returns: boolean
       }
       end_support_access: { Args: never; Returns: undefined }
       mark_platform_notification_read: {

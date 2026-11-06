@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import type { TurnstileInstance } from "@marsidev/react-turnstile";
 import { Navigate, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { Loader2, PlayCircle } from "lucide-react";
@@ -9,9 +10,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Seo } from "@/components/Seo";
 import { CompanyFooterLine } from "@/components/CompanyFooterLine";
 import { trackEvent } from "@/lib/analytics";
-import { supabase } from "@/integrations/supabase/client";
+import { publicSubmitErrorMessage, submitPublicForm } from "@/lib/publicSubmit";
+import { TurnstileWidget } from "@/components/TurnstileWidget";
+import { HoneypotField } from "@/components/HoneypotField";
 import { hasDemoEntry, markDemoEntry, setDemoSessionId, saveDemoNotificationCredentials } from "@/data-layer/demoStore";
-import { saveDemoEmailConfirmation } from "@/data-layer/demoEmailConfirmation";
+import { saveDemoEmailConfirmation, type ConfirmationSendStatus } from "@/data-layer/demoEmailConfirmation";
 
 const ORG_TYPES = ["PSP", "MFB", "IMTO", "Bank", "Other"] as const;
 
@@ -32,6 +35,7 @@ export default function DemoEntry() {
   const [submitting, setSubmitting] = useState(false);
   const [serverError, setServerError] = useState("");
   const [alreadyIn] = useState(hasDemoEntry);
+  const turnstile = useRef<TurnstileInstance>();
 
   useEffect(() => { if (!alreadyIn) void trackEvent("demo_entry_view", { source: "demo_entry" }); }, [alreadyIn]);
   if (alreadyIn) return <Navigate to="/demo/dashboard" replace />;
@@ -51,13 +55,21 @@ export default function DemoEntry() {
     }
     setErrors({});
     setSubmitting(true);
-    const { data, error } = await supabase.functions.invoke("start-demo-session", { body: { ...parsed.data, website } });
+    const result = await submitPublicForm("demo_entry", {
+      email: parsed.data.email, full_name: parsed.data.name,
+      institution_type: parsed.data.organisationType, role: parsed.data.role,
+    }, { turnstile, website });
     setSubmitting(false);
-    if (error || !data?.ok || !data.sessionId) {
-      const status = (error as { context?: Response } | null)?.context?.status;
-      setServerError(status === 429
-        ? "Several demo sessions were started from here recently. Please wait a few minutes and try again."
-        : "We couldn't start the demo. Please try again.");
+    const data = result.body as {
+      sessionId?: string; notificationToken?: string;
+      confirmation?: { status?: ConfirmationSendStatus; retryAfterSeconds?: number };
+    };
+    if (!result.ok || !data.sessionId) {
+      setServerError(result.reason === "rate_limited"
+        ? "Several demo sessions were started from here recently. Please try again later."
+        : result.reason?.startsWith("verification")
+          ? publicSubmitErrorMessage(result)
+          : "We couldn't start the demo. Please try again.");
       return;
     }
     setDemoSessionId(data.sessionId);
@@ -103,10 +115,8 @@ export default function DemoEntry() {
               {errors.organisationType && <p className="text-xs text-destructive">{errors.organisationType}</p>}
             </div>
             {field("role", "Role", { autoComplete: "organization-title", maxLength: 100 })}
-            <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
-              <label htmlFor="de-website">Website</label>
-              <input id="de-website" tabIndex={-1} autoComplete="off" value={website} onChange={(e) => setWebsite(e.target.value)} />
-            </div>
+            <HoneypotField id="de-website" value={website} onChange={setWebsite} />
+            <TurnstileWidget ref={turnstile} action="demo_entry" theme="auto" />
             {serverError && <p role="alert" className="text-sm text-destructive">{serverError}</p>}
             <Button type="submit" className="w-full gap-2" disabled={submitting}>
               {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <PlayCircle className="h-4 w-4" />}
