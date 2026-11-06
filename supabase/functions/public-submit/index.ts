@@ -55,7 +55,8 @@ Deno.serve(async (req) => {
 
   const parsed = spec.schema.safeParse(data)
   if (!parsed.success) {
-    const fields = [...new Set(parsed.error.issues.map((i) => String(i.path[0] ?? '')))].filter(Boolean)
+    const fields = [...new Set(parsed.error.issues.flatMap((i) =>
+      i.code === 'unrecognized_keys' ? i.keys : [String(i.path[0] ?? '')]))].filter(Boolean).slice(0, 20)
     return json({ ok: false, reason: 'invalid_payload', fields }, 400)
   }
   const input = parsed.data as Record<string, unknown>
