@@ -18,6 +18,10 @@ import {
 } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import type { TurnstileInstance } from '@marsidev/react-turnstile';
+import { publicSubmitErrorMessage, submitPublicForm } from '@/lib/publicSubmit';
+import { TurnstileWidget } from '@/components/TurnstileWidget';
+import { HoneypotField } from '@/components/HoneypotField';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -128,6 +132,9 @@ const RoadmapGenerator = () => {
   const [demoDate, setDemoDate] = useState('');
   const [demoMessage, setDemoMessage] = useState('');
   const [demoSubmitting, setDemoSubmitting] = useState(false);
+  const [website, setWebsite] = useState(''); // honeypot, shared by both forms
+  const leadTurnstile = useRef<TurnstileInstance>();
+  const demoTurnstile = useRef<TurnstileInstance>();
 
   const loadingStatuses = [
     `Analysing ${institutionName || 'your institution'}'s regulatory profile...`,
@@ -242,28 +249,23 @@ Managing Director:                                    Signature: _______________
     }
     setShowError(false);
     setSubmitting(true);
-    // Generate the id client-side: visitors may insert but not read leads back.
-    const newLeadId = crypto.randomUUID();
-    const { error } = await supabase
-      .from('roadmap_leads')
-      .insert({
-        id: newLeadId,
-        institution_name: institutionName.trim(),
-        institution_type: institutionType,
-        aml_setup: amlSetup,
-        volume,
-        contact_name: contactName.trim(),
-        title: contactTitle.trim(),
-        email: email.trim(),
-        phone: phone.trim() || null,
-        source: 'roadmap_generator',
-      });
+    // The server generates the lead id and returns it for the roadmap and email steps.
+    const result = await submitPublicForm('roadmap_lead', {
+      institution_name: institutionName.trim(),
+      institution_type: institutionType,
+      aml_setup: amlSetup,
+      volume,
+      contact_name: contactName.trim(),
+      title: contactTitle.trim(),
+      email: email.trim(),
+      phone: phone.trim() || null,
+    }, { turnstile: leadTurnstile, website });
     setSubmitting(false);
-    const leadId = error ? null : newLeadId;
-    if (error) {
+    const leadId = result.ok && typeof result.body.id === 'string' ? result.body.id : null;
+    if (!result.ok) {
       toast({
         title: 'Submission failed',
-        description: 'Please try again in a moment.',
+        description: publicSubmitErrorMessage(result),
         variant: 'destructive',
       });
       return;
@@ -410,19 +412,20 @@ Managing Director:                                    Signature: _______________
     e.preventDefault();
     if (demoSubmitting) return;
     setDemoSubmitting(true);
-    const { error } = await supabase.from('demo_requests').insert({
+    const result = await submitPublicForm('demo_request_post_roadmap', {
       contact_name: contactName.trim() || 'Compliance Officer',
       institution_name: institutionName.trim() || 'Unknown institution',
       email: email.trim() || null,
       preferred_date: demoDate || null,
       message: demoMessage,
-      source: 'post_roadmap',
-    });
+    }, { turnstile: demoTurnstile, website });
     setDemoSubmitting(false);
-    if (error) {
+    if (!result.ok) {
       toast({
         title: 'Could not book demo',
-        description: 'Please try WhatsApp instead — link below.',
+        description: result.reason === 'rate_limited' || result.reason?.startsWith('verification')
+          ? publicSubmitErrorMessage(result)
+          : 'Please try WhatsApp instead — link below.',
         variant: 'destructive',
       });
       return;
@@ -792,6 +795,9 @@ Managing Director:                                    Signature: _______________
                           </div>
                         )}
 
+                        <HoneypotField id="rg-website" value={website} onChange={setWebsite} />
+                        <TurnstileWidget ref={leadTurnstile} action="roadmap_lead" theme="auto" />
+
                         <Button
                           type="submit"
                           disabled={submitting}
@@ -1128,8 +1134,11 @@ Managing Director:                                    Signature: _______________
                   rows={4}
                   value={demoMessage}
                   onChange={(e) => setDemoMessage(e.target.value)}
+                  maxLength={2000}
                 />
               </div>
+              <HoneypotField id="rg-demo-website" value={website} onChange={setWebsite} />
+              <TurnstileWidget ref={demoTurnstile} action="demo_request_post_roadmap" theme="auto" />
               <Button type="submit" disabled={demoSubmitting} className="w-full h-11 font-semibold">
                 {demoSubmitting ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
