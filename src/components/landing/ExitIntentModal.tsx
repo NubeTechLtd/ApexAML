@@ -1,10 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import type { TurnstileInstance } from "@marsidev/react-turnstile";
 import { motion, AnimatePresence } from "framer-motion";
 import { Shield, ArrowRight, Loader2, Download, X, Calendar } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { publicSubmitErrorMessage, submitPublicForm } from "@/lib/publicSubmit";
+import { TurnstileWidget } from "@/components/TurnstileWidget";
+import { HoneypotField } from "@/components/HoneypotField";
 import { NDPRConsent } from "./NDPRConsent";
 
 const SESSION_KEY = "apexaml_exit_intent_shown";
@@ -21,6 +24,8 @@ export function ExitIntentModal({ onBookDemo }: { onBookDemo?: () => void } = {}
   const [email, setEmail] = useState("");
   const [consent, setConsent] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [website, setWebsite] = useState(""); // honeypot
+  const turnstile = useRef<TurnstileInstance>();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -62,14 +67,10 @@ export function ExitIntentModal({ onBookDemo }: { onBookDemo?: () => void } = {}
       return;
     }
     setSubmitting(true);
-    const { error } = await supabase.from("leads").insert({
-      email: trimmed,
-      source: "exit_intent",
-      ndpr_consent: consent,
-    });
+    const result = await submitPublicForm("lead_exit_intent", { email: trimmed, ndpr_consent: consent }, { turnstile, website });
     setSubmitting(false);
-    if (error) {
-      toast({ title: "Submission failed", description: "Please try again.", variant: "destructive" });
+    if (!result.ok) {
+      toast({ title: "Submission failed", description: publicSubmitErrorMessage(result), variant: "destructive" });
       return;
     }
     triggerDownload();
@@ -154,6 +155,8 @@ export function ExitIntentModal({ onBookDemo }: { onBookDemo?: () => void } = {}
                   autoFocus
                   className="bg-white/[0.04] border-white/10 text-white placeholder:text-muted-on-dark h-11 rounded-lg"
                 />
+                <HoneypotField id="exit-website" value={website} onChange={setWebsite} />
+                <TurnstileWidget ref={turnstile} action="lead_exit_intent" />
                 <Button
                   type="submit"
                   disabled={submitting || !consent}

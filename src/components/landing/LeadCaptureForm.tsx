@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import type { TurnstileInstance } from '@marsidev/react-turnstile';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, ArrowLeft, Loader2, CheckCircle2, Mail } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -7,8 +8,10 @@ import { Button } from '@/components/ui/button';
 import { NDPRConsent } from './NDPRConsent';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { publicSubmitErrorMessage, submitPublicForm } from '@/lib/publicSubmit';
+import { TurnstileWidget } from '@/components/TurnstileWidget';
+import { HoneypotField } from '@/components/HoneypotField';
 import { WhatsAppIcon } from './WhatsAppIcon';
 import { WHATSAPP_URL } from '@/lib/whatsapp';
 
@@ -37,6 +40,8 @@ export function LeadCaptureForm() {
   const [currentSetup, setCurrentSetup] = useState('');
   const [phone, setPhone] = useState('');
   const [consent, setConsent] = useState(false);
+  const [website, setWebsite] = useState(''); // honeypot
+  const turnstile = useRef<TurnstileInstance>();
 
   const handleStep1 = (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,7 +53,7 @@ export function LeadCaptureForm() {
     e.preventDefault();
     if (submitting || !consent) return;
     setSubmitting(true);
-    const { error } = await supabase.from('leads').insert({
+    const result = await submitPublicForm('lead_final_cta', {
       email,
       full_name: fullName,
       institution_name: institutionName,
@@ -57,11 +62,10 @@ export function LeadCaptureForm() {
       current_setup: currentSetup,
       phone: `+234${phone.replace(/^\+?234/, '')}`,
       ndpr_consent: consent,
-      source: 'final_cta_2step',
-    });
+    }, { turnstile, website });
     setSubmitting(false);
-    if (error) {
-      toast({ title: 'Submission failed', description: 'Please try again.', variant: 'destructive' });
+    if (!result.ok) {
+      toast({ title: 'Submission failed', description: publicSubmitErrorMessage(result), variant: 'destructive' });
       return;
     }
     setDone(true);
@@ -223,6 +227,9 @@ export function LeadCaptureForm() {
                 />
               </div>
             </div>
+
+            <HoneypotField id="lc-website" value={website} onChange={setWebsite} />
+            <TurnstileWidget ref={turnstile} action="lead_final_cta" />
 
             <div className="flex gap-3">
               <Button
