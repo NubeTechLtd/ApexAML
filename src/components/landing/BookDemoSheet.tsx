@@ -1,4 +1,5 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
+import type { TurnstileInstance } from '@marsidev/react-turnstile';
 import { motion } from 'framer-motion';
 import { Loader2, CheckCircle2, CalendarCheck, ArrowLeft, ArrowRight, Calendar, Clock, X } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
@@ -11,6 +12,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { buildWhatsAppUrl } from '@/lib/whatsapp';
 import { MarketingSurface } from '@/components/MarketingZone';
+import { publicSubmitErrorMessage, submitPublicForm } from '@/lib/publicSubmit';
+import { TurnstileWidget } from '@/components/TurnstileWidget';
+import { HoneypotField } from '@/components/HoneypotField';
 
 interface Props {
   open: boolean;
@@ -74,6 +78,8 @@ export function BookDemoSheet({ open, onOpenChange, prefilledMessage }: Props) {
   const [focusAreas, setFocusAreas] = useState(prefilledMessage ?? '');
   const [submitting, setSubmitting] = useState(false);
   const [confirmedAt, setConfirmedAt] = useState<string | null>(null);
+  const [website, setWebsite] = useState(''); // honeypot
+  const turnstile = useRef<TurnstileInstance>();
   const { toast } = useToast();
 
   const weekGrid = useMemo(() => buildSlots(), []);
@@ -115,26 +121,26 @@ export function BookDemoSheet({ open, onOpenChange, prefilledMessage }: Props) {
   const handleSubmit = async () => {
     if (!canSubmitStep3 || !selectedSlot || submitting) return;
     setSubmitting(true);
-    const { data, error } = await supabase.functions.invoke('send-demo-confirmation', {
-      body: {
-        institutionName,
-        institutionType,
-        role,
-        fullName,
-        email,
-        whatsapp: whatsapp || undefined,
-        focusAreas: focusAreas || undefined,
-        slotDatetime: selectedSlot,
-      },
-    });
+    const result = await submitPublicForm('demo_booking', {
+      contact_name: fullName.slice(0, 120),
+      institution_name: institutionName.slice(0, 200),
+      institution_type: institutionType,
+      role,
+      email,
+      whatsapp: whatsapp.slice(0, 40) || null,
+      focus_areas: focusAreas.slice(0, 800) || null,
+      slot_datetime: selectedSlot,
+    }, { turnstile, website });
     setSubmitting(false);
-    if (error || !data?.ok) {
-      const reason = (data as { reason?: string })?.reason;
+    if (!result.ok) {
+      const reason = result.reason;
       toast({
         title: reason === 'slot_taken' ? 'Slot just got booked' : 'Booking failed',
         description: reason === 'slot_taken'
           ? 'Please pick another slot.'
-          : 'Please try again or message us on WhatsApp.',
+          : reason === 'rate_limited' || reason?.startsWith('verification')
+            ? publicSubmitErrorMessage(result)
+            : 'Please try again or message us on WhatsApp.',
         variant: 'destructive',
       });
       if (reason === 'slot_taken') {
@@ -333,6 +339,8 @@ export function BookDemoSheet({ open, onOpenChange, prefilledMessage }: Props) {
                   rows={3}
                   className="bg-white/[0.04] border-white/10 text-white placeholder:text-muted-on-dark rounded-lg resize-none" />
               </div>
+              <HoneypotField id="bd-website" value={website} onChange={setWebsite} />
+              <TurnstileWidget ref={turnstile} action="demo_booking" />
               <div className="flex gap-2">
                 <Button variant="outline" onClick={() => setStep(2)} disabled={submitting}
                   className="border-white/10 bg-white/[0.04] text-white hover:bg-white/10 hover:text-white">
