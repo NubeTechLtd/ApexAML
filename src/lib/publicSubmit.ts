@@ -43,7 +43,8 @@ export async function submitPublicForm(
 ): Promise<PublicSubmitResult> {
   let token: string | undefined;
   try {
-    token = await opts.turnstile.current?.getResponsePromise(30_000);
+    // Allows time for a click challenge, but fails a broken widget within 20 seconds.
+    token = await opts.turnstile.current?.getResponsePromise(20_000);
   } catch {
     token = undefined;
   }
