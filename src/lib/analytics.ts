@@ -20,7 +20,8 @@ function flatMetadata(metadata?: Record<string, unknown>) {
   if (!metadata) return null;
   const out: Record<string, string | number | boolean | null> = {};
   for (const [k, v] of Object.entries(metadata).slice(0, 20)) {
-    if (v === null || typeof v === 'boolean' || (typeof v === 'number' && Number.isFinite(v))) out[k.slice(0, 64)] = v;
+    if (v === null || typeof v === 'boolean') out[k.slice(0, 64)] = v;
+    else if (typeof v === 'number' && Number.isFinite(v)) out[k.slice(0, 64)] = v;
     else if (v !== undefined) out[k.slice(0, 64)] = String(v).slice(0, 200);
   }
   return out;

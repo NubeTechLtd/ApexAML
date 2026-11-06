@@ -14,7 +14,7 @@ import { publicSubmitErrorMessage, submitPublicForm } from "@/lib/publicSubmit";
 import { TurnstileWidget } from "@/components/TurnstileWidget";
 import { HoneypotField } from "@/components/HoneypotField";
 import { hasDemoEntry, markDemoEntry, setDemoSessionId, saveDemoNotificationCredentials } from "@/data-layer/demoStore";
-import { saveDemoEmailConfirmation } from "@/data-layer/demoEmailConfirmation";
+import { saveDemoEmailConfirmation, type ConfirmationSendStatus } from "@/data-layer/demoEmailConfirmation";
 
 const ORG_TYPES = ["PSP", "MFB", "IMTO", "Bank", "Other"] as const;
 
@@ -62,7 +62,7 @@ export default function DemoEntry() {
     setSubmitting(false);
     const data = result.body as {
       sessionId?: string; notificationToken?: string;
-      confirmation?: { status?: string; retryAfterSeconds?: number };
+      confirmation?: { status?: ConfirmationSendStatus; retryAfterSeconds?: number };
     };
     if (!result.ok || !data.sessionId) {
       setServerError(result.reason === "rate_limited"
