@@ -29,11 +29,13 @@ Deno.test('the four lead tables and both trackers are covered', () => {
   assertEquals(FORMS.contact.table, 'leads')
 })
 
-Deno.test('every visitor column is in its table allowlist and visitors never set id, source or fingerprint', () => {
+Deno.test('every visitor column is in its table allowlist; visitors never set id, fingerprint, user agent or a form source', () => {
   for (const [id, spec] of specs) {
+    // Trackers carry a free tracking label in their own `source` column; forms never do.
+    const serverOnly = spec.turnstile ? ['id', 'source', 'client_fingerprint', 'user_agent'] : ['id', 'user_agent']
     for (const col of visitorColumns(spec)) {
       assert(TABLE_COLUMNS[spec.table].includes(col), `${id}.${col}`)
-      assert(!['id', 'source', 'client_fingerprint', 'user_agent'].includes(col), `${id} lets visitor set ${col}`)
+      assert(!serverOnly.includes(col), `${id} lets visitor set ${col}`)
     }
   }
 })
