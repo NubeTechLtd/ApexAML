@@ -21,7 +21,7 @@ import {
   Twitter,
   Linkedin,
 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { sendPublicEvent } from "@/lib/publicSubmit";
 import logo from "@/assets/logo.svg";
 import { Button } from "@/components/ui/button";
 import { BookDemoSheet } from "@/components/landing/BookDemoSheet";
