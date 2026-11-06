@@ -89,3 +89,6 @@
 
 ## Zone-specific STR wording
 - [x] Matched case hints and tour wording to demo samples, marketing AI-assisted drafting, and unchanged live wording; browser verified all three. Demo uses pre-written seed narratives and deterministic local refinements, not model calls. Ten routing/isolation checks passed; delivered the remaining-reference inventory.
+
+## Single public submission endpoint
+- [ ] Add public-submit (security check, "website" spam trap, 10/IP/hour hashed-IP limit, 10 KB cap, per-form table/column allowlist, service-role insert) and switch every public form plus click/page tracking to it; keep anon INSERT policies for now.
