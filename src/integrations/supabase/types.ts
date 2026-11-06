@@ -2143,6 +2143,13 @@ export type Database = {
         Returns: boolean
       }
       end_support_access: { Args: never; Returns: undefined }
+      get_roadmap_lead_count: { Args: never; Returns: number }
+      get_taken_demo_slots: {
+        Args: { _end: string; _start: string }
+        Returns: {
+          slot_datetime: string
+        }[]
+      }
       mark_platform_notification_read: {
         Args: { _id: string }
         Returns: undefined

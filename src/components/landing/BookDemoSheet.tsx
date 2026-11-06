@@ -103,11 +103,7 @@ export function BookDemoSheet({ open, onOpenChange, prefilledMessage }: Props) {
     const start = weekGrid[0].slots[0].toISOString();
     const end = weekGrid[weekGrid.length - 1].slots[3].toISOString();
     supabase
-      .from('demo_slot_availability')
-      .select('slot_datetime, status')
-      .gte('slot_datetime', start)
-      .lte('slot_datetime', end)
-      .in('status', ['booked', 'blocked'])
+      .rpc('get_taken_demo_slots', { _start: start, _end: end })
       .then(({ data }) => {
         setBookedSlots(new Set((data ?? []).map((r) => new Date(r.slot_datetime).toISOString())));
         setLoadingSlots(false);
