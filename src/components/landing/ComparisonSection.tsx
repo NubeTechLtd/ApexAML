@@ -33,13 +33,13 @@ const ROWS: Row[] = [
     feature: 'goAML XML Export',
     manual: { value: 'Manual, error-prone', tone: 'bad' },
     enterprise: { value: 'Yes', tone: 'ok' },
-    apexaml: 'One-click, auto-formatted',
+    apexaml: 'goAML-style XML export (validation against the NFIU schema in progress)',
   },
   {
     feature: 'Nigerian Typology Library',
     manual: { value: 'Ad-hoc', tone: 'bad' },
     enterprise: { value: 'Generic global', tone: 'mid' },
-    apexaml: '8 Nigerian-specific rules pre-loaded',
+    apexaml: 'Nigerian typology scenarios to explore in the demo; rules configured during your pilot',
   },
   {
     feature: 'CBN Roadmap Support',

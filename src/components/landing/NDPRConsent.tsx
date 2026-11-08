@@ -39,7 +39,7 @@ export function NDPRConsent({ checked, onCheckedChange, id = 'ndpr-consent', cla
         </span>
       </label>
       <p className="text-[10px] text-muted-on-dark leading-relaxed pl-7">
-        Your data is stored on AWS servers in Nigeria. We never sell or share your information. You can request deletion at any time.
+        Hosted on Supabase (AWS Ireland, eu-west-1), encrypted in transit and at rest. We never sell or share your information. You can request deletion at any time.
       </p>
     </div>
   );
