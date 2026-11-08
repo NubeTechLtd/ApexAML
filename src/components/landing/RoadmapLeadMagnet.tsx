@@ -150,7 +150,7 @@ export function RoadmapLeadMagnet() {
                     CBN AML Roadmap Template
                   </h3>
                   <p className="text-sm text-white/55 leading-relaxed max-w-md">
-                    Pre-formatted for Circular <span className="text-white/80 font-mono text-[12px]">BSD/DIR/PUB/LAB/019/002</span>. Submit directly to the CBN Compliance Department. Used by 50+ Nigerian compliance teams.
+                    Structured around Circular <span className="text-white/80 font-mono text-[12px]">BSD/DIR/PUB/LAB/019/002</span>. A starting point for your institution's own AML roadmap: review and adapt it before sharing it with the CBN.
                   </p>
                 </div>
               </div>

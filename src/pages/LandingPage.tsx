@@ -801,9 +801,9 @@ function LandingPageInner() {
               },
               {
                 Icon: ShieldCheck,
-                title: "Vetted Enterprise Security",
-                eyebrow: "Microsoft-Certified AI & Security",
-                text: "Architected by Microsoft-Certified AI Consultants with cross-sector financial experience. Our founders undergo rigorous security vetting to ensure your highly sensitive data is never compromised.",
+                title: "Security-First Engineering",
+                eyebrow: "Security by Design",
+                text: "Hosted on Supabase (AWS Ireland, eu-west-1) and encrypted in transit and at rest. Each institution's data is kept separate, and every action is recorded in an append-only, hash-chained audit trail.",
               },
             ].map(({ Icon, title, eyebrow, text }, i) => (
               <AnimatedSection key={title} delay={i * 0.1}>
@@ -840,9 +840,9 @@ function LandingPageInner() {
                 source: "REST API for API-first fintechs; batch SFTP or middleware adapters for Finacle, T24 and Flexcube",
               },
               {
-                value: "goAML-ready XML",
-                label: "Every STR exported in NFIU-mandated format",
-                source: "Review the exported XML before submission through the NFIU portal.",
+                value: "goAML-style XML",
+                label: "STR export for analyst review and upload",
+                source: "Validation against the NFIU schema in progress. Your authorised person reviews the file and uploads it through the goAML portal.",
               },
             ].map((m, i) => (
               <AnimatedSection key={m.label} delay={i * 0.1}>
