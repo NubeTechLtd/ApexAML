@@ -2,7 +2,10 @@
 
 Disabled at the owner’s request. Emails 2–5 previously ran at days 3, 7, 14 and 21. This is historical copy, not approved current claims; do not restore it automatically. The shared shell includes the original unsubscribe and open/click tracking URLs.
 
+Tracking links must now be HMAC-signed: if this copy is ever restored, build them with `signedClickUrl` / `signedOpenUrl` from `supabase/functions/_shared/email-tracking.ts` (key `EMAIL_TRACKING_SECRET`). Unsigned links are rejected by `email-track`.
+
 ```typescript
+// Superseded — use signedClickUrl / signedOpenUrl instead.
 function trackedLink(token: string, step: number, target: string): string {
   return `${FN_BASE}/email-track?t=${encodeURIComponent(token)}&s=${step}&url=${encodeURIComponent(target)}`;
 }
