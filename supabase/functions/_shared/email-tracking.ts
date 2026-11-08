@@ -22,7 +22,8 @@ const VERSION = 'v1'
 const encoder = new TextEncoder()
 const keyCache = new Map<string, Promise<CryptoKey>>()
 
-export const TOKEN_PATTERN = /^[A-Za-z0-9_-]{8,128}$/
+// email_sequences.tracking_token is standard base64 (may contain + / =).
+export const TOKEN_PATTERN = /^[A-Za-z0-9+/=_-]{8,128}$/
 export const MIN_STEP = 1
 export const MAX_STEP = 5
 export const MAX_URL_LENGTH = 2048
