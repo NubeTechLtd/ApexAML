@@ -3,7 +3,7 @@
 // before any lookup or write.
 //   GET /email-track?t=<token>&s=<step>&type=open&sig=<hmac>  -> log open, 1x1 GIF
 //   GET /email-track?t=<token>&s=<step>&url=<dest>&sig=<hmac> -> log click, 302 to <dest>
-import { type TrackingPayload, verifyTracking } from '../_shared/email-tracking.ts'
+import { isValidPayload, type TrackingPayload, verifyTracking } from '../_shared/email-tracking.ts'
 import { trustedClientIp } from '../_shared/client-ip.ts'
 
 export interface TrackEvent {
@@ -63,12 +63,13 @@ export function parsePayload(params: URLSearchParams): TrackingPayload | null {
   const type = params.get('type')
   if (!token || !stepRaw || !/^\d$/.test(stepRaw)) return null
   const step = Number(stepRaw)
+  let payload: TrackingPayload | null = null
   if (dest !== null) {
-    if (type !== null) return null
-    return { kind: 'click', token, step, url: dest }
+    if (type === null) payload = { kind: 'click', token, step, url: dest }
+  } else if (type === 'open') {
+    payload = { kind: 'open', token, step }
   }
-  if (type === 'open') return { kind: 'open', token, step }
-  return null
+  return payload && isValidPayload(payload) ? payload : null
 }
 
 export async function handleTrack(req: Request, deps: TrackDeps): Promise<Response> {

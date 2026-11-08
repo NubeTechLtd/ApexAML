@@ -97,7 +97,8 @@ Deno.test('signed link for an unknown sequence is rejected', async () => {
 
 Deno.test('malformed requests are rejected before verification', async () => {
   const { d } = deps()
-  for (const q of ['', '?t=' + TOKEN, `?t=${TOKEN}&s=9&type=open&sig=x`, `?t=${TOKEN}&s=1&sig=x`]) {
+  const t = encodeURIComponent(TOKEN)
+  for (const q of ['', '?t=' + t, `?t=${t}&s=9&type=open&sig=x`, `?t=${t}&s=0&type=open&sig=x`, `?t=${t}&s=1&sig=x`, `?t=bad%20token&s=1&type=open&sig=x`]) {
     assertEquals((await handleTrack(get(BASE + '/email-track' + q), d)).status, 400, q)
   }
   assertEquals((await handleTrack(new Request(BASE + '/email-track', { method: 'POST' }), d)).status, 405)
