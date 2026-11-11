@@ -44,8 +44,16 @@ export interface StrDraft {
   alertId: string;
   version: number;
   narrative: string;
+  /** Live: 'ai' (model output) or 'analyst_edit'. Demo uses its own sample labels. */
   generatedBy: string;
   createdAt: string;
+  /** Live AI provenance; null/absent for analyst edits and demo drafts. */
+  provider?: string | null;
+  model?: string | null;
+  promptVersion?: string | null;
+  inputHash?: string | null;
+  createdBy?: string | null;
+  authorName?: string | null;
 }
 
 export interface StrExport {
@@ -252,7 +260,10 @@ export interface DataProvider {
   str: {
     generate(alertId: string): Promise<StrGenerateResult>;
     refine(alertId: string, currentDraft: string, message: string): Promise<StrRefineResult>;
+    /** Saves the analyst's text as a new version ('analyst_edit' in live). */
     saveDraft(alertId: string, narrative: string): Promise<string | null>;
+    /** All saved versions for an alert, oldest first. */
+    listDrafts(alertId: string): Promise<StrDraft[]>;
     recordExport(params: { alertId: string; draftId: string; filename: string; xml: string }): Promise<void>;
     listExports(alertId: string): Promise<StrExport[]>;
   };

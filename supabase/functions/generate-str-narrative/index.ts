@@ -3,6 +3,9 @@ import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { z } from 'npm:zod@3';
 import { authorizeCustomer } from '../_shared/tenant-access.ts';
 import { STR_GENERATE_SYSTEM_PROMPT } from '../_shared/str-prompts.ts';
+import { DRAFT_SELECT, inputHash, promptVersion, providerOf } from '../_shared/str-provenance.ts';
+
+const MODEL = 'google/gemini-3.8-flash';
 
 const BodySchema = z.object({ alert_id: z.string().uuid() });
 
@@ -101,7 +104,7 @@ Draft the STR narrative.`;
         'X-Lovable-AIG-SDK': 'fetch',
       },
       body: JSON.stringify({
-        model: 'google/gemini-3.8-flash',
+        model: MODEL,
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
           { role: 'user', content: prompt },
@@ -119,21 +122,32 @@ Draft the STR narrative.`;
     const narrative: string = aiJson?.choices?.[0]?.message?.content?.trim() ?? '';
     if (!narrative) return json({ error: 'AI returned an empty narrative' }, 502);
 
+    // The model id the gateway reports is the one that actually answered.
+    const servedModel = typeof aiJson?.model === 'string' && aiJson.model ? aiJson.model : MODEL;
+    const modelId = servedModel.includes('/') ? servedModel : `${providerOf(MODEL)}/${servedModel}`;
+
     const { count } = await supabase
       .from('str_drafts')
       .select('id', { count: 'exact', head: true })
       .eq('alert_id', alert.id);
 
-    const { data: draft, error: insertError } = await supabase
+    // AI rows are written with the server credential only, so browsers cannot
+    // label their own text as AI output or forge model details.
+    const admin = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
+    const { data: draft, error: insertError } = await admin
       .from('str_drafts')
       .insert({
         alert_id: alert.id,
         version: (count ?? 0) + 1,
         narrative,
-        generated_by: 'claude_api',
+        generated_by: 'ai',
+        provider: providerOf(modelId),
+        model: modelId,
+        prompt_version: await promptVersion('str-generate', SYSTEM_PROMPT),
+        input_hash: await inputHash(SYSTEM_PROMPT, prompt),
         created_by: user.id,
       })
-      .select('id, alert_id, version, narrative, generated_by, created_at')
+      .select(DRAFT_SELECT)
       .single();
 
     if (insertError) return json({ error: insertError.message }, 400);

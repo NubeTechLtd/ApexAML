@@ -3,6 +3,9 @@ import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { z } from 'npm:zod@3';
 import { authorizeCustomer } from '../_shared/tenant-access.ts';
 import { STR_REFINE_SYSTEM_PROMPT } from '../_shared/str-prompts.ts';
+import { DRAFT_SELECT, inputHash, promptVersion, providerOf } from '../_shared/str-provenance.ts';
+
+const MODEL = 'openai/gpt-6-astra';
 
 const BodySchema = z.object({
   alert_id: z.string().uuid(),
@@ -84,7 +87,7 @@ ${message}`;
         'X-Lovable-AIG-SDK': 'fetch',
       },
       body: JSON.stringify({
-        model: 'openai/gpt-6-astra',
+        model: MODEL,
         instructions: SYSTEM_PROMPT,
         input: context,
         stream: true,
@@ -122,6 +125,7 @@ ${message}`;
     let buffer = '';
     let fullText = '';
     let streamError: string | null = null;
+    let servedModel: string | null = null;
 
     while (true) {
       const { done, value } = await reader.read();
@@ -138,8 +142,9 @@ ${message}`;
           const obj = JSON.parse(payload);
           if (obj.type === 'response.output_text.delta' && typeof obj.delta === 'string') {
             fullText += obj.delta;
-          } else if (obj.type === 'response.completed' && !fullText) {
-            fullText = obj?.response?.output_text ?? '';
+          } else if (obj.type === 'response.completed') {
+            if (typeof obj?.response?.model === 'string' && obj.response.model) servedModel = obj.response.model;
+            if (!fullText) fullText = obj?.response?.output_text ?? '';
           } else if (obj.type === 'response.failed') {
             streamError = obj?.response?.error?.message ?? 'AI stream failed';
           }
@@ -161,21 +166,30 @@ ${message}`;
     const confirmation = (refined.confirmation ?? '').trim();
     if (!narrative || !confirmation) return json({ error: 'AI returned an incomplete refinement' }, 502);
 
+    const reported = servedModel ?? MODEL;
+    const modelId = reported.includes('/') ? reported : `${providerOf(MODEL)}/${reported}`;
+
     const { count } = await supabase
       .from('str_drafts')
       .select('id', { count: 'exact', head: true })
       .eq('alert_id', alert.id);
 
-    const { data: draft, error: insertError } = await supabase
+    // AI rows are written with the server credential only (see generate-str-narrative).
+    const admin = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
+    const { data: draft, error: insertError } = await admin
       .from('str_drafts')
       .insert({
         alert_id: alert.id,
         version: (count ?? 0) + 1,
         narrative,
-        generated_by: 'claude_api',
+        generated_by: 'ai',
+        provider: providerOf(modelId),
+        model: modelId,
+        prompt_version: await promptVersion('str-refine', SYSTEM_PROMPT),
+        input_hash: await inputHash(SYSTEM_PROMPT, context),
         created_by: user.id,
       })
-      .select('id, alert_id, version, narrative, generated_by, created_at')
+      .select(DRAFT_SELECT)
       .single();
 
     if (insertError) return json({ error: insertError.message }, 400);

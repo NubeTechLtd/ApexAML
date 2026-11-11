@@ -209,6 +209,9 @@ export const demoProvider: DataProvider = {
       writeCollection('str_drafts', [...drafts, draft]);
       return draft.id;
     },
+    async listDrafts(alertId) {
+      return readCollection<StrDraft[]>('str_drafts', () => []).filter((d) => d.alertId === alertId).sort((a, b) => a.version - b.version);
+    },
     async recordExport({ alertId, draftId, filename, xml }) {
       const exports = readCollection<StrExport[]>('str_exports', () => []);
       writeCollection('str_exports', [{ id: demoId('export'), alertId, strDraftId: draftId, filename, goamlXml: xml, exportedAt: new Date().toISOString() }, ...exports]);

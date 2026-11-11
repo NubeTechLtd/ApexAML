@@ -36,6 +36,8 @@ import { riskScoreKey } from '@/lib/riskScore';
 
 import { generateGoAMLXml, downloadXmlFile } from '@/lib/generateGoAMLXml';
 import { resolveExportEntity } from '@/data-layer/exportEntity';
+import type { StrDraft } from '@/data-layer/types';
+import { describeStrAttribution, type StrAttribution } from '@/lib/strAttribution';
 import { MissingProfileFields } from '@/components/MissingProfileFields';
 import { IMTOInvestigation } from '@/components/IMTOInvestigation';
 import { CrossBorderSLACard } from '@/components/CrossBorderSLACard';
@@ -280,6 +282,8 @@ export default function AlertWorkspace() {
   // STR state
   const [strDraft, setStrDraft] = useState('');
   const [strDraftId, setStrDraftId] = useState<string | null>(null);
+  // Live only: saved versions for the selected alert, used for attribution.
+  const [strDrafts, setStrDrafts] = useState<StrDraft[]>([]);
   const [strLoading, setStrLoading] = useState(false);
   const [strGenerated, setStrGenerated] = useState(false);
   const [editVersion, setEditVersion] = useState(0);
@@ -325,6 +329,7 @@ export default function AlertWorkspace() {
     const isCrossBorder = currentAlert?.alertType === 'CROSS_BORDER_FLAG';
     setStrDraft(isCrossBorder ? currentAlert!.aiDraftedNarrative : '');
     setStrDraftId(null);
+    setStrDrafts([]);
     setStrLoading(false);
     setStrGenerated(isCrossBorder);
     setStrSource('sample');
@@ -337,6 +342,22 @@ export default function AlertWorkspace() {
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatMessages]);
+
+  const isLive = provider.kind !== 'demo';
+  const refreshDrafts = useCallback(async (alertId: string) => {
+    if (!isLive) return;
+    try {
+      setStrDrafts(await provider.str.listDrafts(alertId));
+    } catch {
+      // Attribution is refreshed again before export.
+    }
+  }, [isLive, provider]);
+  const strAttribution = useMemo(
+    () => (isLive ? describeStrAttribution(strDrafts, strDraftId) : null),
+    [isLive, strDrafts, strDraftId],
+  );
+  const savedNarrative = strDrafts.find((d) => d.id === strDraftId)?.narrative;
+  const strHasUnsavedEdits = isLive && savedNarrative !== undefined && savedNarrative !== strDraft;
 
 
 
@@ -352,6 +373,7 @@ export default function AlertWorkspace() {
       setStrDraft(narrative);
       setStrDraftId(draftId);
       setStrGenerated(true);
+      void refreshDrafts(selected.id);
       if (isDemo) void addAuditEntry({ action: 'STR_DRAFT_GENERATED', analyst: '', caseId: selected.caseId, justification: demoStrAuditJustification(source === 'live_ai' ? 'live_ai' : 'fallback') }).catch(() => undefined);
     } catch (e) {
       toast({
@@ -384,7 +406,10 @@ export default function AlertWorkspace() {
       const result = await provider.str.refine(selected.id, strDraft, input);
       const changed = result.narrative !== strDraft;
       setStrDraft(result.narrative);
-      if (result.draftId) setStrDraftId(result.draftId);
+      if (result.draftId) {
+        setStrDraftId(result.draftId);
+        void refreshDrafts(selected.id);
+      }
       setChatMessages((prev) => [
         ...prev,
         { id: Date.now(), role: 'assistant', content: result.confirmation, source: result.source === 'live_ai' ? 'live_ai' : 'fallback' },
@@ -431,31 +456,59 @@ export default function AlertWorkspace() {
       toast({ title: 'Export blocked', description: <MissingProfileFields missing={resolved.missing} />, variant: 'destructive' });
       return;
     }
-    const xml = generateGoAMLXml(selected, strDraft, resolved.entity, resolved.label);
     const profileVersion = resolved.entity.version;
 
-    // Record the export before downloading so every goAML file leaving the
-    // platform is traceable. Demo alerts are not backed by database rows, so
-    // failures there are non-fatal.
     let draftId = strDraftId;
-    try {
-      if (!draftId && strDraft.trim()) {
+    let attribution: StrAttribution | null = null;
+    if (isLive) {
+      // Save any unsaved analyst text as its own version first, so the
+      // attribution in the file and audit entry matches the exported text.
+      try {
+        const saved = strDrafts.find((d) => d.id === draftId);
+        if (strDraft.trim() && (!saved || saved.narrative !== strDraft)) {
+          draftId = await provider.str.saveDraft(selected.id, strDraft);
+          if (draftId) setStrDraftId(draftId);
+        }
+        const drafts = await provider.str.listDrafts(selected.id);
+        setStrDrafts(drafts);
+        attribution = describeStrAttribution(drafts, draftId);
+      } catch {
+        toast({ title: 'Export not completed', description: 'The draft could not be saved, so the file was not downloaded. Try again.', variant: 'destructive' });
+        return;
+      }
+    } else if (!draftId && strDraft.trim()) {
+      try {
         draftId = await provider.str.saveDraft(selected.id, strDraft);
         if (draftId) setStrDraftId(draftId);
+      } catch {
+        // Demo drafts are best effort.
       }
+    }
+    const xml = generateGoAMLXml(selected, strDraft, resolved.entity, resolved.label, attribution?.text);
+
+    // Record the export before downloading so every goAML file leaving the
+    // platform is traceable.
+    try {
       if (draftId) {
         await provider.str.recordExport({ alertId: selected.id, draftId, filename, xml });
       }
     } catch {
-      // Draft/export records are best effort; the audit entry below is the authority.
+      // Export records are best effort; the audit entry below is the authority.
     }
     try {
       await addAuditEntry({
         action: 'STR_EXPORT',
         analyst: '',
         caseId: selected.caseId,
-        justification: `STR exported as goAML-style XML (draft): ${filename}.${profileVersion != null ? ` Institution profile v${profileVersion}.` : ''}`,
-        metadata: { filename, profile_version: profileVersion, export_type: 'STR', draft_id: draftId ?? null },
+        justification: `STR exported as goAML-style XML (draft): ${filename}.${profileVersion != null ? ` Institution profile v${profileVersion}.` : ''}${attribution ? ` ${attribution.text}.` : ''}`,
+        metadata: {
+          filename, profile_version: profileVersion, export_type: 'STR', draft_id: draftId ?? null,
+          ...(attribution ? {
+            attribution: attribution.text, draft_version: attribution.draftVersion, ai_draft_id: attribution.aiDraftId,
+            ai_provider: attribution.provider, ai_model: attribution.model, prompt_version: attribution.promptVersion,
+            input_hash: attribution.inputHash, ai_drafted_at: attribution.aiDraftedAt, edited_by: attribution.editors,
+          } : {}),
+        },
       });
     } catch {
       if (provider.kind !== 'demo') {
@@ -471,7 +524,7 @@ export default function AlertWorkspace() {
       title: 'STR exported',
       description: `${filename}: ${resolved.label}.`,
     });
-  }, [selected, strDraft, strDraftId, addAuditEntry, toast, provider]);
+  }, [selected, strDraft, strDraftId, strDrafts, isLive, addAuditEntry, toast, provider]);
 
   const handleEscalate = useCallback(() => {
     setEscalateOpen(true);
@@ -1054,12 +1107,24 @@ export default function AlertWorkspace() {
                               </Button>
                             </div>
                           </div>
+                          {strAttribution && (
+                            <div className="px-4 py-1.5 border-b text-[11px] text-muted-foreground shrink-0" data-testid="str-attribution">
+                              {strAttribution.text}{strHasUnsavedEdits ? ' · unsaved edits are saved when you leave the editor or export' : ''}
+                            </div>
+                          )}
                           <textarea
                             value={strDraft}
                             onChange={(e) => setStrDraft(e.target.value)}
                             onFocus={(e) => { strDraftAtFocus.current = e.target.value; }}
                             onBlur={(e) => {
                               if (selected && e.target.value !== strDraftAtFocus.current) {
+                                if (isLive && e.target.value.trim()) {
+                                  // Live: each analyst edit is saved as its own version for attribution.
+                                  const alertId = selected.id;
+                                  void provider.str.saveDraft(alertId, e.target.value)
+                                    .then((id) => { if (id) setStrDraftId(id); return refreshDrafts(alertId); })
+                                    .catch(() => undefined);
+                                }
                                 void addAuditEntry({ action: 'STR_EDIT', analyst: '', caseId: selected.caseId, justification: `Analyst edited the STR narrative (${e.target.value.length} characters).` }).catch(() => undefined);
                               }
                             }}

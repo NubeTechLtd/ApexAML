@@ -195,13 +195,35 @@ export const liveProvider: DataProvider = {
       return { narrative: result.narrative, confirmation: result.confirmation, draftId: result.draft?.id ?? null };
     },
     async saveDraft(alertId, narrative) {
+      const { data: latest, error: latestError } = await supabase
+        .from('str_drafts')
+        .select('version')
+        .eq('alert_id', alertId)
+        .order('version', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (latestError) throw latestError;
+      // The server stamps the author; browsers may only save analyst text.
       const { data, error } = await supabase
         .from('str_drafts')
-        .insert({ alert_id: alertId, version: 1, narrative, generated_by: 'analyst' })
+        .insert({ alert_id: alertId, version: (latest?.version ?? 0) + 1, narrative, generated_by: 'analyst_edit' })
         .select('id')
         .maybeSingle();
       if (error) throw error;
       return data?.id ?? null;
+    },
+    async listDrafts(alertId) {
+      const { data, error } = await supabase
+        .from('str_drafts')
+        .select('id, alert_id, version, narrative, generated_by, provider, model, prompt_version, input_hash, created_by, author_name, created_at')
+        .eq('alert_id', alertId)
+        .order('version', { ascending: true });
+      if (error) throw error;
+      return (data ?? []).map((r) => ({
+        id: r.id, alertId: r.alert_id, version: r.version, narrative: r.narrative, generatedBy: r.generated_by,
+        provider: r.provider, model: r.model, promptVersion: r.prompt_version, inputHash: r.input_hash,
+        createdBy: r.created_by, authorName: r.author_name, createdAt: r.created_at,
+      }));
     },
     async recordExport({ alertId, draftId, filename, xml }) {
       const { data: auth } = await supabase.auth.getUser();
