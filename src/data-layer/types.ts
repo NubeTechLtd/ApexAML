@@ -239,6 +239,14 @@ export interface AuditSnapshot {
   canRead: boolean;
 }
 
+/* ── Institution settings (live) ─────────────────────── */
+export interface InstitutionSettings {
+  /** Institution consent for AI STR drafting; off by default in live. */
+  aiDraftingEnabled: boolean;
+  /** True only for the institution's institution_admin. */
+  canEdit: boolean;
+}
+
 /* ── Platform roles ──────────────────────────────────── */
 export interface PlatformRoleChangeRequest {
   email: string;
@@ -307,6 +315,11 @@ export interface DataProvider {
     /** Profile for the caller's institution, plus whether the caller may edit it. */
     get(): Promise<InstitutionProfileSnapshot>;
     save(entity: Omit<ReportingEntity, 'version'>): Promise<number>;
+  };
+  institutionSettings: {
+    get(): Promise<InstitutionSettings>;
+    /** institution_admin only; writes an audit entry with the justification. */
+    setAiDrafting(enabled: boolean, justification: string): Promise<void>;
   };
   platform: {
     isPlatformStaff(): Promise<boolean>;

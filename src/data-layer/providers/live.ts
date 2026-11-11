@@ -4,6 +4,7 @@
  */
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentInstitutionId } from '@/lib/institution';
+import { AiDraftingDisabledError } from '@/lib/aiDrafting';
 import type { Alert, AlertType, RiskLevel, Transaction, TxChannel } from '@/data/models/alerts';
 import type {
   AdverseMediaOverall, AdverseMediaScreening, AuditChainResult, AuditEntry, CustomerRecord,
@@ -12,6 +13,16 @@ import type {
 } from '../types';
 
 const KYC_BUCKET = 'kyc-documents';
+
+/** Read the JSON body of a failed function call so server messages reach the analyst. */
+async function functionError(error: unknown): Promise<Error> {
+  const ctx = (error as { context?: Response })?.context;
+  let body: { error?: unknown; code?: string } | null = null;
+  try { body = ctx && typeof ctx.json === 'function' ? await ctx.clone().json() : null; } catch { body = null; }
+  if (body?.code === 'ai_drafting_disabled') return new AiDraftingDisabledError();
+  if (typeof body?.error === 'string') return new Error(body.error);
+  return error instanceof Error ? error : new Error('The request failed.');
+}
 const TX_COLUMNS = 'transaction_id, amount, channel, transaction_datetime, counterparty_account, narration, direction';
 
 function timeElapsed(iso: string): string {
@@ -179,7 +190,7 @@ export const liveProvider: DataProvider = {
   str: {
     async generate(alertId) {
       const { data, error } = await supabase.functions.invoke('generate-str-narrative', { body: { alert_id: alertId } });
-      if (error) throw error;
+      if (error) throw await functionError(error);
       const payload = data as { narrative?: string; draft?: { id?: string } } | null;
       const narrative = payload?.narrative?.trim();
       if (!narrative) throw new Error('No narrative was returned.');
@@ -189,7 +200,7 @@ export const liveProvider: DataProvider = {
       const { data, error } = await supabase.functions.invoke('refine-str-narrative', {
         body: { alert_id: alertId, current_draft: currentDraft, message },
       });
-      if (error) throw error;
+      if (error) throw await functionError(error);
       const result = data as { narrative?: string; confirmation?: string; draft?: { id?: string } } | null;
       if (!result?.narrative || !result?.confirmation) throw new Error('The co-pilot returned an incomplete refinement.');
       return { narrative: result.narrative, confirmation: result.confirmation, draftId: result.draft?.id ?? null };
@@ -531,6 +542,28 @@ export const liveProvider: DataProvider = {
       });
       if (error) throw error;
       return data as number;
+    },
+  },
+
+  institutionSettings: {
+    async get() {
+      const { data: auth } = await supabase.auth.getUser();
+      if (!auth.user) return { aiDraftingEnabled: false, canEdit: false };
+      const institutionId = await getCurrentInstitutionId();
+      const [{ data: membership }, { data: row, error }] = await Promise.all([
+        supabase.from('user_institutions').select('role').eq('user_id', auth.user.id).eq('institution_id', institutionId).maybeSingle(),
+        supabase.from('institution_settings').select('ai_drafting_enabled').eq('institution_id', institutionId).maybeSingle(),
+      ]);
+      if (error) throw error;
+      // No row yet means the institution has not consented: off.
+      return { aiDraftingEnabled: row?.ai_drafting_enabled === true, canEdit: membership?.role === 'institution_admin' };
+    },
+    async setAiDrafting(enabled, justification) {
+      const institutionId = await getCurrentInstitutionId();
+      const { error } = await supabase.rpc('set_ai_drafting_enabled', {
+        _institution_id: institutionId, _enabled: enabled, _justification: justification,
+      });
+      if (error) throw error;
     },
   },
 
