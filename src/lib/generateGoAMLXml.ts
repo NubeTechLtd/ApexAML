@@ -18,7 +18,12 @@ function formatDate(date: Date): string {
 /**
  * Generate goAML 3.x compliant XML for an Alert (AlertWorkspace alerts).
  */
-export function generateGoAMLXml(alert: Alert, strDraft: string, entity: ReportingEntity, label: string): string {
+/** XML comment placed after the root element; used for live draft attribution. */
+export function exportFooterXml(footer: string): string {
+  return `\n<!-- ${escapeXml(footer).replace(/--/g, '- -')} -->`;
+}
+
+export function generateGoAMLXml(alert: Alert, strDraft: string, entity: ReportingEntity, label: string, footer?: string): string {
   const today = formatDate(new Date());
   const p = alert.customerProfile;
 
@@ -63,7 +68,7 @@ ${crossBorderBlock}${reportingEntityXml(entity, label)}
 ${txLines}
   </TransactionDetails>
   <NarrativeText>${escapeXml(strDraft)}</NarrativeText>
-</STRReport>`;
+</STRReport>${footer ? exportFooterXml(footer) : ''}`;
 }
 
 /**
