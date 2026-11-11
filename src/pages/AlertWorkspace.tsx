@@ -1050,7 +1050,7 @@ export default function AlertWorkspace() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Sparkles className="h-5 w-5 text-primary" />
-                        <h2 className="text-base font-bold text-foreground">{isDemo ? 'STR Co-Pilot' : 'AI STR Co-Pilot'}</h2>
+                        <h2 className="text-base font-bold text-foreground">{isDemo ? 'STR Co-Pilot' : aiDraftingOn ? 'AI STR Co-Pilot' : 'STR draft'}</h2>
                         {!isDemo && <Link to="/app/settings" className="text-xs text-muted-foreground underline ml-2">Institution profile</Link>}
                       </div>
                       {strGenerated && (
