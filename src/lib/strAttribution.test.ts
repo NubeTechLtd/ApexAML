@@ -47,3 +47,11 @@ describe('describeStrAttribution', () => {
     expect(describeStrAttribution(drafts, 'd1')?.text).toBe('Drafted by AI (model not recorded, 11 Nov 2026)');
   });
 });
+
+describe('STR export footer', () => {
+  it('appends the attribution after the report as an XML comment', async () => {
+    const { exportFooterXml } = await import('./generateGoAMLXml');
+    expect(exportFooterXml('Drafted by AI (google/gemini-3.8-flash, 11 Nov 2026), edited by Ada Obi'))
+      .toBe('\n<!-- Drafted by AI (google/gemini-3.8-flash, 11 Nov 2026), edited by Ada Obi -->');
+  });
+});
