@@ -1691,29 +1691,44 @@ export type Database = {
       str_drafts: {
         Row: {
           alert_id: string
+          author_name: string | null
           created_at: string
           created_by: string | null
           generated_by: string
           id: string
+          input_hash: string | null
+          model: string | null
           narrative: string
+          prompt_version: string | null
+          provider: string | null
           version: number
         }
         Insert: {
           alert_id: string
+          author_name?: string | null
           created_at?: string
           created_by?: string | null
           generated_by?: string
           id?: string
+          input_hash?: string | null
+          model?: string | null
           narrative: string
+          prompt_version?: string | null
+          provider?: string | null
           version?: number
         }
         Update: {
           alert_id?: string
+          author_name?: string | null
           created_at?: string
           created_by?: string | null
           generated_by?: string
           id?: string
+          input_hash?: string | null
+          model?: string | null
           narrative?: string
+          prompt_version?: string | null
+          provider?: string | null
           version?: number
         }
         Relationships: [
