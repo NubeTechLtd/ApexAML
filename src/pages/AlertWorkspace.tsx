@@ -36,6 +36,8 @@ import { riskScoreKey } from '@/lib/riskScore';
 
 import { generateGoAMLXml, downloadXmlFile } from '@/lib/generateGoAMLXml';
 import { resolveExportEntity } from '@/data-layer/exportEntity';
+import type { StrDraft } from '@/data-layer/types';
+import { describeStrAttribution, type StrAttribution } from '@/lib/strAttribution';
 import { MissingProfileFields } from '@/components/MissingProfileFields';
 import { IMTOInvestigation } from '@/components/IMTOInvestigation';
 import { CrossBorderSLACard } from '@/components/CrossBorderSLACard';
@@ -354,8 +356,8 @@ export default function AlertWorkspace() {
     () => (isLive ? describeStrAttribution(strDrafts, strDraftId) : null),
     [isLive, strDrafts, strDraftId],
   );
-  const strHasUnsavedEdits = isLive && !!strDraftId && strDrafts.find((d) => d.id === strDraftId)?.narrative !== undefined
-    && strDrafts.find((d) => d.id === strDraftId)?.narrative !== strDraft;
+  const savedNarrative = strDrafts.find((d) => d.id === strDraftId)?.narrative;
+  const strHasUnsavedEdits = isLive && savedNarrative !== undefined && savedNarrative !== strDraft;
 
 
 
