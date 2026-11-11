@@ -3,7 +3,7 @@ import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { z } from 'npm:zod@3';
 import { authorizeCustomer } from '../_shared/tenant-access.ts';
 import { STR_GENERATE_SYSTEM_PROMPT } from '../_shared/str-prompts.ts';
-import { Pseudonymiser } from '../_shared/pseudonymise.ts';
+import { LIVE_TOKEN_INSTRUCTION, Pseudonymiser } from '../_shared/pseudonymise.ts';
 import { AI_DRAFTING_DISABLED_MESSAGE } from '../_shared/ai-drafting.ts';
 import { DRAFT_SELECT, inputHash, promptVersion, providerOf } from '../_shared/str-provenance.ts';
 
@@ -11,7 +11,7 @@ const MODEL = 'google/gemini-3.8-flash';
 
 const BodySchema = z.object({ alert_id: z.string().uuid() });
 
-const SYSTEM_PROMPT = STR_GENERATE_SYSTEM_PROMPT;
+const SYSTEM_PROMPT = `${STR_GENERATE_SYSTEM_PROMPT}${LIVE_TOKEN_INSTRUCTION}`;
 
 function fmt(n: number) {
   return `₦${new Intl.NumberFormat('en-NG', { maximumFractionDigits: 0 }).format(n)}`;

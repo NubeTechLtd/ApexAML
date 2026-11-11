@@ -106,3 +106,8 @@ export class Pseudonymiser {
     return this.tokenToValue.size;
   }
 }
+
+/** Appended to live STR system prompts only (demo prompts are unchanged). */
+export const LIVE_TOKEN_INSTRUCTION = `
+
+PSEUDONYMISED DATA: personal identifiers in the input have been replaced with tokens such as CUST_1, CUST_1_N2, CPTY_1, NAME_1, BVN_1, NIN_1, NUBAN_1, PHONE_1 and EMAIL_1. Use these tokens exactly as written wherever you refer to that person or identifier. Never invent, guess or expand a real name or number for a token, and never create new tokens.`;

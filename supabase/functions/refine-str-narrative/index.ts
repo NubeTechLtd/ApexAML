@@ -3,7 +3,7 @@ import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { z } from 'npm:zod@3';
 import { authorizeCustomer } from '../_shared/tenant-access.ts';
 import { STR_REFINE_SYSTEM_PROMPT } from '../_shared/str-prompts.ts';
-import { Pseudonymiser } from '../_shared/pseudonymise.ts';
+import { LIVE_TOKEN_INSTRUCTION, Pseudonymiser } from '../_shared/pseudonymise.ts';
 import { AI_DRAFTING_DISABLED_MESSAGE } from '../_shared/ai-drafting.ts';
 import { DRAFT_SELECT, inputHash, promptVersion, providerOf } from '../_shared/str-provenance.ts';
 
@@ -15,7 +15,7 @@ const BodySchema = z.object({
   message: z.string().min(1).max(2000),
 });
 
-const SYSTEM_PROMPT = STR_REFINE_SYSTEM_PROMPT;
+const SYSTEM_PROMPT = `${STR_REFINE_SYSTEM_PROMPT}${LIVE_TOKEN_INSTRUCTION}`;
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
