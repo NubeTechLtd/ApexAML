@@ -905,6 +905,35 @@ export type Database = {
           },
         ]
       }
+      institution_settings: {
+        Row: {
+          ai_drafting_enabled: boolean
+          institution_id: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          ai_drafting_enabled?: boolean
+          institution_id: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          ai_drafting_enabled?: boolean
+          institution_id?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "institution_settings_institution_id_fkey"
+            columns: ["institution_id"]
+            isOneToOne: true
+            referencedRelation: "institutions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       institution_webhook_secrets: {
         Row: {
           active: boolean
@@ -2224,6 +2253,14 @@ export type Database = {
           score: number
           source: string
         }[]
+      }
+      set_ai_drafting_enabled: {
+        Args: {
+          _enabled: boolean
+          _institution_id: string
+          _justification: string
+        }
+        Returns: boolean
       }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }

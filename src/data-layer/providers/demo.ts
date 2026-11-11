@@ -388,6 +388,12 @@ export const demoProvider: DataProvider = {
     save: async () => { throw new Error('The institution profile cannot be edited in the sample workspace.'); },
   },
 
+  // Demo drafting is unchanged: it always uses the synthetic-data AI path.
+  institutionSettings: {
+    get: async () => ({ aiDraftingEnabled: true, canEdit: false }),
+    setAiDrafting: async () => { throw new Error('Settings cannot be changed in the sample workspace.'); },
+  },
+
   platform: {
     isPlatformStaff: async () => false,
     changeRole: async () => ({ data: null, error: { message: 'Platform roles cannot be changed in the sample workspace.' } }),

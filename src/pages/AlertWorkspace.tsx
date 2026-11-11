@@ -38,6 +38,7 @@ import { generateGoAMLXml, downloadXmlFile } from '@/lib/generateGoAMLXml';
 import { resolveExportEntity } from '@/data-layer/exportEntity';
 import type { StrDraft } from '@/data-layer/types';
 import { describeStrAttribution, type StrAttribution } from '@/lib/strAttribution';
+import { AI_DRAFTING_CONSENT_MESSAGE, AiDraftingDisabledError } from '@/lib/aiDrafting';
 import { MissingProfileFields } from '@/components/MissingProfileFields';
 import { IMTOInvestigation } from '@/components/IMTOInvestigation';
 import { CrossBorderSLACard } from '@/components/CrossBorderSLACard';
@@ -284,6 +285,9 @@ export default function AlertWorkspace() {
   const [strDraftId, setStrDraftId] = useState<string | null>(null);
   // Live only: saved versions for the selected alert, used for attribution.
   const [strDrafts, setStrDrafts] = useState<StrDraft[]>([]);
+  // Live only: institution consent for AI drafting (null while loading). Demo is always on.
+  const [aiDraftingSetting, setAiDraftingSetting] = useState<boolean | null>(null);
+  const [strManual, setStrManual] = useState(false);
   const [strLoading, setStrLoading] = useState(false);
   const [strGenerated, setStrGenerated] = useState(false);
   const [editVersion, setEditVersion] = useState(0);
@@ -330,6 +334,7 @@ export default function AlertWorkspace() {
     setStrDraft(isCrossBorder ? currentAlert!.aiDraftedNarrative : '');
     setStrDraftId(null);
     setStrDrafts([]);
+    setStrManual(false);
     setStrLoading(false);
     setStrGenerated(isCrossBorder);
     setStrSource('sample');
@@ -344,6 +349,15 @@ export default function AlertWorkspace() {
   }, [chatMessages]);
 
   const isLive = provider.kind !== 'demo';
+  useEffect(() => {
+    if (!isLive) return;
+    let cancelled = false;
+    provider.institutionSettings.get()
+      .then((s) => { if (!cancelled) setAiDraftingSetting(s.aiDraftingEnabled); })
+      .catch(() => { if (!cancelled) setAiDraftingSetting(false); });
+    return () => { cancelled = true; };
+  }, [isLive, provider]);
+  const aiDraftingOn = !isLive || aiDraftingSetting === true;
   const refreshDrafts = useCallback(async (alertId: string) => {
     if (!isLive) return;
     try {
@@ -363,8 +377,16 @@ export default function AlertWorkspace() {
 
 
 
-  const handleGenerateSTR = async () => {
+  const handleStartManualSTR = () => {
     if (!selected) return;
+    setStrManual(true);
+    setStrDraft('');
+    setStrDraftId(null);
+    setStrGenerated(true);
+  };
+
+  const handleGenerateSTR = async () => {
+    if (!selected || !aiDraftingOn) return;
     setStrLoading(true);
     setStrDraft('');
     try {
@@ -376,6 +398,7 @@ export default function AlertWorkspace() {
       void refreshDrafts(selected.id);
       if (isDemo) void addAuditEntry({ action: 'STR_DRAFT_GENERATED', analyst: '', caseId: selected.caseId, justification: demoStrAuditJustification(source === 'live_ai' ? 'live_ai' : 'fallback') }).catch(() => undefined);
     } catch (e) {
+      if (e instanceof AiDraftingDisabledError) setAiDraftingSetting(false);
       toast({
         title: 'Could not draft the report',
         description:
@@ -388,7 +411,7 @@ export default function AlertWorkspace() {
   };
 
   const handleSendChat = async () => {
-    if (!chatInput.trim() || !selected || isTyping) return;
+    if (!chatInput.trim() || !selected || isTyping || !aiDraftingOn) return;
     if (!strDraft.trim()) {
       toast({
         title: 'Draft the report first',
@@ -419,8 +442,13 @@ export default function AlertWorkspace() {
         setEditVersion((v) => v + 1);
         void addAuditEntry({ action: 'STR_EDIT', analyst: '', caseId: selected.caseId, justification: isDemo ? demoStrAuditJustification(result.source === 'live_ai' ? 'live_ai' : 'sample', input) : `STR draft edited by co-pilot: "${input.slice(0, 120)}"` }).catch(() => undefined);
       }
-    } catch {
+    } catch (e) {
       // Never claim the draft changed: the report text is untouched.
+      if (e instanceof AiDraftingDisabledError) {
+        setAiDraftingSetting(false);
+        toast({ title: 'AI drafting is off', description: AI_DRAFTING_CONSENT_MESSAGE, variant: 'destructive' });
+        return;
+      }
       setChatMessages((prev) => [
         ...prev,
         {
@@ -1022,7 +1050,7 @@ export default function AlertWorkspace() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Sparkles className="h-5 w-5 text-primary" />
-                        <h2 className="text-base font-bold text-foreground">{isDemo ? 'STR Co-Pilot' : 'AI STR Co-Pilot'}</h2>
+                        <h2 className="text-base font-bold text-foreground">{isDemo ? 'STR Co-Pilot' : aiDraftingOn ? 'AI STR Co-Pilot' : 'STR draft'}</h2>
                         {!isDemo && <Link to="/app/settings" className="text-xs text-muted-foreground underline ml-2">Institution profile</Link>}
                       </div>
                       {strGenerated && (
@@ -1033,7 +1061,28 @@ export default function AlertWorkspace() {
                       )}
                     </div>
 
-                    {!strGenerated && !strLoading && (
+                    {!strGenerated && !strLoading && isLive && !aiDraftingOn && (
+                      <Card className="border-dashed" data-testid="ai-drafting-off">
+                        <CardContent className="py-10 flex flex-col items-center gap-4">
+                          <div className="text-center space-y-1.5">
+                            <p className="text-sm font-medium text-foreground">
+                              {aiDraftingSetting === null ? 'Checking AI drafting setting…' : 'AI drafting needs your institution\'s consent'}
+                            </p>
+                            {aiDraftingSetting === false && (
+                              <p className="text-xs text-muted-foreground max-w-md">
+                                {AI_DRAFTING_CONSENT_MESSAGE}{' '}
+                                <Link to="/app/settings" className="underline">Open Settings</Link>
+                              </p>
+                            )}
+                          </div>
+                          <Button size="lg" variant="outline" className="gap-2 mt-2" onClick={handleStartManualSTR} disabled={aiDraftingSetting === null}>
+                            Write the STR narrative yourself
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    )}
+
+                    {!strGenerated && !strLoading && aiDraftingOn && (
                       <Card className="border-dashed">
                         <CardContent className="py-10 flex flex-col items-center gap-4">
                           <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10">
@@ -1094,7 +1143,10 @@ export default function AlertWorkspace() {
                             <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">STR Draft Editor</span>
                             <div className="flex items-center gap-2">
                               {strGenerated && isDemo && <DemoSampleLabel source={strSource} />}
-                              {strGenerated && !isDemo && (
+                              {strGenerated && !isDemo && strManual && (
+                                <Badge variant="outline" className="text-[9px]">Analyst draft</Badge>
+                              )}
+                              {strGenerated && !isDemo && !strManual && (
                                 <Badge variant="outline" className="text-[9px] gap-1 bg-primary/5 text-primary border-primary/20">
                                   <Sparkles className="h-2.5 w-2.5" />
                                   AI Generated — Review Required
@@ -1133,7 +1185,8 @@ export default function AlertWorkspace() {
                           />
                         </div>
 
-                        {/* Chat assistant */}
+                        {/* Chat assistant (hidden in live when AI drafting is off) */}
+                        {aiDraftingOn && (
                         <div className="w-72 flex flex-col rounded-lg border overflow-hidden shrink-0">
                           <div className="px-3 py-2 border-b bg-muted/30 flex items-center gap-2 shrink-0">
                             <Bot className="h-3.5 w-3.5 text-primary" />
@@ -1201,6 +1254,7 @@ export default function AlertWorkspace() {
                             </div>
                           </div>
                         </div>
+                        )}
                       </div>
                     )}
                   </div>
