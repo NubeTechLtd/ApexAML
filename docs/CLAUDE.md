@@ -24,7 +24,7 @@ bun run build
 
 - `src/integrations/supabase/client.ts`, `src/integrations/supabase/types.ts`, `previewAuthStorage.ts`, `.env`: generated.
 - `supabase/config.toml` project settings. Only per-function `verify_jwt` blocks are ours.
-- `src/components/AIMockUI*`: the owner asked that it never be modified.
+- The `AIMockUI` function in `src/pages/LandingPage.tsx`: the owner asked that it never be modified or deleted.
 - Managed schemas (`auth`, `storage`, `realtime`, `vault`, `supabase_functions`).
 
 ## Conventions
