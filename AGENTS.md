@@ -36,4 +36,4 @@
 - Public rate limits key on _shared/client-ip.ts (Cloudflare-set cf-connecting-ip, which visitors cannot supply), never on x-forwarded-for.
 - email_events is written only by edge functions with the service role (no anon/authenticated write grants); email-track accepts only links HMAC-signed via _shared/email-tracking.ts (EMAIL_TRACKING_SECRET over kind, token, step and destination) and fails closed, so opens and clicks cannot be forged.
 - Live STR AI functions require institution_settings.ai_drafting_enabled (set only via audited admin RPC), pseudonymise PII in-request via _shared/pseudonymise.ts, and alone insert 'ai' drafts with provenance; browsers save only 'analyst_edit' (trigger stamps author, freezes provenance).
-- docs/ (ARCHITECTURE, DATA_MODEL, EDGE_FUNCTIONS, MIGRATION, ENV, CLAUDE) is the handover reference; update the matching file whenever zones, tables, RLS, functions, schedules or secrets change, so the docs never describe a system that no longer exists.
+- docs/ is the handover reference; update the matching file when zones, tables, RLS, functions, schedules or secrets change, so it never goes stale.
