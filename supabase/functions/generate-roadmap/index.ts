@@ -89,7 +89,7 @@ function institutionTypeBlock(type: string): string {
     return "This is a Deposit Money Bank. Emphasise correspondent banking due diligence, cross-border transaction monitoring, and the phased implementation timelines set in the circular (do not state a specific final compliance date). Include NIBSS integration milestones.";
   }
   if (/imto/.test(t)) {
-    return "This is an IMTO. Include specific milestones for: (1) the $200 USD equivalent cash-payout threshold structuring rule with cumulative 24-hour beneficiary tracking, (2) inbound-only and naira-only settlement validation, (3) the 24-hour cross-border STR mandate with overseas compliance API webhook, (4) B2B/B2P phantom payroll detection for the newly permitted business remittance channels, (5) May 2026 settlement account segregation monitoring. These are IMTO-specific CBN obligations.";
+    return "This is an IMTO. Include specific milestones for: (1) the $200 USD equivalent cash-payout threshold structuring rule with cumulative 24-hour beneficiary tracking, (2) inbound-only and naira-only settlement validation, (3) the 24-hour cross-border STR mandate with overseas compliance API webhook, (4) B2B/B2P phantom payroll detection for the newly permitted business remittance channels, (5) settlement account segregation monitoring within the phased implementation timelines set in the circular. These are IMTO-specific CBN obligations.";
   }
   if (/mfb|microfinance/.test(t)) {
     return "This is a Microfinance Bank. Emphasise agent banking network monitoring, Tier 1/2/3 KYC upgrade workflows, and rural transaction pattern analysis.";
@@ -168,7 +168,7 @@ function fallbackRoadmap(d: Body): string {
 - Enforce inbound-only validation on Nigerian IMTO settlement accounts; block outbound transfers.
 - Stand up 24-hour cross-border STR webhook to receive overseas-flag events from partner IMTOs.
 - Deploy phantom payroll detection on corporate sender accounts (uniform-amount, multi-bank fan-out).
-- Complete settlement account segregation per the May 2026 CBN Circular; tag designated accounts with approved correspondents.`
+- Complete settlement account segregation per CBN Circular BSD/DIR/PUB/LAB/019/002 within the phased implementation timelines set in the circular; tag designated accounts with approved correspondents.`
     : "";
 
   return `CBN AML IMPLEMENTATION ROADMAP

@@ -728,7 +728,7 @@ export const PrintableRoadmap = forwardRef<HTMLDivElement, PrintableRoadmapProps
               color: '#b45309',
               items: [
                 'External audit attestation against CBN Circular BSD/DIR/PUB/LAB/019/002',
-                'Full coverage demonstrated across all 10 CBN capability areas',
+                'Coverage review across all 10 CBN capability areas',
                 '5-year record-retention archive validated',
                 'Board sign-off and certification submitted to CBN within the phased implementation timelines set in the circular',
               ],
