@@ -301,8 +301,9 @@ Deno.serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
+        // No max_tokens: like generate-str-narrative. This model spends part of any cap on
+        // hidden reasoning, and the old 1,500 cap cut roadmaps off mid-sentence.
         model: MODEL,
-        max_tokens: 1500,
         messages: [
           {
             role: "system",
@@ -330,6 +331,16 @@ Deno.serve(async (req) => {
         body.leadId,
         `AI returned ${content ? `too little text (${content.trim().length} characters, minimum 200)` : "no text"}; finish_reason=${data?.choices?.[0]?.finish_reason ?? "unknown"}`,
       );
+      await persistRoadmap(body.leadId, fallback);
+      return new Response(JSON.stringify({ roadmap: fallback, source: "fallback" }), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const finishReason = data?.choices?.[0]?.finish_reason;
+    if (finishReason === "length") {
+      logFallback(body.leadId, `AI output was cut off before it finished (finish_reason=length, ${content.trim().length} characters)`);
       await persistRoadmap(body.leadId, fallback);
       return new Response(JSON.stringify({ roadmap: fallback, source: "fallback" }), {
         status: 200,
