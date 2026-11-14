@@ -11,7 +11,7 @@ All functions live in `supabase/functions/<name>/index.ts` (Deno) and deploy aut
 | Function | Trigger / caller | Schedule | Auth | Secrets |
 |---|---|---|---|---|
 | `public-submit` **public** | Every public form and tracker via `src/lib/publicSubmit.ts` (lead forms, contact, demo entry, roadmap lead, walkthrough booking, post-roadmap demo request, landing clicks, page events) | on request | Per-form allowlist (`forms.ts`), "website" honeypot, 10 KB cap, 10 requests per hashed IP per hour (`consume_rate_limit`), Turnstile for forms only | `TURNSTILE_SECRET_KEY`, `IP_HASH_SECRET`, `LOVABLE_API_KEY` (internal alerts, booking/demo emails) |
-| `generate-roadmap` | `RoadmapGenerator.tsx` after the roadmap lead is saved | on request | Lead must be fresh, match the email, and not already have a roadmap | `LOVABLE_API_KEY` (AI Gateway, `google/gemini-2.5-pro`) |
+| `generate-roadmap` | `RoadmapGenerator.tsx` after the roadmap lead is saved | on request | Lead must be fresh, match the email, and not already have a roadmap | `LOVABLE_API_KEY` (AI Gateway, `google/gemini-3.8-flash`, same model as STR drafting) |
 | `send-roadmap-email` | `RoadmapGenerator.tsx` (fire-and-forget) | on request | Sends only to the email on a fresh matching lead; idempotent per lead | `LOVABLE_API_KEY` |
 | `submit-pilot-request` **public** | `InstitutionGate` "Request pilot access" form (`src/lib/pilotRequest.ts`) | on request | Verifies the session itself; uses the session's verified email; honeypot and rate limit | `LOVABLE_API_KEY` |
 | `email-track` **public** | Links inside emails | on request | HMAC-signed links only; fails closed | `EMAIL_TRACKING_SECRET` |
