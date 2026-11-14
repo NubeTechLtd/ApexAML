@@ -207,7 +207,7 @@ PHASE 3 — ADVANCED COMPLIANCE (Months 10-18)
 
 PHASE 4 — FULL COMPLIANCE CERTIFICATION (Months 18-24)
 - Month 19: External audit attestation against CBN Circular BSD/DIR/PUB/LAB/019/002.
-- Month 21: Full coverage demonstrated across all 10 CBN capability areas.
+- Month 21: Coverage review across all 10 CBN capability areas.
 - Month 22: 5-year record-retention archive in place and documented.
 - Month 24: Board sign-off and submission of full compliance certification to CBN within the phased implementation timelines set in the circular.
 
