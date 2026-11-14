@@ -170,7 +170,7 @@ const RoadmapGenerator = () => {
     const isImto = /IMTO/i.test(institutionType);
     const deadline = getDeadlinePlain(institutionType);
     const imtoBlock = isImto
-      ? `\n- $200 USD cash-limit structuring detection across all IMTO agents (rolling 24h beneficiary window).\n- Inbound-only validation on Nigerian IMTO settlement accounts; block outbound.\n- 24-hour cross-border STR webhook for overseas-flag intake.\n- Phantom payroll detection on corporate sender accounts.\n- May 2026 settlement account segregation (designated accounts + approved correspondents).`
+      ? `\n- $200 USD cash-limit structuring detection across all IMTO agents (rolling 24h beneficiary window).\n- Inbound-only validation on Nigerian IMTO settlement accounts; block outbound.\n- 24-hour cross-border STR webhook for overseas-flag intake.\n- Phantom payroll detection on corporate sender accounts.\n- Settlement account segregation within the phased implementation timelines set in the circular (designated accounts + approved correspondents).`
       : '';
     return `CBN AML IMPLEMENTATION ROADMAP
 Prepared for: ${institutionName}
@@ -207,7 +207,7 @@ PHASE 3 — ADVANCED COMPLIANCE (Months 10-18)
 
 PHASE 4 — FULL COMPLIANCE CERTIFICATION (Months 18-24)
 - External audit attestation against CBN Circular BSD/DIR/PUB/LAB/019/002.
-- Full coverage demonstrated across all 10 CBN capability areas.
+- Coverage review across all 10 CBN capability areas.
 - 5-year record-retention archive in place and documented.
 - Board sign-off and submission of full compliance certification to CBN within the phased implementation timelines set in the circular.
 
@@ -953,7 +953,8 @@ Managing Director:                                    Signature: _______________
                           <p className="text-[12px] text-foreground/80 leading-relaxed">
                             This roadmap covers the $200 cash-limit structuring rule, inbound-only and
                             naira-only validation, 24-hour cross-border STR auto-countdown, phantom payroll
-                            network detection, and May 2026 settlement account segregation monitoring. These
+                            network detection, and settlement account segregation monitoring within the
+                            circular's phased implementation timelines. These
                             are pre-configured in ApexAML's IMTO module.
                           </p>
                         </div>
