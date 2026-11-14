@@ -37,4 +37,3 @@
 - email_events is written only by service-role edge functions; email-track accepts only links HMAC-signed via _shared/email-tracking.ts and fails closed, so opens and clicks cannot be forged.
 - Live STR AI functions require institution_settings.ai_drafting_enabled (set only via audited admin RPC), pseudonymise PII in-request via _shared/pseudonymise.ts, and alone insert 'ai' drafts with provenance; browsers save only 'analyst_edit' (trigger stamps author, freezes provenance).
 - docs/ is the handover reference; update the matching file when zones, tables, RLS, functions, schedules or secrets change, so it never goes stale.
-- Scheduled live jobs use managed HTTP schedules plus `_shared/scheduled-jobs.ts`: secret-header auth, only non-sample institutions with a membership and the job's institution_settings switch on, institution_id-scoped queries, one audit entry per institution per run; this keeps sample data and unconsented tenants out of automated processing.
