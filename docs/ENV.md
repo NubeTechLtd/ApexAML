@@ -31,7 +31,8 @@ Other public configuration kept in code:
 | `IP_HASH_SECRET` | Generated | `public-submit` | Keys the hashed IPs stored in `rate_limits` |
 | `EMAIL_TRACKING_SECRET` | Generated | `email-track`, `_shared/email-tracking.ts` | Changing it invalidates every existing tracking link |
 | `WEBHOOK_SECRETS_KEY` | Generated | `ingest-transaction` | AES-256-GCM key for `institution_webhook_secrets`. Losing it makes every issued webhook key unusable |
-| `CRON_SECRET` | Generated | `generate-ctr-batch`, `refresh-sanctions-database`, `rescreen-adverse-media` | Must match the vault entry `cron_secret` |
+| `CRON_SECRET` | Generated | `generate-ctr-batch`, `refresh-sanctions-database`; manual runs of `rescreen-adverse-media` and `risk-score-sweep` (`x-cron-secret`) | Must match the vault entry `cron_secret` |
+| `LOVABLE_CRON_SECRET` | Platform, managed | Bearer sent by the managed HTTP schedules to `rescreen-adverse-media` and `risk-score-sweep`, checked by `_shared/cron-auth.ts` | Managed by the platform; never set by hand |
 | `RESEND_API_KEY` | Connector | Not used by current code | Left over from the earlier email setup. Managed under Connectors |
 
 ## Database vault entries

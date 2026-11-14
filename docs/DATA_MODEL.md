@@ -33,7 +33,7 @@ Institution roles (`user_institutions.role`): `analyst`, `compliance_officer`, `
 
 | Table | Columns | RLS | Purpose |
 |---|---|---|---|
-| `institutions` | id, name, institution_type, cbn_licence_number, created_at | SELECT `tenant_read(id)`; no browser writes | Tenant root. One row per customer institution, plus a dedicated non-tenant platform-control row used only as the audit scope for platform events |
+| `institutions` | id, name, institution_type, cbn_licence_number, is_sample_data (default false; true for seeded institutions, which scheduled jobs skip), created_at | SELECT `tenant_read(id)`; no browser writes | Tenant root. One row per customer institution, plus a dedicated non-tenant platform-control row used only as the audit scope for platform events |
 | `user_institutions` | user_id, institution_id, role, created_at | SELECT own rows, or all rows of an institution where caller is institution_admin; no browser writes | Membership and institution role. Gates `/app`. Provisioned by staff (no self-service UI) |
 | `institution_profiles` | institution_id, legal_name, cbn_licence_number, goaml_entity_id, address, mlro_name, contact_email, contact_phone, version, updated_by, updated_at | SELECT member; writes only via `save_institution_profile` RPC (institution_admin) | Reporting-entity details for live STR/CTR XML |
 | `institution_profile_versions` | id, institution_id, version, snapshot (jsonb), changed_by, created_at | SELECT member; written by the RPC | Immutable history; each export audit entry records the version it used |
