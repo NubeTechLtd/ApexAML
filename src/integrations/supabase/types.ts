@@ -907,20 +907,26 @@ export type Database = {
       }
       institution_settings: {
         Row: {
+          adverse_media_rescreen_enabled: boolean
           ai_drafting_enabled: boolean
           institution_id: string
+          risk_sweep_enabled: boolean
           updated_at: string
           updated_by: string | null
         }
         Insert: {
+          adverse_media_rescreen_enabled?: boolean
           ai_drafting_enabled?: boolean
           institution_id: string
+          risk_sweep_enabled?: boolean
           updated_at?: string
           updated_by?: string | null
         }
         Update: {
+          adverse_media_rescreen_enabled?: boolean
           ai_drafting_enabled?: boolean
           institution_id?: string
+          risk_sweep_enabled?: boolean
           updated_at?: string
           updated_by?: string | null
         }
@@ -978,6 +984,7 @@ export type Database = {
           created_at: string
           id: string
           institution_type: string
+          is_sample_data: boolean
           name: string
         }
         Insert: {
@@ -985,6 +992,7 @@ export type Database = {
           created_at?: string
           id?: string
           institution_type: string
+          is_sample_data?: boolean
           name: string
         }
         Update: {
@@ -992,6 +1000,7 @@ export type Database = {
           created_at?: string
           id?: string
           institution_type?: string
+          is_sample_data?: boolean
           name?: string
         }
         Relationships: []
@@ -2258,6 +2267,15 @@ export type Database = {
         Args: {
           _enabled: boolean
           _institution_id: string
+          _justification: string
+        }
+        Returns: boolean
+      }
+      set_scheduled_job_enabled: {
+        Args: {
+          _enabled: boolean
+          _institution_id: string
+          _job: string
           _justification: string
         }
         Returns: boolean
