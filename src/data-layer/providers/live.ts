@@ -548,20 +548,34 @@ export const liveProvider: DataProvider = {
   institutionSettings: {
     async get() {
       const { data: auth } = await supabase.auth.getUser();
-      if (!auth.user) return { aiDraftingEnabled: false, canEdit: false };
+      if (!auth.user) return { aiDraftingEnabled: false, adverseMediaRescreenEnabled: false, riskSweepEnabled: false, sampleData: false, canEdit: false };
       const institutionId = await getCurrentInstitutionId();
-      const [{ data: membership }, { data: row, error }] = await Promise.all([
+      const [{ data: membership }, { data: row, error }, { data: inst }] = await Promise.all([
         supabase.from('user_institutions').select('role').eq('user_id', auth.user.id).eq('institution_id', institutionId).maybeSingle(),
-        supabase.from('institution_settings').select('ai_drafting_enabled').eq('institution_id', institutionId).maybeSingle(),
+        supabase.from('institution_settings').select('ai_drafting_enabled, adverse_media_rescreen_enabled, risk_sweep_enabled').eq('institution_id', institutionId).maybeSingle(),
+        supabase.from('institutions').select('is_sample_data').eq('id', institutionId).maybeSingle(),
       ]);
       if (error) throw error;
-      // No row yet means the institution has not consented: off.
-      return { aiDraftingEnabled: row?.ai_drafting_enabled === true, canEdit: membership?.role === 'institution_admin' };
+      // No row yet means every setting is off.
+      return {
+        aiDraftingEnabled: row?.ai_drafting_enabled === true,
+        adverseMediaRescreenEnabled: row?.adverse_media_rescreen_enabled === true,
+        riskSweepEnabled: row?.risk_sweep_enabled === true,
+        sampleData: inst?.is_sample_data === true,
+        canEdit: membership?.role === 'institution_admin',
+      };
     },
     async setAiDrafting(enabled, justification) {
       const institutionId = await getCurrentInstitutionId();
       const { error } = await supabase.rpc('set_ai_drafting_enabled', {
         _institution_id: institutionId, _enabled: enabled, _justification: justification,
+      });
+      if (error) throw error;
+    },
+    async setScheduledJob(job, enabled, justification) {
+      const institutionId = await getCurrentInstitutionId();
+      const { error } = await supabase.rpc('set_scheduled_job_enabled', {
+        _institution_id: institutionId, _job: job, _enabled: enabled, _justification: justification,
       });
       if (error) throw error;
     },

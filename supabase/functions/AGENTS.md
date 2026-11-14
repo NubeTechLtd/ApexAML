@@ -1,0 +1,1 @@
+- Scheduled live jobs use managed HTTP schedules plus `_shared/scheduled-jobs.ts`: secret-header auth, only non-sample institutions with a membership and the job's institution_settings switch on, institution_id-scoped queries, one audit entry per institution per run; this keeps sample data and unconsented tenants out of automated processing.

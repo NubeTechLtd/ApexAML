@@ -390,8 +390,9 @@ export const demoProvider: DataProvider = {
 
   // Demo drafting is unchanged: it always uses the synthetic-data AI path.
   institutionSettings: {
-    get: async () => ({ aiDraftingEnabled: true, canEdit: false }),
+    get: async () => ({ aiDraftingEnabled: true, adverseMediaRescreenEnabled: false, riskSweepEnabled: false, sampleData: true, canEdit: false }),
     setAiDrafting: async () => { throw new Error('Settings cannot be changed in the sample workspace.'); },
+    setScheduledJob: async () => { throw new Error('Settings cannot be changed in the sample workspace.'); },
   },
 
   platform: {
