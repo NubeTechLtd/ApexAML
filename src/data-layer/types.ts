@@ -243,9 +243,17 @@ export interface AuditSnapshot {
 export interface InstitutionSettings {
   /** Institution consent for AI STR drafting; off by default in live. */
   aiDraftingEnabled: boolean;
+  /** Weekly adverse-media re-screen; off by default. */
+  adverseMediaRescreenEnabled: boolean;
+  /** Nightly risk-score sweep; off by default. */
+  riskSweepEnabled: boolean;
+  /** Institution is marked as holding sample data, so scheduled jobs never run for it. */
+  sampleData: boolean;
   /** True only for the institution's institution_admin. */
   canEdit: boolean;
 }
+
+export type ScheduledJobKey = 'adverse_media_rescreen' | 'risk_sweep';
 
 /* ── Platform roles ──────────────────────────────────── */
 export interface PlatformRoleChangeRequest {
@@ -320,6 +328,8 @@ export interface DataProvider {
     get(): Promise<InstitutionSettings>;
     /** institution_admin only; writes an audit entry with the justification. */
     setAiDrafting(enabled: boolean, justification: string): Promise<void>;
+    /** institution_admin only; writes an audit entry with the justification. */
+    setScheduledJob(job: ScheduledJobKey, enabled: boolean, justification: string): Promise<void>;
   };
   platform: {
     isPlatformStaff(): Promise<boolean>;

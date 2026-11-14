@@ -11,6 +11,7 @@ import { useDataProvider } from '@/data-layer/hooks';
 import { LIVE_EXPORT_LABEL, PROFILE_FIELDS, missingProfileFields, type ReportingEntity } from '@/lib/reportingEntity';
 import { APP_HOME } from '@/lib/zones';
 import { AiDraftingSettingCard } from '@/components/AiDraftingSettingCard';
+import { ScheduledJobsSettingCard } from '@/components/ScheduledJobsSettingCard';
 
 type Fields = Omit<ReportingEntity, 'version'>;
 const EMPTY: Fields = { legalName: '', cbnLicenceNumber: '', goamlEntityId: '', address: '', mlroName: '', contactEmail: '', contactPhone: '' };
@@ -93,6 +94,7 @@ export default function InstitutionProfileSettings() {
           </CardContent>
         </Card>
         <AiDraftingSettingCard />
+        <ScheduledJobsSettingCard />
       </div>
     </div>
   );
