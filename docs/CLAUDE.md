@@ -87,7 +87,6 @@ Also binding (from project memory):
 - `email-sequence-dispatch` (paused) and `whatsapp-followup` (disabled) are deployed but inactive, and their tables are retained.
 - Several tables keep broad default grants that RLS blocks; revoking unused grants is a tidy-up.
 - `RESEND_API_KEY` connector secret is unused.
-- `generate-roadmap` calls the AI Gateway with an outdated model id (`google/gemini-2.5-pro`); it may be falling back on every call. Its system prompt also contains claims that break the wording rules ("examination-ready", advisory history with the CBN, NFIU and 200+ institutions). Both need an owner-approved fix.
 - Two migration folders exist (`supabase/migrations` from earlier, `drizzle/migrations` current).
 
 **Security and privacy**
