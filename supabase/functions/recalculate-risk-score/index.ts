@@ -2,7 +2,7 @@
 // records the movement in risk_score_history and updates customer_risk_scores.
 //
 // Called by database triggers (ctr_queue filings), by the app when an alert
-// fires or is resolved, and by the nightly clean-period sweep.
+// fires or is resolved, and by the nightly risk-score-sweep (CLEAN_PERIOD_30D).
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { authorizeCustomer } from '../_shared/tenant-access.ts';
 
@@ -117,6 +117,7 @@ Deno.serve(async (req) => {
     const { data: current } = await supabase
       .from("customer_risk_scores")
       .select("risk_score, kyc_tier")
+      .eq("institution_id", institutionId)
       .eq("customer_id", customerId)
       .maybeSingle();
 
@@ -143,6 +144,7 @@ Deno.serve(async (req) => {
     const { count: recentFilings } = await supabase
       .from("ctr_queue")
       .select("id", { count: "exact", head: true })
+      .eq("institution_id", institutionId)
       .eq("customer_id", customerId)
       .eq("status", "filed")
       .gte("filed_at", since90);
@@ -179,6 +181,7 @@ Deno.serve(async (req) => {
       const { data: lastFiling } = await supabase
         .from("ctr_queue")
         .select("filed_at")
+        .eq("institution_id", institutionId)
         .eq("customer_id", customerId)
         .eq("status", "filed")
         .order("filed_at", { ascending: false })
@@ -194,6 +197,7 @@ Deno.serve(async (req) => {
     const { data: docs } = await supabase
       .from("kyc_documents")
       .select("verified, is_current")
+      .eq("institution_id", institutionId)
       .eq("customer_id", customerId);
     if (docs && docs.length > 0 && docs.every((d) => d.verified && d.is_current)) {
       add("All KYC documents current and verified", -5);
