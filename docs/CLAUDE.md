@@ -82,7 +82,7 @@ Also binding (from project memory):
 - goAML XML is not validated against the official NFIU schema.
 
 **Backend**
-- `rescreen-adverse-media` (weekly) and the nightly risk-score sweep in `recalculate-risk-score` have no cron schedule.
+- `generate-ctr-batch-daily` returned 401 on its last run (vault `cron_secret` does not match `CRON_SECRET`).
 - `submit-contact`, `start-demo-session` and `send-demo-confirmation` are superseded by `public-submit` but still deployed; removal awaits owner approval.
 - `email-sequence-dispatch` (paused) and `whatsapp-followup` (disabled) are deployed but inactive, and their tables are retained.
 - Several tables keep broad default grants that RLS blocks; revoking unused grants is a tidy-up.

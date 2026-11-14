@@ -39,7 +39,8 @@ All functions live in `supabase/functions/<name>/index.ts` (Deno) and deploy aut
 | `ingest-transaction` | Institution core banking system | on request | Per-institution signed webhook (details below) | `WEBHOOK_SECRETS_KEY` |
 | `generate-ctr-batch` | Database cron job `generate-ctr-batch-daily` | `50 22 * * *` UTC (23:50 WAT) | `x-cron-secret` must equal `CRON_SECRET` | `CRON_SECRET` |
 | `refresh-sanctions-database` | Database cron job `refresh-sanctions-daily` | `0 1 * * *` UTC | `x-cron-secret` | `CRON_SECRET` |
-| `rescreen-adverse-media` | Intended weekly sweep | **not scheduled** (no cron job exists) | `x-cron-secret` | `CRON_SECRET` |
+| `rescreen-adverse-media` | Managed schedule `adverse-media-rescreen-weekly` | `0 2 * * 1` UTC | Managed scheduler bearer (`_shared/cron-auth.ts`) or `x-cron-secret` = `CRON_SECRET`; anything else 401 | `LOVABLE_CRON_SECRET` (managed), `CRON_SECRET` |
+| `risk-score-sweep` | Managed schedule `risk-score-sweep-nightly` | `0 3 * * *` UTC | Same as above | same |
 
 ### Platform staff
 
@@ -68,7 +69,10 @@ All functions live in `supabase/functions/<name>/index.ts` (Deno) and deploy aut
 | `generate-ctr-batch-daily` | `50 22 * * *` | `generate-ctr-batch` | `x-cron-secret` from vault `cron_secret`; bearer from vault `email_queue_service_role_key` |
 | `refresh-sanctions-daily` | `0 1 * * *` | `refresh-sanctions-database` | same |
 
-Not scheduled despite code comments: the weekly `rescreen-adverse-media` sweep and the nightly "clean period" sweep mentioned in `recalculate-risk-score`.
+| `adverse-media-rescreen-weekly` (managed HTTP schedule) | `0 2 * * 1` | `rescreen-adverse-media` | Managed bearer secret |
+| `risk-score-sweep-nightly` (managed HTTP schedule) | `0 3 * * *` | `risk-score-sweep` | Managed bearer secret |
+
+The managed scheduler cannot send custom headers, so the two newer jobs accept its bearer secret; manual runs use `x-cron-secret`. Both jobs (`_shared/scheduled-jobs.ts`) process only live institutions: `institutions.is_sample_data = false`, not `platform_control`, with a `user_institutions` membership, and the job's `institution_settings` switch on (`adverse_media_rescreen_enabled` / `risk_sweep_enabled`, default off). With none, they exit before any external call. Every query filters by `institution_id`. The re-screen makes at most 200 screenings per run (one screening = one `screen-adverse-media` call) and logs when the cap is reached; both stop starting new work after 130 s. Each run writes one `SCHEDULED_JOB_RUN` audit entry per live institution with job, start/end, records processed, external calls and outcome (`success`, `partial`, `failed`, `skipped_setting_off`).
 
 ## Shared modules (`_shared/`)
 
