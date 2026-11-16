@@ -3,6 +3,7 @@
  * Loaded lazily by the data layer, so the demo zone never reaches this module.
  */
 import { supabase } from '@/integrations/supabase/client';
+import type { Json } from '@/integrations/supabase/types';
 import { getCurrentInstitutionId } from '@/lib/institution';
 import { AiDraftingDisabledError } from '@/lib/aiDrafting';
 import type { Alert, AlertType, RiskLevel, Transaction, TxChannel } from '@/data/models/alerts';
@@ -110,7 +111,7 @@ export const liveProvider: DataProvider = {
         .from('alerts')
         .select(
           `id, case_id, status, risk_level, rule_triggered, alert_type, description,
-           behavioral_red_flags, opened_at, customer_id,
+           behavioral_red_flags, opened_at, customer_id, amount_ngn,
            customers ( id, full_name, bvn, nin, nuban, kyc_tier, risk_score, entity_type )`,
         )
         .eq('institution_id', institutionId)
@@ -158,6 +159,7 @@ export const liveProvider: DataProvider = {
           transactions: byCustomer.get(r.customer_id) ?? [],
           behavioralRedFlags: flags,
           alertType: (r.alert_type as AlertType) ?? 'STANDARD',
+          flaggedAmountNGN: r.amount_ngn === null || r.amount_ngn === undefined ? undefined : Number(r.amount_ngn),
         };
       });
     },
@@ -169,6 +171,18 @@ export const liveProvider: DataProvider = {
         .eq('institution_id', institutionId)
         .eq('id', alertId);
       if (error) throw error;
+    },
+    async importCsv(rows, fileName) {
+      // The database action re-checks every row, the caller's role and the institution, and writes the audit entry.
+      const institutionId = await getCurrentInstitutionId();
+      const { data, error } = await supabase.rpc('import_alerts_csv', {
+        _institution_id: institutionId,
+        _rows: rows as unknown as Json,
+        _file_name: fileName,
+      });
+      if (error) throw new Error(error.message);
+      const result = (data ?? {}) as { imported?: number; customers_created?: number };
+      return { imported: Number(result.imported ?? 0), customersCreated: Number(result.customers_created ?? 0) };
     },
   },
 
