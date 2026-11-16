@@ -196,6 +196,11 @@ function MiniAlertCard({ alert, isSelected, onClick, status, assignedAnalyst }: 
       </div>
       <p className="text-sm font-semibold text-foreground truncate">{alert.customerProfile.fullName}</p>
       <p className="text-xs text-muted-foreground mt-0.5 truncate">{alert.ruleTriggered}</p>
+      {alert.flaggedAmountNGN !== undefined && (
+        <p className="text-[11px] font-mono text-foreground mt-0.5">
+          ₦{alert.flaggedAmountNGN.toLocaleString('en-NG', { maximumFractionDigits: 2 })}
+        </p>
+      )}
       <div className="flex items-center justify-between mt-2">
         <div className="flex items-center gap-1.5">
           <Badge variant="secondary" className={`text-[10px] ${
@@ -231,7 +236,7 @@ export default function AlertWorkspace() {
   const navigate = useZoneNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState('');
-  const { alerts, loading: alertsLoading, error: alertsError } = useInstitutionAlerts();
+  const { alerts, loading: alertsLoading, error: alertsError, refetch: refetchAlerts } = useInstitutionAlerts();
   const [selectedId, setSelectedId] = useState<string>('');
   const [escalateOpen, setEscalateOpen] = useState(false);
   const [fpDialogOpen, setFpDialogOpen] = useState(false);
@@ -622,7 +627,7 @@ export default function AlertWorkspace() {
                   <Skeleton className="h-20 w-full" />
                 </div>
               ) : !isDemo && !alertsError && alerts.length === 0 ? (
-                <LiveWorkspaceEmptyState />
+                <LiveWorkspaceEmptyState onImported={refetchAlerts} />
               ) : (
                 <div className="text-center max-w-md space-y-2">
                   <Shield className="h-8 w-8 text-muted-foreground mx-auto" />
