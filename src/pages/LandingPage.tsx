@@ -121,16 +121,16 @@ const FEATURE_ICONS = [Shield, Sparkles, SlidersHorizontal, Lock];
 
 const defaultFeatures = [
   {
-    title: "Identity & KYC Ops",
-    desc: "BVN/NIN verification, PEP screening, and tiered risk scoring — all in one automated pipeline.",
+    title: "Customer 360 & Screening Workspace",
+    desc: "Unified view of customer identifiers, PEP/sanctions alerts, and behavioral risk triggers.",
   },
   {
     title: "AI STR Co-Pilot",
     desc: "AI-assisted STR drafting from the case's own data, reviewed and edited by an analyst.",
   },
   {
-    title: "No-Code Rules Engine",
-    desc: "Build, test, and deploy AML detection rules without writing a single line of code.",
+    title: "Nigerian Typology Sandbox",
+    desc: "Test pre-configured rules for POS round-tripping, corporate commingling, and IMTO smurfing.",
   },
   {
     title: "Immutable Audit Trail",
@@ -321,7 +321,7 @@ function RoadmapGeneratorBand() {
 const FAQ_FOR_SCHEMA: Array<{ q: string; a: string }> = [
   {
     q: "Does ApexAML satisfy the CBN circular requirements?",
-    a: "Yes. ApexAML covers all 10 capability areas mandated by Circular BSD/DIR/PUB/LAB/019/002, including tiered CDD with BVN/NIN, EDD, PEP and sanctions screening, beneficial-owner identification, transaction monitoring with Nigerian typologies, goAML-format STR/CTR export for analyst review and upload, an append-only audit trail, AML/CFT training and 5-year record retention.",
+    a: "ApexAML provides the investigation workspace, AI drafting assistant, and goAML export tooling mandated by Circular BSD/DIR/PUB/LAB/019/002. Automated detection rules and transaction ingestion are configured during your institution's 30-45 day pilot.",
   },
   {
     q: "Where is our data stored — is it in Nigeria?",
@@ -368,7 +368,7 @@ export default function LandingPage() {
     <AudienceProvider>
       <Seo
         title="ApexAML — Compliance Intelligence for Nigerian Fintechs"
-        description="CBN-aligned AML platform for Nigerian fintechs and banks. AI-assisted STR drafting from the case's own data, reviewed and edited by an analyst. BVN/NIN KYC, transaction monitoring, NFIU goAML reporting and an append-only audit trail."
+        description="CBN-aligned AML workspace for Nigerian financial institutions. AI-assisted STR drafting, goAML XML export preparation, and verifiable hash-chained audit trails."
         path="/"
         jsonLd={LANDING_JSON_LD}
       />
