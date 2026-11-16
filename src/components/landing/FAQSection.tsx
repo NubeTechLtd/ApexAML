@@ -15,28 +15,11 @@ const FAQS: FAQ[] = [
   {
     q: "Does ApexAML satisfy the CBN Circular BSD/DIR/PUB/LAB/019/002 requirements?",
     a: (
-      <div className="space-y-3">
-        <p>
-          Yes. ApexAML was engineered specifically to satisfy the 10 capability areas mandated by Circular{" "}
-          <span className="font-mono text-white/80 text-[12px]">BSD/DIR/PUB/LAB/019/002</span>:
-        </p>
-        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1.5 text-[13px] text-white/55 list-disc list-inside marker:text-primary">
-          <li>Tiered CDD with BVN/NIN linkage</li>
-          <li>Enhanced Due Diligence workflows</li>
-          <li>PEP &amp; sanctions screening</li>
-          <li>Beneficial-owner identification</li>
-          <li>Transaction monitoring (Nigerian typologies)</li>
-          <li>goAML-format STR/CTR export for analyst review and upload</li>
-          <li>Currency Transaction Reporting (CTR)</li>
-          <li>Independent immutable audit trail</li>
-          <li>AML/CFT training &amp; board oversight</li>
-          <li>5-year record retention</li>
-        </ul>
-        <p>
-          Our real-time alerts, dynamic rule engine, NIN/BVN-linked onboarding and audit-ready reporting are also built
-          toward CBN Circular BSD/DIR/PUB/LAB/019/002, issued 10 March 2026, within the phased implementation timelines set in the circular.
-        </p>
-      </div>
+      <p>
+        ApexAML provides the investigation workspace, AI drafting assistant, and goAML export tooling mandated by
+        Circular <span className="font-mono text-white/80 text-[12px]">BSD/DIR/PUB/LAB/019/002</span>. Automated
+        detection rules and transaction ingestion are configured during your institution's 30-45 day pilot.
+      </p>
     ),
   },
   {
