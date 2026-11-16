@@ -135,6 +135,8 @@ export interface Alert {
   crossBorder?: CrossBorderContext;
   /** Commingling context — present when alertType === 'IMTO_ACCOUNT_COMMINGLING'. */
   commingling?: CommingleContext;
+  /** Live only: flagged amount supplied with the case (for example from a CSV import). */
+  flaggedAmountNGN?: number;
 }
 
 /**

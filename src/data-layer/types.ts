@@ -11,6 +11,9 @@ import type { Rule } from '@/components/RulesTable';
 import type { AppNotification } from '@/hooks/useNotifications';
 
 import type { ReportingEntity } from '@/lib/reportingEntity';
+import type { AlertCsvRow } from '@/lib/alertsCsv';
+
+export interface AlertCsvImportResult { imported: number; customersCreated: number }
 
 export interface InstitutionProfileSnapshot {
   institutionId: string | null;
@@ -270,6 +273,8 @@ export interface DataProvider {
   alerts: {
     list(): Promise<AlertRecord[]>;
     setStatus(alertId: string, status: AlertRecord['status']): Promise<void>;
+    /** Live only: imports CSV cases into the caller's institution, all-or-nothing, with one audit entry. */
+    importCsv?(rows: AlertCsvRow[], fileName: string): Promise<AlertCsvImportResult>;
   };
   customers: { list(): Promise<CustomerRecord[]>; get(id: string): Promise<CustomerRecord | null> };
   transactions: { listForCustomers(customerIds: string[]): Promise<TransactionRecord[]> };

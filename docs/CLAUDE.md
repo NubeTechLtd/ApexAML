@@ -77,7 +77,7 @@ Also binding (from project memory):
 - Only `/app/workspace` and `/app/settings` exist live. Dashboard, rules, sanctions, KYC/KYB, customers, reports, audit and accounts pages are demo-only.
 - No rule engine on live data; no server process creates live alerts. See wording rule 3.
 - Live provider returns empty lists for KYB, rules, settlement accounts and notifications.
-- CSV import in the live empty state is a placeholder. Initial data is loaded by the pilot team.
+- The live empty state imports cases (alerts) from CSV only; customers and transactions cannot be imported yet. Imported cases have no transaction timeline.
 - No UI to provision institutions or memberships, or to issue webhook keys. No webhook keys have been issued, so `ingest-transaction` has not processed a real institution's traffic.
 - goAML XML is not validated against the official NFIU schema.
 

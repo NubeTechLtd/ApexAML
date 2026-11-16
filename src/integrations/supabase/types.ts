@@ -73,6 +73,7 @@ export type Database = {
       alerts: {
         Row: {
           alert_type: string
+          amount_ngn: number | null
           assigned_analyst_id: string | null
           behavioral_red_flags: string[] | null
           case_id: string
@@ -89,6 +90,7 @@ export type Database = {
         }
         Insert: {
           alert_type: string
+          amount_ngn?: number | null
           assigned_analyst_id?: string | null
           behavioral_red_flags?: string[] | null
           case_id: string
@@ -105,6 +107,7 @@ export type Database = {
         }
         Update: {
           alert_type?: string
+          amount_ngn?: number | null
           assigned_analyst_id?: string | null
           behavioral_red_flags?: string[] | null
           case_id?: string
@@ -2202,6 +2205,10 @@ export type Database = {
         Returns: {
           slot_datetime: string
         }[]
+      }
+      import_alerts_csv: {
+        Args: { _file_name: string; _institution_id: string; _rows: Json }
+        Returns: Json
       }
       mark_platform_notification_read: {
         Args: { _id: string }
