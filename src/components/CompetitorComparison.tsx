@@ -1,7 +1,7 @@
-import { BarChart3, Check, Zap } from "lucide-react";
+import { BarChart3, Check, Info, Zap } from "lucide-react";
 import { PLAN_PRICING, IMPLEMENTATION_PRICE_RANGE } from "@/lib/pricing";
 
-type Marker = "check" | "bolt" | "none";
+type Marker = "check" | "bolt" | "info" | "none";
 
 interface Row {
   feature: string;
@@ -19,7 +19,7 @@ const ROWS: Row[] = [
   { feature: "Case management workspace", apex: { value: "Full workspace", marker: "check" }, autogon: { value: "Not published" } },
   { feature: "Explainable alert UI", apex: { value: "Plain-English typology cards", marker: "check" }, autogon: { value: "Not published" } },
   { feature: "Transparent public pricing", apex: { value: "Yes", marker: "check" }, autogon: { value: "Demo only" } },
-  { feature: "Data residency (NDPA 2023)", apex: { value: "Hosted on Supabase (AWS Ireland, eu-west-1), encrypted in transit and at rest. Data residency in Nigeria is not currently offered. Contact us about your requirements.", marker: "check" }, autogon: { value: "US-incorporated" } },
+  { feature: "Data Residency & Cloud Governance", apex: { value: "Hosted on Supabase (AWS Ireland, eu-west-1), encrypted in transit and at rest. Data residency in Nigeria is not currently offered. We sign an NDPA-compliant DPA at contract signing.", marker: "info" }, autogon: { value: "US-incorporated" } },
   { feature: "Live Nigerian clients", apex: { value: "Building", marker: "bolt" }, autogon: { value: "Several deployed", marker: "check" } },
   { feature: "Proprietary ML engine", apex: { value: "Rules + AI-assisted STR drafting", marker: "bolt" }, autogon: { value: "Proprietary ML", marker: "check" } },
 ];
@@ -27,6 +27,7 @@ const ROWS: Row[] = [
 function MarkerIcon({ marker }: { marker?: Marker }) {
   if (marker === "check") return <Check className="h-3.5 w-3.5 text-risk-low shrink-0 mt-0.5" strokeWidth={3} />;
   if (marker === "bolt") return <Zap className="h-3.5 w-3.5 text-amber-400 shrink-0 mt-0.5" strokeWidth={2.5} />;
+  if (marker === "info") return <Info className="h-3.5 w-3.5 text-muted-on-dark shrink-0 mt-0.5" strokeWidth={2.5} />;
   return <span className="h-1.5 w-1.5 rounded-full bg-white/30 shrink-0 mt-2" />;
 }
 
