@@ -6,7 +6,7 @@ import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors'
 import { trustedClientIp } from '../_shared/client-ip.ts'
 import { issueDemoConfirmation, sha256Hex } from '../_shared/demo-email-confirmation.ts'
 import { sendTemplateEmail } from '../_shared/transactional-email-templates/send-email.ts'
-import { buildRow, Envelope, getForm, isHoneypotTripped, RATE_LIMIT, readLimitedBody, type FormSpec } from './forms.ts'
+import { buildRow, Envelope, getForm, isHoneypotTripped, readLimitedBody, type FormSpec } from './forms.ts'
 import { verifyTurnstile } from './turnstile.ts'
 import { completeBooking, fmtSlot, INTERNAL_ALERT_EMAIL, isBookableSlot, isSlotTaken, type BookingRow } from './booking.ts'
 
@@ -74,7 +74,7 @@ Deno.serve(async (req) => {
   const ip = trustedClientIp(req.headers)
   const ipHash = await hashIp(ip, ipSecret)
   const limit = await admin.rpc('consume_rate_limit', {
-    _bucket: spec.bucket, _ip_hash: ipHash, _limit: RATE_LIMIT.limit, _window_seconds: RATE_LIMIT.windowSeconds,
+    _bucket: spec.bucket, _ip_hash: ipHash, _limit: spec.rateLimit.limit, _window_seconds: spec.rateLimit.windowSeconds,
   })
   if (limit.error) { console.error('rate limit check failed', limit.error.code); return json({ ok: false, reason: 'server_error' }, 500) }
   if (limit.data !== true) return json({ ok: false, reason: 'rate_limited' }, 429)

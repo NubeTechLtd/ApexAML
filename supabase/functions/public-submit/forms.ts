@@ -4,7 +4,10 @@
 import { z } from 'npm:zod@3.25.76'
 
 export const MAX_BODY_BYTES = 10 * 1024
+/** Visitor forms (all share one bucket): 10 submissions per hashed IP per hour. */
 export const RATE_LIMIT = { limit: 10, windowSeconds: 60 * 60 }
+/** Click and page tracking: a separate, higher cap per tracker, so shared office or mobile networks are still counted. */
+export const TRACKER_RATE_LIMIT = { limit: 300, windowSeconds: 60 * 60 }
 
 export type PublicTable = 'leads' | 'roadmap_leads' | 'demo_requests' | 'landing_page_clicks' | 'page_events'
 
@@ -43,6 +46,8 @@ export interface FormSpec {
   turnstile: boolean
   /** Rate-limit bucket: all visitor forms share one per IP; each tracker has its own. */
   bucket: string
+  /** Per-IP limit applied to this spec's bucket. */
+  rateLimit: { limit: number; windowSeconds: number }
   /** Strict schema: its keys are the only columns a visitor may supply. */
   schema: z.ZodTypeAny
   /** Columns the server always sets, never the visitor. */
@@ -52,7 +57,7 @@ export interface FormSpec {
 const FORMS_BUCKET = 'forms'
 
 const leadForm = (shape: z.ZodRawShape, source: string): FormSpec => ({
-  table: 'leads', turnstile: true, bucket: FORMS_BUCKET, schema: z.object(shape).strict(), fixed: { source },
+  table: 'leads', turnstile: true, bucket: FORMS_BUCKET, rateLimit: RATE_LIMIT, schema: z.object(shape).strict(), fixed: { source },
 })
 
 export const FORMS = {
@@ -73,14 +78,14 @@ export const FORMS = {
     email, full_name: text(2, 100), institution_type: z.enum(ORGANISATION_TYPES), role: text(2, 100),
   }, 'demo_entry'),
   roadmap_lead: {
-    table: 'roadmap_leads', turnstile: true, bucket: FORMS_BUCKET, fixed: { source: 'roadmap_generator' },
+    table: 'roadmap_leads', turnstile: true, bucket: FORMS_BUCKET, rateLimit: RATE_LIMIT, fixed: { source: 'roadmap_generator' },
     schema: z.object({
       institution_name: text(2, 200), institution_type: text(1, 50), aml_setup: text(1, 100), volume: text(1, 100),
       contact_name: text(2, 120), title: text(1, 120), email, phone: optPhone,
     }).strict(),
   },
   demo_request_post_roadmap: {
-    table: 'demo_requests', turnstile: true, bucket: FORMS_BUCKET, fixed: { source: 'post_roadmap' },
+    table: 'demo_requests', turnstile: true, bucket: FORMS_BUCKET, rateLimit: RATE_LIMIT, fixed: { source: 'post_roadmap' },
     schema: z.object({
       contact_name: text(1, 120), institution_name: text(1, 200),
       email: z.union([email, z.literal('')]).optional().nullable().transform((v) => (v ? v : null)),
@@ -88,21 +93,21 @@ export const FORMS = {
     }).strict(),
   },
   demo_booking: {
-    table: 'demo_requests', turnstile: true, bucket: FORMS_BUCKET, fixed: { source: 'book_demo_sheet_v2' },
+    table: 'demo_requests', turnstile: true, bucket: FORMS_BUCKET, rateLimit: RATE_LIMIT, fixed: { source: 'book_demo_sheet_v2' },
     schema: z.object({
       contact_name: text(2, 120), institution_name: text(2, 200), institution_type: text(1, 50), role: text(1, 80),
       email, whatsapp: optText(40), focus_areas: optText(800), slot_datetime: z.string().datetime({ offset: true }),
     }).strict(),
   },
   landing_click: {
-    table: 'landing_page_clicks', turnstile: false, bucket: 'landing_click', fixed: {},
+    table: 'landing_page_clicks', turnstile: false, bucket: 'landing_click', rateLimit: TRACKER_RATE_LIMIT, fixed: {},
     schema: z.object({
       source: slug, event: slug, page_path: optPath,
       referrer: z.string().trim().max(500).url().optional().nullable().transform((v) => v ?? null),
     }).strict(),
   },
   page_event: {
-    table: 'page_events', turnstile: false, bucket: 'page_event', fixed: {},
+    table: 'page_events', turnstile: false, bucket: 'page_event', rateLimit: TRACKER_RATE_LIMIT, fixed: {},
     schema: z.object({
       event_name: slug, session_id: optText(64), path: optPath,
       source: slug.optional().nullable().transform((v) => v ?? null), metadata,
