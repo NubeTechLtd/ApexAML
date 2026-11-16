@@ -1,11 +1,19 @@
 import { assert, assertEquals, assertThrows } from 'jsr:@std/assert@1'
-import { buildRow, Envelope, FORMS, getForm, isHoneypotTripped, MAX_BODY_BYTES, RATE_LIMIT, readLimitedBody, TABLE_COLUMNS, visitorColumns, type FormSpec } from './forms.ts'
+import { buildRow, Envelope, FORMS, getForm, isHoneypotTripped, MAX_BODY_BYTES, RATE_LIMIT, readLimitedBody, TRACKER_RATE_LIMIT, TABLE_COLUMNS, visitorColumns, type FormSpec } from './forms.ts'
 import { isAcceptedVerification } from './turnstile.ts'
 
 const specs = Object.entries(FORMS) as [string, FormSpec][]
 
 Deno.test('rate limit is 10 requests per IP per hour', () => {
   assertEquals(RATE_LIMIT, { limit: 10, windowSeconds: 3600 })
+})
+
+Deno.test('visitor forms use the 10/hour limit; click and page tracking use 300/hour', () => {
+  assertEquals(TRACKER_RATE_LIMIT, { limit: 300, windowSeconds: 3600 })
+  for (const [id, spec] of specs) {
+    const tracker = spec.table === 'landing_page_clicks' || spec.table === 'page_events'
+    assertEquals(spec.rateLimit, tracker ? TRACKER_RATE_LIMIT : RATE_LIMIT, id)
+  }
 })
 
 Deno.test('payload cap is 10 KB', async () => {
