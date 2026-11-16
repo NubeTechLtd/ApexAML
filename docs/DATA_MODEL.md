@@ -45,7 +45,7 @@ Institution roles (`user_institutions.role`): `analyst`, `compliance_officer`, `
 |---|---|---|---|
 | `customers` | id, institution_id, full_name, bvn, nin, nuban, kyc_tier, risk_level, risk_score, account_status, bvn_verified, entity_type, created_at | tenant | Institution customers |
 | `transactions` | id, institution_id, customer_id, tx_type, channel, amount_ngn, balance_after, counterparty, agent_location, occurred_at, created_at | tenant | Customer transactions used as case evidence and AI drafting input |
-| `alerts` | id, institution_id, case_id, customer_id, rule_triggered, alert_type, risk_level, status, description, behavioral_red_flags (text[]), assigned_analyst_id, opened_at, closed_at, dismissal_reason | tenant | Cases shown in `/app/workspace`. No server job creates live alerts yet |
+| `alerts` | id, institution_id, case_id, customer_id, rule_triggered, alert_type, risk_level, status, description, behavioral_red_flags (text[]), assigned_analyst_id, opened_at, closed_at, dismissal_reason, amount_ngn (nullable flagged amount) | tenant | Cases shown in `/app/workspace`. Created by analyst CSV import (`import_alerts_csv`); no server job creates live alerts yet |
 | `str_drafts` | id, alert_id, version, narrative, generated_by (`ai` or `analyst_edit`), created_by, author_name, provider, model, prompt_version, input_hash, created_at | SELECT via the alert's `tenant_read`; INSERT only `generated_by = 'analyst_edit'` with a tenant role on the alert's institution; UPDATE with tenant role. Trigger `str_drafts_guard` stamps the author and freezes provenance | Versioned STR narratives. Only the AI edge functions (service role) insert `ai` drafts with provider/model/prompt provenance |
 | `str_exports` | id, alert_id, str_draft_id, filename, goaml_xml, exported_by, exported_at | SELECT via the alert's `tenant_read`; INSERT with tenant role | Every exported STR XML file (draft for institution review and upload) |
 
@@ -148,6 +148,7 @@ The demo zone's case data lives in the browser. These tables only hold sessions,
 | Function | Caller | Purpose |
 |---|---|---|
 | `save_institution_profile(...)` | institution_admin | Upserts profile, writes a version snapshot and audit entry |
+| `import_alerts_csv(_institution_id, _rows, _file_name)` | analyst, compliance_officer, institution_admin of that institution (support grants refused) | All-or-nothing import of 1–500 CSV cases: re-validates rows, rejects case IDs already in use, matches customers by BVN within the institution or creates them, writes one `ALERTS_CSV_IMPORT` audit entry (row_count, analyst_user_id, customers_created, file_name) |
 | `set_ai_drafting_enabled(inst, enabled, justification)` | institution_admin | Toggles AI drafting consent with a 20+ character reason, audited |
 | `verify_audit_chain(institution_id)` | compliance_officer / institution_admin | Server-side chain verification |
 | `start_support_access(inst, justification, confirmed)` / `end_support_access()` / `support_institutions()` | platform_admin with MFA | Audited, expiring read-only support grants |
