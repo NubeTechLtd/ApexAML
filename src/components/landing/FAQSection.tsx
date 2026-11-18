@@ -26,7 +26,7 @@ const FAQS: FAQ[] = [
     q: "Where is our data stored — is it in Nigeria?",
     a: (
       <p>
-        Hosted on Supabase (AWS Ireland, eu-west-1), encrypted in transit and at rest. Data residency in Nigeria is not currently offered. Contact us about your requirements. We sign a data processing addendum (DPA) at contract signing.
+        Hosted on Supabase (AWS Ireland, eu-west-1), encrypted in transit and at rest. Data residency in Nigeria is not currently offered. We sign an NDPA-compliant DPA at contract signing.
       </p>
     ),
   },

@@ -325,7 +325,7 @@ const FAQ_FOR_SCHEMA: Array<{ q: string; a: string }> = [
   },
   {
     q: "Where is our data stored — is it in Nigeria?",
-    a: "Hosted on Supabase (AWS Ireland, eu-west-1), encrypted in transit and at rest. Data residency in Nigeria is not currently offered. Contact us about your requirements. We sign a DPA at contract signing.",
+    a: "Hosted on Supabase (AWS Ireland, eu-west-1), encrypted in transit and at rest. Data residency in Nigeria is not currently offered. We sign an NDPA-compliant DPA at contract signing.",
   },
   {
     q: "How long does integration take?",
@@ -629,7 +629,7 @@ function LandingPageInner() {
                 <span className="hidden sm:inline text-muted-on-dark">·</span>
                 <span className="inline-flex items-center gap-1.5">
                   <CheckCircle2 className="h-3 w-3 text-risk-low" />
-                  Hosted on Supabase (AWS Ireland, eu-west-1), encrypted in transit and at rest. Data residency in Nigeria is not currently offered. Contact us about your requirements.
+                  Hosted on Supabase (AWS Ireland, eu-west-1), encrypted in transit and at rest. Data residency in Nigeria is not currently offered. We sign an NDPA-compliant DPA at contract signing.
                 </span>
               </div>
             </div>
@@ -803,7 +803,7 @@ function LandingPageInner() {
                 Icon: ShieldCheck,
                 title: "Security-First Engineering",
                 eyebrow: "Security by Design",
-                text: "Hosted on Supabase (AWS Ireland, eu-west-1) and encrypted in transit and at rest. Each institution's data is kept separate, and every action is recorded in an append-only, hash-chained audit trail.",
+                text: "Hosted on Supabase (AWS Ireland, eu-west-1), encrypted in transit and at rest. Each institution's data is kept separate, and every action is recorded in an append-only, hash-chained audit trail.",
               },
             ].map(({ Icon, title, eyebrow, text }, i) => (
               <AnimatedSection key={title} delay={i * 0.1}>

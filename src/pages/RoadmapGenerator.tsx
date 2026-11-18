@@ -581,7 +581,7 @@ Managing Director:                                    Signature: _______________
                         'CBN circular aligned',
                         'goAML-style XML export',
                         'NDPR compliant',
-                        'Hosted on Supabase (AWS Ireland, eu-west-1), encrypted in transit and at rest. Data residency in Nigeria is not currently offered. Contact us about your requirements.',
+                        'Hosted on Supabase (AWS Ireland, eu-west-1), encrypted in transit and at rest. Data residency in Nigeria is not currently offered. We sign an NDPA-compliant DPA at contract signing.',
                         'Free — no account required',
                       ].map((badge) => (
                         <span

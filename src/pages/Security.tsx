@@ -4,7 +4,7 @@ import { Seo } from "@/components/Seo";
 import { MarketingPageShell } from "@/components/landing/MarketingPageShell";
 
 const ITEMS = [
-  { icon: Database, title: "Hosting", body: "Hosted on Supabase (AWS Ireland, eu-west-1), encrypted in transit and at rest. Data residency in Nigeria is not currently offered. Contact us about your requirements." },
+  { icon: Database, title: "Hosting", body: "Hosted on Supabase (AWS Ireland, eu-west-1), encrypted in transit and at rest. Data residency in Nigeria is not currently offered. We sign an NDPA-compliant DPA at contract signing." },
   { icon: Users, title: "Institution isolation", body: "Every customer record, case, report and file belongs to one institution. Database rules only let members of that institution see or change it." },
   { icon: KeyRound, title: "Roles", body: "Analysts, compliance officers and institution administrators each get their own permissions. Activity logs are visible only to compliance officers and administrators." },
   { icon: ScrollText, title: "Activity log", body: "Actions are written to an append-only, hash-chained activity log. Entries cannot be edited or deleted from inside the app, and the chain can be checked from the audit page." },

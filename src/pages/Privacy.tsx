@@ -19,7 +19,7 @@ const SECTIONS = [
   },
   {
     h: "4. Where your data is stored",
-    p: "Hosted on Supabase (AWS Ireland, eu-west-1), encrypted in transit and at rest. Data residency in Nigeria is not currently offered. Contact us about your requirements. Backups are encrypted at rest using AES-256.",
+    p: "Hosted on Supabase (AWS Ireland, eu-west-1), encrypted in transit and at rest. Data residency in Nigeria is not currently offered. We sign an NDPA-compliant DPA at contract signing. Backups are encrypted at rest using AES-256.",
   },
   {
     h: "5. Sub-processors",
@@ -44,7 +44,7 @@ export default function Privacy() {
     <div className="min-h-screen bg-[hsl(220,25%,6%)] text-foreground">
       <Seo
         title="Privacy Policy | ApexAML"
-        description="How ApexAML collects, processes and stores personal data under the Nigeria Data Protection Act 2023. AWS Ireland hosting, sub-processors, lawful basis, and your NDPA rights. Data residency in Nigeria is not currently offered. Contact us about your requirements."
+        description="How ApexAML collects, processes and stores personal data under the Nigeria Data Protection Act 2023. AWS Ireland hosting, sub-processors, lawful basis, and your NDPA rights. Data residency in Nigeria is not currently offered. We sign an NDPA-compliant DPA at contract signing."
         path="/privacy"
       />
       {/* Header */}
