@@ -114,7 +114,7 @@ export default function Contact() {
         </div>
 
         <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr]">
-          <section className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-6 sm:p-8">
+          <section className="min-w-0 rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-6 sm:p-8">
             {done ? (
               <div role="status" className="space-y-4 py-6 text-center">
                 <CheckCircle2 className="mx-auto h-10 w-10 text-risk-low" />
@@ -153,7 +153,7 @@ export default function Contact() {
                 </div>
                 {/* Honeypot: hidden from people, filled by bots */}
                 <HoneypotField id="ct-website" value={website} onChange={setWebsite} />
-                <TurnstileWidget ref={turnstile} action="contact" />
+                <TurnstileWidget ref={turnstile} action="contact" className="w-full max-w-full" />
                 {serverError && <p role="alert" className="text-sm text-roadmap-warning">{serverError}</p>}
                 <Button type="submit" disabled={submitting} className="w-full h-11 bg-primary text-primary-foreground font-semibold rounded-lg">
                   {submitting ? <><Loader2 className="h-4 w-4 animate-spin" />Sending…</> : "Send message"}
@@ -162,7 +162,7 @@ export default function Contact() {
             )}
           </section>
 
-          <aside className="space-y-4">
+          <aside className="min-w-0 space-y-4">
             <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 space-y-3">
               <Button onClick={() => setDemoOpen(true)} className="w-full h-11 bg-primary text-primary-foreground font-semibold rounded-lg">
                 <CalendarCheck className="h-4 w-4" />Book a 30-minute walkthrough
