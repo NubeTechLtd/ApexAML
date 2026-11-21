@@ -656,27 +656,27 @@ export default function AlertWorkspace() {
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-background">
         <AppSidebar />
-        <div className="flex-1 flex flex-col min-h-0">
+        <div className="flex-1 min-w-0 flex flex-col min-h-0">
           {/* Top bar */}
-          <div className="flex items-center justify-between border-b px-6 py-3 bg-card shrink-0">
-            <div className="flex items-center gap-2">
-              <Shield className="h-5 w-5 text-primary" />
-              <div>
-                <h1 className="text-lg font-bold text-foreground leading-tight">Alert Workspace</h1>
-                <p className="text-[11px] text-muted-foreground">Investigate flagged transactions and prepare STRs for goAML export</p>
+          <div className="flex items-center justify-between border-b px-4 md:px-6 py-3 bg-card shrink-0">
+            <div className="flex items-center gap-2 min-w-0">
+              <Shield className="h-5 w-5 text-primary shrink-0" />
+              <div className="min-w-0">
+                <h1 className="text-lg font-bold text-foreground leading-tight truncate">Alert Workspace</h1>
+                <p className="text-[11px] text-muted-foreground truncate">Investigate flagged transactions and prepare STRs for goAML export</p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 shrink-0">
               <AuditBell />
               <NotificationBell />
               <ThemeToggle />
             </div>
           </div>
 
-          {/* Split pane */}
-          <div className="flex flex-1 min-h-0">
+          {/* Split pane — stacked on phones, side-by-side from md up */}
+          <div className="flex flex-col md:flex-row flex-1 min-h-0">
             {/* Left pane – Alert list (30%) */}
-            <div className="w-[30%] min-w-[280px] border-r flex flex-col bg-muted/20">
+            <div className="w-full md:w-[30%] md:min-w-[280px] border-b md:border-b-0 md:border-r flex flex-col bg-muted/20 max-h-[40vh] md:max-h-none">
               <div className="p-3 border-b bg-card">
                 <div className="relative">
                   <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
@@ -893,7 +893,7 @@ export default function AlertWorkspace() {
                         </AccordionTrigger>
                         <AccordionContent>
                           <CardContent className="py-3 px-5 pt-0">
-                            <div className="grid grid-cols-4 gap-4">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                               <div className="flex items-center gap-2">
                                 <User className="h-4 w-4 text-muted-foreground" />
                                 <div>
@@ -1141,9 +1141,9 @@ export default function AlertWorkspace() {
                     )}
 
                     {strGenerated && (
-                      <div className="flex gap-4 min-h-[400px]">
+                      <div className="flex flex-col lg:flex-row gap-4 min-h-[400px]">
                         {/* Editor */}
-                         <div className={`flex-1 flex flex-col rounded-lg border overflow-hidden relative transition-all duration-500 ${isTyping ? 'border-primary/50 shadow-[0_0_20px_hsl(var(--primary)/0.2)]' : ''}`}>
+                         <div className={`flex-1 min-w-0 flex flex-col rounded-lg border overflow-hidden relative transition-all duration-500 ${isTyping ? 'border-primary/50 shadow-[0_0_20px_hsl(var(--primary)/0.2)]' : ''}`}>
                           <div className="px-4 py-2 border-b bg-muted/30 flex items-center justify-between shrink-0">
                             <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">STR Draft Editor</span>
                             <div className="flex items-center gap-2">
@@ -1192,7 +1192,7 @@ export default function AlertWorkspace() {
 
                         {/* Chat assistant (hidden in live when AI drafting is off) */}
                         {aiDraftingOn && (
-                        <div className="w-72 flex flex-col rounded-lg border overflow-hidden shrink-0">
+                        <div className="w-full lg:w-72 flex flex-col rounded-lg border overflow-hidden shrink-0">
                           <div className="px-3 py-2 border-b bg-muted/30 flex items-center gap-2 shrink-0">
                             <Bot className="h-3.5 w-3.5 text-primary" />
                             <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{isDemo ? 'STR drafting assistant' : 'AI Assistant'}</span>
